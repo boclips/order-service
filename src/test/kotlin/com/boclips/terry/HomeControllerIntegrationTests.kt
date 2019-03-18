@@ -47,4 +47,20 @@ class HomeControllerIntegrationTests {
                 .andExpect(header().string("Content-Type", "application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.challenge", equalTo("iamchallenging")))
     }
+
+    @Test
+    fun `it's a client error to send a malformed Slack verification request`() {
+        mockMvc.perform(
+                post("/slack-verification")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("""
+                            {
+                                "token": "sometoken",
+                                "poo": "iamchallenging",
+                                "type": "url_verification"
+                            }
+                        """)
+        )
+                .andExpect(status().is4xxClientError)
+    }
 }
