@@ -1,0 +1,20 @@
+app: terry
+port: 8080
+scale: Small
+environments:
+  production:
+    replicas: 1
+    urls:
+      - terry.boclips.com
+  staging:
+    replicas: 1
+    urls:
+      - terry.staging-boclips.com
+  testing:
+    replicas: 1
+    urls:
+      - terry.testing-boclips.com
+  local:
+    replicas: 1
+    urls:
+      - terry.local-boclips.com
