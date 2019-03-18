@@ -1,6 +1,6 @@
 app: terry
 port: 8080
-scale: Small
+scale: Medium
 environments:
   production:
     replicas: 1
