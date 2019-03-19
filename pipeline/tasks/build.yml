@@ -18,5 +18,8 @@ caches:
 - path: .gradle/
 - path: source/dependency-check-cache
 
+params:
+  SLACK_BOT_TOKEN:
+
 run:
   path: source/pipeline/scripts/build.sh
