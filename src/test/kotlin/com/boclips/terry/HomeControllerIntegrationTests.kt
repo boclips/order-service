@@ -24,7 +24,7 @@ class HomeControllerIntegrationTests {
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun `responds with a terrific message`() {
+    fun `root path responds with a terrific message`() {
         mockMvc.perform(
                 get("/"))
                 .andExpect(status().isOk)
@@ -60,8 +60,37 @@ class HomeControllerIntegrationTests {
                                 "poo": "iamchallenging",
                                 "type": "url_verification"
                             }
-                        """)
+                        """.trimIndent())
         )
                 .andExpect(status().is4xxClientError)
+    }
+
+    @Test
+    fun `well-formed slack events receive 200s`() {
+        mockMvc.perform(
+                post("/slack")
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content("""
+                            {
+                                "token": "XXYYZZ",
+                                "team_id": "TXXXXXXXX",
+                                "api_app_id": "AXXXXXXXXX",
+                                "event": {
+                                    "type": "name_of_event",
+                                    "event_ts": "1234567890.123456",
+                                    "user": "UXXXXXXX1"
+                                },
+                                "type": "event_callback",
+                                "authed_users": [
+                                    "UXXXXXXX1",
+                                    "UXXXXXXX2"
+                                ],
+                                "event_id": "Ev08MFMKH6",
+                                "event_time": 1234567890
+                            }
+                        """.trimIndent())
+        )
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.challenge").isEmpty)
     }
 }

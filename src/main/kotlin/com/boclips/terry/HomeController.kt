@@ -14,11 +14,11 @@ class HomeController {
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
     @PostMapping("/slack")
-    fun slack(@RequestBody request: SlackVerificationRequest?): SlackVerificationResponse {
-        return request?.challenge?.let {
-            val slackVerificationResponse = SlackVerificationResponse(challenge = it)
-            logger.info { "Successfully parsed Slack verification request" }
-            slackVerificationResponse
-        } ?: throw IllegalArgumentException()
-    }
+    fun slack(@RequestBody request: SlackRequest): SlackResponse =
+            when (request) {
+                is VerificationRequest ->
+                    SlackResponse(challenge = request.challenge)
+                is EventNotification ->
+                    SlackResponse()
+            }
 }
