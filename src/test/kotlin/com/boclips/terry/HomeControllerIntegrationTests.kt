@@ -1,6 +1,7 @@
 package com.boclips.terry
 
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,10 +25,10 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `responds with a terrific message`() {
-        val response = mockMvc.perform(get("/")).andReturn().response
-
-        assertThat(response.contentAsString).contains("Do as I say")
-        assertThat(response.status).isEqualTo(200)
+        mockMvc.perform(
+                get("/"))
+                .andExpect(status().isOk)
+                .andExpect(xpath("h1").string(containsString("Do as I say")))
     }
 
     @Test
