@@ -16,9 +16,13 @@ class HomeController {
     @PostMapping("/slack")
     fun slack(@RequestBody request: SlackRequest): SlackResponse =
             when (request) {
-                is VerificationRequest ->
+                is VerificationRequest -> {
+                    logger.info { "Responding to verification challenge" }
                     VerificationResponse(challenge = request.challenge)
-                is EventNotification ->
+                }
+                is EventNotification -> {
+                    logger.info { "Received event notification" }
                     EventNotificationResponse()
+                }
             }
 }
