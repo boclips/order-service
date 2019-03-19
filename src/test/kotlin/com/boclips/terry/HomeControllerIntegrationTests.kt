@@ -34,7 +34,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `can meet Slack's verification challenge`() {
         mockMvc.perform(
-                post("/slack-verification")
+                post("/slack")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("""
                             {
@@ -52,7 +52,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `it's a client error to send a malformed Slack verification request`() {
         mockMvc.perform(
-                post("/slack-verification")
+                post("/slack")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("""
                             {

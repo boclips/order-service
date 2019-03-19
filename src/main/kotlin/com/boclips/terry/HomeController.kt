@@ -13,8 +13,8 @@ class HomeController {
     @GetMapping("/")
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
-    @PostMapping("/slack-verification")
-    fun slackVerification(@RequestBody request: SlackVerificationRequest?): SlackVerificationResponse {
+    @PostMapping("/slack")
+    fun slack(@RequestBody request: SlackVerificationRequest?): SlackVerificationResponse {
         return request?.challenge?.let {
             val slackVerificationResponse = SlackVerificationResponse(challenge = it)
             logger.info { "Successfully parsed Slack verification request" }
