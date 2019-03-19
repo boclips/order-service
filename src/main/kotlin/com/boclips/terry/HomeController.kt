@@ -17,8 +17,8 @@ class HomeController {
     fun slack(@RequestBody request: SlackRequest): SlackResponse =
             when (request) {
                 is VerificationRequest ->
-                    SlackResponse(challenge = request.challenge)
+                    VerificationResponse(challenge = request.challenge)
                 is EventNotification ->
-                    SlackResponse()
+                    EventNotificationResponse()
             }
 }

@@ -91,6 +91,6 @@ class HomeControllerIntegrationTests {
                         """.trimIndent())
         )
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.challenge").isEmpty)
+                .andExpect(content().json("{}"))
     }
 }

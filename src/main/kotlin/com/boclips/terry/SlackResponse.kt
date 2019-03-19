@@ -1,5 +1,6 @@
 package com.boclips.terry
 
-class SlackResponse(val challenge: String) {
-    constructor() : this("")
-}
+sealed class SlackResponse
+
+data class VerificationResponse(val challenge: String) : SlackResponse()
+class EventNotificationResponse() : SlackResponse()
