@@ -1,4 +1,4 @@
-package com.boclips.terry
+package com.boclips.terry.infrastructure.incoming
 
 sealed class SlackResponse
 

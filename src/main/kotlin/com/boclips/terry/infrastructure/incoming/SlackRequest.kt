@@ -1,4 +1,4 @@
-package com.boclips.terry
+package com.boclips.terry.infrastructure.incoming
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
@@ -38,7 +38,7 @@ data class EventNotification(
         @JsonProperty("api_app_id")
         val apiAppId: String?,
 
-        val event: SlackEvent?,
+        val event: SlackEvent,
 
         val type: String,
 
@@ -52,11 +52,3 @@ data class EventNotification(
         val eventTime: Date?
 ) : SlackRequest()
 
-data class SlackEvent(
-        val type: String,
-
-        @JsonProperty("event_ts")
-        val eventTs: String,
-
-        val user: String
-)

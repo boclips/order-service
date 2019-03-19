@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -18,13 +19,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class HomeControllerIntegrationTests {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
+    @Autowired
+    lateinit var slackPoster: FakeSlackPoster
+
     @Test
-    fun `root path responds with a terrific message`() {
+    fun `root path serves a terrific message`() {
         mockMvc.perform(
                 get("/"))
                 .andExpect(status().isOk)
@@ -66,31 +71,38 @@ class HomeControllerIntegrationTests {
     }
 
     @Test
-    fun `well-formed slack events receive 200s`() {
+    fun `Slack mentions receive 200s and send responses`() {
         mockMvc.perform(
                 post("/slack")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content("""
                             {
-                                "token": "XXYYZZ",
-                                "team_id": "TXXXXXXXX",
-                                "api_app_id": "AXXXXXXXXX",
+                                "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
+                                "team_id": "T061EG9R6",
+                                "api_app_id": "A0MDYCDME",
                                 "event": {
-                                    "type": "name_of_event",
-                                    "event_ts": "1234567890.123456",
-                                    "user": "UXXXXXXX1"
+                                    "type": "app_mention",
+                                    "user": "U061F7AUR",
+                                    "text": "What ever happened to <@U0LAN0Z89>?",
+                                    "ts": "1515449438.000011",
+                                    "channel": "C0LAN2Q65",
+                                    "event_ts": "1515449438000011"
                                 },
                                 "type": "event_callback",
+                                "event_id": "Ev0MDYGDKJ",
+                                "event_time": 1515449438000011,
                                 "authed_users": [
-                                    "UXXXXXXX1",
-                                    "UXXXXXXX2"
-                                ],
-                                "event_id": "Ev08MFMKH6",
-                                "event_time": 1234567890
+                                    "U0LAN0Z89"
+                                ]
                             }
                         """.trimIndent())
         )
                 .andExpect(status().isOk)
                 .andExpect(content().json("{}"))
+
+        assertThat(slackPoster.lastMessage?.text)
+                .isEqualTo("Sorry m8, I'm being built rn")
+        assertThat(slackPoster.lastMessage?.channel)
+                .isEqualTo("C0LAN2Q65")
     }
 }

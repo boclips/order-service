@@ -1,5 +1,6 @@
 package com.boclips.terry
 
+import com.boclips.terry.application.Terry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
