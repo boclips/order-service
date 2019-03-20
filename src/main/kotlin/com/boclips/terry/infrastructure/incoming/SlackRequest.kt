@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.incoming
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -21,7 +22,10 @@ import java.util.*
                 name = "event_callback"
         )
 )
+@JsonIgnoreProperties(ignoreUnknown = true)
 sealed class SlackRequest
+
+object Malformed : SlackRequest()
 
 data class VerificationRequest(
         val challenge: String,

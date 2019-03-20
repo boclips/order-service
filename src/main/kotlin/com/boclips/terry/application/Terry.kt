@@ -6,14 +6,18 @@ import com.boclips.terry.infrastructure.outgoing.*
 class Terry() {
     fun receiveSlack(request: SlackRequest): Decision =
             when (request) {
-                is VerificationRequest -> {
+                is VerificationRequest ->
                     Decision(
                             log = "Responding to verification challenge",
-                            acknowledgement = VerificationResponse(challenge = request.challenge)
+                            response = VerificationResponse(challenge = request.challenge)
                     )
-                }
                 is EventNotification ->
                     handleEventNotification(request.event)
+                Malformed ->
+                    Decision(
+                            log = "Malformed request",
+                            response = MalformedRequestRejection
+                    )
             }
 
     private fun handleEventNotification(event: SlackEvent): Decision =
@@ -21,7 +25,7 @@ class Terry() {
                 is AppMention -> {
                     Decision(
                             log = "Responding via chat with \"${helpFor(event.user)}\"",
-                            acknowledgement = ChatPost(
+                            response = ChatReply(
                                     message = Message(
                                             channel = event.channel,
                                             text = helpFor(event.user)

@@ -2,7 +2,7 @@ package com.boclips.terry
 
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.ChatPost
+import com.boclips.terry.infrastructure.outgoing.ChatReply
 import com.boclips.terry.infrastructure.outgoing.Decision
 import com.boclips.terry.infrastructure.outgoing.Message
 import com.boclips.terry.infrastructure.outgoing.VerificationResponse
@@ -21,7 +21,7 @@ class TerryTests {
                         type = irrelevant
                 )
         )).isEqualTo(Decision(
-                acknowledgement = VerificationResponse(
+                response = VerificationResponse(
                         challenge = "bet-you-cant-copy-paste-this-m8"
                 ),
                 log = "Responding to verification challenge"
@@ -48,7 +48,7 @@ class TerryTests {
                         eventTime = Date()
                 )
         )).isEqualTo(Decision(
-                acknowledgement = ChatPost(
+                response = ChatReply(
                         message = Message(
                                 channel = "#engineering",
                                 text = "<@UBS7V80PR> I don't do much yet"
