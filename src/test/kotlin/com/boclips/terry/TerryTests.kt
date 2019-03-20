@@ -32,28 +32,28 @@ class TerryTests {
     fun `responds to Slack enquiry about his job description`() {
         assertThat(Terry(FakeSlackPoster()).receiveSlack(
                 request = EventNotification(
-                        teamId = "",
-                        apiAppId = "",
+                        teamId = irrelevant,
+                        apiAppId = irrelevant,
                         event = AppMention(
-                                type = "",
+                                type = irrelevant,
                                 channel = "#engineering",
-                                text = "",
-                                eventTs = "",
-                                ts = "",
-                                user = ""
+                                text = "hi Tezza",
+                                eventTs = irrelevant,
+                                ts = irrelevant,
+                                user = "UBS7V80PR"
                         ),
-                        type = "",
-                        authedUsers = listOf(""),
-                        eventId = "",
+                        type = irrelevant,
+                        authedUsers = emptyList(),
+                        eventId = irrelevant,
                         eventTime = Date()
                 )
         )).isEqualTo(Decision(
                 action = ChatPost(
                         message = Message(
                                 channel = "#engineering",
-                                text = "Sorry m8, I'm being built rn"
+                                text = "<@UBS7V80PR> I don't do much yet"
                         )),
-                log = """Responding via chat with "Sorry m8, I'm being built rn""""
+                log = """Responding via chat with "<@UBS7V80PR> I don't do much yet""""
         ))
     }
 }

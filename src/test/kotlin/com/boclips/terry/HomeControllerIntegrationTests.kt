@@ -121,7 +121,7 @@ class HomeControllerIntegrationTests {
                 .andExpect(content().json("{}"))
 
         assertThat(slackPoster.lastMessage?.text)
-                .isEqualTo("Sorry m8, I'm being built rn")
+                .isEqualTo("<@U061F7AUR> I don't do much yet")
         assertThat(slackPoster.lastMessage?.channel)
                 .isEqualTo("C0LAN2Q65")
     }

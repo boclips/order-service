@@ -20,18 +20,17 @@ class Terry(private val slackPoster: SlackPoster) {
             when (event) {
                 is AppMention -> {
                     Decision(
-                            log = "Responding via chat with \"${help()}\"",
+                            log = "Responding via chat with \"${helpFor(event.user)}\"",
                             action = ChatPost(
                                     message = Message(
                                             channel = event.channel,
-                                            text = help()
+                                            text = helpFor(event.user)
                                     )
                             )
                     )
                 }
             }
 
-    private fun help(): String {
-        return "Sorry m8, I'm being built rn"
-    }
+    private fun helpFor(user: String): String = "<@${user}> ${help()}"
+    private fun help(): String = "I don't do much yet"
 }
