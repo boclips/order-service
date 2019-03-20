@@ -22,7 +22,8 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(@RequestBody request: SlackRequest): Action {
         val decision = terry.receiveSlack(request)
-        logger.info { decision.log }
+        logger.debug { "request: $request" }
+        logger.info { "decision: ${decision.log}" }
         when (val action = decision.action) {
             is ChatPost ->
                 slackPoster.chatPostMessage(action.message)
