@@ -24,14 +24,11 @@ import java.util.*
 sealed class SlackRequest
 
 data class VerificationRequest(
-        val token: String,
         val challenge: String,
         val type: String
 ) : SlackRequest()
 
 data class EventNotification(
-        val token: String,
-
         @JsonProperty("team_id")
         val teamId: String?,
 

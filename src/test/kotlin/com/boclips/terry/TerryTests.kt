@@ -18,7 +18,6 @@ class TerryTests {
         assertThat(Terry(FakeSlackPoster()).receiveSlack(
                 request = VerificationRequest(
                         challenge = "bet-you-cant-copy-paste-this-m8",
-                        token = irrelevant,
                         type = irrelevant
                 )
         )).isEqualTo(Decision(
@@ -33,10 +32,8 @@ class TerryTests {
     fun `responds to Slack enquiry about his job description`() {
         assertThat(Terry(FakeSlackPoster()).receiveSlack(
                 request = EventNotification(
-                        token = "",
                         teamId = "",
                         apiAppId = "",
-                        authedUsers = listOf(""),
                         event = AppMention(
                                 type = "",
                                 channel = "#engineering",
@@ -46,6 +43,7 @@ class TerryTests {
                                 user = ""
                         ),
                         type = "",
+                        authedUsers = listOf(""),
                         eventId = "",
                         eventTime = Date()
                 )
