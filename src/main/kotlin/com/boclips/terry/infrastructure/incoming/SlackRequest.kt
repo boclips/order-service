@@ -43,7 +43,7 @@ data class EventNotification(
         val type: String,
 
         @JsonProperty("authed_users")
-        val authedUsers: Array<String>?,
+        val authedUsers: List<String>?,
 
         @JsonProperty("event_id")
         val eventId: String?,

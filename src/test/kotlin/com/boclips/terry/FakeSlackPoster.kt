@@ -4,11 +4,8 @@ import com.boclips.terry.infrastructure.outgoing.*
 import java.math.BigDecimal
 
 class FakeSlackPoster : SlackPoster {
-    override fun chatPostMessage(channel: String, text: String): PosterResponse {
-        lastMessage = Message(
-                channel = channel,
-                text = text
-        )
+    override fun chatPostMessage(message: Message): PosterResponse {
+        lastMessage = message
         return PostSuccess(timestamp = BigDecimal(System.currentTimeMillis() / 1000))
     }
 

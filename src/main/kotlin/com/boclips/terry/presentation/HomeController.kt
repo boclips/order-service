@@ -2,7 +2,6 @@ package com.boclips.terry.presentation
 
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.Message
 import com.boclips.terry.infrastructure.outgoing.SlackPoster
 import mu.KLogging
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,25 +20,13 @@ class HomeController(
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
     @PostMapping("/slack")
-    fun slack(@RequestBody request: SlackRequest): SlackResponse =
-            when (request) {
-                is VerificationRequest -> {
-                    logger.info { "Responding to verification challenge" }
-                    VerificationResponse(challenge = request.challenge)
-                }
-                is EventNotification ->
-                    handleEventNotification(request.event)
-            }
-
-    private fun handleEventNotification(event: SlackEvent): SlackResponse =
-            when (event) {
-                is AppMention -> {
-                    logger.info { "Responding to app mention" }
-                    slackPoster.chatPostMessage(
-                            channel = event.channel,
-                            text = terry.help()
-                    )
-                    EventNotificationResponse()
-                }
-            }
+    fun slack(@RequestBody request: SlackRequest): Action {
+        val decision = terry.receiveSlack(request)
+        logger.info { decision.log }
+        when (val action = decision.action) {
+            is ChatPost ->
+                slackPoster.chatPostMessage(action.message)
+        }
+        return decision.action
+    }
 }

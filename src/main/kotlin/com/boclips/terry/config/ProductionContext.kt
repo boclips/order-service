@@ -17,5 +17,5 @@ class ProductionContext {
     )
 
     @Bean
-    fun terry(): Terry = Terry()
+    fun terry(): Terry = Terry(slackPoster = slackPoster())
 }

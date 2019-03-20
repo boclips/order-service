@@ -1,10 +1,7 @@
 package com.boclips.terry.contracts
 
 import com.boclips.terry.FakeSlackPoster
-import com.boclips.terry.infrastructure.outgoing.HTTPSlackPoster
-import com.boclips.terry.infrastructure.outgoing.PostFailure
-import com.boclips.terry.infrastructure.outgoing.PostSuccess
-import com.boclips.terry.infrastructure.outgoing.SlackPoster
+import com.boclips.terry.infrastructure.outgoing.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.Before
@@ -36,10 +33,10 @@ abstract class SlackPosterTests() {
     @Test
     fun `successfully posts to a channel`() {
         val begin = BigDecimal(System.currentTimeMillis() / 1000)
-        val response = poster!!.chatPostMessage(
+        val response = poster!!.chatPostMessage(Message(
                 text = "Hi there",
                 channel = "#terry-test-output"
-        )
+        ))
         when (response) {
             is PostSuccess ->
                 assertThat(response.timestamp)

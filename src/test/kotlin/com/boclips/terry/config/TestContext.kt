@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Profile
 @Profile("test")
 class TestContext {
     @Bean
-    fun fakeSlackPoster(): SlackPoster = FakeSlackPoster()
+    fun slackPoster(): SlackPoster = FakeSlackPoster()
 
     @Bean
-    fun terry(): Terry = Terry()
+    fun terry(): Terry = Terry(slackPoster = slackPoster())
 }
