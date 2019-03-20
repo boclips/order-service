@@ -1,5 +1,6 @@
 package com.boclips.terry
 
+import com.boclips.terry.infrastructure.incoming.SlackSignature
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -28,6 +30,9 @@ class HomeControllerIntegrationTests {
     @Autowired
     lateinit var slackPoster: FakeSlackPoster
 
+    @Autowired
+    lateinit var slackSignature: SlackSignature
+
     @Test
     fun `root path serves a terrific message`() {
         mockMvc.perform(
@@ -38,65 +43,80 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `can meet Slack's verification challenge`() {
-        mockMvc.perform(
-                post("/slack")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content("""
-                            {
-                                "token": "sometoken",
-                                "challenge": "iamchallenging",
-                                "type": "url_verification"
-                            }
-                        """)
-        )
+        postFromSlack("""
+            {
+                "token": "sometoken",
+                "challenge": "iamchallenging",
+                "type": "url_verification"
+            }
+        """)
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", "application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.challenge", equalTo("iamchallenging")))
     }
 
     @Test
-    fun `it's a client error to send a malformed Slack verification request`() {
-        mockMvc.perform(
-                post("/slack")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content("""
-                            {
-                                "token": "sometoken",
-                                "poo": "iamchallenging",
-                                "type": "url_verification"
-                            }
-                        """.trimIndent())
+    fun `failing the request signature check results in 401`() {
+        val timestamp = validTimestamp()
+        postFromSlack(
+                body = """
+                    {
+                        "token": "sometoken",
+                        "challenge": "iamchallenging",
+                        "type": "url_verification"
+                    }
+                """,
+                timestamp = timestamp,
+                signature = slackSignature.compute(timestamp.toString(), "different-body")
         )
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `sending a timestamp older than 5 minutes results in 401`() {
+        postFromSlack("""
+            {
+                "token": "sometoken",
+                "challenge": "iamchallenging",
+                "type": "url_verification"
+            }
+        """, staleTimestamp())
+                .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `it's a client error to send a malformed Slack verification request`() {
+        postFromSlack("""
+            {
+                "token": "sometoken",
+                "poo": "iamchallenging",
+                "type": "url_verification"
+            }""".trimIndent())
                 .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun `Slack mentions receive 200s and send responses`() {
-        mockMvc.perform(
-                post("/slack")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content("""
-                            {
-                                "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
-                                "team_id": "T061EG9R6",
-                                "api_app_id": "A0MDYCDME",
-                                "event": {
-                                    "type": "app_mention",
-                                    "user": "U061F7AUR",
-                                    "text": "What ever happened to <@U0LAN0Z89>?",
-                                    "ts": "1515449438.000011",
-                                    "channel": "C0LAN2Q65",
-                                    "event_ts": "1515449438000011"
-                                },
-                                "type": "event_callback",
-                                "event_id": "Ev0MDYGDKJ",
-                                "event_time": 1515449438000011,
-                                "authed_users": [
-                                    "U0LAN0Z89"
-                                ]
-                            }
-                        """.trimIndent())
-        )
+        postFromSlack("""
+            {
+                "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
+                "team_id": "T061EG9R6",
+                "api_app_id": "A0MDYCDME",
+                "event": {
+                    "type": "app_mention",
+                    "user": "U061F7AUR",
+                    "text": "What ever happened to <@U0LAN0Z89>?",
+                    "ts": "1515449438.000011",
+                    "channel": "C0LAN2Q65",
+                    "event_ts": "1515449438000011"
+                },
+                "type": "event_callback",
+                "event_id": "Ev0MDYGDKJ",
+                "event_time": 1515449438000011,
+                "authed_users": [
+                    "U0LAN0Z89"
+                ]
+            }""".trimIndent())
                 .andExpect(status().isOk)
                 .andExpect(content().json("{}"))
 
@@ -105,4 +125,20 @@ class HomeControllerIntegrationTests {
         assertThat(slackPoster.lastMessage?.channel)
                 .isEqualTo("C0LAN2Q65")
     }
+
+    private fun validTimestamp() = System.currentTimeMillis() / 1000 - (5 * 60)
+    private fun staleTimestamp() = validTimestamp() - 1
+
+    private fun postFromSlack(
+            body: String,
+            timestamp: Long = validTimestamp(),
+            signature: String = slackSignature.compute(timestamp.toString(), body)
+    ): ResultActions =
+            mockMvc.perform(
+                    post("/slack")
+                            .header("X-Slack-Request-Timestamp", timestamp)
+                            .header("X-Slack-Signature", signature)
+                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .content(body)
+            )
 }
