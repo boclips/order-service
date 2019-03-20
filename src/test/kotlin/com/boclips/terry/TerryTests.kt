@@ -21,7 +21,7 @@ class TerryTests {
                         type = irrelevant
                 )
         )).isEqualTo(Decision(
-                action = VerificationResponse(
+                acknowledgement = VerificationResponse(
                         challenge = "bet-you-cant-copy-paste-this-m8"
                 ),
                 log = "Responding to verification challenge"
@@ -48,7 +48,7 @@ class TerryTests {
                         eventTime = Date()
                 )
         )).isEqualTo(Decision(
-                action = ChatPost(
+                acknowledgement = ChatPost(
                         message = Message(
                                 channel = "#engineering",
                                 text = "<@UBS7V80PR> I don't do much yet"

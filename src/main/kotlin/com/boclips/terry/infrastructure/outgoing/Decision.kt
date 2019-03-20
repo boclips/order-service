@@ -1,3 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing
 
-data class Decision(val action: Action, val log: String)
+data class Decision(
+        val acknowledgement: Acknowledgement,
+        val log: String
+)

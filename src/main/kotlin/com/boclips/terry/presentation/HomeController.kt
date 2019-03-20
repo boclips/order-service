@@ -25,28 +25,28 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(@RequestBody body: String,
               @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-              @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<Action> {
+              @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<Acknowledgement> {
         if (stale(timestamp)) {
             logger.info { "stale timestamp" }
-            return ResponseEntity<Action>(StaleTimestamp, HttpStatus.UNAUTHORIZED)
+            return ResponseEntity<Acknowledgement>(StaleTimestamp, HttpStatus.UNAUTHORIZED)
         }
         if (signatureMismatch(timestamp, body, sig)) {
             logger.info { "bad signature" }
-            return ResponseEntity<Action>(SignatureMismatch, HttpStatus.UNAUTHORIZED)
+            return ResponseEntity<Acknowledgement>(SignatureMismatch, HttpStatus.UNAUTHORIZED)
         }
         val request = parsedSlackRequest(body)
         return if (request == null) {
             logger.info { "bad request" }
-            ResponseEntity<Action>(RequestMalformedError, HttpStatus.BAD_REQUEST)
+            ResponseEntity<Acknowledgement>(RequestMalformed, HttpStatus.BAD_REQUEST)
         } else {
             val decision = terry.receiveSlack(request)
             logger.debug { "full request: $request" }
             logger.info { "decision: ${decision.log}" }
-            when (decision.action) {
+            when (decision.acknowledgement) {
                 is ChatPost ->
-                    slackPoster.chatPostMessage(decision.action.message)
+                    slackPoster.chatPostMessage(decision.acknowledgement.message)
             }
-            ResponseEntity<Action>(decision.action, HttpStatus.OK)
+            ResponseEntity<Acknowledgement>(decision.acknowledgement, HttpStatus.OK)
         }
     }
 

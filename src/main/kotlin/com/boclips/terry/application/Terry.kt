@@ -9,7 +9,7 @@ class Terry() {
                 is VerificationRequest -> {
                     Decision(
                             log = "Responding to verification challenge",
-                            action = VerificationResponse(challenge = request.challenge)
+                            acknowledgement = VerificationResponse(challenge = request.challenge)
                     )
                 }
                 is EventNotification ->
@@ -21,7 +21,7 @@ class Terry() {
                 is AppMention -> {
                     Decision(
                             log = "Responding via chat with \"${helpFor(event.user)}\"",
-                            action = ChatPost(
+                            acknowledgement = ChatPost(
                                     message = Message(
                                             channel = event.channel,
                                             text = helpFor(event.user)
