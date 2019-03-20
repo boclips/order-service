@@ -5,7 +5,6 @@ import com.boclips.terry.infrastructure.incoming.*
 import com.boclips.terry.infrastructure.outgoing.SlackPoster
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -27,27 +26,40 @@ class HomeController(
     fun slack(@RequestBody body: String,
               @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
               @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<Action> {
-        if (timestamp.toLong() < (System.currentTimeMillis() / 1000) - (5 * 60)) {
+        if (stale(timestamp)) {
             logger.info { "stale timestamp" }
             return ResponseEntity<Action>(StaleTimestamp, HttpStatus.UNAUTHORIZED)
         }
-        if (slackSignature.compute(timestamp, body) != sig) {
+        if (signatureMismatch(timestamp, body, sig)) {
             logger.info { "bad signature" }
             return ResponseEntity<Action>(SignatureMismatch, HttpStatus.UNAUTHORIZED)
         }
-        val request = try {
-            objectMapper.readValue(body, SlackRequest::class.java)
-        } catch (e: Exception) {
+        val request = parsedSlackRequest(body)
+        return if (request == null) {
             logger.info { "bad request" }
-            return ResponseEntity<Action>(RequestMalformedError, HttpStatus.BAD_REQUEST)
+            ResponseEntity<Action>(RequestMalformedError, HttpStatus.BAD_REQUEST)
+        } else {
+            val decision = terry.receiveSlack(request)
+            logger.debug { "full request: $request" }
+            logger.info { "decision: ${decision.log}" }
+            when (decision.action) {
+                is ChatPost ->
+                    slackPoster.chatPostMessage(decision.action.message)
+            }
+            ResponseEntity<Action>(decision.action, HttpStatus.OK)
         }
-        val decision = terry.receiveSlack(request)
-        logger.debug { "full request: $request" }
-        logger.info { "decision: ${decision.log}" }
-        when (val action = decision.action) {
-            is ChatPost ->
-                slackPoster.chatPostMessage(action.message)
-        }
-        return ResponseEntity<Action>(decision.action, HttpStatus.OK)
     }
+
+    private fun signatureMismatch(timestamp: String, body: String, sig: String) =
+            slackSignature.compute(timestamp, body) != sig
+
+    private fun stale(timestamp: String) =
+            timestamp.toLong() < (System.currentTimeMillis() / 1000) - (5 * 60)
+
+    private fun parsedSlackRequest(body: String): SlackRequest? =
+            try {
+                objectMapper.readValue(body, SlackRequest::class.java)
+            } catch (e: Exception) {
+                null
+            }
 }
