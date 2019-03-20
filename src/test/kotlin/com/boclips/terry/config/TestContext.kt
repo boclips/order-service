@@ -15,7 +15,7 @@ class TestContext {
     fun slackPoster(): SlackPoster = FakeSlackPoster()
 
     @Bean
-    fun terry(): Terry = Terry(slackPoster = slackPoster())
+    fun terry(): Terry = Terry()
 
     @Bean
     fun slackSignature(): SlackSignature = SlackSignature(

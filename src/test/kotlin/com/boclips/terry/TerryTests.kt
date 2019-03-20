@@ -15,7 +15,7 @@ class TerryTests {
 
     @Test
     fun `verifies Slack`() {
-        assertThat(Terry(FakeSlackPoster()).receiveSlack(
+        assertThat(Terry().receiveSlack(
                 request = VerificationRequest(
                         challenge = "bet-you-cant-copy-paste-this-m8",
                         type = irrelevant
@@ -30,7 +30,7 @@ class TerryTests {
 
     @Test
     fun `responds to Slack enquiry about his job description`() {
-        assertThat(Terry(FakeSlackPoster()).receiveSlack(
+        assertThat(Terry().receiveSlack(
                 request = EventNotification(
                         teamId = irrelevant,
                         apiAppId = irrelevant,

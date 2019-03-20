@@ -3,7 +3,7 @@ package com.boclips.terry.application
 import com.boclips.terry.infrastructure.incoming.*
 import com.boclips.terry.infrastructure.outgoing.*
 
-class Terry(private val slackPoster: SlackPoster) {
+class Terry() {
     fun receiveSlack(request: SlackRequest): Decision =
             when (request) {
                 is VerificationRequest -> {
