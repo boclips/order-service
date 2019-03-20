@@ -2,7 +2,10 @@ package com.boclips.terry
 
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.*
+import com.boclips.terry.infrastructure.outgoing.ChatPost
+import com.boclips.terry.infrastructure.outgoing.Decision
 import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.VerificationResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.util.*

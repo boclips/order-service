@@ -1,8 +1,7 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.Message
-import com.boclips.terry.infrastructure.outgoing.SlackPoster
+import com.boclips.terry.infrastructure.outgoing.*
 
 class Terry(private val slackPoster: SlackPoster) {
     fun receiveSlack(request: SlackRequest): Decision =

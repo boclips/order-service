@@ -2,7 +2,7 @@ package com.boclips.terry.presentation
 
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.SlackPoster
+import com.boclips.terry.infrastructure.outgoing.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
 import org.springframework.http.HttpStatus
