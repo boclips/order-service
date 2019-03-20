@@ -11,7 +11,6 @@ class Terry(private val slackPoster: SlackPoster) {
                     Decision(
                             log = "Responding to verification challenge",
                             action = VerificationResponse(challenge = request.challenge)
-
                     )
                 }
                 is EventNotification ->
