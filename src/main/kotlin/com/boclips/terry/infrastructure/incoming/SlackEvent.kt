@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.incoming
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
                 name = "app_mention"
         )
 )
+@JsonIgnoreProperties(ignoreUnknown = true)
 sealed class SlackEvent
 
 data class AppMention(

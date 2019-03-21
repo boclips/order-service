@@ -103,6 +103,7 @@ class HomeControllerIntegrationTests {
                 "team_id": "T061EG9R6",
                 "api_app_id": "A0MDYCDME",
                 "event": {
+                    "funny_unknown_property": "to-test-ignoring-unknown-properties",
                     "type": "app_mention",
                     "user": "U061F7AUR",
                     "text": "What ever happened to <@U0LAN0Z89>?",
