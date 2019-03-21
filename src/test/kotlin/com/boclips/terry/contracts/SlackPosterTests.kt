@@ -8,14 +8,14 @@ import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
 
-class FakeSlackPosterTests() : SlackPosterTests() {
+class FakeSlackPosterTests : SlackPosterTests() {
     @Before
     fun setUp() {
         poster = FakeSlackPoster()
     }
 }
 
-class HTTPSlackPosterTests() : SlackPosterTests() {
+class HTTPSlackPosterTests : SlackPosterTests() {
     @Before
     fun setUp() {
         poster = HTTPSlackPoster(
@@ -26,9 +26,9 @@ class HTTPSlackPosterTests() : SlackPosterTests() {
 }
 
 @org.junit.Ignore
-abstract class SlackPosterTests() {
+abstract class SlackPosterTests {
     var poster: SlackPoster? = null
-    val timeout = BigDecimal(30)
+    private val timeout = BigDecimal(30)
 
     @Test
     fun `successfully posts to a channel`() {
@@ -43,7 +43,7 @@ abstract class SlackPosterTests() {
                         .isGreaterThanOrEqualTo(begin)
                         .isLessThan(begin + timeout)
             is PostFailure ->
-                fail<String>("Post failed: ${response}")
+                fail<String>("Post failed: $response")
         }
     }
 }

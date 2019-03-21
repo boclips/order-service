@@ -13,7 +13,7 @@ class HTTPSlackPoster(
     override fun chatPostMessage(message: Message): PosterResponse {
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer $botToken")
-        val entity = HttpEntity<Message>(message, headers)
+        val entity = HttpEntity(message, headers)
         val response: HTTPSlackPostResponse? = RestTemplate().postForObject(
                 slackURI,
                 entity,
