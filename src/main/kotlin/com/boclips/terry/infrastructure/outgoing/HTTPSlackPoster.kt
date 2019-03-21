@@ -2,6 +2,7 @@ package com.boclips.terry.infrastructure.outgoing
 
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
 import java.math.BigDecimal
@@ -14,13 +15,14 @@ class HTTPSlackPoster(
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer $botToken")
         val entity = HttpEntity(message, headers)
-        val response: HTTPSlackPostResponse? = RestTemplate().postForObject(
-                slackURI,
-                entity,
-                HTTPSlackPostResponse::class
-        )
-        response?.error?.let {
-            return PostFailure(message = it)
+        val response: HTTPSlackPostResponse? = try {
+            RestTemplate().postForObject(
+                    slackURI,
+                    entity,
+                    HTTPSlackPostResponse::class
+            )
+        } catch (e: HttpClientErrorException) {
+            return PostFailure("${e.message}")
         }
         response?.ts?.let {
             return PostSuccess(timestamp = it)

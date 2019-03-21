@@ -12,6 +12,7 @@ class FakeSlackPosterTests : SlackPosterTests() {
     @Before
     fun setUp() {
         poster = FakeSlackPoster()
+        failingPoster = FakeSlackPoster(PostFailure(message = "401 UNAUTHORIZED"))
     }
 }
 
@@ -22,12 +23,17 @@ class HTTPSlackPosterTests : SlackPosterTests() {
                 slackURI = "https://slack.com/api/chat.postMessage",
                 botToken = System.getenv("SLACK_BOT_TOKEN")
         )
+        failingPoster = HTTPSlackPoster(
+                slackURI = "https://httpbin.org/status/401",
+                botToken = "bad-token"
+        )
     }
 }
 
 @org.junit.Ignore
 abstract class SlackPosterTests {
     var poster: SlackPoster? = null
+    var failingPoster: SlackPoster? = null
     private val timeout = BigDecimal(30)
 
     @Test
@@ -44,6 +50,19 @@ abstract class SlackPosterTests {
                         .isLessThan(begin + timeout)
             is PostFailure ->
                 fail<String>("Post failed: $response")
+        }
+    }
+
+    @Test
+    fun `failures produce PostFailures`() {
+        when (val response = failingPoster!!.chatPostMessage(Message(
+                text = "I hope this won't work",
+                channel = "#terry-test-output"
+        ))) {
+            is PostSuccess ->
+                fail<String>("Expected post to Slack to fail, but it was successful: $response")
+            is PostFailure ->
+                assertThat(response.message).isEqualTo("401 UNAUTHORIZED")
         }
     }
 }
