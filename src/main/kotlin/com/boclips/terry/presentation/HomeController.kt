@@ -3,6 +3,10 @@ package com.boclips.terry.presentation
 import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
+import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
+import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
+import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,7 +15,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class HomeController(
         private val slackRequestValidator: SlackRequestValidator,
-        private val slackPoster: SlackPoster
+        private val slackPoster: SlackPoster,
+        private val videoService: VideoService
 ) {
     companion object : KLogging()
 
@@ -33,8 +38,24 @@ class HomeController(
                 MalformedRequestRejection ->
                     ResponseEntity(response, HttpStatus.BAD_REQUEST)
                 is ChatReply -> {
-                    slackPoster.chatPostMessage(response.message)
-                    ResponseEntity(response, HttpStatus.OK)
+                    slackPoster.chatPostMessage(response.message).let { slackResponse ->
+                        when (slackResponse) {
+                            is PostSuccess -> ResponseEntity(response as Response, HttpStatus.OK)
+                            is PostFailure -> ResponseEntity(response as Response, HttpStatus.INTERNAL_SERVER_ERROR)
+                        }
+                    }
+                }
+                is VideoRetrieval -> {
+                    val videoRetrievalResponse = response.onComplete(
+                            videoService.get(response.videoId)
+                    )
+
+                    slackPoster.chatPostMessage(videoRetrievalResponse.message)
+
+                    ResponseEntity(
+                            videoRetrievalResponse,
+                            HttpStatus.OK
+                    )
                 }
                 is VerificationResponse ->
                     ResponseEntity(response, HttpStatus.OK)

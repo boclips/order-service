@@ -1,5 +1,6 @@
-package com.boclips.terry.infrastructure.outgoing
+package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.boclips.terry.infrastructure.outgoing.*
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.HttpClientErrorException

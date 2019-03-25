@@ -1,7 +1,11 @@
 package com.boclips.terry.contracts
 
 import com.boclips.terry.FakeSlackPoster
-import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
+import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
+import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
+import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.Before
@@ -11,8 +15,8 @@ import java.math.BigDecimal
 class FakeSlackPosterTests : SlackPosterTests() {
     @Before
     fun setUp() {
-        poster = FakeSlackPoster()
-        failingPoster = FakeSlackPoster(PostFailure(message = "401 UNAUTHORIZED"))
+        poster = FakeSlackPoster().respondWith(PostSuccess(timestamp = BigDecimal(System.currentTimeMillis() / 1000 + 1)))
+        failingPoster = FakeSlackPoster().respondWith(PostFailure(message = "401 UNAUTHORIZED"))
     }
 }
 
@@ -66,4 +70,3 @@ abstract class SlackPosterTests {
         }
     }
 }
-

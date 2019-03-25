@@ -1,4 +1,4 @@
-package com.boclips.terry.infrastructure.outgoing
+package com.boclips.terry.infrastructure.outgoing.slack
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal

@@ -1,12 +1,15 @@
 package com.boclips.terry
 
 import com.boclips.terry.application.Terry
-import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.ChatReply
-import com.boclips.terry.infrastructure.outgoing.Decision
-import com.boclips.terry.infrastructure.outgoing.Message
-import com.boclips.terry.infrastructure.outgoing.VerificationResponse
+import com.boclips.terry.infrastructure.incoming.AppMention
+import com.boclips.terry.infrastructure.incoming.EventNotification
+import com.boclips.terry.infrastructure.incoming.VerificationRequest
+import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.videos.Error
+import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
+import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.Test
 import java.util.*
 
@@ -30,30 +33,94 @@ class TerryTests {
 
     @Test
     fun `responds to Slack enquiry about his job description`() {
-        assertThat(Terry().receiveSlack(
-                request = EventNotification(
-                        teamId = irrelevant,
-                        apiAppId = irrelevant,
-                        event = AppMention(
-                                type = irrelevant,
-                                channel = "#engineering",
-                                text = "hi Tezza",
-                                eventTs = irrelevant,
-                                ts = irrelevant,
-                                user = "UBS7V80PR"
-                        ),
-                        type = irrelevant,
-                        authedUsers = emptyList(),
-                        eventId = irrelevant,
-                        eventTime = Date()
-                )
-        )).isEqualTo(Decision(
-                response = ChatReply(
-                        message = Message(
-                                channel = "#engineering",
-                                text = "<@UBS7V80PR> I don't do much yet"
-                        )),
-                log = """Responding via chat with "<@UBS7V80PR> I don't do much yet""""
-        ))
+        assertThat(mentionTerry("hi Tezza", userId = "UBS7V80PR"))
+                .isEqualTo(Decision(
+                        response = ChatReply(
+                                message = Message(
+                                        channel = "#engineering",
+                                        text = "<@UBS7V80PR> I don't do much yet"
+                                )),
+                        log = """Responding via chat with "<@UBS7V80PR> I don't do much yet""""
+                ))
     }
+
+    @Test
+    fun `retrieves video details when given an ID`() {
+        val decision = mentionTerry("I would like video 12345678")
+        assertThat(decision.log).isEqualTo("Retrieving video ID 12345678")
+        when (val response = decision.response) {
+            is VideoRetrieval -> {
+                assertThat(response.videoId).isEqualTo("12345678")
+            }
+            else ->
+                fail<String>("Expected a video retrieval, but got $response")
+        }
+    }
+
+    @Test
+    fun `successful receipt of video triggers a chat message with the details`() {
+        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
+            is VideoRetrieval ->
+                assertThat(response.onComplete(FoundVideo(videoId = "abcdefg", title = "Boclips 4evah")))
+                        .isEqualTo(ChatReply(
+                                message = Message(
+                                        channel = "#engineering",
+                                        text = """<@THAD123> Your request for video myvid123: video ID abcdefg is called "Boclips 4evah""""
+                                )
+                        ))
+            else ->
+                fail<String>("Expected a video retrieval, but got $response")
+        }
+    }
+
+    @Test
+    fun `missing video triggers a chat message with an apology`() {
+        when (val response = mentionTerry("video myvid123 doesn't even exist, m8", userId = "THAD123").response) {
+            is VideoRetrieval ->
+                assertThat(response.onComplete(MissingVideo(videoId = "myvid123")))
+                        .isEqualTo(ChatReply(
+                                message = Message(
+                                        channel = "#engineering",
+                                        text = """<@THAD123> Sorry, video myvid123 doesn't seem to exist! :("""
+                                )
+                        ))
+            else ->
+                fail<String>("Expected a video retrieval, but got $response")
+        }
+    }
+
+    @Test
+    fun `server error triggers a chat message with some blame`() {
+        when (val response = mentionTerry("please find video thatbreaksvideoservice", userId = "THAD123").response) {
+            is VideoRetrieval ->
+                assertThat(response.onComplete(Error(message = "500 REALLY BAD")))
+                        .isEqualTo(ChatReply(
+                                message = Message(
+                                        channel = "#engineering",
+                                        text = """<@THAD123> looks like the video service is broken :("""
+                                )
+                        ))
+            else ->
+                fail<String>("Expected a video retrieval, but got $response")
+        }
+    }
+
+    private fun mentionTerry(message: String, userId: String = "DEFAULTUSERID"): Decision = Terry().receiveSlack(
+            request = EventNotification(
+                    teamId = irrelevant,
+                    apiAppId = irrelevant,
+                    event = AppMention(
+                            type = irrelevant,
+                            channel = "#engineering",
+                            text = "<@TERRYID> $message",
+                            eventTs = irrelevant,
+                            ts = irrelevant,
+                            user = userId
+                    ),
+                    type = irrelevant,
+                    authedUsers = emptyList(),
+                    eventId = irrelevant,
+                    eventTime = Date()
+            )
+    )
 }

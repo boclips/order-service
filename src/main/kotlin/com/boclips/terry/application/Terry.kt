@@ -2,8 +2,12 @@ package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.incoming.*
 import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.videos.Error
+import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
+import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
+import java.awt.SystemColor.text
 
-class Terry() {
+class Terry {
     fun receiveSlack(request: SlackRequest): Decision =
             when (request) {
                 is VerificationRequest ->
@@ -23,7 +27,38 @@ class Terry() {
     private fun handleEventNotification(event: SlackEvent): Decision =
             when (event) {
                 is AppMention -> {
-                    Decision(
+                    val pattern = """.*video ([^ ]+).*""".toRegex()
+                    pattern.matchEntire(event.text)?.groups?.get(1)?.value?.let { videoId ->
+                        Decision(
+                                log = "Retrieving video ID 12345678",
+                                response = VideoRetrieval(videoId) { videoServiceResponse ->
+                                    when (videoServiceResponse) {
+                                        is FoundVideo ->
+                                            ChatReply(
+                                                    message = Message(
+                                                            channel = event.channel,
+                                                            text = """<@${event.user}> Your request for video $videoId: video ID ${videoServiceResponse.videoId} is called "Boclips 4evah""""
+                                                    )
+                                            )
+                                        is MissingVideo ->
+                                            ChatReply(
+                                                    message = Message(
+                                                            channel = event.channel,
+                                                            text = """<@${event.user}> Sorry, video $videoId doesn't seem to exist! :("""
+                                                    )
+                                            )
+                                        is Error ->
+                                            ChatReply(
+                                                    message = Message(
+                                                            channel = event.channel,
+                                                            text = """<@${event.user}> looks like the video service is broken :("""
+                                                    )
+                                            )
+                                    }
+
+                                }
+                        )
+                    } ?: Decision(
                             log = "Responding via chat with \"${helpFor(event.user)}\"",
                             response = ChatReply(
                                     message = Message(
