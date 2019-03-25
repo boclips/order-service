@@ -1,12 +1,5 @@
-package com.boclips.terry.contracts
+package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.FakeSlackPoster
-import com.boclips.terry.infrastructure.outgoing.slack.Attachment
-import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
-import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
-import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
-import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
-import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.Before

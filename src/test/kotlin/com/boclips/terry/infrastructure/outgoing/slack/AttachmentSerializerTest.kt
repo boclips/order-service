@@ -1,4 +1,4 @@
-package com.boclips.terry
+package com.boclips.terry.infrastructure.outgoing.slack
 
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage

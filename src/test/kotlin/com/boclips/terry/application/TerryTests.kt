@@ -1,4 +1,4 @@
-package com.boclips.terry
+package com.boclips.terry.application
 
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.AppMention

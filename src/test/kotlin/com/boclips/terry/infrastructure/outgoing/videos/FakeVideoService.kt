@@ -1,7 +1,6 @@
-package com.boclips.terry
+package com.boclips.terry.infrastructure.outgoing.videos
 
-import com.boclips.terry.infrastructure.outgoing.videos.VideoService
-import com.boclips.terry.infrastructure.outgoing.videos.VideoServiceResponse
+import com.boclips.terry.Fake
 
 class FakeVideoService : Fake, VideoService {
     var lastIdRequest: String? = null

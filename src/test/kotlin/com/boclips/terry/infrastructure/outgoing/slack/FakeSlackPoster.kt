@@ -1,8 +1,6 @@
-package com.boclips.terry
+package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
-import com.boclips.terry.infrastructure.outgoing.slack.PosterResponse
-import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
+import com.boclips.terry.Fake
 
 class FakeSlackPoster : Fake, SlackPoster {
     lateinit var slackMessages: List<SlackMessage>

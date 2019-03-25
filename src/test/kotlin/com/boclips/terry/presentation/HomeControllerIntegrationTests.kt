@@ -1,5 +1,7 @@
-package com.boclips.terry
+package com.boclips.terry.presentation
 
+import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
+import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage

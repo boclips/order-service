@@ -1,7 +1,7 @@
 package com.boclips.terry.config
 
-import com.boclips.terry.FakeSlackPoster
-import com.boclips.terry.FakeVideoService
+import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
+import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature

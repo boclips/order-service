@@ -1,10 +1,5 @@
-package com.boclips.terry.contracts
+package com.boclips.terry.infrastructure.outgoing.videos
 
-import com.boclips.terry.FakeVideoService
-import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
-import com.boclips.terry.infrastructure.outgoing.videos.HTTPVideoService
-import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
-import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
