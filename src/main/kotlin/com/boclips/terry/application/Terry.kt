@@ -4,9 +4,7 @@ import com.boclips.terry.infrastructure.incoming.*
 import com.boclips.terry.infrastructure.outgoing.*
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
-import com.boclips.terry.infrastructure.outgoing.videos.Error
-import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
-import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
+import com.boclips.terry.infrastructure.outgoing.videos.*
 
 class Terry {
     fun receiveSlack(request: SlackRequest): Decision =
@@ -34,18 +32,10 @@ class Terry {
                                 log = "Retrieving video ID 12345678",
                                 response = VideoRetrieval(videoId) { videoServiceResponse ->
                                     when (videoServiceResponse) {
-                                        is FoundVideo ->
-                                            ChatReply(
-                                                    slackMessage = SlackMessage(
-                                                            channel = event.channel,
-                                                            text = "<@${event.user}> Here's the video details for $videoId:",
-                                                            attachments = listOf(Attachment(
-                                                                    imageUrl = videoServiceResponse.thumbnailUrl,
-                                                                    title = videoServiceResponse.title,
-                                                                    videoId = videoServiceResponse.videoId
-                                                            ))
-                                                    )
-                                            )
+                                        is FoundKalturaVideo ->
+                                            replyWithVideo(foundVideo = videoServiceResponse, type = "Kaltura", event = event, requestVideoId = videoId)
+                                        is FoundYouTubeVideo ->
+                                            replyWithVideo(foundVideo = videoServiceResponse, type = "YouTube", event = event, requestVideoId = videoId)
                                         is MissingVideo ->
                                             ChatReply(
                                                     slackMessage = SlackMessage(
@@ -78,4 +68,19 @@ class Terry {
 
     private fun helpFor(user: String): String = "<@${user}> ${help()}"
     private fun help(): String = "I don't do much yet"
+
+    private fun replyWithVideo(foundVideo: FoundVideo, type: String, event: AppMention, requestVideoId: String) =
+            ChatReply(
+                    slackMessage = SlackMessage(
+                            channel = event.channel,
+                            text = "<@${event.user}> Here's the video details for $requestVideoId:",
+                            attachments = listOf(Attachment(
+                                    imageUrl = foundVideo.thumbnailUrl,
+                                    title = foundVideo.title,
+                                    videoId = foundVideo.videoId,
+                                    type = type,
+                                    playbackId = foundVideo.playbackId
+                            ))
+                    )
+            )
 }

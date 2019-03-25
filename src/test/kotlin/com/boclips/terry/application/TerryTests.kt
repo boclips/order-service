@@ -1,14 +1,17 @@
 package com.boclips.terry.application
 
-import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.AppMention
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
-import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.ChatReply
+import com.boclips.terry.infrastructure.outgoing.Decision
+import com.boclips.terry.infrastructure.outgoing.VerificationResponse
+import com.boclips.terry.infrastructure.outgoing.VideoRetrieval
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.Error
-import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
+import com.boclips.terry.infrastructure.outgoing.videos.FoundKalturaVideo
+import com.boclips.terry.infrastructure.outgoing.videos.FoundYouTubeVideo
 import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
@@ -60,15 +63,56 @@ class TerryTests {
     }
 
     @Test
-    fun `successful receipt of video triggers a chat message with the details`() {
+    fun `successful receipt of Kaltura video triggers a chat message with the Kaltura details`() {
         when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
             is VideoRetrieval ->
-                assertThat(response.onComplete(FoundVideo(videoId = "abcdefg", title = "Boclips 4evah", description = "boclips is...interesting", thumbnailUrl = "validurl")))
+                assertThat(response.onComplete(FoundKalturaVideo(
+                        videoId = "abcdefg",
+                        title = "Boclips 4evah",
+                        description = "boclips is...interesting",
+                        thumbnailUrl = "validurl",
+                        playbackId = "1234"
+                )))
                         .isEqualTo(ChatReply(
                                 slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = "<@THAD123> Here's the video details for myvid123:",
-                                        attachments = listOf(Attachment(imageUrl = "validurl", title = "Boclips 4evah", videoId = "abcdefg"))
+                                        attachments = listOf(Attachment(
+                                                imageUrl = "validurl",
+                                                title = "Boclips 4evah",
+                                                videoId = "abcdefg",
+                                                type = "Kaltura",
+                                                playbackId = "1234"
+                                        ))
+                                )
+                        ))
+            else ->
+                fail<String>("Expected a video retrieval, but got $response")
+        }
+    }
+
+    @Test
+    fun `successful receipt of YouTube video triggers a chat message with the YouTube details`() {
+        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
+            is VideoRetrieval ->
+                assertThat(response.onComplete(FoundYouTubeVideo(
+                        videoId = "abcdefg",
+                        title = "Boclips 4evah",
+                        description = "boclips is...interesting",
+                        thumbnailUrl = "validurl",
+                        playbackId = "1234"
+                )))
+                        .isEqualTo(ChatReply(
+                                slackMessage = SlackMessage(
+                                        channel = "#engineering",
+                                        text = "<@THAD123> Here's the video details for myvid123:",
+                                        attachments = listOf(Attachment(
+                                                imageUrl = "validurl",
+                                                title = "Boclips 4evah",
+                                                videoId = "abcdefg",
+                                                type = "YouTube",
+                                                playbackId = "1234"
+                                        ))
                                 )
                         ))
             else ->

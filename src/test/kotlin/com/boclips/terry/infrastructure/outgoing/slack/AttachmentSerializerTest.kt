@@ -1,7 +1,5 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.infrastructure.outgoing.slack.Attachment
-import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -17,7 +15,9 @@ class AttachmentSerializerTest {
                 attachments = listOf(Attachment(
                         imageUrl = "image",
                         title = "title",
-                        videoId = "videoId"
+                        videoId = "videoId",
+                        type = "YouTube",
+                        playbackId = "1234"
                 ))
         ))
 
@@ -29,10 +29,19 @@ class AttachmentSerializerTest {
                     {
                         "title": "title",
                         "image_url": "image",
+                        "color": "good",
                         "fields": [
                             {
                                 "title": "Video ID",
                                 "value": "videoId"
+                            },
+                            {
+                                 "title": "Playback ID",
+                                "value": "1234"
+                            },
+                            {
+                                "title": "Playback Provider",
+                                "value": "YouTube"
                             }
                         ]
                     }

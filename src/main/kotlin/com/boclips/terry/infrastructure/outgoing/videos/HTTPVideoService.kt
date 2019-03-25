@@ -13,14 +13,26 @@ class HTTPVideoService(private val videoServiceURI: String) : VideoService {
                     "$videoServiceURI/$videoId",
                     HTTPVideoServiceGetResponse::class
             )
-            response?.let {
-                FoundVideo(
-                        videoId = it.id,
-                        title = it.title,
-                        description = it.description,
-                        thumbnailUrl = it.playback.thumbnailUrl
-                )
-            } ?: MissingVideo(videoId = videoId)
+            when (response?.playback?.type) {
+                "STREAM" ->
+                    FoundKalturaVideo(
+                            videoId = response.id,
+                            title = response.title,
+                            description = response.description,
+                            thumbnailUrl = response.playback.thumbnailUrl,
+                            playbackId = response.playback.id
+                    )
+                "YOUTUBE" ->
+                    FoundYouTubeVideo(
+                            videoId = response.id,
+                            title = response.title,
+                            description = response.description,
+                            thumbnailUrl = response.playback.thumbnailUrl,
+                            playbackId = response.playback.id
+                    )
+                else ->
+                    MissingVideo(videoId = videoId)
+            }
         } catch (e: HttpClientErrorException) {
             if (e.statusCode.value() == 404) {
                 MissingVideo(videoId)
@@ -41,5 +53,7 @@ data class HTTPVideoServiceGetResponse(
 )
 
 data class HTTPVideoServicePlayback(
-        val thumbnailUrl: String
+        val id: String,
+        val thumbnailUrl: String,
+        val type: String
 )

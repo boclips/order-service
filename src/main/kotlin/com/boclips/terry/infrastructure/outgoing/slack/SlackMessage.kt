@@ -1,6 +1,5 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 data class SlackMessage(
@@ -11,9 +10,10 @@ data class SlackMessage(
 
 @JsonSerialize(using = AttachmentSerializer::class)
 data class Attachment(
-        @JsonProperty("image_url")
         val imageUrl: String,
         val color: String = "good",
         val title: String,
-        val videoId: String
+        val videoId: String,
+        val type: String,
+        val playbackId: String
 )

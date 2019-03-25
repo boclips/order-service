@@ -7,6 +7,7 @@ import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
+import com.boclips.terry.infrastructure.outgoing.videos.FoundKalturaVideo
 import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
@@ -179,7 +180,13 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `videos are retrieved`() {
-        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah", description = "a description", thumbnailUrl = "blahblah"))
+        videoService.respondWith(FoundKalturaVideo(
+                videoId = "resolvedId",
+                title = "Boclips 4evah",
+                description = "a description",
+                thumbnailUrl = "blahblah",
+                playbackId = "agreatplayback"
+        ))
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack("""
@@ -211,7 +218,9 @@ class HomeControllerIntegrationTests {
                 attachments = listOf(Attachment(
                         imageUrl = "blahblah",
                         title = "Boclips 4evah",
-                        videoId = "resolvedId"
+                        videoId = "resolvedId",
+                        type = "Kaltura",
+                        playbackId = "agreatplayback"
                 ))
         )))
     }
