@@ -1,6 +1,7 @@
 package com.boclips.terry
 
 import com.boclips.terry.infrastructure.incoming.SlackSignature
+import com.boclips.terry.infrastructure.outgoing.Attachment
 import com.boclips.terry.infrastructure.outgoing.Message
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
@@ -147,9 +148,9 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `Slack response failure gives 500`() {
-            slackPoster.nextResponse = PostFailure(message = "could not post to slack")
+        slackPoster.nextResponse = PostFailure(message = "could not post to slack")
 
-            postFromSlack("""
+        postFromSlack("""
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -170,13 +171,13 @@ class HomeControllerIntegrationTests {
                     "U0LAN0Z89"
                 ]
             }""".trimIndent())
-                    .andExpect(status().is5xxServerError)
-                    .andExpect(content().json("{}"))
+                .andExpect(status().is5xxServerError)
+                .andExpect(content().json("{}"))
     }
 
     @Test
     fun `videos are retrieved`() {
-        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah"))
+        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah", thumbnailUrl = "blahblah"))
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack("""
@@ -202,7 +203,11 @@ class HomeControllerIntegrationTests {
                 .andExpect(status().isOk)
 
         assertThat(videoService.lastIdRequest).isEqualTo("asdfzxcv")
-        assertThat(slackPoster.messages).isEqualTo(listOf(Message(channel = "C0LAN2Q65", text = "<@U061F7AUR> Your request for video asdfzxcv: video ID resolvedId is called \"Boclips 4evah\"")))
+        assertThat(slackPoster.messages).isEqualTo(listOf(Message(
+                channel = "C0LAN2Q65",
+                text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
+                attachments = listOf(Attachment(imageUrl = "blahblah", title = "Boclips 4evah", videoId = "resolvedId"))
+        )))
     }
 
     private fun validTimestamp() = System.currentTimeMillis() / 1000 - (5 * 60)

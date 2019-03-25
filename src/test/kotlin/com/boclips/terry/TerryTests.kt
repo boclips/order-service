@@ -61,11 +61,12 @@ class TerryTests {
     fun `successful receipt of video triggers a chat message with the details`() {
         when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
             is VideoRetrieval ->
-                assertThat(response.onComplete(FoundVideo(videoId = "abcdefg", title = "Boclips 4evah")))
+                assertThat(response.onComplete(FoundVideo(videoId = "abcdefg", title = "Boclips 4evah", thumbnailUrl = "validurl")))
                         .isEqualTo(ChatReply(
                                 message = Message(
                                         channel = "#engineering",
-                                        text = """<@THAD123> Your request for video myvid123: video ID abcdefg is called "Boclips 4evah""""
+                                        text = "<@THAD123> Here's the video details for myvid123:",
+                                        attachments = listOf(Attachment(imageUrl = "validurl", title = "Boclips 4evah", videoId = "abcdefg"))
                                 )
                         ))
             else ->

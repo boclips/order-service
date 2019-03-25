@@ -1,6 +1,7 @@
 package com.boclips.terry.contracts
 
 import com.boclips.terry.FakeSlackPoster
+import com.boclips.terry.infrastructure.outgoing.Attachment
 import com.boclips.terry.infrastructure.outgoing.Message
 import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
@@ -45,7 +46,8 @@ abstract class SlackPosterTests {
         val begin = BigDecimal(System.currentTimeMillis() / 1000)
         val response = poster!!.chatPostMessage(Message(
                 text = "Hi there",
-                channel = "#terry-test-output"
+                channel = "#terry-test-output",
+                attachments = listOf(Attachment(imageUrl = "https://www.boclips.com/hubfs/Boclips_November2018%20Theme/image/terry-610548e89d54257dccc9174c262f53e7.png", title = "This is a really cool video", videoId = "A Video Id"))
         ))
         when (response) {
             is PostSuccess ->

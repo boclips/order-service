@@ -13,7 +13,12 @@ class FakeVideoServiceTests : VideoServiceTests() {
     @Before
     fun setUp() {
         videoService = FakeVideoService()
-                .respondWith(FoundVideo(videoId = "5c54d8cad8eafeecae2179af", title = "Tesco opens new discount supermarket 'Jack's'"))
+                .respondWith(FoundVideo(
+                        videoId = "5c54d8cad8eafeecae2179af",
+                        title = "Tesco opens new discount supermarket 'Jack's'",
+                        thumbnailUrl = "https://cdnapisec.kaltura.com/p/1776261/thumbnail/entry_id/1_y0g6ftvy/height/250/vid_slices/3/vid_slice/2"
+                ))
+
         missingVideoService = FakeVideoService()
                 .respondWith(MissingVideo(videoId = "987654321"))
     }
@@ -36,7 +41,8 @@ abstract class VideoServiceTests {
         assertThat(videoService!!.get("2584078"))
                 .isEqualTo(FoundVideo(
                         videoId = "5c54d8cad8eafeecae2179af",
-                        title = "Tesco opens new discount supermarket 'Jack's'"
+                        title = "Tesco opens new discount supermarket 'Jack's'",
+                        thumbnailUrl = "https://cdnapisec.kaltura.com/p/1776261/thumbnail/entry_id/1_y0g6ftvy/height/250/vid_slices/3/vid_slice/2"
                 ))
     }
 

@@ -5,7 +5,6 @@ import com.boclips.terry.infrastructure.outgoing.*
 import com.boclips.terry.infrastructure.outgoing.videos.Error
 import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
 import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
-import java.awt.SystemColor.text
 
 class Terry {
     fun receiveSlack(request: SlackRequest): Decision =
@@ -37,7 +36,8 @@ class Terry {
                                             ChatReply(
                                                     message = Message(
                                                             channel = event.channel,
-                                                            text = """<@${event.user}> Your request for video $videoId: video ID ${videoServiceResponse.videoId} is called "${videoServiceResponse.title}""""
+                                                            text = "<@${event.user}> Here's the video details for $videoId:",
+                                                            attachments = listOf(Attachment(imageUrl = videoServiceResponse.thumbnailUrl, videoId = videoServiceResponse.videoId, title = videoServiceResponse.title))
                                                     )
                                             )
                                         is MissingVideo ->
