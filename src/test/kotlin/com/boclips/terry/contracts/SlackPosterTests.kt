@@ -1,8 +1,8 @@
 package com.boclips.terry.contracts
 
 import com.boclips.terry.FakeSlackPoster
-import com.boclips.terry.infrastructure.outgoing.Attachment
-import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
@@ -44,7 +44,7 @@ abstract class SlackPosterTests {
     @Test
     fun `successfully posts to a channel`() {
         val begin = BigDecimal(System.currentTimeMillis() / 1000)
-        val response = poster!!.chatPostMessage(Message(
+        val response = poster!!.chatPostMessage(SlackMessage(
                 text = "Hi there",
                 channel = "#terry-test-output",
                 attachments = listOf(Attachment(
@@ -66,7 +66,7 @@ abstract class SlackPosterTests {
 
     @Test
     fun `failures produce PostFailures`() {
-        when (val response = failingPoster!!.chatPostMessage(Message(
+        when (val response = failingPoster!!.chatPostMessage(SlackMessage(
                 text = "I hope this won't work",
                 channel = "#terry-test-output"
         ))) {

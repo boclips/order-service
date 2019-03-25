@@ -1,8 +1,8 @@
 package com.boclips.terry
 
 import com.boclips.terry.infrastructure.incoming.SlackSignature
-import com.boclips.terry.infrastructure.outgoing.Attachment
-import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
 import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
@@ -139,8 +139,8 @@ class HomeControllerIntegrationTests {
                 .andExpect(status().isOk)
                 .andExpect(content().json("{}"))
 
-        assertThat(slackPoster.messages)
-                .isEqualTo(listOf(Message(
+        assertThat(slackPoster.slackMessages)
+                .isEqualTo(listOf(SlackMessage(
                         text = "<@U061F7AUR> I don't do much yet",
                         channel = "C0LAN2Q65"
                 )))
@@ -203,7 +203,7 @@ class HomeControllerIntegrationTests {
                 .andExpect(status().isOk)
 
         assertThat(videoService.lastIdRequest).isEqualTo("asdfzxcv")
-        assertThat(slackPoster.messages).isEqualTo(listOf(Message(
+        assertThat(slackPoster.slackMessages).isEqualTo(listOf(SlackMessage(
                 channel = "C0LAN2Q65",
                 text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
                 attachments = listOf(Attachment(

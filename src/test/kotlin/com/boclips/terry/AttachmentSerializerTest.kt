@@ -1,7 +1,7 @@
 package com.boclips.terry
 
-import com.boclips.terry.infrastructure.outgoing.Attachment
-import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -11,7 +11,7 @@ class AttachmentSerializerTest {
     @Test
     fun `serializes message from domain to slack format`() {
         val objectMapper = ObjectMapper()
-        val json = objectMapper.writeValueAsString(Message(
+        val json = objectMapper.writeValueAsString(SlackMessage(
                 channel = "a channel",
                 text = "some text",
                 attachments = listOf(Attachment(

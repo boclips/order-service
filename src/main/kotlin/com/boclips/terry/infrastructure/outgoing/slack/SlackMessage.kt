@@ -1,10 +1,9 @@
-package com.boclips.terry.infrastructure.outgoing
+package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.infrastructure.outgoing.slack.AttachmentSerializer
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
-data class Message(
+data class SlackMessage(
         val channel: String,
         val text: String,
         val attachments: List<Attachment> = emptyList()

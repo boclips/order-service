@@ -1,6 +1,5 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.infrastructure.outgoing.Attachment
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider

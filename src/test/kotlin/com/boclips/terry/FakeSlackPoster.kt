@@ -1,11 +1,11 @@
 package com.boclips.terry
 
-import com.boclips.terry.infrastructure.outgoing.Message
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.PosterResponse
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 
 class FakeSlackPoster : Fake, SlackPoster {
-    lateinit var messages: List<Message>
+    lateinit var slackMessages: List<SlackMessage>
     var nextResponse: PosterResponse? = null
 
     init {
@@ -13,7 +13,7 @@ class FakeSlackPoster : Fake, SlackPoster {
     }
 
     override fun reset() {
-        messages = emptyList()
+        slackMessages = emptyList()
     }
 
     fun respondWith(response: PosterResponse): FakeSlackPoster {
@@ -21,6 +21,6 @@ class FakeSlackPoster : Fake, SlackPoster {
         return this
     }
 
-    override fun chatPostMessage(message: Message): PosterResponse =
-            nextResponse!!.also { messages = listOf(message) }
+    override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse =
+            nextResponse!!.also { slackMessages = listOf(slackMessage) }
 }

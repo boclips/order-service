@@ -2,6 +2,8 @@ package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.incoming.*
 import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.Error
 import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
 import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
@@ -34,7 +36,7 @@ class Terry {
                                     when (videoServiceResponse) {
                                         is FoundVideo ->
                                             ChatReply(
-                                                    message = Message(
+                                                    slackMessage = SlackMessage(
                                                             channel = event.channel,
                                                             text = "<@${event.user}> Here's the video details for $videoId:",
                                                             attachments = listOf(Attachment(
@@ -47,14 +49,14 @@ class Terry {
                                             )
                                         is MissingVideo ->
                                             ChatReply(
-                                                    message = Message(
+                                                    slackMessage = SlackMessage(
                                                             channel = event.channel,
                                                             text = """<@${event.user}> Sorry, video $videoId doesn't seem to exist! :("""
                                                     )
                                             )
                                         is Error ->
                                             ChatReply(
-                                                    message = Message(
+                                                    slackMessage = SlackMessage(
                                                             channel = event.channel,
                                                             text = """<@${event.user}> looks like the video service is broken :("""
                                                     )
@@ -66,7 +68,7 @@ class Terry {
                     } ?: Decision(
                             log = "Responding via chat with \"${helpFor(event.user)}\"",
                             response = ChatReply(
-                                    message = Message(
+                                    slackMessage = SlackMessage(
                                             channel = event.channel,
                                             text = helpFor(event.user)
                                     )

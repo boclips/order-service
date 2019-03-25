@@ -38,7 +38,7 @@ class HomeController(
                 MalformedRequestRejection ->
                     ResponseEntity(response, HttpStatus.BAD_REQUEST)
                 is ChatReply -> {
-                    slackPoster.chatPostMessage(response.message).let { slackResponse ->
+                    slackPoster.chatPostMessage(response.slackMessage).let { slackResponse ->
                         when (slackResponse) {
                             is PostSuccess -> ResponseEntity(response as Response, HttpStatus.OK)
                             is PostFailure -> ResponseEntity(response as Response, HttpStatus.INTERNAL_SERVER_ERROR)
@@ -50,7 +50,7 @@ class HomeController(
                             videoService.get(response.videoId)
                     )
 
-                    slackPoster.chatPostMessage(videoRetrievalResponse.message)
+                    slackPoster.chatPostMessage(videoRetrievalResponse.slackMessage)
 
                     ResponseEntity(
                             videoRetrievalResponse,

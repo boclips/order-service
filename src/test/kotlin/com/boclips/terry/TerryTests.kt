@@ -5,6 +5,8 @@ import com.boclips.terry.infrastructure.incoming.AppMention
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
 import com.boclips.terry.infrastructure.outgoing.*
+import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.Error
 import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
 import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
@@ -36,7 +38,7 @@ class TerryTests {
         assertThat(mentionTerry("hi Tezza", userId = "UBS7V80PR"))
                 .isEqualTo(Decision(
                         response = ChatReply(
-                                message = Message(
+                                slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = "<@UBS7V80PR> I don't do much yet"
                                 )),
@@ -63,7 +65,7 @@ class TerryTests {
             is VideoRetrieval ->
                 assertThat(response.onComplete(FoundVideo(videoId = "abcdefg", title = "Boclips 4evah", description = "boclips is...interesting", thumbnailUrl = "validurl")))
                         .isEqualTo(ChatReply(
-                                message = Message(
+                                slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = "<@THAD123> Here's the video details for myvid123:",
                                         attachments = listOf(Attachment(imageUrl = "validurl", title = "Boclips 4evah", videoId = "abcdefg", description = "boclips is...interesting"))
@@ -80,7 +82,7 @@ class TerryTests {
             is VideoRetrieval ->
                 assertThat(response.onComplete(MissingVideo(videoId = "myvid123")))
                         .isEqualTo(ChatReply(
-                                message = Message(
+                                slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = """<@THAD123> Sorry, video myvid123 doesn't seem to exist! :("""
                                 )
@@ -96,7 +98,7 @@ class TerryTests {
             is VideoRetrieval ->
                 assertThat(response.onComplete(Error(message = "500 REALLY BAD")))
                         .isEqualTo(ChatReply(
-                                message = Message(
+                                slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = """<@THAD123> looks like the video service is broken :("""
                                 )

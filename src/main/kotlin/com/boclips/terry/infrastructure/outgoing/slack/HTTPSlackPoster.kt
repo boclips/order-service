@@ -1,6 +1,5 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
-import com.boclips.terry.infrastructure.outgoing.*
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.HttpClientErrorException
@@ -12,10 +11,10 @@ class HTTPSlackPoster(
         private val slackURI: String,
         private val botToken: String
 ) : SlackPoster {
-    override fun chatPostMessage(message: Message): PosterResponse {
+    override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse {
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer $botToken")
-        val entity = HttpEntity(message, headers)
+        val entity = HttpEntity(slackMessage, headers)
         val response: HTTPSlackPostResponse? = try {
             RestTemplate().postForObject(
                     slackURI,
