@@ -37,7 +37,12 @@ class Terry {
                                                     message = Message(
                                                             channel = event.channel,
                                                             text = "<@${event.user}> Here's the video details for $videoId:",
-                                                            attachments = listOf(Attachment(imageUrl = videoServiceResponse.thumbnailUrl, videoId = videoServiceResponse.videoId, title = videoServiceResponse.title))
+                                                            attachments = listOf(Attachment(
+                                                                    imageUrl = videoServiceResponse.thumbnailUrl,
+                                                                    videoId = videoServiceResponse.videoId,
+                                                                    title = videoServiceResponse.title,
+                                                                    description = videoServiceResponse.description
+                                                            ))
                                                     )
                                             )
                                         is MissingVideo ->

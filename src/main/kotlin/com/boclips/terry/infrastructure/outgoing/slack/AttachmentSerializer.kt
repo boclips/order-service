@@ -15,6 +15,10 @@ class AttachmentSerializer : JsonSerializer<Attachment>() {
         gen?.writeStringField("title", "Video ID")
         gen?.writeStringField("value", value?.videoId)
         gen?.writeEndObject()
+        gen?.writeStartObject()
+        gen?.writeStringField("title", "Description")
+        gen?.writeStringField("value", value?.description)
+        gen?.writeEndObject()
         gen?.writeEndArray()
         gen?.writeEndObject()
     }

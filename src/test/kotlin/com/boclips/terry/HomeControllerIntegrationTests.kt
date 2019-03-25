@@ -177,7 +177,7 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `videos are retrieved`() {
-        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah", thumbnailUrl = "blahblah"))
+        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah", description = "a description", thumbnailUrl = "blahblah"))
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack("""
@@ -206,7 +206,12 @@ class HomeControllerIntegrationTests {
         assertThat(slackPoster.messages).isEqualTo(listOf(Message(
                 channel = "C0LAN2Q65",
                 text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
-                attachments = listOf(Attachment(imageUrl = "blahblah", title = "Boclips 4evah", videoId = "resolvedId"))
+                attachments = listOf(Attachment(
+                        imageUrl = "blahblah",
+                        title = "Boclips 4evah",
+                        description = "a description",
+                        videoId = "resolvedId"
+                ))
         )))
     }
 

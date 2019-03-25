@@ -17,7 +17,8 @@ class AttachmentSerializerTest {
                 attachments = listOf(Attachment(
                         imageUrl = "image",
                         videoId = "videoId",
-                        title = "title"
+                        title = "title",
+                        description = "videos are great"
                 ))
         ))
 
@@ -31,8 +32,12 @@ class AttachmentSerializerTest {
                         "image_url": "image",
                         "fields": [
                             {
-                            "title": "Video ID",
-                            "value": "videoId"
+                                "title": "Video ID",
+                                "value": "videoId"
+                            },
+                            {
+                                "title": "Description",
+                                "value": "videos are great"
                             }
                         ]
                     }
