@@ -15,6 +15,5 @@ data class Attachment(
         val imageUrl: String,
         val color: String = "good",
         val title: String,
-        val description: String,
         val videoId: String
 )

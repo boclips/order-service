@@ -41,9 +41,8 @@ class Terry {
                                                             text = "<@${event.user}> Here's the video details for $videoId:",
                                                             attachments = listOf(Attachment(
                                                                     imageUrl = videoServiceResponse.thumbnailUrl,
-                                                                    videoId = videoServiceResponse.videoId,
                                                                     title = videoServiceResponse.title,
-                                                                    description = videoServiceResponse.description
+                                                                    videoId = videoServiceResponse.videoId
                                                             ))
                                                     )
                                             )

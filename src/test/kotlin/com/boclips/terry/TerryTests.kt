@@ -68,7 +68,7 @@ class TerryTests {
                                 slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = "<@THAD123> Here's the video details for myvid123:",
-                                        attachments = listOf(Attachment(imageUrl = "validurl", title = "Boclips 4evah", videoId = "abcdefg", description = "boclips is...interesting"))
+                                        attachments = listOf(Attachment(imageUrl = "validurl", title = "Boclips 4evah", videoId = "abcdefg"))
                                 )
                         ))
             else ->

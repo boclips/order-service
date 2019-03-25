@@ -209,7 +209,6 @@ class HomeControllerIntegrationTests {
                 attachments = listOf(Attachment(
                         imageUrl = "blahblah",
                         title = "Boclips 4evah",
-                        description = "a description",
                         videoId = "resolvedId"
                 ))
         )))

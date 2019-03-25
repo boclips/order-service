@@ -50,7 +50,6 @@ abstract class SlackPosterTests {
                 attachments = listOf(Attachment(
                         imageUrl = "https://www.boclips.com/hubfs/Boclips_November2018%20Theme/image/terry-610548e89d54257dccc9174c262f53e7.png",
                         title = "This is a really cool video",
-                        description = "no one cares",
                         videoId = "A Video Id"
                 ))
         ))
