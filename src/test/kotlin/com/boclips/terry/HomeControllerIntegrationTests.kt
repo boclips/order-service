@@ -176,7 +176,7 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `videos are retrieved`() {
-        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Best video"))
+        videoService.respondWith(FoundVideo(videoId = "resolvedId", title = "Boclips 4evah"))
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack("""

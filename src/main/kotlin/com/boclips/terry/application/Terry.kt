@@ -37,7 +37,7 @@ class Terry {
                                             ChatReply(
                                                     message = Message(
                                                             channel = event.channel,
-                                                            text = """<@${event.user}> Your request for video $videoId: video ID ${videoServiceResponse.videoId} is called "Boclips 4evah""""
+                                                            text = """<@${event.user}> Your request for video $videoId: video ID ${videoServiceResponse.videoId} is called "${videoServiceResponse.title}""""
                                                     )
                                             )
                                         is MissingVideo ->
