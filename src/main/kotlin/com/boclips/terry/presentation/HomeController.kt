@@ -40,31 +40,25 @@ class HomeController(
                     badRequest()
                 is ChatReply ->
                     chat(terryResponse.slackMessage)
-                is VideoRetrieval -> {
-                    val videoRetrievalResponse = terryResponse.onComplete(
-                            videoService.get(terryResponse.videoId)
-                    )
-
-                    chat(videoRetrievalResponse.slackMessage)
-
-                    ok()
-                }
+                is VideoRetrieval ->
+                    terryResponse
+                            .onComplete(videoService.get(terryResponse.videoId))
+                            .also { chat(it.slackMessage) }
+                            .let { ok() }
                 is VerificationResponse ->
-                    ResponseEntity(SlackVerificationResponse(terryResponse.challenge), HttpStatus.OK)
+                    ok(SlackVerificationResponse(terryResponse.challenge))
             }
 
     private fun chat(slackMessage: SlackMessage): ResponseEntity<ControllerResponse> =
-        slackPoster.chatPostMessage(slackMessage).let { slackResponse ->
-            when (slackResponse) {
+            when (slackPoster.chatPostMessage(slackMessage)) {
                 is PostSuccess ->
                     ok()
                 is PostFailure ->
                     internalServerError()
             }
-        }
 
-    private fun ok() =
-            ResponseEntity(Success as ControllerResponse, HttpStatus.OK)
+    private fun ok(obj: ControllerResponse = Success) =
+            ResponseEntity(obj, HttpStatus.OK)
 
     private fun badRequest(): ResponseEntity<ControllerResponse> =
             ResponseEntity(Failure, HttpStatus.BAD_REQUEST)
