@@ -5,6 +5,7 @@ import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import mu.KLogging
@@ -37,28 +38,30 @@ class HomeController(
                     unauthorized()
                 MalformedRequestRejection ->
                     badRequest()
-                is ChatReply -> {
-                    slackPoster.chatPostMessage(terryResponse.slackMessage).let { slackResponse ->
-                        when (slackResponse) {
-                            is PostSuccess ->
-                                ok()
-                            is PostFailure ->
-                                internalServerError()
-                        }
-                    }
-                }
+                is ChatReply ->
+                    chat(terryResponse.slackMessage)
                 is VideoRetrieval -> {
                     val videoRetrievalResponse = terryResponse.onComplete(
                             videoService.get(terryResponse.videoId)
                     )
 
-                    slackPoster.chatPostMessage(videoRetrievalResponse.slackMessage)
+                    chat(videoRetrievalResponse.slackMessage)
 
                     ok()
                 }
                 is VerificationResponse ->
                     ResponseEntity(SlackVerificationResponse(terryResponse.challenge), HttpStatus.OK)
             }
+
+    private fun chat(slackMessage: SlackMessage): ResponseEntity<ControllerResponse> =
+        slackPoster.chatPostMessage(slackMessage).let { slackResponse ->
+            when (slackResponse) {
+                is PostSuccess ->
+                    ok()
+                is PostFailure ->
+                    internalServerError()
+            }
+        }
 
     private fun ok() =
             ResponseEntity(Success as ControllerResponse, HttpStatus.OK)
