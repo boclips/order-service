@@ -1,4 +1,4 @@
-package com.boclips.terry.infrastructure.outgoing
+package com.boclips.terry.application
 
 data class Decision(
         val response: Response,

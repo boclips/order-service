@@ -1,8 +1,8 @@
 package com.boclips.terry.presentation
 
+import com.boclips.terry.application.*
 import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
-import com.boclips.terry.infrastructure.outgoing.*
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster

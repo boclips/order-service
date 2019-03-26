@@ -1,7 +1,6 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.incoming.*
-import com.boclips.terry.infrastructure.outgoing.*
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.*

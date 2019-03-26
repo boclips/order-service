@@ -1,4 +1,4 @@
-package com.boclips.terry.infrastructure.outgoing
+package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.VideoServiceResponse

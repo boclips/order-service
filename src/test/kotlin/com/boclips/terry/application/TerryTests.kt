@@ -3,10 +3,6 @@ package com.boclips.terry.application
 import com.boclips.terry.infrastructure.incoming.AppMention
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
-import com.boclips.terry.infrastructure.outgoing.ChatReply
-import com.boclips.terry.infrastructure.outgoing.Decision
-import com.boclips.terry.infrastructure.outgoing.VerificationResponse
-import com.boclips.terry.infrastructure.outgoing.VideoRetrieval
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.videos.Error

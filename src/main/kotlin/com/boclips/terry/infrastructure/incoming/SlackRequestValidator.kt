@@ -1,7 +1,8 @@
 package com.boclips.terry.infrastructure.incoming
 
+import com.boclips.terry.application.AuthenticityRejection
+import com.boclips.terry.application.Response
 import com.boclips.terry.application.Terry
-import com.boclips.terry.infrastructure.outgoing.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.lang.Exception
 import mu.KLogging
