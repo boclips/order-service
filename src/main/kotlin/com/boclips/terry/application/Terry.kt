@@ -11,14 +11,14 @@ class Terry {
                 is VerificationRequest ->
                     Decision(
                             log = "Responding to verification challenge",
-                            response = VerificationResponse(challenge = request.challenge)
+                            action = VerificationResponse(challenge = request.challenge)
                     )
                 is EventNotification ->
                     handleEventNotification(request.event)
                 Malformed ->
                     Decision(
                             log = "Malformed request",
-                            response = MalformedRequestRejection
+                            action = MalformedRequestRejection
                     )
             }
 
@@ -29,7 +29,7 @@ class Terry {
                     pattern.matchEntire(event.text)?.groups?.get(1)?.value?.let { videoId ->
                         Decision(
                                 log = "Retrieving video ID 12345678",
-                                response = VideoRetrieval(videoId) { videoServiceResponse ->
+                                action = VideoRetrieval(videoId) { videoServiceResponse ->
                                     when (videoServiceResponse) {
                                         is FoundKalturaVideo ->
                                             replyWithVideo(foundVideo = videoServiceResponse, type = "Kaltura", event = event, requestVideoId = videoId)
@@ -55,7 +55,7 @@ class Terry {
                         )
                     } ?: Decision(
                             log = "Responding via chat with \"${helpFor(event.user)}\"",
-                            response = ChatReply(
+                            action = ChatReply(
                                     slackMessage = SlackMessage(
                                             channel = event.channel,
                                             text = helpFor(event.user)

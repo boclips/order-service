@@ -25,7 +25,7 @@ class TerryTests {
                         type = irrelevant
                 )
         )).isEqualTo(Decision(
-                response = VerificationResponse(
+                action = VerificationResponse(
                         challenge = "bet-you-cant-copy-paste-this-m8"
                 ),
                 log = "Responding to verification challenge"
@@ -36,7 +36,7 @@ class TerryTests {
     fun `responds to Slack enquiry about his job description`() {
         assertThat(mentionTerry("hi Tezza", userId = "UBS7V80PR"))
                 .isEqualTo(Decision(
-                        response = ChatReply(
+                        action = ChatReply(
                                 slackMessage = SlackMessage(
                                         channel = "#engineering",
                                         text = "<@UBS7V80PR> I don't do much yet"
@@ -49,7 +49,7 @@ class TerryTests {
     fun `retrieves video details when given an ID`() {
         val decision = mentionTerry("I would like video 12345678")
         assertThat(decision.log).isEqualTo("Retrieving video ID 12345678")
-        when (val response = decision.response) {
+        when (val response = decision.action) {
             is VideoRetrieval -> {
                 assertThat(response.videoId).isEqualTo("12345678")
             }
@@ -60,7 +60,7 @@ class TerryTests {
 
     @Test
     fun `successful receipt of Kaltura video triggers a chat message with the Kaltura details`() {
-        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
+        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").action) {
             is VideoRetrieval ->
                 assertThat(response.onComplete(FoundKalturaVideo(
                         videoId = "abcdefg",
@@ -89,7 +89,7 @@ class TerryTests {
 
     @Test
     fun `successful receipt of YouTube video triggers a chat message with the YouTube details`() {
-        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").response) {
+        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").action) {
             is VideoRetrieval ->
                 assertThat(response.onComplete(FoundYouTubeVideo(
                         videoId = "abcdefg",
@@ -118,7 +118,7 @@ class TerryTests {
 
     @Test
     fun `missing video triggers a chat message with an apology`() {
-        when (val response = mentionTerry("video myvid123 doesn't even exist, m8", userId = "THAD123").response) {
+        when (val response = mentionTerry("video myvid123 doesn't even exist, m8", userId = "THAD123").action) {
             is VideoRetrieval ->
                 assertThat(response.onComplete(MissingVideo(videoId = "myvid123")))
                         .isEqualTo(ChatReply(
@@ -134,7 +134,7 @@ class TerryTests {
 
     @Test
     fun `server error triggers a chat message with some blame`() {
-        when (val response = mentionTerry("please find video thatbreaksvideoservice", userId = "THAD123").response) {
+        when (val response = mentionTerry("please find video thatbreaksvideoservice", userId = "THAD123").action) {
             is VideoRetrieval ->
                 assertThat(response.onComplete(Error(message = "500 REALLY BAD")))
                         .isEqualTo(ChatReply(

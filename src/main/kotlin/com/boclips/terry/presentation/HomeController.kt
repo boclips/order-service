@@ -27,26 +27,26 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(@RequestBody body: String,
               @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-              @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<ControllerResponse> =
-            when (val terryResponse = slackRequestValidator.process(RawSlackRequest(
+              @RequestHeader(value = "X-Slack-Signature") signatureClaim: String): ResponseEntity<ControllerResponse> =
+            when (val action = slackRequestValidator.process(RawSlackRequest(
                     currentTime = System.currentTimeMillis() / 1000,
                     timestamp = timestamp,
                     body = body,
-                    signature = sig
+                    signatureClaim = signatureClaim
             ))) {
                 AuthenticityRejection ->
                     unauthorized()
                 MalformedRequestRejection ->
                     badRequest()
                 is ChatReply ->
-                    chat(terryResponse.slackMessage)
+                    chat(action.slackMessage)
                 is VideoRetrieval ->
-                    terryResponse
-                            .onComplete(videoService.get(terryResponse.videoId))
-                            .also { chat(it.slackMessage) }
-                            .let { ok() }
+                    action
+                            .onComplete(videoService.get(action.videoId))
+                            .apply { chat(slackMessage) }
+                            .run { ok() }
                 is VerificationResponse ->
-                    ok(SlackVerificationResponse(terryResponse.challenge))
+                    ok(SlackVerificationResponse(action.challenge))
             }
 
     private fun chat(slackMessage: SlackMessage): ResponseEntity<ControllerResponse> =

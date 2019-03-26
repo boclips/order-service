@@ -1,7 +1,7 @@
 package com.boclips.terry.infrastructure.incoming
 
 import com.boclips.terry.application.AuthenticityRejection
-import com.boclips.terry.application.Response
+import com.boclips.terry.application.Action
 import com.boclips.terry.application.Terry
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.lang.Exception
@@ -13,14 +13,14 @@ class SlackRequestValidator(val terry: Terry,
 ) {
     companion object : KLogging()
 
-    fun process(rawSlackRequest: RawSlackRequest): Response =
+    fun process(rawSlackRequest: RawSlackRequest): Action =
             when (slackSignature.verify(rawSlackRequest)) {
                 SignatureMismatch, StaleTimestamp ->
                     AuthenticityRejection
                 Verified -> {
                     val decision = terry.receiveSlack(hydrate(rawSlackRequest.body))
                     logger.info { decision.log }
-                    decision.response
+                    decision.action
                 }
             }
 

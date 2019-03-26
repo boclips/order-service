@@ -17,21 +17,23 @@ class SlackSignature(val version: String, private val secretKey: ByteArray) {
             when {
                 request.timestamp.toLong() < request.currentTime - (5 * 60) ->
                     StaleTimestamp
-                compute(request.timestamp, request.body) != request.signature ->
+                compute(request.timestamp, request.body) != request.signatureClaim ->
                     SignatureMismatch
                 else ->
                     Verified
             }
 
-    fun compute(timestamp: String, body: String): String {
-        val keySpec = SecretKeySpec(secretKey, type)
-        val mac = Mac.getInstance(type)
-        mac.init(keySpec)
-        val final = mac.doFinal(
-                "$version:$timestamp:$body"
-                        .toByteArray()
-        )
-        val formatted = "v0=${Hex.encodeHexString(final)}"
-        return formatted
-    }
+    fun compute(timestamp: String, body: String): String =
+            SecretKeySpec(secretKey, type)
+                    .let { keySpec ->
+                        Mac.getInstance(type)
+                                .apply { init(keySpec) }
+                                .run {
+                                    doFinal(formatted(timestamp, body))
+                                            .let { final -> "v0=${Hex.encodeHexString(final)}" }
+                                }
+                    }
+
+    private fun formatted(timestamp: String, body: String) =
+            "$version:$timestamp:$body".toByteArray()
 }

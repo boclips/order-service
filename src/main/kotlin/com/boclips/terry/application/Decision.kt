@@ -1,6 +1,6 @@
 package com.boclips.terry.application
 
 data class Decision(
-        val response: Response,
+        val action: Action,
         val log: String
 )
