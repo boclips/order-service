@@ -1,5 +1,5 @@
 package com.boclips.terry
 
 interface Fake {
-    fun reset()
+    fun reset(): Fake
 }

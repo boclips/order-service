@@ -10,7 +10,7 @@ class FakeSlackPoster : Fake, SlackPoster {
         reset()
     }
 
-    override fun reset() {
+    override fun reset(): Fake {
         slackMessages = emptyList()
     }
 

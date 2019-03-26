@@ -8,7 +8,6 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.PostFailure
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
 import com.boclips.terry.infrastructure.outgoing.videos.FoundKalturaVideo
-import com.boclips.terry.infrastructure.outgoing.videos.FoundVideo
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
