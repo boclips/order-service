@@ -13,16 +13,20 @@ class SlackRequestValidator(val terry: Terry,
 ) {
     companion object : KLogging()
 
-    fun process(rawSlackRequest: RawSlackRequest): Response =
-            when (slackSignature.verify(rawSlackRequest)) {
-                SignatureMismatch, StaleTimestamp ->
-                    AuthenticityRejection
-                Verified -> {
-                    val decision = terry.receiveSlack(hydrate(rawSlackRequest.body))
-                    logger.info { decision.log }
-                    decision.response
-                }
+    fun process(rawSlackRequest: RawSlackRequest): Response {
+        logger.info { "Start of validation" }
+        val response = when (slackSignature.verify(rawSlackRequest)) {
+            SignatureMismatch, StaleTimestamp ->
+                AuthenticityRejection
+            Verified -> {
+                val decision = terry.receiveSlack(hydrate(rawSlackRequest.body))
+                logger.info { decision.log }
+                decision.response
             }
+        }
+        logger.info { "End of validation"}
+        return response
+    }
 
     private fun hydrate(body: String): SlackRequest =
             try {
