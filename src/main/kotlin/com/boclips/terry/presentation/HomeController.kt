@@ -26,38 +26,49 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(@RequestBody body: String,
               @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-              @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<Response> =
-            when (val response = slackRequestValidator.process(RawSlackRequest(
+              @RequestHeader(value = "X-Slack-Signature") sig: String): ResponseEntity<ControllerResponse> =
+            when (val terryResponse = slackRequestValidator.process(RawSlackRequest(
                     currentTime = System.currentTimeMillis() / 1000,
                     timestamp = timestamp,
                     body = body,
                     signature = sig
             ))) {
                 AuthenticityRejection ->
-                    ResponseEntity(response, HttpStatus.UNAUTHORIZED)
+                    unauthorized()
                 MalformedRequestRejection ->
-                    ResponseEntity(response, HttpStatus.BAD_REQUEST)
+                    badRequest()
                 is ChatReply -> {
-                    slackPoster.chatPostMessage(response.slackMessage).let { slackResponse ->
+                    slackPoster.chatPostMessage(terryResponse.slackMessage).let { slackResponse ->
                         when (slackResponse) {
-                            is PostSuccess -> ResponseEntity(response as Response, HttpStatus.OK)
-                            is PostFailure -> ResponseEntity(response as Response, HttpStatus.INTERNAL_SERVER_ERROR)
+                            is PostSuccess ->
+                                ok()
+                            is PostFailure ->
+                                internalServerError()
                         }
                     }
                 }
                 is VideoRetrieval -> {
-                    val videoRetrievalResponse = response.onComplete(
-                            videoService.get(response.videoId)
+                    val videoRetrievalResponse = terryResponse.onComplete(
+                            videoService.get(terryResponse.videoId)
                     )
 
                     slackPoster.chatPostMessage(videoRetrievalResponse.slackMessage)
 
-                    ResponseEntity(
-                            videoRetrievalResponse,
-                            HttpStatus.OK
-                    )
+                    ok()
                 }
                 is VerificationResponse ->
-                    ResponseEntity(response, HttpStatus.OK)
+                    ResponseEntity(SlackVerificationResponse(terryResponse.challenge), HttpStatus.OK)
             }
+
+    private fun ok() =
+            ResponseEntity(Success as ControllerResponse, HttpStatus.OK)
+
+    private fun badRequest(): ResponseEntity<ControllerResponse> =
+            ResponseEntity(Failure, HttpStatus.BAD_REQUEST)
+
+    private fun unauthorized(): ResponseEntity<ControllerResponse> =
+            ResponseEntity(Failure, HttpStatus.UNAUTHORIZED)
+
+    private fun internalServerError() =
+            ResponseEntity(Failure as ControllerResponse, HttpStatus.INTERNAL_SERVER_ERROR)
 }
