@@ -1,7 +1,7 @@
 app: terry
 port: 8080
-scale: Medium
-bootTime: Slow
+scale: Large
+bootTime: Fast
 healthPath: /
 environments:
   production:
