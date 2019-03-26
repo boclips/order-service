@@ -17,11 +17,10 @@ class SlackRequestValidator(val terry: Terry,
             when (slackSignature.verify(rawSlackRequest)) {
                 SignatureMismatch, StaleTimestamp ->
                     AuthenticityRejection
-                Verified -> {
-                    val decision = terry.receiveSlack(hydrate(rawSlackRequest.body))
-                    logger.info { decision.log }
-                    decision.action
-                }
+                Verified ->
+                    terry.receiveSlack(hydrate(rawSlackRequest.body))
+                            .apply { logger.info { log } }
+                            .run { action }
             }
 
     private fun hydrate(body: String): SlackRequest =
