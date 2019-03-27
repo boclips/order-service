@@ -1,11 +1,11 @@
 package com.boclips.terry.config
 
-import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
-import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
+import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
+import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import com.boclips.terry.presentation.HomeControllerJobs
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
