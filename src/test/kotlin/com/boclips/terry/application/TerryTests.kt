@@ -79,7 +79,8 @@ class TerryTests {
                             title = "Boclips 4evah",
                             description = "boclips is...interesting",
                             thumbnailUrl = "validurl",
-                            playbackId = "1234"
+                            playbackId = "1234",
+                            streamUrl = "https://cdnapisec.kaltura.com/p/1776261/sp/177626100/playManifest/entryId/1_y0g6ftvy/format/applehttp/protocol/https/video.mp4"
                         )
                     )
                 )

@@ -32,9 +32,19 @@ class Terry {
                                 action = VideoRetrieval(videoId) { videoServiceResponse ->
                                     when (videoServiceResponse) {
                                         is FoundKalturaVideo ->
-                                            replyWithVideo(foundVideo = videoServiceResponse, type = "Kaltura", event = event, requestVideoId = videoId)
+                                            replyWithVideo(
+                                                foundVideo = videoServiceResponse,
+                                                type = "Kaltura",
+                                                event = event,
+                                                requestVideoId = videoId
+                                            )
                                         is FoundYouTubeVideo ->
-                                            replyWithVideo(foundVideo = videoServiceResponse, type = "YouTube", event = event, requestVideoId = videoId)
+                                            replyWithVideo(
+                                                foundVideo = videoServiceResponse,
+                                                type = "YouTube",
+                                                event = event,
+                                                requestVideoId = videoId
+                                            )
                                         is MissingVideo ->
                                             ChatReply(
                                                     slackMessage = SlackMessage(

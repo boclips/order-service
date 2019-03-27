@@ -15,5 +15,5 @@ data class Attachment(
         val title: String,
         val videoId: String,
         val type: String,
-        val playbackId: String
+        val playbackId: String?
 )

@@ -8,25 +8,26 @@ import org.springframework.web.client.getForObject
 class HTTPVideoService(private val videoServiceURI: String) : VideoService {
     override fun get(videoId: String): VideoServiceResponse = try {
         val response: HTTPVideoServiceGetResponse? = RestTemplate().getForObject(
-                "$videoServiceURI/$videoId",
-                HTTPVideoServiceGetResponse::class
+            "$videoServiceURI/$videoId",
+            HTTPVideoServiceGetResponse::class
         )
         when (response?.playback?.type) {
             "STREAM" ->
                 FoundKalturaVideo(
-                        videoId = response.id,
-                        title = response.title,
-                        description = response.description,
-                        thumbnailUrl = response.playback.thumbnailUrl,
-                        playbackId = response.playback.id
+                    videoId = response.id,
+                    title = response.title,
+                    description = response.description,
+                    thumbnailUrl = response.playback.thumbnailUrl,
+                    playbackId = extractKalturaPlaybackId(response.playback.streamUrl),
+                    streamUrl = response.playback.streamUrl
                 )
             "YOUTUBE" ->
                 FoundYouTubeVideo(
-                        videoId = response.id,
-                        title = response.title,
-                        description = response.description,
-                        thumbnailUrl = response.playback.thumbnailUrl,
-                        playbackId = response.playback.id
+                    videoId = response.id,
+                    title = response.title,
+                    description = response.description,
+                    thumbnailUrl = response.playback.thumbnailUrl,
+                    playbackId = response.playback.id
                 )
             else ->
                 MissingVideo(videoId = videoId)
@@ -43,14 +44,15 @@ class HTTPVideoService(private val videoServiceURI: String) : VideoService {
 }
 
 data class HTTPVideoServiceGetResponse(
-        val id: String,
-        val title: String,
-        val playback: HTTPVideoServicePlayback,
-        val description: String
+    val id: String,
+    val title: String,
+    val playback: HTTPVideoServicePlayback,
+    val description: String
 )
 
 data class HTTPVideoServicePlayback(
-        val id: String,
-        val thumbnailUrl: String,
-        val type: String
+    val id: String,
+    val thumbnailUrl: String,
+    val streamUrl: String?,
+    val type: String
 )

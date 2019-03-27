@@ -176,11 +176,12 @@ class HomeControllerIntegrationTests {
     @Test
     fun `videos are retrieved`() {
         videoService.respondWith(FoundKalturaVideo(
-                videoId = "resolvedId",
-                title = "Boclips 4evah",
-                description = "a description",
-                thumbnailUrl = "blahblah",
-                playbackId = "agreatplayback"
+            videoId = "resolvedId",
+            title = "Boclips 4evah",
+            description = "a description",
+            thumbnailUrl = "blahblah",
+            playbackId = "agreatplayback",
+            streamUrl = null
         ))
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 

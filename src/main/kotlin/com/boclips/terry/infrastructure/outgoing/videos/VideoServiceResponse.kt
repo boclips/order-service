@@ -7,7 +7,7 @@ interface FoundVideo {
     val title: String
     val description: String
     val thumbnailUrl: String
-    val playbackId: String
+    val playbackId: String?
     fun getType(): String
 }
 
@@ -15,11 +15,12 @@ data class MissingVideo(val videoId: String) : VideoServiceResponse()
 data class Error(val message: String) : VideoServiceResponse()
 
 data class FoundKalturaVideo(
-        override val videoId: String,
-        override val title: String,
-        override val description: String,
-        override val thumbnailUrl: String,
-        override val playbackId: String
+    override val videoId: String,
+    override val title: String,
+    override val description: String,
+    override val thumbnailUrl: String,
+    override val playbackId: String?,
+    val streamUrl: String?
 ) : FoundVideo, VideoServiceResponse() {
     override fun getType(): String = "Kaltura"
 }
