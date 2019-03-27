@@ -26,5 +26,4 @@ class AttachmentSerializer : JsonSerializer<Attachment>() {
         gen?.writeEndArray()
         gen?.writeEndObject()
     }
-
 }

@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class HomeController(
-        private val slackRequestValidator: SlackRequestValidator,
-        private val slackPoster: SlackPoster,
-        private val videoService: VideoService
+    private val slackRequestValidator: SlackRequestValidator,
+    private val slackPoster: SlackPoster,
+    private val videoService: VideoService
 ) {
     companion object : KLogging()
 
@@ -25,47 +25,51 @@ class HomeController(
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
     @PostMapping("/slack")
-    fun slack(@RequestBody body: String,
-              @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-              @RequestHeader(value = "X-Slack-Signature") signatureClaim: String): ResponseEntity<ControllerResponse> =
-            when (val action = slackRequestValidator.process(RawSlackRequest(
-                    currentTime = System.currentTimeMillis() / 1000,
-                    timestamp = timestamp,
-                    body = body,
-                    signatureClaim = signatureClaim
-            ))) {
-                AuthenticityRejection ->
-                    unauthorized()
-                MalformedRequestRejection ->
-                    badRequest()
-                is ChatReply ->
-                    chat(action.slackMessage)
-                is VideoRetrieval ->
-                    action
-                            .onComplete(videoService.get(action.videoId))
-                            .apply { chat(slackMessage) }
-                            .run { ok() }
-                is VerificationResponse ->
-                    ok(SlackVerificationResponse(action.challenge))
-            }
+    fun slack(
+        @RequestBody body: String,
+        @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
+        @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
+    ): ResponseEntity<ControllerResponse> =
+        when (val action = slackRequestValidator.process(
+            RawSlackRequest(
+                currentTime = System.currentTimeMillis() / 1000,
+                timestamp = timestamp,
+                body = body,
+                signatureClaim = signatureClaim
+            )
+        )) {
+            AuthenticityRejection ->
+                unauthorized()
+            MalformedRequestRejection ->
+                badRequest()
+            is ChatReply ->
+                chat(action.slackMessage)
+            is VideoRetrieval ->
+                action
+                    .onComplete(videoService.get(action.videoId))
+                    .apply { chat(slackMessage) }
+                    .run { ok() }
+            is VerificationResponse ->
+                ok(SlackVerificationResponse(action.challenge))
+        }
 
     private fun chat(slackMessage: SlackMessage): ResponseEntity<ControllerResponse> =
-            when (slackPoster.chatPostMessage(slackMessage)) {
-                is PostSuccess ->
-                    ok()
-                is PostFailure ->
-                    internalServerError()
-            }
+        when (slackPoster.chatPostMessage(slackMessage)) {
+            is PostSuccess ->
+                ok()
+            is PostFailure ->
+                internalServerError()
+        }
 
     private fun ok(obj: ControllerResponse = Success) =
-            ResponseEntity(obj, HttpStatus.OK)
+        ResponseEntity(obj, HttpStatus.OK)
 
     private fun badRequest(): ResponseEntity<ControllerResponse> =
-            ResponseEntity(Failure, HttpStatus.BAD_REQUEST)
+        ResponseEntity(Failure, HttpStatus.BAD_REQUEST)
 
     private fun unauthorized(): ResponseEntity<ControllerResponse> =
-            ResponseEntity(Failure, HttpStatus.UNAUTHORIZED)
+        ResponseEntity(Failure, HttpStatus.UNAUTHORIZED)
 
     private fun internalServerError() =
-            ResponseEntity(Failure as ControllerResponse, HttpStatus.INTERNAL_SERVER_ERROR)
+        ResponseEntity(Failure as ControllerResponse, HttpStatus.INTERNAL_SERVER_ERROR)
 }

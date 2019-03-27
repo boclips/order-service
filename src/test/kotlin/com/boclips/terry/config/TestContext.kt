@@ -23,15 +23,15 @@ class TestContext {
 
     @Bean
     fun slackSignature(): SlackSignature = SlackSignature(
-            "v0",
-            SLACK_SECRET_KEY_FOR_TEST.toByteArray()
+        "v0",
+        SLACK_SECRET_KEY_FOR_TEST.toByteArray()
     )
 
     @Bean
     fun slackRequestValidator(): SlackRequestValidator = SlackRequestValidator(
-            terry = terry(),
-            slackSignature = slackSignature(),
-            objectMapper = jacksonObjectMapper()
+        terry = terry(),
+        slackSignature = slackSignature(),
+        objectMapper = jacksonObjectMapper()
     )
 
     @Bean

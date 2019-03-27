@@ -11,12 +11,12 @@ class FakeVideoService : Fake, VideoService {
     }
 
     override fun reset(): Fake = this
-            .also { lastIdRequest = null }
+        .also { lastIdRequest = null }
 
     override fun get(videoId: String): VideoServiceResponse = nextResponse!!
-            .also { lastIdRequest = videoId }
+        .also { lastIdRequest = videoId }
 
     fun respondWith(response: VideoServiceResponse): FakeVideoService = this
-            .also { nextResponse = response }
+        .also { nextResponse = response }
 }
 

@@ -10,38 +10,42 @@ object SignatureMismatch : Result()
 object StaleTimestamp : Result()
 object Verified : Result()
 
-class SlackSignature(val version: String, private val secretKey: ByteArray, private val signatureTimeoutSeconds: Int = 5 * 60) {
+class SlackSignature(
+    val version: String,
+    private val secretKey: ByteArray,
+    private val signatureTimeoutSeconds: Int = 5 * 60
+) {
     private val type = "HmacSHA256"
 
     fun verify(request: RawSlackRequest): Result =
-            with(request) {
-                when {
-                    timestamp.toLong() < currentTime - signatureTimeoutSeconds ->
-                        StaleTimestamp
-                    compute(timestamp, body) != signatureClaim ->
-                        SignatureMismatch
-                    else ->
-                        Verified
-                }
+        with(request) {
+            when {
+                timestamp.toLong() < currentTime - signatureTimeoutSeconds ->
+                    StaleTimestamp
+                compute(timestamp, body) != signatureClaim ->
+                    SignatureMismatch
+                else ->
+                    Verified
             }
+        }
 
     fun compute(timestamp: String, body: String): String =
-            when (secretKey.size) {
-                0 ->
-                    ""
-                else ->
-                    SecretKeySpec(secretKey, type)
-                            .let { keySpec ->
-                                Mac.getInstance(type)
-                                        .apply { init(keySpec) }
-                                        .run { encoded(doFinal(formatted(timestamp, body))) }
-                            }
+        when (secretKey.size) {
+            0 ->
+                ""
+            else ->
+                SecretKeySpec(secretKey, type)
+                    .let { keySpec ->
+                        Mac.getInstance(type)
+                            .apply { init(keySpec) }
+                            .run { encoded(doFinal(formatted(timestamp, body))) }
+                    }
 
-            }
+        }
 
     private fun encoded(text: ByteArray): String =
-            "v0=${Hex.encodeHexString(text)}"
+        "v0=${Hex.encodeHexString(text)}"
 
     private fun formatted(timestamp: String, body: String) =
-            "$version:$timestamp:$body".toByteArray()
+        "$version:$timestamp:$body".toByteArray()
 }

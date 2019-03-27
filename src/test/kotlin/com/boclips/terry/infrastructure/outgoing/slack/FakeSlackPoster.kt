@@ -11,11 +11,11 @@ class FakeSlackPoster : Fake, SlackPoster {
     }
 
     override fun reset(): Fake = this
-            .also { slackMessages = emptyList() }
+        .also { slackMessages = emptyList() }
 
     fun respondWith(response: PosterResponse): FakeSlackPoster = this
-            .also { nextResponse = response }
+        .also { nextResponse = response }
 
     override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse = nextResponse!!
-            .also { slackMessages = listOf(slackMessage) }
+        .also { slackMessages = listOf(slackMessage) }
 }

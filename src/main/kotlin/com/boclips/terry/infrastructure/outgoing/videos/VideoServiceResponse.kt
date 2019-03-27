@@ -26,11 +26,11 @@ data class FoundKalturaVideo(
 }
 
 data class FoundYouTubeVideo(
-        override val videoId: String,
-        override val title: String,
-        override val description: String,
-        override val thumbnailUrl: String,
-        override val playbackId: String
+    override val videoId: String,
+    override val title: String,
+    override val description: String,
+    override val thumbnailUrl: String,
+    override val playbackId: String
 ) : FoundVideo, VideoServiceResponse() {
     override fun getType(): String = "Youtube"
 }

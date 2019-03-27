@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Profile
 class ProductionContext {
     @Bean
     fun slackPoster(): SlackPoster = HTTPSlackPoster(
-            slackURI = "https://slack.com/api/chat.postMessage",
-            botToken = System.getenv("SLACK_BOT_TOKEN")
+        slackURI = "https://slack.com/api/chat.postMessage",
+        botToken = System.getenv("SLACK_BOT_TOKEN")
     )
 
     @Bean
@@ -29,14 +29,14 @@ class ProductionContext {
 
     @Bean
     fun slackSignature(): SlackSignature = SlackSignature(
-            "v0",
-            System.getenv("SLACK_SIGNING_SECRET").toByteArray()
+        "v0",
+        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
     )
 
     @Bean
     fun slackRequestValidator(): SlackRequestValidator = SlackRequestValidator(
-            terry = terry(),
-            slackSignature = slackSignature(),
-            objectMapper = jacksonObjectMapper()
+        terry = terry(),
+        slackSignature = slackSignature(),
+        objectMapper = jacksonObjectMapper()
     )
 }

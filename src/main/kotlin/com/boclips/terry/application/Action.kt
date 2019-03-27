@@ -10,6 +10,6 @@ object MalformedRequestRejection : Action()
 data class VerificationResponse(val challenge: String) : Action()
 data class ChatReply(val slackMessage: SlackMessage) : Action()
 data class VideoRetrieval(
-        val videoId: String,
-        val onComplete: (VideoServiceResponse) -> ChatReply
+    val videoId: String,
+    val onComplete: (VideoServiceResponse) -> ChatReply
 ) : Action()

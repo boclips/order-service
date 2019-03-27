@@ -8,8 +8,8 @@ import org.springframework.web.client.postForObject
 import java.math.BigDecimal
 
 class HTTPSlackPoster(
-        private val slackURI: String,
-        private val botToken: String
+    private val slackURI: String,
+    private val botToken: String
 ) : SlackPoster {
     override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse {
         val headers = HttpHeaders()
@@ -17,9 +17,9 @@ class HTTPSlackPoster(
         val entity = HttpEntity(slackMessage, headers)
         val response: HTTPSlackPostResponse? = try {
             RestTemplate().postForObject(
-                    slackURI,
-                    entity,
-                    HTTPSlackPostResponse::class
+                slackURI,
+                entity,
+                HTTPSlackPostResponse::class
             )
         } catch (e: HttpClientErrorException) {
             return PostFailure("${e.message}")
@@ -32,7 +32,7 @@ class HTTPSlackPoster(
 }
 
 data class HTTPSlackPostResponse(
-        val ok: Boolean,
-        val error: String?,
-        var ts: BigDecimal?
+    val ok: Boolean,
+    val error: String?,
+    var ts: BigDecimal?
 )

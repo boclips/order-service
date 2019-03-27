@@ -3,7 +3,6 @@ package com.boclips.terry.infrastructure.outgoing.videos
 import io.kotlintest.properties.assertAll
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.net.URI
 
 class ExtractKalturaPlaybackIdTest {
     @Test

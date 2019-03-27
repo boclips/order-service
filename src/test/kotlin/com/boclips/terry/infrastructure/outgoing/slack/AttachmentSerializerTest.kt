@@ -8,19 +8,24 @@ class AttachmentSerializerTest {
     @Test
     fun `serializes message from domain to slack format`() {
         val objectMapper = ObjectMapper()
-        val json = objectMapper.writeValueAsString(SlackMessage(
+        val json = objectMapper.writeValueAsString(
+            SlackMessage(
                 channel = "a channel",
                 text = "some text",
-                attachments = listOf(Attachment(
+                attachments = listOf(
+                    Attachment(
                         imageUrl = "image",
                         title = "title",
                         videoId = "videoId",
                         type = "YouTube",
                         playbackId = "1234"
-                ))
-        ))
+                    )
+                )
+            )
+        )
 
-        assertThat(json).isEqualToIgnoringWhitespace("""
+        assertThat(json).isEqualToIgnoringWhitespace(
+            """
             {
                 "channel": "a channel",
                 "text": "some text",
@@ -46,6 +51,7 @@ class AttachmentSerializerTest {
                     }
                 ]
             }
-        """)
+        """
+        )
     }
 }

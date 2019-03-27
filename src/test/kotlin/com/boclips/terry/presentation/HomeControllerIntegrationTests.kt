@@ -50,70 +50,78 @@ class HomeControllerIntegrationTests {
     @Test
     fun `root path serves a terrific message`() {
         mockMvc.perform(
-                get("/"))
-                .andExpect(status().isOk)
-                .andExpect(xpath("h1").string(containsString("Do as I say")))
+            get("/")
+        )
+            .andExpect(status().isOk)
+            .andExpect(xpath("h1").string(containsString("Do as I say")))
     }
 
     @Test
     fun `can meet Slack's verification challenge`() {
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "sometoken",
                 "challenge": "iamchallenging",
                 "type": "url_verification"
             }
-        """)
-                .andExpect(status().isOk)
-                .andExpect(header().string("Content-Type", "application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.challenge", equalTo("iamchallenging")))
+        """
+        )
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", "application/json;charset=UTF-8"))
+            .andExpect(jsonPath("$.challenge", equalTo("iamchallenging")))
     }
 
     @Test
     fun `failing the request signature check results in 401`() {
         val timestamp = validTimestamp()
         postFromSlack(
-                body = """
+            body = """
                     {
                         "token": "sometoken",
                         "challenge": "iamchallenging",
                         "type": "url_verification"
                     }
                 """,
-                timestamp = timestamp,
-                signature = slackSignature.compute(timestamp.toString(), "different-body")
+            timestamp = timestamp,
+            signature = slackSignature.compute(timestamp.toString(), "different-body")
         )
-                .andExpect(status().isUnauthorized)
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `sending a timestamp older than 5 minutes results in 401`() {
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "sometoken",
                 "challenge": "iamchallenging",
                 "type": "url_verification"
             }
-        """, staleTimestamp())
-                .andExpect(status().isUnauthorized)
+        """, staleTimestamp()
+        )
+            .andExpect(status().isUnauthorized)
     }
 
     @Test
     fun `it's a client error to send a malformed Slack verification request`() {
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "sometoken",
                 "poo": "iamchallenging",
                 "type": "url_verification"
-            }""".trimIndent())
-                .andExpect(status().is4xxClientError)
+            }""".trimIndent()
+        )
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
     fun `Slack mentions receive 200s and send responses`() {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(1231231)))
 
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -133,22 +141,28 @@ class HomeControllerIntegrationTests {
                 "authed_users": [
                     "U0LAN0Z89"
                 ]
-            }""".trimIndent())
-                .andExpect(status().isOk)
-                .andExpect(content().json("{}"))
+            }""".trimIndent()
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().json("{}"))
 
         assertThat(slackPoster.slackMessages)
-                .isEqualTo(listOf(SlackMessage(
+            .isEqualTo(
+                listOf(
+                    SlackMessage(
                         text = "<@U061F7AUR> I don't do much yet",
                         channel = "C0LAN2Q65"
-                )))
+                    )
+                )
+            )
     }
 
     @Test
     fun `Slack response failure gives 500`() {
         slackPoster.nextResponse = PostFailure(message = "could not post to slack")
 
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -168,24 +182,28 @@ class HomeControllerIntegrationTests {
                 "authed_users": [
                     "U0LAN0Z89"
                 ]
-            }""".trimIndent())
-                .andExpect(status().is5xxServerError)
-                .andExpect(content().json("{}"))
+            }""".trimIndent()
+        )
+            .andExpect(status().is5xxServerError)
+            .andExpect(content().json("{}"))
     }
 
     @Test
     fun `videos are retrieved`() {
-        videoService.respondWith(FoundKalturaVideo(
-            videoId = "resolvedId",
-            title = "Boclips 4evah",
-            description = "a description",
-            thumbnailUrl = "blahblah",
-            playbackId = "agreatplayback",
-            streamUrl = null
-        ))
+        videoService.respondWith(
+            FoundKalturaVideo(
+                videoId = "resolvedId",
+                title = "Boclips 4evah",
+                description = "a description",
+                thumbnailUrl = "blahblah",
+                playbackId = "agreatplayback",
+                streamUrl = null
+            )
+        )
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
-        postFromSlack("""
+        postFromSlack(
+            """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -204,36 +222,43 @@ class HomeControllerIntegrationTests {
                 "authed_users": [
                     "U0LAN0Z89"
                 ]
-            }""".trimIndent())
-                .andExpect(status().isOk)
+            }""".trimIndent()
+        )
+            .andExpect(status().isOk)
 
         assertThat(videoService.lastIdRequest).isEqualTo("asdfzxcv")
-        assertThat(slackPoster.slackMessages).isEqualTo(listOf(SlackMessage(
-                channel = "C0LAN2Q65",
-                text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
-                attachments = listOf(Attachment(
-                        imageUrl = "blahblah",
-                        title = "Boclips 4evah",
-                        videoId = "resolvedId",
-                        type = "Kaltura",
-                        playbackId = "agreatplayback"
-                ))
-        )))
+        assertThat(slackPoster.slackMessages).isEqualTo(
+            listOf(
+                SlackMessage(
+                    channel = "C0LAN2Q65",
+                    text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
+                    attachments = listOf(
+                        Attachment(
+                            imageUrl = "blahblah",
+                            title = "Boclips 4evah",
+                            videoId = "resolvedId",
+                            type = "Kaltura",
+                            playbackId = "agreatplayback"
+                        )
+                    )
+                )
+            )
+        )
     }
 
     private fun validTimestamp() = System.currentTimeMillis() / 1000 - (5 * 60)
     private fun staleTimestamp() = validTimestamp() - 1
 
     private fun postFromSlack(
-            body: String,
-            timestamp: Long = validTimestamp(),
-            signature: String = slackSignature.compute(timestamp.toString(), body)
+        body: String,
+        timestamp: Long = validTimestamp(),
+        signature: String = slackSignature.compute(timestamp.toString(), body)
     ): ResultActions =
-            mockMvc.perform(
-                    post("/slack")
-                            .header("X-Slack-Request-Timestamp", timestamp)
-                            .header("X-Slack-Signature", signature)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
-                            .content(body)
-            )
+        mockMvc.perform(
+            post("/slack")
+                .header("X-Slack-Request-Timestamp", timestamp)
+                .header("X-Slack-Signature", signature)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(body)
+        )
 }
