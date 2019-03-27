@@ -11,6 +11,7 @@ import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.scheduling.annotation.Async
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -43,22 +44,28 @@ class HomeController(
             MalformedRequestRejection ->
                 badRequest()
             is ChatReply ->
-                chat(action.slackMessage)
+                ok()
+                    .also { chat(action.slackMessage) }
             is VideoRetrieval ->
-                action
-                    .onComplete(videoService.get(action.videoId))
-                    .apply { chat(slackMessage) }
-                    .run { ok() }
+                ok()
+                    .also { getVideo(action) }
             is VerificationResponse ->
                 ok(SlackVerificationResponse(action.challenge))
         }
 
-    private fun chat(slackMessage: SlackMessage): ResponseEntity<ControllerResponse> =
+    @Async
+    private fun getVideo(action: VideoRetrieval) =
+        action
+            .onComplete(videoService.get(action.videoId))
+            .apply { chat(slackMessage) }
+
+    @Async
+    private fun chat(slackMessage: SlackMessage) =
         when (slackPoster.chatPostMessage(slackMessage)) {
             is PostSuccess ->
-                ok()
+                logger.debug { "Successful post of $slackMessage" }
             is PostFailure ->
-                internalServerError()
+                logger.error { "Failed post to Slack" }
         }
 
     private fun ok(obj: ControllerResponse = Success) =
