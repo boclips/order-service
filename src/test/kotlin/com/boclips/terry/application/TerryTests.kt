@@ -88,7 +88,7 @@ class TerryTests {
                         ChatReply(
                             slackMessage = SlackMessage(
                                 channel = "#engineering",
-                                text = "<@THAD123> Here's the video details for myvid123:",
+                                text = "<@THAD123> Here are the video details for myvid123:",
                                 attachments = listOf(
                                     Attachment(
                                         imageUrl = "validurl",
@@ -125,7 +125,7 @@ class TerryTests {
                         ChatReply(
                             slackMessage = SlackMessage(
                                 channel = "#engineering",
-                                text = "<@THAD123> Here's the video details for myvid123:",
+                                text = "<@THAD123> Here are the video details for myvid123:",
                                 attachments = listOf(
                                     Attachment(
                                         imageUrl = "validurl",

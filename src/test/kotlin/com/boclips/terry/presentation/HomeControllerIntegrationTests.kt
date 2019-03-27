@@ -231,7 +231,7 @@ class HomeControllerIntegrationTests {
             listOf(
                 SlackMessage(
                     channel = "C0LAN2Q65",
-                    text = "<@U061F7AUR> Here's the video details for asdfzxcv:",
+                    text = "<@U061F7AUR> Here are the video details for asdfzxcv:",
                     attachments = listOf(
                         Attachment(
                             imageUrl = "blahblah",

@@ -82,7 +82,7 @@ class Terry {
         ChatReply(
             slackMessage = SlackMessage(
                 channel = event.channel,
-                text = "<@${event.user}> Here's the video details for $requestVideoId:",
+                text = "<@${event.user}> Here are the video details for $requestVideoId:",
                 attachments = listOf(
                     Attachment(
                         imageUrl = foundVideo.thumbnailUrl,
