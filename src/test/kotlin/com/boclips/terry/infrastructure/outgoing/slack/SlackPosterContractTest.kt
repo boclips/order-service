@@ -2,12 +2,13 @@ package com.boclips.terry.infrastructure.outgoing.slack
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 class FakeSlackPosterTests : SlackPosterTests() {
-    @Before
+    @BeforeEach
     fun setUp() {
         poster = FakeSlackPoster().respondWith(PostSuccess(timestamp = BigDecimal(System.currentTimeMillis() / 1000 + 1)))
         failingPoster = FakeSlackPoster().respondWith(PostFailure(message = "401 UNAUTHORIZED"))
@@ -15,7 +16,7 @@ class FakeSlackPosterTests : SlackPosterTests() {
 }
 
 class HTTPSlackPosterTests : SlackPosterTests() {
-    @Before
+    @BeforeEach
     fun setUp() {
         poster = HTTPSlackPoster(
                 slackURI = "https://slack.com/api/chat.postMessage",
@@ -28,7 +29,7 @@ class HTTPSlackPosterTests : SlackPosterTests() {
     }
 }
 
-@org.junit.Ignore
+@Disabled
 abstract class SlackPosterTests {
     var poster: SlackPoster? = null
     var failingPoster: SlackPoster? = null

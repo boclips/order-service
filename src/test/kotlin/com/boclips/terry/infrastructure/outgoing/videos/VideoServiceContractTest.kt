@@ -1,11 +1,11 @@
 package com.boclips.terry.infrastructure.outgoing.videos
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class FakeVideoServiceTests : VideoServiceTests() {
-    @Before
+    @BeforeEach
     fun setUp() {
         videoServiceForKaltura = FakeVideoService()
                 .respondWith(FoundKalturaVideo(
@@ -29,7 +29,7 @@ class FakeVideoServiceTests : VideoServiceTests() {
 }
 
 class HTTPVideoServiceTests : VideoServiceTests() {
-    @Before
+    @BeforeEach
     fun setUp() {
         videoServiceForKaltura = HTTPVideoService("https://api.boclips.com/v1/videos")
         videoServiceForYouTube = HTTPVideoService("https://api.boclips.com/v1/videos")
