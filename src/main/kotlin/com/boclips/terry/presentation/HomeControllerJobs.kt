@@ -8,7 +8,7 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import org.springframework.scheduling.annotation.Async
 
-class HomeControllerJobs(
+open class HomeControllerJobs(
     private val slackPoster: SlackPoster,
     private val videoService: VideoService
 ) {
