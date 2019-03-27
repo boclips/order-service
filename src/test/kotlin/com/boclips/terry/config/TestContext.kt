@@ -7,6 +7,7 @@ import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
+import com.boclips.terry.presentation.HomeControllerJobs
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -36,6 +37,13 @@ class TestContext {
 
     @Bean
     fun videoService(): VideoService = FakeVideoService()
+
+    @Bean
+    fun homeControllerJobs(): HomeControllerJobs =
+        HomeControllerJobs(
+            slackPoster = slackPoster(),
+            videoService = videoService()
+        )
 }
 
 const val SLACK_SECRET_KEY_FOR_TEST = "foobar"

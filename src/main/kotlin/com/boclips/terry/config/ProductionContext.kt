@@ -7,11 +7,14 @@ import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.HTTPVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
+import com.boclips.terry.presentation.HomeControllerJobs
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.scheduling.annotation.EnableAsync
 
+@EnableAsync
 @Configuration
 @Profile("production")
 class ProductionContext {
@@ -39,4 +42,11 @@ class ProductionContext {
         slackSignature = slackSignature(),
         objectMapper = jacksonObjectMapper()
     )
+
+    @Bean
+    fun homeControllerJobs(): HomeControllerJobs =
+        HomeControllerJobs(
+            slackPoster = slackPoster(),
+            videoService = videoService()
+        )
 }
