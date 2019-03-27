@@ -71,7 +71,4 @@ class HomeController(
 
     private fun unauthorized(): ResponseEntity<ControllerResponse> =
         ResponseEntity(Failure, HttpStatus.UNAUTHORIZED)
-
-    private fun internalServerError() =
-        ResponseEntity(Failure as ControllerResponse, HttpStatus.INTERNAL_SERVER_ERROR)
 }
