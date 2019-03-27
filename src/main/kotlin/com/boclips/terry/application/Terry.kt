@@ -28,7 +28,7 @@ class Terry {
                     val pattern = """.*video ([^ ]+).*""".toRegex()
                     pattern.matchEntire(event.text)?.groups?.get(1)?.value?.let { videoId ->
                         Decision(
-                                log = "Retrieving video ID 12345678",
+                                log = "Retrieving video ID $videoId",
                                 action = VideoRetrieval(videoId) { videoServiceResponse ->
                                     when (videoServiceResponse) {
                                         is FoundKalturaVideo ->
