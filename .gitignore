@@ -3,3 +3,4 @@ build
 out/
 .idea/
 dependency-check-cache
+.kotlintest

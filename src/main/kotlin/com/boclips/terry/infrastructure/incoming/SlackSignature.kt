@@ -10,14 +10,13 @@ object SignatureMismatch : Result()
 object StaleTimestamp : Result()
 object Verified : Result()
 
-class SlackSignature(val version: String, private val secretKey: ByteArray) {
+class SlackSignature(val version: String, private val secretKey: ByteArray, private val signatureTimeoutSeconds: Int = 5 * 60) {
     private val type = "HmacSHA256"
-    private val signatureTimeout = 5 * 60
 
     fun verify(request: RawSlackRequest): Result =
             with(request) {
                 when {
-                    timestamp.toLong() < currentTime - signatureTimeout ->
+                    timestamp.toLong() < currentTime - signatureTimeoutSeconds ->
                         StaleTimestamp
                     compute(timestamp, body) != signatureClaim ->
                         SignatureMismatch
@@ -27,12 +26,18 @@ class SlackSignature(val version: String, private val secretKey: ByteArray) {
             }
 
     fun compute(timestamp: String, body: String): String =
-            SecretKeySpec(secretKey, type)
-                    .let { keySpec ->
-                        Mac.getInstance(type)
-                                .apply { init(keySpec) }
-                                .run { encoded(doFinal(formatted(timestamp, body))) }
-                    }
+            when (secretKey.size) {
+                0 ->
+                    ""
+                else ->
+                    SecretKeySpec(secretKey, type)
+                            .let { keySpec ->
+                                Mac.getInstance(type)
+                                        .apply { init(keySpec) }
+                                        .run { encoded(doFinal(formatted(timestamp, body))) }
+                            }
+
+            }
 
     private fun encoded(text: ByteArray): String =
             "v0=${Hex.encodeHexString(text)}"
