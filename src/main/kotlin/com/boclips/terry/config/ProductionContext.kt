@@ -42,11 +42,4 @@ class ProductionContext {
         slackSignature = slackSignature(),
         objectMapper = jacksonObjectMapper()
     )
-
-    @Bean
-    fun homeControllerJobs(): HomeControllerJobs =
-        HomeControllerJobs(
-            slackPoster = slackPoster(),
-            videoService = videoService()
-        )
 }

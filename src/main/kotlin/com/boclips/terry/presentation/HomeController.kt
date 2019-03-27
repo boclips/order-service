@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class HomeController(
     private val slackRequestValidator: SlackRequestValidator,
-    private val homeControllerJobs: HomeControllerJobs
+    private val slackPoster: SlackPoster,
+    private val videoService: VideoService
 ) {
     companion object : KLogging()
 
@@ -44,13 +45,23 @@ class HomeController(
                 badRequest()
             is ChatReply ->
                 ok()
-                    .also { homeControllerJobs.chat(action.slackMessage) }
+                    .also { chat(action) }
             is VideoRetrieval ->
                 ok()
-                    .also { homeControllerJobs.getVideo(action) }
+                    .also { getVideo(action) }
             is VerificationResponse ->
                 ok(SlackVerificationResponse(action.challenge))
         }
+
+    private fun getVideo(action: VideoRetrieval) {
+        HomeControllerJobs(slackPoster = slackPoster, videoService = videoService)
+            .getVideo(action)
+    }
+
+    private fun chat(action: ChatReply) {
+        HomeControllerJobs(slackPoster = slackPoster, videoService = videoService)
+            .chat(action.slackMessage)
+    }
 
     private fun ok(obj: ControllerResponse = Success) =
         ResponseEntity(obj, HttpStatus.OK)
