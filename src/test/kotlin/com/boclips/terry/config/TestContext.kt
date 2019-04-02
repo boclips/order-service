@@ -7,12 +7,10 @@ import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
-import com.boclips.terry.presentation.HomeControllerJobs
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.scheduling.annotation.EnableAsync
 
 @Configuration
 @Profile("test")

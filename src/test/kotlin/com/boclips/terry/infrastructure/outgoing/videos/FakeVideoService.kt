@@ -19,4 +19,3 @@ class FakeVideoService : Fake, VideoService {
     fun respondWith(response: VideoServiceResponse): FakeVideoService = this
         .also { nextResponse = response }
 }
-

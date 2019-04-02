@@ -14,7 +14,8 @@ class HTTPSlackPoster(
     override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse {
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer $botToken")
-        val entity = HttpEntity(slackMessage, headers)
+        val body = MessageConverter().convert(slackMessage)
+        val entity = HttpEntity(body, headers)
         val response: HTTPSlackPostResponse? = try {
             RestTemplate().postForObject(
                 slackURI,
@@ -27,7 +28,7 @@ class HTTPSlackPoster(
         response?.ts?.let {
             return PostSuccess(timestamp = it)
         }
-        return PostFailure("Unknown error")
+        return PostFailure("Error: ${response?.error}\nRequest:\n$body")
     }
 }
 

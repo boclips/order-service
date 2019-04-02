@@ -40,7 +40,6 @@ class SlackSignature(
                             .apply { init(keySpec) }
                             .run { encoded(doFinal(formatted(timestamp, body))) }
                     }
-
         }
 
     private fun encoded(text: ByteArray): String =

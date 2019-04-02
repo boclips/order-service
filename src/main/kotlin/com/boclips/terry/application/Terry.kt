@@ -60,7 +60,6 @@ class Terry {
                                         )
                                     )
                             }
-
                         }
                     )
                 } ?: Decision(
@@ -75,7 +74,7 @@ class Terry {
             }
         }
 
-    private fun helpFor(user: String): String = "<@${user}> ${help()}"
+    private fun helpFor(user: String): String = "<@$user> ${help()}"
     private fun help(): String = "I don't do much yet"
 
     private fun replyWithVideo(foundVideo: FoundVideo, type: String, event: AppMention, requestVideoId: String) =

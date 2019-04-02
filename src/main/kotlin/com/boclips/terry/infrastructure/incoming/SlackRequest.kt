@@ -52,4 +52,3 @@ data class EventNotification(
     @JsonProperty("event_time")
     val eventTime: Date?
 ) : SlackRequest()
-
