@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.HttpClientErrorException
@@ -28,12 +29,18 @@ class HTTPSlackPoster(
         response?.ts?.let {
             return PostSuccess(timestamp = it)
         }
-        return PostFailure("Error: ${response?.error}\nRequest:\n$body")
+        return PostFailure("Error: ${response?.error}\n${response?.metadata}\nRequest:\n$body")
     }
 }
 
 data class HTTPSlackPostResponse(
     val ok: Boolean,
     val error: String?,
+    @JsonProperty("response_metadata")
+    val metadata: HTTPSlackPostResponseMetadata?,
     var ts: BigDecimal?
+)
+
+data class HTTPSlackPostResponseMetadata (
+    val messages: List<String>
 )

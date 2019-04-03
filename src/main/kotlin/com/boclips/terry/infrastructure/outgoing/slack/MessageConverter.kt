@@ -44,6 +44,36 @@ class MessageConverter {
                             text = "*Video ID*\n${attachment.videoId}"
                         ),
                         accessory = null
+                    ),
+                    SlackViewSection(
+                        type = "section",
+                        text = SlackViewText(
+                            type = "mrkdwn",
+                            text = "Request transcript:"
+                        ),
+                        accessory = SlackViewAccessory(
+                            type = "static_select",
+                            placeholder = SlackViewText(
+                                type = "plain_text",
+                                text = "Choose transcript type"
+                            ),
+                            options = listOf(
+                                SlackViewSelectOption(
+                                    text = SlackViewText(
+                                        type = "plain_text",
+                                        text = "British English"
+                                    ),
+                                    value = "british-english"
+                                ),
+                                SlackViewSelectOption(
+                                    text = SlackViewText(
+                                        type = "plain_text",
+                                        text = "US English"
+                                    ),
+                                    value = "us-english"
+                                )
+                            )
+                        )
                     )
                 )
             }

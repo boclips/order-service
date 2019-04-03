@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 class MessageConverterTest {
     @Test
-    fun `can convert message to Slack format`() {
+    fun `can convert message to Slack format, adding interactive elements`() {
         MessageConverter().convert(
             SlackMessage(
                 channel = "a channel",
@@ -68,6 +68,36 @@ class MessageConverterTest {
                         "text": {
                             "type": "mrkdwn",
                             "text": "*Video ID*\nthe-video-id123"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Request transcript:"
+                        },
+                        "accessory": {
+                            "type": "static_select",
+                            "placeholder": {
+                                "type": "plain_text",
+                                "text": "Choose transcript type"
+                            },
+                            "options": [
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "British English"
+                                    },
+                                    "value": "british-english"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "US English"
+                                    },
+                                    "value": "us-english"
+                                }
+                            ]
                         }
                     }
                 ]

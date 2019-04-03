@@ -40,12 +40,21 @@ data class SlackViewText(
     val text: String
 )
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 data class SlackViewAccessory(
     val type: String,
 
     @JsonProperty("image_url")
-    val imageUrl: String,
+    val imageUrl: String? = null,
 
     @JsonProperty("alt_text")
-    val altText: String
+    val altText: String? = null,
+
+    val placeholder: SlackViewText? = null,
+    val options: List<SlackViewSelectOption>? = null
+)
+
+data class SlackViewSelectOption(
+    val text: SlackViewText,
+    val value: String
 )
