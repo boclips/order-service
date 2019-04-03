@@ -66,6 +66,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `can meet Slack's verification challenge`() {
         postFromSlack(
+            "/slack",
             """
             {
                 "token": "sometoken",
@@ -83,6 +84,7 @@ class HomeControllerIntegrationTests {
     fun `failing the request signature check results in 401`() {
         val timestamp = validTimestamp()
         postFromSlack(
+            path = "/slack",
             body = """
                     {
                         "token": "sometoken",
@@ -99,6 +101,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `sending a timestamp older than 5 minutes results in 401`() {
         postFromSlack(
+            "/slack",
             """
             {
                 "token": "sometoken",
@@ -113,6 +116,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `it's a client error to send a malformed Slack verification request`() {
         postFromSlack(
+            "/slack",
             """
             {
                 "token": "sometoken",
@@ -128,6 +132,7 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(1231231)))
 
         postFromSlack(
+            "/slack",
             """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
@@ -179,6 +184,7 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack(
+            "/slack",
             """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
@@ -231,12 +237,13 @@ class HomeControllerIntegrationTests {
         validTimestamp() - timestampBufferSeconds - 1
 
     private fun postFromSlack(
+        path: String,
         body: String,
         timestamp: Long = validTimestamp(),
         signature: String = slackSignature.compute(timestamp.toString(), body)
     ): ResultActions =
         mockMvc.perform(
-            post("/slack")
+            post(path)
                 .header("X-Slack-Request-Timestamp", timestamp)
                 .header("X-Slack-Signature", signature)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
