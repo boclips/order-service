@@ -200,7 +200,7 @@ class HomeControllerIntegrationTests {
                 ]
             }""".trimIndent()
         )
-        assertThat(status().isOk)
+            .andExpect(status().isOk)
 
         assertThat(videoService.lastIdRequest).isEqualTo("asdfzxcv")
         assertThat(slackPoster.slackMessages).isEqualTo(
