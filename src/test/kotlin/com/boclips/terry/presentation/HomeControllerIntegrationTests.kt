@@ -228,6 +228,17 @@ class HomeControllerIntegrationTests {
         )
     }
 
+    @Test
+    fun `interaction requests are logged until we know better`() {
+        postFromSlack(
+            "/slack-interaction",
+            """
+            body of request
+            """.trimIndent()
+        )
+            .andExpect(status().isOk)
+    }
+
     private val timestampBufferSeconds = 10
 
     private fun validTimestamp() =

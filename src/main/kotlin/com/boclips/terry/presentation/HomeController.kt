@@ -49,6 +49,14 @@ class HomeController(
                 ok(SlackVerificationResponse(action.challenge))
         }
 
+    @PostMapping("/slack-interaction")
+    fun slackInteraction(
+        @RequestBody body: String,
+        @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
+        @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
+    ): ResponseEntity<ControllerResponse> = ok()
+        .also { logger.info { body } }
+
     private fun getVideo(action: VideoRetrieval) {
         HomeControllerJobs(slackPoster = slackPoster, videoService = videoService)
             .getVideo(action)
