@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import java.util.*
+import java.util.Date
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -20,6 +20,10 @@ import java.util.*
     JsonSubTypes.Type(
         value = EventNotification::class,
         name = "event_callback"
+    ),
+    JsonSubTypes.Type(
+        value = BlockActions::class,
+        name = "block_actions"
     )
 )
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -52,3 +56,25 @@ data class EventNotification(
     @JsonProperty("event_time")
     val eventTime: Date?
 ) : SlackRequest()
+
+data class BlockActions(
+    val channel: BlockActionIdentifiable,
+    val actions: List<BlockAction>,
+    val user: BlockActionIdentifiable
+) : SlackRequest()
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class BlockActionIdentifiable(
+    val id: String
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class BlockAction(
+    @JsonProperty("selected_option")
+    val selectedOption: BlockActionSelectedOption
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class BlockActionSelectedOption(
+    val value: String
+)

@@ -19,14 +19,17 @@ class SlackRequestValidator(
             SignatureMismatch, StaleTimestamp ->
                 AuthenticityRejection
             Verified ->
-                terry.receiveSlack(hydrate(rawSlackRequest.body))
+                terry.receiveSlack(hydrate(rawSlackRequest))
                     .apply { logger.info { log } }
                     .run { action }
         }
 
-    private fun hydrate(body: String): SlackRequest =
+    private fun hydrate(rawSlackRequest: RawSlackRequest): SlackRequest =
         try {
-            objectMapper.readValue(body, SlackRequest::class.java)
+            objectMapper.readValue(
+                rawSlackRequest.payload ?: rawSlackRequest.body,
+                SlackRequest::class.java
+            )
         } catch (e: Exception) {
             logger.error { e.message }
             Malformed

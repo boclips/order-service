@@ -1,6 +1,12 @@
 package com.boclips.terry.presentation
 
-import com.boclips.terry.application.*
+import com.boclips.kalturaclient.KalturaClient
+import com.boclips.terry.application.AuthenticityRejection
+import com.boclips.terry.application.ChatReply
+import com.boclips.terry.application.MalformedRequestRejection
+import com.boclips.terry.application.VerificationResponse
+import com.boclips.terry.application.VideoRetrieval
+import com.boclips.terry.application.VideoTagging
 import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
@@ -8,13 +14,19 @@ import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import mu.KLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class HomeController(
     private val slackRequestValidator: SlackRequestValidator,
     private val slackPoster: SlackPoster,
-    private val videoService: VideoService
+    private val videoService: VideoService,
+    private val kalturaClient: KalturaClient
 ) {
     companion object : KLogging()
 
@@ -24,6 +36,7 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(
         @RequestBody body: String,
+        @RequestParam payload: String?,
         @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
         @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
     ): ResponseEntity<ControllerResponse> =
@@ -32,6 +45,7 @@ class HomeController(
                 currentTime = System.currentTimeMillis() / 1000,
                 timestamp = timestamp,
                 body = body,
+                payload = payload,
                 signatureClaim = signatureClaim
             )
         )) {
@@ -47,23 +61,35 @@ class HomeController(
                     .also { getVideo(action) }
             is VerificationResponse ->
                 ok(SlackVerificationResponse(action.challenge))
+            is VideoTagging ->
+                ok()
+                    .also { tagVideo(action) }
         }
 
-    @PostMapping("/slack-interaction")
-    fun slackInteraction(
-        @RequestBody body: String,
-        @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-        @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
-    ): ResponseEntity<ControllerResponse> = ok()
-        .also { logger.info { body } }
+    private fun tagVideo(action: VideoTagging) {
+        HomeControllerJobs(
+            slackPoster = slackPoster,
+            videoService = videoService,
+            kalturaClient = kalturaClient
+        )
+            .tagVideo(action)
+    }
 
     private fun getVideo(action: VideoRetrieval) {
-        HomeControllerJobs(slackPoster = slackPoster, videoService = videoService)
+        HomeControllerJobs(
+            slackPoster = slackPoster,
+            videoService = videoService,
+            kalturaClient = kalturaClient
+        )
             .getVideo(action)
     }
 
     private fun chat(action: ChatReply) {
-        HomeControllerJobs(slackPoster = slackPoster, videoService = videoService)
+        HomeControllerJobs(
+            slackPoster = slackPoster,
+            videoService = videoService,
+            kalturaClient = kalturaClient
+        )
             .chat(action.slackMessage)
     }
 

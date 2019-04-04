@@ -1,5 +1,6 @@
 package com.boclips.terry.presentation
 
+import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath
 import java.math.BigDecimal
+import java.net.URLEncoder
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -48,6 +50,9 @@ class HomeControllerIntegrationTests {
     @Autowired
     lateinit var videoService: FakeVideoService
 
+    @Autowired
+    lateinit var kalturaClient: TestKalturaClient
+
     @BeforeEach
     fun setUp() {
         slackPoster.reset()
@@ -66,7 +71,6 @@ class HomeControllerIntegrationTests {
     @Test
     fun `can meet Slack's verification challenge`() {
         postFromSlack(
-            "/slack",
             """
             {
                 "token": "sometoken",
@@ -84,7 +88,6 @@ class HomeControllerIntegrationTests {
     fun `failing the request signature check results in 401`() {
         val timestamp = validTimestamp()
         postFromSlack(
-            path = "/slack",
             body = """
                     {
                         "token": "sometoken",
@@ -101,14 +104,14 @@ class HomeControllerIntegrationTests {
     @Test
     fun `sending a timestamp older than 5 minutes results in 401`() {
         postFromSlack(
-            "/slack",
             """
             {
                 "token": "sometoken",
                 "challenge": "iamchallenging",
                 "type": "url_verification"
             }
-        """, staleTimestamp()
+        """,
+            timestamp = staleTimestamp()
         )
             .andExpect(status().isUnauthorized)
     }
@@ -116,7 +119,6 @@ class HomeControllerIntegrationTests {
     @Test
     fun `it's a client error to send a malformed Slack verification request`() {
         postFromSlack(
-            "/slack",
             """
             {
                 "token": "sometoken",
@@ -132,7 +134,6 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(1231231)))
 
         postFromSlack(
-            "/slack",
             """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
@@ -184,7 +185,6 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack(
-            "/slack",
             """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
@@ -229,15 +229,173 @@ class HomeControllerIntegrationTests {
     }
 
     @Test
-    fun `interaction requests are logged until we know better`() {
+    fun `transcript requests tag videos in Kaltura`() {
         postFromSlack(
-            "/slack-interaction",
-            """
-            body of request
-            """.trimIndent()
+            "payload=${transcriptRequestPayload("0_fgc6nmmt")}",
+            contentType = MediaType.APPLICATION_FORM_URLENCODED
         )
             .andExpect(status().isOk)
+
+        assertThat(kalturaClient.getBaseEntry("0_fgc6nmmt").tags).containsExactly("caption48british")
     }
+
+    private fun transcriptRequestPayload(entryId: String): String? =
+        URLEncoder.encode(
+            """
+    {
+      "type": "block_actions",
+      "team": {
+        "id": "T04CX5TQC",
+        "domain": "boclips"
+      },
+      "user": {
+        "id": "UBS7V80PR",
+        "username": "andrew",
+        "name": "andrew",
+        "team_id": "T04CX5TQC"
+      },
+      "api_app_id": "AH343GQTZ",
+      "token": "sometoken",
+      "container": {
+        "type": "message",
+        "message_ts": "1554309414.016200",
+        "channel_id": "CH1HFTDT2",
+        "is_ephemeral": false
+      },
+      "trigger_id": "600474721686.4439197828.7925f4d9002c4b77d9773a2ee0763ef4",
+      "channel": {
+        "id": "CH1HFTDT2",
+        "name": "terry-test-output"
+      },
+      "message": {
+        "type": "message",
+        "subtype": "bot_message",
+        "text": "This content can't be displayed.",
+        "ts": "1554309414.016200",
+        "username": "Terry",
+        "bot_id": "BH3ADPWM8",
+        "blocks": [
+          {
+            "type": "section",
+            "block_id": "GUY",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*<@UBS7V80PR> Here are the video details for 1234:*",
+              "verbatim": false
+            }
+          },
+          {
+            "type": "divider",
+            "block_id": "7N86C"
+          },
+          {
+            "type": "section",
+            "block_id": "BhQ9",
+            "text": {
+              "type": "mrkdwn",
+              "text": "Is Islamic State Planning Attacks on the West?",
+              "verbatim": false
+            },
+            "accessory": {
+              "fallback": "435x250px image",
+              "image_url": "https://cdnapisec.kaltura.com/p/1776261/thumbnail/entry_id/0_fgc6nmmt/height/250/vid_slices/3/vid_slice/2",
+              "image_width": 435,
+              "image_height": 250,
+              "image_bytes": 22949,
+              "type": "image",
+              "alt_text": "Is Islamic State Planning Attacks on the West?"
+            }
+          },
+          {
+            "type": "section",
+            "block_id": "5xB4",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*Playback ID*\n$entryId",
+              "verbatim": false
+            }
+          },
+          {
+            "type": "section",
+            "block_id": "m71",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*Playback Provider*\nKaltura",
+              "verbatim": false
+            }
+          },
+          {
+            "type": "section",
+            "block_id": "UXvaU",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*Video ID*\n5c54a6c7d8eafeecae072ca4",
+              "verbatim": false
+            }
+          },
+          {
+            "type": "section",
+            "block_id": "dvNbh",
+            "text": {
+              "type": "mrkdwn",
+              "text": "Request transcript:",
+              "verbatim": false
+            },
+            "accessory": {
+              "type": "static_select",
+              "placeholder": {
+                "type": "plain_text",
+                "text": "Choose transcript type",
+                "emoji": true
+              },
+              "options": [
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "text": "British English",
+                    "emoji": true
+                  },
+                  "value": "british-english"
+                },
+                {
+                  "text": {
+                    "type": "plain_text",
+                    "text": "US English",
+                    "emoji": true
+                  },
+                  "value": "us-english"
+                }
+              ],
+              "action_id": "LGn/v"
+            }
+          }
+        ]
+      },
+      "response_url": "https://hooks.slack.com/actions/T04CX5TQC/599518168997/NrTHISozF3Le5AOQKOAC3aPt",
+      "actions": [
+        {
+          "type": "static_select",
+          "action_id": "LGn/v",
+          "block_id": "dvNbh",
+          "selected_option": {
+            "text": {
+              "type": "plain_text",
+              "text": "British English",
+              "emoji": true
+            },
+            "value": "{\"code\":\"british-english\",\"entryId\":\"$entryId\"}"
+          },
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Choose transcript type",
+            "emoji": true
+          },
+          "action_ts": "1554309417.644885"
+        }
+      ]
+    }
+            """.trimIndent(), "utf-8"
+        )
 
     private val timestampBufferSeconds = 10
 
@@ -248,16 +406,16 @@ class HomeControllerIntegrationTests {
         validTimestamp() - timestampBufferSeconds - 1
 
     private fun postFromSlack(
-        path: String,
         body: String,
+        contentType: MediaType = MediaType.APPLICATION_JSON_UTF8,
         timestamp: Long = validTimestamp(),
         signature: String = slackSignature.compute(timestamp.toString(), body)
     ): ResultActions =
         mockMvc.perform(
-            post(path)
+            post("/slack")
                 .header("X-Slack-Request-Timestamp", timestamp)
                 .header("X-Slack-Signature", signature)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(contentType)
                 .content(body)
         )
 }

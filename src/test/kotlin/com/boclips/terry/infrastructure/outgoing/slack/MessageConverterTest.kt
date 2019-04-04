@@ -88,14 +88,14 @@ class MessageConverterTest {
                                         "type": "plain_text",
                                         "text": "British English"
                                     },
-                                    "value": "british-english"
+                                    "value": "{\"code\":\"british-english\",\"entryId\":\"1234\"}"
                                 },
                                 {
                                     "text": {
                                         "type": "plain_text",
                                         "text": "US English"
                                     },
-                                    "value": "us-english"
+                                    "value": "{\"code\":\"us-english\",\"entryId\":\"1234\"}"
                                 }
                             ]
                         }

@@ -1,5 +1,7 @@
 package com.boclips.terry.config
 
+import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
@@ -36,6 +38,10 @@ class TestContext {
 
     @Bean
     fun videoService(): VideoService = FakeVideoService()
+
+    @Bean
+    fun kalturaClient(): KalturaClient =
+        TestKalturaClient()
 }
 
 const val SLACK_SECRET_KEY_FOR_TEST = "foobar"

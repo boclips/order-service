@@ -1,10 +1,16 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.incoming.AppMention
+import com.boclips.terry.infrastructure.incoming.BlockAction
+import com.boclips.terry.infrastructure.incoming.BlockActionIdentifiable
+import com.boclips.terry.infrastructure.incoming.BlockActionSelectedOption
+import com.boclips.terry.infrastructure.incoming.BlockActions
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
 import com.boclips.terry.infrastructure.outgoing.slack.Attachment
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
+import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
+import com.boclips.terry.infrastructure.outgoing.transcripts.Success
 import com.boclips.terry.infrastructure.outgoing.videos.Error
 import com.boclips.terry.infrastructure.outgoing.videos.FoundKalturaVideo
 import com.boclips.terry.infrastructure.outgoing.videos.FoundYouTubeVideo
@@ -39,7 +45,7 @@ class TerryTests {
 
     @Test
     fun `responds to Slack enquiry about his job description`() {
-        assertThat(mentionTerry("hi Tezza", userId = "UBS7V80PR"))
+        assertThat(mentionTerry("hi Tezza", user = "UBS7V80PR", channel = "#engineering"))
             .isEqualTo(
                 Decision(
                     action = ChatReply(
@@ -56,7 +62,7 @@ class TerryTests {
     @Test
     fun `retrieves video details when given an ID`() {
         assertAll { videoId: Long ->
-            val decision = mentionTerry("I would like video $videoId")
+            val decision = mentionTerry("I would like video $videoId", channel = "#engineering")
             assertThat(decision.log).isEqualTo("Retrieving video ID $videoId")
             when (val response = decision.action) {
                 is VideoRetrieval -> {
@@ -70,7 +76,11 @@ class TerryTests {
 
     @Test
     fun `successful receipt of Kaltura video triggers a chat message with the Kaltura details`() {
-        when (val action = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").action) {
+        when (val action = mentionTerry(
+            "Yo can I get video myvid123 please?",
+            user = "THAD123",
+            channel = "#engineering"
+        ).action) {
             is VideoRetrieval ->
                 assertThat(
                     action.onComplete(
@@ -108,10 +118,14 @@ class TerryTests {
 
     @Test
     fun `successful receipt of YouTube video triggers a chat message with the YouTube details`() {
-        when (val response = mentionTerry("Yo can I get video myvid123 please?", userId = "THAD123").action) {
+        when (val action = mentionTerry(
+            "Yo can I get video myvid123 please?",
+            user = "THAD123",
+            channel = "#engineering"
+        ).action) {
             is VideoRetrieval ->
                 assertThat(
-                    response.onComplete(
+                    action.onComplete(
                         FoundYouTubeVideo(
                             videoId = "abcdefg",
                             title = "Boclips 4evah",
@@ -139,15 +153,19 @@ class TerryTests {
                         )
                     )
             else ->
-                fail<String>("Expected a video retrieval, but got $response")
+                fail<String>("Expected a video retrieval, but got $action")
         }
     }
 
     @Test
     fun `missing video triggers a chat message with an apology`() {
-        when (val response = mentionTerry("video myvid123 doesn't even exist, m8", userId = "THAD123").action) {
+        when (val action = mentionTerry(
+            "video myvid123 doesn't even exist, m8",
+            user = "THAD123",
+            channel = "#engineering"
+        ).action) {
             is VideoRetrieval ->
-                assertThat(response.onComplete(MissingVideo(videoId = "myvid123")))
+                assertThat(action.onComplete(MissingVideo(videoId = "myvid123")))
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(
@@ -157,15 +175,19 @@ class TerryTests {
                         )
                     )
             else ->
-                fail<String>("Expected a video retrieval, but got $response")
+                fail<String>("Expected a video retrieval, but got $action")
         }
     }
 
     @Test
-    fun `server error triggers a chat message with some blame`() {
-        when (val response = mentionTerry("please find video thatbreaksvideoservice", userId = "THAD123").action) {
+    fun `video service server error triggers a chat message with some blame`() {
+        when (val action = mentionTerry(
+            "please find video thatbreaksvideoservice",
+            user = "THAD123",
+            channel = "#engineering"
+        ).action) {
             is VideoRetrieval ->
-                assertThat(response.onComplete(Error(message = "500 REALLY BAD")))
+                assertThat(action.onComplete(Error(message = "500 REALLY BAD")))
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(
@@ -175,22 +197,112 @@ class TerryTests {
                         )
                     )
             else ->
-                fail<String>("Expected a video retrieval, but got $response")
+                fail<String>("Expected a video retrieval, but got $action")
         }
     }
 
-    private fun mentionTerry(message: String, userId: String = "DEFAULTUSERID"): Decision =
+    @Test
+    fun `transcript request translates the code into Kaltura language`() {
+        assertThat(
+            (Terry().receiveSlack(
+                BlockActions(
+                    actions = listOf(
+                        BlockAction(
+                            selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
+                        )
+                    ),
+                    channel = BlockActionIdentifiable(id = "#orders"),
+                    user = BlockActionIdentifiable(id = "THAD666")
+                )
+            ).action as VideoTagging).tag
+        ).isEqualTo("caption48british")
+    }
+
+    @Test
+    fun `transcript request with unknown code gives a malformed rejection`() {
+        assertThat(
+            Terry().receiveSlack(
+                BlockActions(
+                    actions = listOf(
+                        BlockAction(
+                            selectedOption = BlockActionSelectedOption("""{"code":"unknown","entryId":"a_Kaltura1D"}""")
+                        )
+                    ),
+                    channel = BlockActionIdentifiable(id = "#orders"),
+                    user = BlockActionIdentifiable(id = "THAD666")
+                )
+            ).action
+        ).isInstanceOf(MalformedRequestRejection::class.java)
+    }
+
+    @Test
+    fun `successful transcript request triggers a chat message with the title of the video`() {
+        when (val action = Terry().receiveSlack(
+            BlockActions(
+                actions = listOf(
+                    BlockAction(
+                        selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
+                    )
+                ),
+                channel = BlockActionIdentifiable(id = "#orders"),
+                user = BlockActionIdentifiable(id = "THAD666")
+            )
+        ).action) {
+            is VideoTagging ->
+                assertThat(action.onComplete(Success(title = "Interview with Oasis")))
+                    .isEqualTo(
+                        ChatReply(
+                            slackMessage = SlackMessage(
+                                channel = "#orders",
+                                text = """<@THAD666> OK, I requested a transcript for "Interview with Oasis"."""
+                            )
+                        )
+                    )
+            else ->
+                fail<String>("Expected a transcript request, but got $action")
+        }
+    }
+
+    @Test
+    fun `failed transcript request triggers a chat message`() {
+        when (val action = Terry().receiveSlack(
+            BlockActions(
+                actions = listOf(
+                    BlockAction(
+                        selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
+                    )
+                ),
+                channel = BlockActionIdentifiable(id = "#orders"),
+                user = BlockActionIdentifiable(id = "THAD666")
+            )
+        ).action) {
+            is VideoTagging ->
+                assertThat(action.onComplete(Failure(title = "Interview with Blur", error = "Kaltura fail")))
+                    .isEqualTo(
+                        ChatReply(
+                            slackMessage = SlackMessage(
+                                channel = "#orders",
+                                text = """<@THAD666> Sorry! I don't think "Interview with Blur" could be tagged: "Kaltura fail"."""
+                            )
+                        )
+                    )
+            else ->
+                fail<String>("Expected a transcript request, but got $action")
+        }
+    }
+
+    private fun mentionTerry(message: String, user: String = "DEFAULTUSERID", channel: String): Decision =
         Terry().receiveSlack(
             EventNotification(
                 teamId = irrelevant,
                 apiAppId = irrelevant,
                 event = AppMention(
                     type = irrelevant,
-                    channel = "#engineering",
+                    channel = channel,
                     text = "<@TERRYID> $message",
                     eventTs = irrelevant,
                     ts = irrelevant,
-                    user = userId
+                    user = user
                 ),
                 type = irrelevant,
                 authedUsers = emptyList(),

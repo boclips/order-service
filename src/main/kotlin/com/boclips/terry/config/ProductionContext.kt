@@ -1,5 +1,7 @@
 package com.boclips.terry.config
 
+import com.boclips.kalturaclient.KalturaClient
+import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.terry.application.Terry
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
@@ -40,5 +42,14 @@ class ProductionContext {
         terry = terry(),
         slackSignature = slackSignature(),
         objectMapper = jacksonObjectMapper()
+    )
+
+    @Bean
+    fun kalturaClient(): KalturaClient = KalturaClient.create(
+        KalturaClientConfig.builder()
+            .partnerId(System.getenv("KALTURA_PARTNER_ID"))
+            .userId(System.getenv("KALTURA_USER_ID"))
+            .secret(System.getenv("KALTURA_SECRET"))
+            .build()
     )
 }

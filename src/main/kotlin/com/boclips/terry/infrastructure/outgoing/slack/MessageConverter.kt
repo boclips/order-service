@@ -1,5 +1,13 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
+data class TranscriptVideoCode(
+    val code: String,
+    val entryId: String
+)
+
 class MessageConverter {
     fun convert(slackMessage: SlackMessage): SlackView =
         messageToView(slackMessage)
@@ -63,14 +71,20 @@ class MessageConverter {
                                         type = "plain_text",
                                         text = "British English"
                                     ),
-                                    value = "british-english"
+                                    value = createTranscriptValueJson(
+                                        code = "british-english",
+                                        attachment = attachment
+                                    )
                                 ),
                                 SlackViewSelectOption(
                                     text = SlackViewText(
                                         type = "plain_text",
                                         text = "US English"
                                     ),
-                                    value = "us-english"
+                                    value = createTranscriptValueJson(
+                                        code = "us-english",
+                                        attachment = attachment
+                                    )
                                 )
                             )
                         )
@@ -92,4 +106,14 @@ class MessageConverter {
                     ) + videoBlocks
                 )
             }
+
+    private fun createTranscriptValueJson(code: String, attachment: Attachment): String {
+        val transcriptRequest = TranscriptVideoCode(
+            code = code,
+            entryId = attachment.playbackId!!
+        )
+
+        val mapper: ObjectMapper = jacksonObjectMapper()
+        return mapper.writeValueAsString(transcriptRequest)
+    }
 }
