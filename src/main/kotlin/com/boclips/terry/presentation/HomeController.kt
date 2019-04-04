@@ -65,6 +65,16 @@ class HomeController(
             is VideoTagging ->
                 ok()
                     .also { tagVideo(action) }
+        }.also {
+            logger.info {
+                "Incoming message"
+            }
+            logger.info {
+               body
+            }
+            logger.info {
+                payload
+            }
         }
 
     private fun tagVideo(action: VideoTagging) {
