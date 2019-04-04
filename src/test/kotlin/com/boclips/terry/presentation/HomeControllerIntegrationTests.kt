@@ -104,7 +104,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `sending a timestamp older than 5 minutes results in 401`() {
         postFromSlack(
-            """
+            body = """
             {
                 "token": "sometoken",
                 "challenge": "iamchallenging",
@@ -119,7 +119,7 @@ class HomeControllerIntegrationTests {
     @Test
     fun `it's a client error to send a malformed Slack verification request`() {
         postFromSlack(
-            """
+            body = """
             {
                 "token": "sometoken",
                 "poo": "iamchallenging",
@@ -134,7 +134,7 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(1231231)))
 
         postFromSlack(
-            """
+            body = """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -185,7 +185,7 @@ class HomeControllerIntegrationTests {
         slackPoster.respondWith(PostSuccess(timestamp = BigDecimal(98765)))
 
         postFromSlack(
-            """
+            body = """
             {
                 "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
                 "team_id": "T061EG9R6",
@@ -230,8 +230,10 @@ class HomeControllerIntegrationTests {
 
     @Test
     fun `transcript requests tag videos in Kaltura`() {
+        val payload = transcriptRequestPayload("0_fgc6nmmt")
         postFromSlack(
-            "payload=${transcriptRequestPayload("0_fgc6nmmt")}",
+            body = "payload=${URLEncoder.encode(payload, "utf-8")}",
+            payload = payload,
             contentType = MediaType.APPLICATION_FORM_URLENCODED
         )
             .andExpect(status().isOk)
@@ -239,8 +241,7 @@ class HomeControllerIntegrationTests {
         assertThat(kalturaClient.getBaseEntry("0_fgc6nmmt").tags).containsExactly("caption48british")
     }
 
-    private fun transcriptRequestPayload(entryId: String): String? =
-        URLEncoder.encode(
+    private fun transcriptRequestPayload(entryId: String): String =
             """
     {
       "type": "block_actions",
@@ -394,8 +395,7 @@ class HomeControllerIntegrationTests {
         }
       ]
     }
-            """.trimIndent(), "utf-8"
-        )
+            """.trimIndent()
 
     private val timestampBufferSeconds = 10
 
@@ -407,9 +407,10 @@ class HomeControllerIntegrationTests {
 
     private fun postFromSlack(
         body: String,
+        payload: String = body,
         contentType: MediaType = MediaType.APPLICATION_JSON_UTF8,
         timestamp: Long = validTimestamp(),
-        signature: String = slackSignature.compute(timestamp.toString(), body)
+        signature: String = slackSignature.compute(timestamp = timestamp.toString(), body = payload)
     ): ResultActions =
         mockMvc.perform(
             post("/slack")

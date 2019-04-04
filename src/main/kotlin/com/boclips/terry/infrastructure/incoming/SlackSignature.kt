@@ -22,7 +22,7 @@ class SlackSignature(
             when {
                 timestamp.toLong() < currentTime - signatureTimeoutSeconds ->
                     StaleTimestamp
-                compute(timestamp, body) != signatureClaim ->
+                compute(timestamp = timestamp, body = payload ?: body) != signatureClaim ->
                     SignatureMismatch
                 else ->
                     Verified
