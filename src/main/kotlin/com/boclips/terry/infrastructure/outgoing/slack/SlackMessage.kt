@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class SlackMessage(
     val channel: String,
     val text: String,
-    val attachments: List<Attachment> = emptyList()
+    val slackMessageVideos: List<SlackMessageVideo> = emptyList()
 )
 
-data class Attachment(
+data class SlackMessageVideo(
     val imageUrl: String,
     val color: String = "good",
     val title: String,

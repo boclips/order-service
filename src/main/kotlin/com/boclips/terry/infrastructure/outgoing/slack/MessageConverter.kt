@@ -13,27 +13,27 @@ class MessageConverter {
         messageToView(slackMessage)
 
     private fun messageToView(slackMessage: SlackMessage): SlackView =
-        slackMessage.attachments
-            .fold(emptyList()) { acc: List<SlackViewBlock>, attachment: Attachment ->
+        slackMessage.slackMessageVideos
+            .fold(emptyList()) { acc: List<SlackViewBlock>, slackMessageVideo: SlackMessageVideo ->
                 acc + listOf(
                     SlackViewDivider,
                     SlackViewSection(
                         type = "section",
                         text = SlackViewText(
                             type = "mrkdwn",
-                            text = attachment.title
+                            text = slackMessageVideo.title
                         ),
                         accessory = SlackViewAccessory(
                             type = "image",
-                            imageUrl = attachment.imageUrl,
-                            altText = attachment.title
+                            imageUrl = slackMessageVideo.imageUrl,
+                            altText = slackMessageVideo.title
                         )
                     ),
                     SlackViewSection(
                         type = "section",
                         text = SlackViewText(
                             type = "mrkdwn",
-                            text = "*Playback ID*\n${attachment.playbackId}"
+                            text = "*Playback ID*\n${slackMessageVideo.playbackId}"
                         ),
                         accessory = null
                     ),
@@ -41,7 +41,7 @@ class MessageConverter {
                         type = "section",
                         text = SlackViewText(
                             type = "mrkdwn",
-                            text = "*Playback Provider*\n${attachment.type}"
+                            text = "*Playback Provider*\n${slackMessageVideo.type}"
                         ),
                         accessory = null
                     ),
@@ -49,7 +49,7 @@ class MessageConverter {
                         type = "section",
                         text = SlackViewText(
                             type = "mrkdwn",
-                            text = "*Video ID*\n${attachment.videoId}"
+                            text = "*Video ID*\n${slackMessageVideo.videoId}"
                         ),
                         accessory = null
                     ),
@@ -73,7 +73,7 @@ class MessageConverter {
                                     ),
                                     value = createTranscriptValueJson(
                                         code = "british-english",
-                                        attachment = attachment
+                                        slackMessageVideo = slackMessageVideo
                                     )
                                 ),
                                 SlackViewSelectOption(
@@ -83,7 +83,7 @@ class MessageConverter {
                                     ),
                                     value = createTranscriptValueJson(
                                         code = "us-english",
-                                        attachment = attachment
+                                        slackMessageVideo = slackMessageVideo
                                     )
                                 )
                             )
@@ -107,10 +107,10 @@ class MessageConverter {
                 )
             }
 
-    private fun createTranscriptValueJson(code: String, attachment: Attachment): String {
+    private fun createTranscriptValueJson(code: String, slackMessageVideo: SlackMessageVideo): String {
         val transcriptRequest = TranscriptVideoCode(
             code = code,
-            entryId = attachment.playbackId!!
+            entryId = slackMessageVideo.playbackId!!
         )
 
         val mapper: ObjectMapper = jacksonObjectMapper()

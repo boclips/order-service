@@ -11,8 +11,8 @@ class MessageConverterTest {
             SlackMessage(
                 channel = "a channel",
                 text = "some text",
-                attachments = listOf(
-                    Attachment(
+                slackMessageVideos = listOf(
+                    SlackMessageVideo(
                         imageUrl = "https://api.slack.com/img/blocks/bkb_template_images/palmtree.png",
                         title = "a lovely video",
                         videoId = "the-video-id123",

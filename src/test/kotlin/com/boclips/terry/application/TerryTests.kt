@@ -7,7 +7,7 @@ import com.boclips.terry.infrastructure.incoming.BlockActionSelectedOption
 import com.boclips.terry.infrastructure.incoming.BlockActions
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
-import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
 import com.boclips.terry.infrastructure.outgoing.transcripts.Success
@@ -99,8 +99,8 @@ class TerryTests {
                             slackMessage = SlackMessage(
                                 channel = "#engineering",
                                 text = "<@THAD123> Here are the video details for myvid123:",
-                                attachments = listOf(
-                                    Attachment(
+                                slackMessageVideos = listOf(
+                                    SlackMessageVideo(
                                         imageUrl = "validurl",
                                         title = "Boclips 4evah",
                                         videoId = "abcdefg",
@@ -140,8 +140,8 @@ class TerryTests {
                             slackMessage = SlackMessage(
                                 channel = "#engineering",
                                 text = "<@THAD123> Here are the video details for myvid123:",
-                                attachments = listOf(
-                                    Attachment(
+                                slackMessageVideos = listOf(
+                                    SlackMessageVideo(
                                         imageUrl = "validurl",
                                         title = "Boclips 4evah",
                                         videoId = "abcdefg",

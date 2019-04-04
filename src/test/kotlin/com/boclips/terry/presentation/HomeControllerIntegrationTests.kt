@@ -2,7 +2,7 @@ package com.boclips.terry.presentation
 
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.infrastructure.incoming.SlackSignature
-import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
@@ -214,8 +214,8 @@ class HomeControllerIntegrationTests {
                 SlackMessage(
                     channel = "C0LAN2Q65",
                     text = "<@U061F7AUR> Here are the video details for asdfzxcv:",
-                    attachments = listOf(
-                        Attachment(
+                    slackMessageVideos = listOf(
+                        SlackMessageVideo(
                             imageUrl = "blahblah",
                             title = "Boclips 4evah",
                             videoId = "resolvedId",

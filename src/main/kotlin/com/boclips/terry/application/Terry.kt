@@ -7,7 +7,7 @@ import com.boclips.terry.infrastructure.incoming.Malformed
 import com.boclips.terry.infrastructure.incoming.SlackEvent
 import com.boclips.terry.infrastructure.incoming.SlackRequest
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
-import com.boclips.terry.infrastructure.outgoing.slack.Attachment
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.TranscriptVideoCode
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
@@ -145,8 +145,8 @@ class Terry {
             slackMessage = SlackMessage(
                 channel = event.channel,
                 text = "<@${event.user}> Here are the video details for $requestVideoId:",
-                attachments = listOf(
-                    Attachment(
+                slackMessageVideos = listOf(
+                    SlackMessageVideo(
                         imageUrl = foundVideo.thumbnailUrl,
                         title = foundVideo.title,
                         videoId = foundVideo.videoId,
