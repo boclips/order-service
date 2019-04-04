@@ -49,8 +49,9 @@ class HomeController(
                 signatureClaim = signatureClaim
             )
         )) {
-            AuthenticityRejection ->
+            is AuthenticityRejection ->
                 unauthorized()
+                    .also { logger.error { action.reason } }
             MalformedRequestRejection ->
                 badRequest()
             is ChatReply ->

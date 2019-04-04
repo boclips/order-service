@@ -6,7 +6,7 @@ import com.boclips.terry.infrastructure.outgoing.videos.VideoServiceResponse
 
 sealed class Action
 
-object AuthenticityRejection : Action()
+data class AuthenticityRejection(val reason: String) : Action()
 object MalformedRequestRejection : Action()
 data class VerificationResponse(val challenge: String) : Action()
 data class ChatReply(val slackMessage: SlackMessage) : Action()
