@@ -1,13 +1,10 @@
 package com.boclips.terry.infrastructure.incoming
 
-import com.boclips.terry.application.AuthenticityRejection
 import com.boclips.terry.application.Action
+import com.boclips.terry.application.AuthenticityRejection
 import com.boclips.terry.application.Terry
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import java.lang.Exception
 import mu.KLogging
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URLDecoder
 
 class SlackRequestValidator(
