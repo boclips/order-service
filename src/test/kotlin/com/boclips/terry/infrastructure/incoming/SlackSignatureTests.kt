@@ -21,8 +21,7 @@ class SlackSignatureTests {
                 currentTime = sigTime,
                 body = body,
                 timestamp = "$sigTime",
-                signatureClaim = goodSig,
-                payload = null
+                signatureClaim = goodSig
             )
         ).shouldBeSameInstanceAs(Verified)
     }
@@ -38,8 +37,7 @@ class SlackSignatureTests {
                         currentTime = sigTime.toLong(),
                         body = body,
                         timestamp = "$sigTime",
-                        signatureClaim = compute(timestamp = "$sigTime", body = body),
-                        payload = null
+                        signatureClaim = compute(timestamp = "$sigTime", body = body)
                     )
                 ).shouldBeSameInstanceAs(Verified)
             }
@@ -57,8 +55,7 @@ class SlackSignatureTests {
                         currentTime = sigTime.toLong() + timeoutSeconds + 1,
                         body = body,
                         timestamp = "$sigTime",
-                        signatureClaim = compute(timestamp = "$sigTime", body = body),
-                        payload = null
+                        signatureClaim = compute(timestamp = "$sigTime", body = body)
                     )
                 ).shouldBeSameInstanceAs(StaleTimestamp)
             }

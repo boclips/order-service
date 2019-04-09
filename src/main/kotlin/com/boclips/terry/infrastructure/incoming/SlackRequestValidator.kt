@@ -4,8 +4,11 @@ import com.boclips.terry.application.AuthenticityRejection
 import com.boclips.terry.application.Action
 import com.boclips.terry.application.Terry
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.lang.Exception
 import mu.KLogging
+import org.springframework.web.util.UriComponentsBuilder
+import java.net.URLDecoder
 
 class SlackRequestValidator(
     val terry: Terry,
@@ -29,11 +32,18 @@ class SlackRequestValidator(
     private fun hydrate(rawSlackRequest: RawSlackRequest): SlackRequest =
         try {
             objectMapper.readValue(
-                rawSlackRequest.payload ?: rawSlackRequest.body,
+                parse(rawSlackRequest.body),
                 SlackRequest::class.java
             )
         } catch (e: Exception) {
             logger.error { e.message }
             Malformed
+        }
+
+    private fun parse(body: String): String =
+        if (body.substringBefore('=') == "payload") {
+            URLDecoder.decode(body.substringAfter('='), "UTF-8")
+        } else {
+            body
         }
 }

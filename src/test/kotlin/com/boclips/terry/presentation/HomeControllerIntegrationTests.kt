@@ -233,7 +233,6 @@ class HomeControllerIntegrationTests {
         val payload = transcriptRequestPayload("0_fgc6nmmt")
         postFromSlack(
             body = "payload=${URLEncoder.encode(payload, "utf-8")}",
-            payload = payload,
             contentType = MediaType.APPLICATION_FORM_URLENCODED
         )
             .andExpect(status().isOk)
@@ -407,10 +406,9 @@ class HomeControllerIntegrationTests {
 
     private fun postFromSlack(
         body: String,
-        payload: String = body,
         contentType: MediaType = MediaType.APPLICATION_JSON_UTF8,
         timestamp: Long = validTimestamp(),
-        signature: String = slackSignature.compute(timestamp = timestamp.toString(), body = payload)
+        signature: String = slackSignature.compute(timestamp = timestamp.toString(), body = body)
     ): ResultActions =
         mockMvc.perform(
             post("/slack")

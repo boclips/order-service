@@ -36,7 +36,6 @@ class HomeController(
     @PostMapping("/slack")
     fun slack(
         @RequestBody body: String,
-        @RequestParam payload: String?,
         @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
         @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
     ): ResponseEntity<ControllerResponse> =
@@ -45,7 +44,6 @@ class HomeController(
                 currentTime = System.currentTimeMillis() / 1000,
                 timestamp = timestamp,
                 body = body,
-                payload = payload,
                 signatureClaim = signatureClaim
             )
         )) {
@@ -71,9 +69,6 @@ class HomeController(
             }
             logger.info {
                body
-            }
-            logger.info {
-                payload
             }
         }
 
