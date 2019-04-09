@@ -1,6 +1,7 @@
 package com.boclips.terry.presentation
 
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.terry.infrastructure.FakeClock
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
@@ -30,7 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath
 import java.math.BigDecimal
-import java.net.URLEncoder
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -48,6 +48,9 @@ class HomeControllerIntegrationTests {
     lateinit var slackSignature: SlackSignature
 
     @Autowired
+    lateinit var clock: FakeClock
+
+    @Autowired
     lateinit var videoService: FakeVideoService
 
     @Autowired
@@ -57,6 +60,7 @@ class HomeControllerIntegrationTests {
     fun setUp() {
         slackPoster.reset()
         videoService.reset()
+        clock.reset()
     }
 
     @Test
@@ -229,174 +233,32 @@ class HomeControllerIntegrationTests {
     }
 
     @Test
-    fun `transcript requests (with asterisks encoded as %2A) tag videos in Kaltura`() {
-        val payload = transcriptRequestPayload("0_fgc6nmmt")
-        var encodedAsterisk = "%2A"
+    fun `transcript requests tag videos in Kaltura`() {
+        val fixtureTimestamp: Long = 1554829933
+        val body = transcriptRequestBody("0_fgc6nmmt")
+        val fixtureSignature = "v0=bcbaee6fc659d43ce2e1151f136190de4c3284563981bf4ccf9a045c54d45f3e"
+
+        assertThat(
+            slackSignature.compute(
+                timestamp = fixtureTimestamp.toString(),
+                body = body
+            )
+        ).isEqualTo(fixtureSignature)
+
+        clock.nextTime = fixtureTimestamp
         postFromSlack(
-            body = "payload=${URLEncoder.encode(payload, "utf-8")
-                .replace("video+details+for+1234%3A*","video+details+for+1234%3A$encodedAsterisk")}",
-            contentType = MediaType.APPLICATION_FORM_URLENCODED
+            body = body,
+            contentType = MediaType.APPLICATION_FORM_URLENCODED,
+            signature = fixtureSignature,
+            timestamp = fixtureTimestamp
         )
             .andExpect(status().isOk)
 
         assertThat(kalturaClient.getBaseEntry("0_fgc6nmmt").tags).containsExactly("caption48british")
     }
 
-    private fun transcriptRequestPayload(entryId: String): String =
-            """
-    {
-      "type": "block_actions",
-      "team": {
-        "id": "T04CX5TQC",
-        "domain": "boclips"
-      },
-      "user": {
-        "id": "UBS7V80PR",
-        "username": "andrew",
-        "name": "andrew",
-        "team_id": "T04CX5TQC"
-      },
-      "api_app_id": "AH343GQTZ",
-      "token": "sometoken",
-      "container": {
-        "type": "message",
-        "message_ts": "1554309414.016200",
-        "channel_id": "CH1HFTDT2",
-        "is_ephemeral": false
-      },
-      "trigger_id": "600474721686.4439197828.7925f4d9002c4b77d9773a2ee0763ef4",
-      "channel": {
-        "id": "CH1HFTDT2",
-        "name": "terry-test-output"
-      },
-      "message": {
-        "type": "message",
-        "subtype": "bot_message",
-        "text": "This content can't be displayed.",
-        "ts": "1554309414.016200",
-        "username": "Terry",
-        "bot_id": "BH3ADPWM8",
-        "blocks": [
-          {
-            "type": "section",
-            "block_id": "GUY",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*<@UBS7V80PR> Here are the video details for 1234:*",
-              "verbatim": false
-            }
-          },
-          {
-            "type": "divider",
-            "block_id": "7N86C"
-          },
-          {
-            "type": "section",
-            "block_id": "BhQ9",
-            "text": {
-              "type": "mrkdwn",
-              "text": "Is Islamic State Planning Attacks on the West?",
-              "verbatim": false
-            },
-            "accessory": {
-              "fallback": "435x250px image",
-              "image_url": "https://cdnapisec.kaltura.com/p/1776261/thumbnail/entry_id/0_fgc6nmmt/height/250/vid_slices/3/vid_slice/2",
-              "image_width": 435,
-              "image_height": 250,
-              "image_bytes": 22949,
-              "type": "image",
-              "alt_text": "Is Islamic State Planning Attacks on the West?"
-            }
-          },
-          {
-            "type": "section",
-            "block_id": "5xB4",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*Playback ID*\n$entryId",
-              "verbatim": false
-            }
-          },
-          {
-            "type": "section",
-            "block_id": "m71",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*Playback Provider*\nKaltura",
-              "verbatim": false
-            }
-          },
-          {
-            "type": "section",
-            "block_id": "UXvaU",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*Video ID*\n5c54a6c7d8eafeecae072ca4",
-              "verbatim": false
-            }
-          },
-          {
-            "type": "section",
-            "block_id": "dvNbh",
-            "text": {
-              "type": "mrkdwn",
-              "text": "Request transcript:",
-              "verbatim": false
-            },
-            "accessory": {
-              "type": "static_select",
-              "placeholder": {
-                "type": "plain_text",
-                "text": "Choose transcript type",
-                "emoji": true
-              },
-              "options": [
-                {
-                  "text": {
-                    "type": "plain_text",
-                    "text": "British English",
-                    "emoji": true
-                  },
-                  "value": "british-english"
-                },
-                {
-                  "text": {
-                    "type": "plain_text",
-                    "text": "US English",
-                    "emoji": true
-                  },
-                  "value": "us-english"
-                }
-              ],
-              "action_id": "LGn/v"
-            }
-          }
-        ]
-      },
-      "response_url": "https://hooks.slack.com/actions/T04CX5TQC/599518168997/NrTHISozF3Le5AOQKOAC3aPt",
-      "actions": [
-        {
-          "type": "static_select",
-          "action_id": "LGn/v",
-          "block_id": "dvNbh",
-          "selected_option": {
-            "text": {
-              "type": "plain_text",
-              "text": "British English",
-              "emoji": true
-            },
-            "value": "{\"code\":\"british-english\",\"entryId\":\"$entryId\"}"
-          },
-          "placeholder": {
-            "type": "plain_text",
-            "text": "Choose transcript type",
-            "emoji": true
-          },
-          "action_ts": "1554309417.644885"
-        }
-      ]
-    }
-            """.trimIndent()
+    private fun transcriptRequestBody(entryId: String): String =
+        """payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T04CX5TQC%22%2C%22domain%22%3A%22boclips%22%7D%2C%22user%22%3A%7B%22id%22%3A%22UBS7V80PR%22%2C%22username%22%3A%22andrew%22%2C%22name%22%3A%22andrew%22%2C%22team_id%22%3A%22T04CX5TQC%22%7D%2C%22api_app_id%22%3A%22AH343GQTZ%22%2C%22token%22%3A%22eboarPAkhN2k0rafp4SNNfGh%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22message_ts%22%3A%221554829923.013200%22%2C%22channel_id%22%3A%22CH1HFTDT2%22%2C%22is_ephemeral%22%3Afalse%7D%2C%22trigger_id%22%3A%22596234579393.4439197828.ac1a9302100ccae9475d5c5a7a4ca5ab%22%2C%22channel%22%3A%7B%22id%22%3A%22CH1HFTDT2%22%2C%22name%22%3A%22terry-test-output%22%7D%2C%22message%22%3A%7B%22type%22%3A%22message%22%2C%22subtype%22%3A%22bot_message%22%2C%22text%22%3A%22This+content+can%27t+be+displayed.%22%2C%22ts%22%3A%221554829923.013200%22%2C%22username%22%3A%22Terry%22%2C%22bot_id%22%3A%22BH3ADPWM8%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22yC1E%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2A%3C%40UBS7V80PR%3E+Here+are+the+video+details+for+1234%3A%2A%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22KJi%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ywI%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22fallback%22%3A%22435x250px+image%22%2C%22image_url%22%3A%22https%3A%5C%2F%5C%2Fcdnapisec.kaltura.com%5C%2Fp%5C%2F1776261%5C%2Fthumbnail%5C%2Fentry_id%5C%2F$entryId%5C%2Fheight%5C%2F250%5C%2Fvid_slices%5C%2F3%5C%2Fvid_slice%5C%2F2%22%2C%22image_width%22%3A435%2C%22image_height%22%3A250%2C%22image_bytes%22%3A22949%2C%22type%22%3A%22image%22%2C%22alt_text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ZjhdX%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+ID%2A%5Cn$entryId%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22CSQ%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+Provider%2A%5CnKaltura%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%2264gj7%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AVideo+ID%2A%5Cn5c54a6c7d8eafeecae072ca4%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Request+transcript%3A%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22static_select%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22US+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22us-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%5D%2C%22action_id%22%3A%2278%3D%22%7D%7D%5D%7D%2C%22response_url%22%3A%22https%3A%5C%2F%5C%2Fhooks.slack.com%5C%2Factions%5C%2FT04CX5TQC%5C%2F605457088357%5C%2FoJeQpwXhyqrppUBFrs7beIcp%22%2C%22actions%22%3A%5B%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%2278%3D%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22action_ts%22%3A%221554829933.145715%22%7D%5D%7D"""
 
     private val timestampBufferSeconds = 10
 

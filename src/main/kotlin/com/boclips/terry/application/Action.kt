@@ -1,12 +1,16 @@
 package com.boclips.terry.application
 
+import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.transcripts.TaggingResponse
 import com.boclips.terry.infrastructure.outgoing.videos.VideoServiceResponse
 
 sealed class Action
 
-data class AuthenticityRejection(val reason: String) : Action()
+data class AuthenticityRejection(
+    val request: RawSlackRequest,
+    val reason: String
+) : Action()
 object MalformedRequestRejection : Action()
 data class VerificationResponse(val challenge: String) : Action()
 data class ChatReply(val slackMessage: SlackMessage) : Action()

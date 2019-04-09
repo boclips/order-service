@@ -3,6 +3,8 @@ package com.boclips.terry.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.application.Terry
+import com.boclips.terry.infrastructure.Clock
+import com.boclips.terry.infrastructure.FakeClock
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
@@ -26,8 +28,11 @@ class TestContext {
     @Bean
     fun slackSignature(): SlackSignature = SlackSignature(
         "v0",
-        SLACK_SECRET_KEY_FOR_TEST.toByteArray()
+        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
     )
+
+    @Bean
+    fun clock(): Clock = FakeClock()
 
     @Bean
     fun slackRequestValidator(): SlackRequestValidator = SlackRequestValidator(
@@ -43,5 +48,3 @@ class TestContext {
     fun kalturaClient(): KalturaClient =
         TestKalturaClient()
 }
-
-const val SLACK_SECRET_KEY_FOR_TEST = "foobar"

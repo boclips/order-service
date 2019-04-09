@@ -7,6 +7,7 @@ import com.boclips.terry.application.MalformedRequestRejection
 import com.boclips.terry.application.VerificationResponse
 import com.boclips.terry.application.VideoRetrieval
 import com.boclips.terry.application.VideoTagging
+import com.boclips.terry.infrastructure.Clock
 import com.boclips.terry.infrastructure.incoming.RawSlackRequest
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 class HomeController(
     private val slackRequestValidator: SlackRequestValidator,
+    private val clock: Clock,
     private val slackPoster: SlackPoster,
     private val videoService: VideoService,
     private val kalturaClient: KalturaClient
@@ -40,7 +42,7 @@ class HomeController(
     ): ResponseEntity<ControllerResponse> =
         when (val action = slackRequestValidator.process(
             RawSlackRequest(
-                currentTime = System.currentTimeMillis() / 1000,
+                currentTime = clock.read(),
                 timestamp = timestamp,
                 body = request.reader.use { it.readText() },
                 signatureClaim = signatureClaim
@@ -48,7 +50,10 @@ class HomeController(
         )) {
             is AuthenticityRejection ->
                 unauthorized()
-                    .also { logger.error { action.reason } }
+                    .also {
+                        logger.error { action.reason }
+                        logger.error { action.request.body }
+                    }
             MalformedRequestRejection ->
                 badRequest()
             is ChatReply ->

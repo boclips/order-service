@@ -3,6 +3,8 @@ package com.boclips.terry.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.KalturaClientConfig
 import com.boclips.terry.application.Terry
+import com.boclips.terry.infrastructure.Clock
+import com.boclips.terry.infrastructure.RealClock
 import com.boclips.terry.infrastructure.incoming.SlackRequestValidator
 import com.boclips.terry.infrastructure.incoming.SlackSignature
 import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
@@ -43,6 +45,9 @@ class ProductionContext {
         slackSignature = slackSignature(),
         objectMapper = jacksonObjectMapper()
     )
+
+    @Bean
+    fun clock(): Clock = RealClock()
 
     @Bean
     fun kalturaClient(): KalturaClient = KalturaClient.create(
