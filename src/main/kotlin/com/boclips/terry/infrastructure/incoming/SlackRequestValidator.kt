@@ -16,8 +16,10 @@ class SlackRequestValidator(
 
     fun process(rawSlackRequest: RawSlackRequest): Action =
         when (slackSignature.verify(rawSlackRequest)) {
-            is SignatureMismatch ->
+            is SignatureMismatch -> {
+                logger.debug { rawSlackRequest.body }
                 AuthenticityRejection("Signature mismatch: ${rawSlackRequest.signatureClaim}\nat timestamp: ${rawSlackRequest.timestamp}")
+            }
             is StaleTimestamp ->
                 AuthenticityRejection("Stale timestamp: ${rawSlackRequest.timestamp}")
             Verified ->

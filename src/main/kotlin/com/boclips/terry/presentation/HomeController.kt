@@ -42,10 +42,7 @@ class HomeController(
             RawSlackRequest(
                 currentTime = System.currentTimeMillis() / 1000,
                 timestamp = timestamp,
-                body = request.reader.use {
-                    it.readText()
-                    .also { logger.info { it } }
-                },
+                body = request.reader.use { it.readText() },
                 signatureClaim = signatureClaim
             )
         )) {
