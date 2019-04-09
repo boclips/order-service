@@ -42,10 +42,8 @@ class SlackRequestValidator(
 
     private fun parse(body: String): String =
         if (body.substringBefore('=') == "payload") {
-            logger.debug { "Detected a payload-style request" }
             URLDecoder.decode(body.substringAfter('='), "UTF-8")
         } else {
-            logger.debug { "Regular request" }
             body
         }
 }
