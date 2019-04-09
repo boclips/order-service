@@ -229,10 +229,12 @@ class HomeControllerIntegrationTests {
     }
 
     @Test
-    fun `transcript requests tag videos in Kaltura`() {
+    fun `transcript requests (with asterisks encoded as %2A) tag videos in Kaltura`() {
         val payload = transcriptRequestPayload("0_fgc6nmmt")
+        var encodedAsterisk = "%2A"
         postFromSlack(
-            body = "payload=${URLEncoder.encode(payload, "utf-8")}",
+            body = "payload=${URLEncoder.encode(payload, "utf-8")
+                .replace("video+details+for+1234%3A*","video+details+for+1234%3A$encodedAsterisk")}",
             contentType = MediaType.APPLICATION_FORM_URLENCODED
         )
             .andExpect(status().isOk)

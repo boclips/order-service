@@ -16,10 +16,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 class HomeController(
@@ -35,7 +34,7 @@ class HomeController(
 
     @PostMapping("/slack")
     fun slack(
-        @RequestBody body: String,
+        request: HttpServletRequest,
         @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
         @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
     ): ResponseEntity<ControllerResponse> =
@@ -43,7 +42,7 @@ class HomeController(
             RawSlackRequest(
                 currentTime = System.currentTimeMillis() / 1000,
                 timestamp = timestamp,
-                body = body,
+                body = request.reader.use { it.readText() },
                 signatureClaim = signatureClaim
             )
         )) {
@@ -63,13 +62,6 @@ class HomeController(
             is VideoTagging ->
                 ok()
                     .also { tagVideo(action) }
-        }.also {
-            logger.info {
-                "Incoming message"
-            }
-            logger.info {
-               body
-            }
         }
 
     private fun tagVideo(action: VideoTagging) {
