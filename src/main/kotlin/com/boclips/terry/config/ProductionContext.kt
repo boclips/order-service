@@ -12,10 +12,12 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.HTTPVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.web.filter.HiddenHttpMethodFilter
 
 @EnableAsync
 @Configuration
@@ -57,4 +59,11 @@ class ProductionContext {
             .secret(System.getenv("KALTURA_SECRET"))
             .build()
     )
+
+    @Bean
+    fun removeFiltersToAllowAccessToRawRequestBody(filter: HiddenHttpMethodFilter): FilterRegistrationBean<*> {
+        val registration = FilterRegistrationBean(filter)
+        registration.isEnabled = false
+        return registration
+    }
 }
