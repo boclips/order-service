@@ -35,17 +35,13 @@ class HomeController(
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
     @PostMapping("/slack")
-    fun slack(
-        request: HttpServletRequest,
-        @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
-        @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
-    ): ResponseEntity<ControllerResponse> =
+    fun slack(request: HttpServletRequest): ResponseEntity<ControllerResponse> =
         when (val action = slackRequestValidator.process(
             RawSlackRequest(
                 currentTime = clock.read(),
-                timestamp = timestamp,
+                timestamp = request.getHeader("X-Slack-Request-Timestamp"),
                 body = request.reader.use { it.readText() },
-                signatureClaim = signatureClaim
+                signatureClaim = request.getHeader("X-Slack-Signature")
             )
         )) {
             is AuthenticityRejection ->
