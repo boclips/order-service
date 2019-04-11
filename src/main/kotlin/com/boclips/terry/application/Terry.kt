@@ -94,8 +94,7 @@ class Terry {
     private fun handleEventNotification(event: SlackEvent): Decision =
         when (event) {
             is AppMention -> {
-                val pattern = """.*video ([^ ]+).*""".toRegex()
-                pattern.matchEntire(event.text)?.groups?.get(1)?.value?.let { videoId ->
+                extractVideoId(event.text)?.let { videoId ->
                     Decision(
                         log = "Retrieving video ID $videoId",
                         action = VideoRetrieval(videoId) { videoServiceResponse ->
@@ -141,6 +140,11 @@ class Terry {
                     )
                 )
             }
+        }
+
+    private fun extractVideoId(text: String): String? =
+        """.*video ([^ ]+).*""".toRegex().let { pattern ->
+            pattern.matchEntire(text)?.groups?.get(1)?.value
         }
 
     private fun helpFor(user: String): String = "<@$user> ${help()}"
