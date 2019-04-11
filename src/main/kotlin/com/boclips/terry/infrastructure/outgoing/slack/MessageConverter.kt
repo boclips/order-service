@@ -15,97 +15,92 @@ class MessageConverter {
     private fun messageToView(slackMessage: SlackMessage): SlackView =
         slackMessage.slackMessageVideos
             .fold(emptyList()) { acc: List<SlackViewBlock>, slackMessageVideo: SlackMessageVideo ->
-                acc + listOf(
-                    SlackViewDivider,
-                    SlackViewSection(
-                        type = "section",
-                        text = SlackViewText(
-                            type = "mrkdwn",
-                            text = slackMessageVideo.title
-                        ),
-                        accessory = SlackViewAccessory(
-                            type = "image",
-                            imageUrl = slackMessageVideo.imageUrl,
-                            altText = slackMessageVideo.title
-                        )
-                    ),
-                    SlackViewSection(
-                        type = "section",
-                        text = SlackViewText(
-                            type = "mrkdwn",
-                            text = "*Playback ID*\n${slackMessageVideo.playbackId}"
-                        ),
-                        accessory = null
-                    ),
-                    SlackViewSection(
-                        type = "section",
-                        text = SlackViewText(
-                            type = "mrkdwn",
-                            text = "*Playback Provider*\n${slackMessageVideo.type}"
-                        ),
-                        accessory = null
-                    ),
-                    SlackViewSection(
-                        type = "section",
-                        text = SlackViewText(
-                            type = "mrkdwn",
-                            text = "*Video ID*\n${slackMessageVideo.videoId}"
-                        ),
-                        accessory = null
-                    ),
-                    SlackViewSection(
-                        type = "section",
-                        text = SlackViewText(
-                            type = "mrkdwn",
-                            text = "Request transcript:"
-                        ),
-                        accessory = SlackViewAccessory(
-                            type = "static_select",
-                            placeholder = SlackViewText(
-                                type = "plain_text",
-                                text = "Choose transcript type"
-                            ),
-                            options = listOf(
-                                SlackViewSelectOption(
-                                    text = SlackViewText(
-                                        type = "plain_text",
-                                        text = "British English"
-                                    ),
-                                    value = createTranscriptValueJson(
-                                        code = "british-english",
-                                        slackMessageVideo = slackMessageVideo
-                                    )
-                                ),
-                                SlackViewSelectOption(
-                                    text = SlackViewText(
-                                        type = "plain_text",
-                                        text = "US English"
-                                    ),
-                                    value = createTranscriptValueJson(
-                                        code = "us-english",
-                                        slackMessageVideo = slackMessageVideo
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
+                acc + standardSections(slackMessageVideo) + interactiveSections(slackMessageVideo)
             }
             .let { videoBlocks ->
                 SlackView(
                     channel = slackMessage.channel,
                     blocks = listOf(
-                        SlackViewSection(
-                            type = "section",
-                            text = SlackViewText(
-                                type = "mrkdwn",
-                                text = "*${slackMessage.text}*"
-                            ),
-                            accessory = null
-                        )
+                        textSection("*${slackMessage.text}*")
                     ) + videoBlocks
                 )
             }
+
+    private fun standardSections(slackMessageVideo: SlackMessageVideo): List<SlackViewBlock> {
+        return listOf(
+            SlackViewDivider,
+            SlackViewSection(
+                type = "section",
+                text = SlackViewText(
+                    type = "mrkdwn",
+                    text = slackMessageVideo.title
+                ),
+                accessory = SlackViewAccessory(
+                    type = "image",
+                    imageUrl = slackMessageVideo.imageUrl,
+                    altText = slackMessageVideo.title
+                )
+            ),
+            textSection("*Playback ID*\n${slackMessageVideo.playbackId}"),
+            textSection("*Playback Provider*\n${slackMessageVideo.type}"),
+            textSection("*Video ID*\n${slackMessageVideo.videoId}")
+        )
+    }
+
+    private fun interactiveSections(slackMessageVideo: SlackMessageVideo): List<SlackViewBlock> =
+        if (slackMessageVideo.type == "Kaltura") {
+            listOf(
+                SlackViewSection(
+                    type = "section",
+                    text = SlackViewText(
+                        type = "mrkdwn",
+                        text = "Request transcript:"
+                    ),
+                    accessory = SlackViewAccessory(
+                        type = "static_select",
+                        placeholder = SlackViewText(
+                            type = "plain_text",
+                            text = "Choose transcript type"
+                        ),
+                        options = listOf(
+                            SlackViewSelectOption(
+                                text = SlackViewText(
+                                    type = "plain_text",
+                                    text = "British English"
+                                ),
+                                value = createTranscriptValueJson(
+                                    code = "british-english",
+                                    slackMessageVideo = slackMessageVideo
+                                )
+                            ),
+                            SlackViewSelectOption(
+                                text = SlackViewText(
+                                    type = "plain_text",
+                                    text = "US English"
+                                ),
+                                value = createTranscriptValueJson(
+                                    code = "us-english",
+                                    slackMessageVideo = slackMessageVideo
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        } else {
+            emptyList()
+        }
+
+    private fun textSection(text: String): SlackViewSection {
+        return SlackViewSection(
+            type = "section",
+            text = SlackViewText(
+                type = "mrkdwn",
+                text = text
+            ),
+            accessory = null
+        )
+    }
 
     private fun createTranscriptValueJson(code: String, slackMessageVideo: SlackMessageVideo): String {
         val transcriptRequest = TranscriptVideoCode(

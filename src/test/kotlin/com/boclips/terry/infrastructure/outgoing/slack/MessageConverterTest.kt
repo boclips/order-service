@@ -16,7 +16,7 @@ class MessageConverterTest {
                         imageUrl = "https://api.slack.com/img/blocks/bkb_template_images/palmtree.png",
                         title = "a lovely video",
                         videoId = "the-video-id123",
-                        type = "YouTube",
+                        type = "Kaltura",
                         playbackId = "1234"
                     )
                 )
@@ -60,7 +60,7 @@ class MessageConverterTest {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*Playback Provider*\nYouTube"
+                            "text": "*Playback Provider*\nKaltura"
                         }
                     },
                     {
@@ -104,6 +104,34 @@ class MessageConverterTest {
             }
             """
             )
+        }
+    }
+
+    @Test
+    fun `non-Kaltura videos don't show interactive elements yet`() {
+        MessageConverter().convert(
+            SlackMessage(
+                channel = "a channel",
+                text = "some text",
+                slackMessageVideos = listOf(
+                    SlackMessageVideo(
+                        imageUrl = "https://api.slack.com/img/blocks/bkb_template_images/palmtree.png",
+                        title = "a lovely video",
+                        videoId = "the-video-id123",
+                        type = "YouTube",
+                        playbackId = "1234"
+                    )
+                )
+            )
+        ).let { converted ->
+            assertThat(converted.blocks.mapNotNull {
+                when (it) {
+                    is SlackViewSection ->
+                        it.accessory?.type
+                    SlackViewDivider ->
+                        null
+                }
+            }).doesNotContain("static_select")
         }
     }
 }
