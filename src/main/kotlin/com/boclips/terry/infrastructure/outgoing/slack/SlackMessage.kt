@@ -14,9 +14,14 @@ data class SlackMessageVideo(
     val color: String = "good",
     val title: String,
     val videoId: String,
-    val type: String,
+    val type: SlackMessageVideoType,
     val playbackId: String?
-)
+) {
+    enum class SlackMessageVideoType(val provider: String) {
+        YOUTUBE("YouTube"),
+        KALTURA("Kaltura")
+    }
+}
 
 data class SlackView(
     val channel: String,

@@ -9,6 +9,7 @@ import com.boclips.terry.infrastructure.incoming.SlackRequest
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
 import com.boclips.terry.infrastructure.outgoing.slack.TranscriptVideoCode
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
 import com.boclips.terry.infrastructure.outgoing.transcripts.Success
@@ -102,14 +103,14 @@ class Terry {
                                 is FoundKalturaVideo ->
                                     replyWithVideo(
                                         foundVideo = videoServiceResponse,
-                                        type = "Kaltura",
+                                        type = KALTURA,
                                         event = event,
                                         requestVideoId = videoId
                                     )
                                 is FoundYouTubeVideo ->
                                     replyWithVideo(
                                         foundVideo = videoServiceResponse,
-                                        type = "YouTube",
+                                        type = YOUTUBE,
                                         event = event,
                                         requestVideoId = videoId
                                     )
@@ -150,7 +151,7 @@ class Terry {
     private fun helpFor(user: String): String = "<@$user> ${help()}"
     private fun help(): String = "I don't do much yet"
 
-    private fun replyWithVideo(foundVideo: FoundVideo, type: String, event: AppMention, requestVideoId: String) =
+    private fun replyWithVideo(foundVideo: FoundVideo, type: SlackMessageVideo.SlackMessageVideoType, event: AppMention, requestVideoId: String) =
         ChatReply(
             slackMessage = SlackMessage(
                 channel = event.channel,

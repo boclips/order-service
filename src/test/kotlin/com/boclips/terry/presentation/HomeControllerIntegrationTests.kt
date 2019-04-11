@@ -7,6 +7,7 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.PostSuccess
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
 import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.FoundKalturaVideo
 import org.assertj.core.api.Assertions.assertThat
@@ -223,7 +224,7 @@ class HomeControllerIntegrationTests {
                             imageUrl = "blahblah",
                             title = "Boclips 4evah",
                             videoId = "resolvedId",
-                            type = "Kaltura",
+                            type = KALTURA,
                             playbackId = "agreatplayback"
                         )
                     )

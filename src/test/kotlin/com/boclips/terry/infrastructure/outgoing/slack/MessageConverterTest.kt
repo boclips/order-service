@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ class MessageConverterTest {
                         imageUrl = "https://api.slack.com/img/blocks/bkb_template_images/palmtree.png",
                         title = "a lovely video",
                         videoId = "the-video-id123",
-                        type = "Kaltura",
+                        type = KALTURA,
                         playbackId = "1234"
                     )
                 )
@@ -118,7 +119,7 @@ class MessageConverterTest {
                         imageUrl = "https://api.slack.com/img/blocks/bkb_template_images/palmtree.png",
                         title = "a lovely video",
                         videoId = "the-video-id123",
-                        type = "YouTube",
+                        type = YOUTUBE,
                         playbackId = "1234"
                     )
                 )

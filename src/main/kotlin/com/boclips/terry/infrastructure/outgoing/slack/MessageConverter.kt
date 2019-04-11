@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
@@ -42,13 +43,13 @@ class MessageConverter {
                 )
             ),
             textSection("*Playback ID*\n${slackMessageVideo.playbackId}"),
-            textSection("*Playback Provider*\n${slackMessageVideo.type}"),
+            textSection("*Playback Provider*\n${slackMessageVideo.type.provider}"),
             textSection("*Video ID*\n${slackMessageVideo.videoId}")
         )
     }
 
     private fun interactiveSections(slackMessageVideo: SlackMessageVideo): List<SlackViewBlock> =
-        if (slackMessageVideo.type == "Kaltura") {
+        if (slackMessageVideo.type == KALTURA) {
             listOf(
                 SlackViewSection(
                     type = "section",

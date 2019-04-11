@@ -9,6 +9,7 @@ import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
 import com.boclips.terry.infrastructure.outgoing.transcripts.Success
 import com.boclips.terry.infrastructure.outgoing.videos.Error
@@ -104,7 +105,7 @@ class TerryTests {
                                         imageUrl = "validurl",
                                         title = "Boclips 4evah",
                                         videoId = "abcdefg",
-                                        type = "Kaltura",
+                                        type = KALTURA,
                                         playbackId = "1234"
                                     )
                                 )
@@ -145,7 +146,7 @@ class TerryTests {
                                         imageUrl = "validurl",
                                         title = "Boclips 4evah",
                                         videoId = "abcdefg",
-                                        type = "YouTube",
+                                        type = YOUTUBE,
                                         playbackId = "1234"
                                     )
                                 )
