@@ -238,7 +238,7 @@ class TerryTests {
     }
 
     @Test
-    fun `successful transcript request triggers a chat message with the title of the video`() {
+    fun `successful transcript request triggers a chat message with the entry ID of the video`() {
         when (val action = Terry().receiveSlack(
             BlockActions(
                 actions = listOf(
@@ -257,7 +257,7 @@ class TerryTests {
                         ChatReply(
                             slackMessage = SlackMessage(
                                 channel = "#orders",
-                                text = """<@THAD666> OK, I requested a transcript for "Interview with Oasis"."""
+                                text = """<@THAD666> OK, I requested a transcript for "interviewWithOasis"."""
                             )
                         )
                     )
@@ -286,7 +286,7 @@ class TerryTests {
                         ChatReply(
                             slackMessage = SlackMessage(
                                 channel = "#orders",
-                                text = """<@THAD666> Sorry! I don't think "Interview with Blur" could be tagged: "Kaltura fail"."""
+                                text = """<@THAD666> Sorry! I don't think "interviewWithBlur" could be tagged: "Kaltura fail"."""
                             )
                         )
                     )
