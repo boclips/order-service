@@ -91,16 +91,9 @@ class MessageConverterTest {
                                 {
                                     "text": {
                                         "type": "plain_text",
-                                        "text": "Arabic captions for Arabic video"
+                                        "text": "Arabic to Arabic"
                                     },
                                     "value": "{\"code\":\"arabic\",\"entryId\":\"1234\"}"
-                                },
-                                {
-                                    "text": {
-                                        "type": "plain_text",
-                                        "text": "Arabic captions for English video"
-                                    },
-                                    "value": "{\"code\":\"english-arabic-translation\",\"entryId\":\"1234\"}"
                                 },
                                 {
                                     "text": {
@@ -108,6 +101,13 @@ class MessageConverterTest {
                                         "text": "British English"
                                     },
                                     "value": "{\"code\":\"british-english\",\"entryId\":\"1234\"}"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "English to Arabic"
+                                    },
+                                    "value": "{\"code\":\"english-arabic-translation\",\"entryId\":\"1234\"}"
                                 },
                                 {
                                     "text": {
