@@ -266,7 +266,7 @@ class HomeControllerIntegrationTests {
             listOf(
                 SlackMessage(
                     channel = "CH1HFTDT2",
-                    text = """<@UBS7V80PR> OK, I requested a transcript for "0_fgc6nmmt"."""
+                    text = """<@UBS7V80PR> OK, I requested a transcript for "0_fgc6nmmt" (British English)."""
                 )
             )
         )

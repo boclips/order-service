@@ -10,7 +10,7 @@ import com.boclips.terry.infrastructure.incoming.VerificationRequest
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
-import com.boclips.terry.infrastructure.outgoing.slack.TranscriptVideoCode
+import com.boclips.terry.infrastructure.outgoing.slack.TranscriptCodeForEntryId
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
 import com.boclips.terry.infrastructure.outgoing.transcripts.Success
 import com.boclips.terry.infrastructure.outgoing.videos.Error
@@ -21,13 +21,23 @@ import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
+data class TranscriptCode(
+    val tag: String,
+    val displayName: String
+)
+
 class Terry {
-    private val transcriptCodeToKalturaTag = mapOf(
-        "british-english" to "caption48british",
-        "us-english" to "caption48",
-        "arabic" to "arabic48",
-        "english-arabic-translation" to "englisharabic48"
-    )
+    companion object {
+        val transcriptCodeToKalturaTag = mapOf(
+            "british-english" to TranscriptCode(tag = "caption48british", displayName = "British English"),
+            "us-english" to TranscriptCode(tag = "caption48", displayName = "US English"),
+            "arabic" to TranscriptCode(tag = "arabic48", displayName = "Arabic captions for Arabic video"),
+            "english-arabic-translation" to TranscriptCode(
+                tag = "englisharabic48",
+                displayName = "Arabic captions for English video"
+            )
+        )
+    }
 
     fun receiveSlack(request: SlackRequest): Decision =
         when (request) {
@@ -54,10 +64,10 @@ class Terry {
         )
 
     private fun transcriptResponse(request: TranscriptRequest): Action =
-        transcriptCodeToKalturaTag[request.code]?.let { kalturaTag ->
+        transcriptCodeToKalturaTag[request.code]?.let { transcriptCode ->
             VideoTagging(
                 entryId = request.entryId,
-                tag = kalturaTag,
+                tag = transcriptCode.tag,
                 responseUrl = request.responseUrl,
                 onComplete =
                 { response ->
@@ -66,7 +76,7 @@ class Terry {
                             ChatReply(
                                 slackMessage = SlackMessage(
                                     channel = request.channel,
-                                    text = """<@${request.user}> OK, I requested a transcript for "${response.entryId}"."""
+                                    text = """<@${request.user}> OK, I requested a transcript for "${response.entryId}" (${transcriptCode.displayName})."""
                                 )
                             )
                         is Failure ->
@@ -81,7 +91,7 @@ class Terry {
         } ?: MalformedRequestRejection
 
     private fun blockActionsToTranscriptRequest(blockActions: BlockActions): TranscriptRequest =
-        (jacksonObjectMapper().readValue(blockActions.actions.first().selectedOption.value) as TranscriptVideoCode)
+        (jacksonObjectMapper().readValue(blockActions.actions.first().selectedOption.value) as TranscriptCodeForEntryId)
             .let { videoCode ->
                 TranscriptRequest(
                     entryId = videoCode.entryId,
@@ -151,7 +161,12 @@ class Terry {
     private fun helpFor(user: String): String = "<@$user> ${help()}"
     private fun help(): String = "I don't do much yet"
 
-    private fun replyWithVideo(foundVideo: FoundVideo, type: SlackMessageVideo.SlackMessageVideoType, event: AppMention, requestVideoId: String) =
+    private fun replyWithVideo(
+        foundVideo: FoundVideo,
+        type: SlackMessageVideo.SlackMessageVideoType,
+        event: AppMention,
+        requestVideoId: String
+    ) =
         ChatReply(
             slackMessage = SlackMessage(
                 channel = event.channel,

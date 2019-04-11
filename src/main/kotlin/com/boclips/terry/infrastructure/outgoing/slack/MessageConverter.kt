@@ -1,10 +1,12 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
+import com.boclips.terry.application.Terry
+import com.boclips.terry.application.TranscriptCode
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
-data class TranscriptVideoCode(
+data class TranscriptCodeForEntryId(
     val code: String,
     val entryId: String
 )
@@ -63,28 +65,20 @@ class MessageConverter {
                             type = "plain_text",
                             text = "Choose transcript type"
                         ),
-                        options = listOf(
-                            SlackViewSelectOption(
-                                text = SlackViewText(
-                                    type = "plain_text",
-                                    text = "British English"
-                                ),
-                                value = createTranscriptValueJson(
-                                    code = "british-english",
-                                    slackMessageVideo = slackMessageVideo
+                        options = Terry.transcriptCodeToKalturaTag.entries
+                            .map { entry ->
+                                SlackViewSelectOption(
+                                    text = SlackViewText(
+                                        type = "plain_text",
+                                        text = entry.value.displayName
+                                    ),
+                                    value = createTranscriptValueJson(
+                                        code = entry.key,
+                                        slackMessageVideo = slackMessageVideo
+                                    )
                                 )
-                            ),
-                            SlackViewSelectOption(
-                                text = SlackViewText(
-                                    type = "plain_text",
-                                    text = "US English"
-                                ),
-                                value = createTranscriptValueJson(
-                                    code = "us-english",
-                                    slackMessageVideo = slackMessageVideo
-                                )
-                            )
-                        )
+                            }
+                            .sortedBy { entry -> entry.text.text }
                     )
                 )
             )
@@ -104,7 +98,7 @@ class MessageConverter {
     }
 
     private fun createTranscriptValueJson(code: String, slackMessageVideo: SlackMessageVideo): String {
-        val transcriptRequest = TranscriptVideoCode(
+        val transcriptRequest = TranscriptCodeForEntryId(
             code = code,
             entryId = slackMessageVideo.playbackId!!
         )

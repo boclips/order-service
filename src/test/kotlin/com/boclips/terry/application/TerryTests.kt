@@ -258,7 +258,7 @@ class TerryTests {
                         ChatReply(
                             slackMessage = SlackMessage(
                                 channel = "#orders",
-                                text = """<@THAD666> OK, I requested a transcript for "interviewWithOasis"."""
+                                text = """<@THAD666> OK, I requested a transcript for "interviewWithOasis" (British English)."""
                             )
                         )
                     )

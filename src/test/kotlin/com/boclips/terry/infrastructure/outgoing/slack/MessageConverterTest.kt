@@ -4,6 +4,9 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMe
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
+import org.skyscreamer.jsonassert.comparator.DefaultComparator
 
 class MessageConverterTest {
     @Test
@@ -23,7 +26,8 @@ class MessageConverterTest {
                 )
             )
         ).let { converted ->
-            assertThat(jacksonObjectMapper().writeValueAsString(converted)).isEqualToIgnoringWhitespace(
+            JSONAssert.assertEquals(
+                "Bad message conversion:",
                 """
             {
                 "channel": "a channel",
@@ -87,6 +91,20 @@ class MessageConverterTest {
                                 {
                                     "text": {
                                         "type": "plain_text",
+                                        "text": "Arabic captions for Arabic video"
+                                    },
+                                    "value": "{\"code\":\"arabic\",\"entryId\":\"1234\"}"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "Arabic captions for English video"
+                                    },
+                                    "value": "{\"code\":\"english-arabic-translation\",\"entryId\":\"1234\"}"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
                                         "text": "British English"
                                     },
                                     "value": "{\"code\":\"british-english\",\"entryId\":\"1234\"}"
@@ -103,7 +121,9 @@ class MessageConverterTest {
                     }
                 ]
             }
-            """
+            """,
+                jacksonObjectMapper().writeValueAsString(converted),
+                DefaultComparator(JSONCompareMode.STRICT)
             )
         }
     }
