@@ -29,12 +29,21 @@ data class TranscriptCode(
 class Terry {
     companion object {
         val transcriptCodeToKalturaTag = mapOf(
-            "british-english" to TranscriptCode(tag = "caption48british", displayName = "British English"),
-            "us-english" to TranscriptCode(tag = "caption48", displayName = "US English"),
-            "arabic" to TranscriptCode(tag = "arabic48", displayName = "Arabic captions for Arabic video"),
+            "british-english" to TranscriptCode(
+                tag = "caption48british",
+                displayName = "British English"
+            ),
+            "us-english" to TranscriptCode(
+                tag = "caption48",
+                displayName = "US English"
+            ),
+            "arabic" to TranscriptCode(
+                tag = "arabic48",
+                displayName = "Arabic to Arabic"
+            ),
             "english-arabic-translation" to TranscriptCode(
                 tag = "englisharabic48",
-                displayName = "Arabic captions for English video"
+                displayName = "English to Arabic"
             )
         )
     }
