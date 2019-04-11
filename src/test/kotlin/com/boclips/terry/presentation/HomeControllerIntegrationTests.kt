@@ -147,7 +147,7 @@ class HomeControllerIntegrationTests {
                     "funny_unknown_property": "to-test-ignoring-unknown-properties",
                     "type": "app_mention",
                     "user": "U061F7AUR",
-                    "text": "What ever happened to <@U0LAN0Z89>?",
+                    "text": "What ever *happened* to <@U0LAN0Z89>?",
                     "ts": "1515449438.000011",
                     "channel": "C0LAN2Q65",
                     "event_ts": "1515449438000011"

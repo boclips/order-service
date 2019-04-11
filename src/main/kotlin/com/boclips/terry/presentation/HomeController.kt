@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
@@ -35,13 +36,17 @@ class HomeController(
     fun index() = "<h1>Do as I say, and do not do as I do</h1>"
 
     @PostMapping("/slack")
-    fun slack(request: HttpServletRequest): ResponseEntity<ControllerResponse> =
+    fun slack(
+        @RequestBody body: String,
+        @RequestHeader(value = "X-Slack-Request-Timestamp") timestamp: String,
+        @RequestHeader(value = "X-Slack-Signature") signatureClaim: String
+    ): ResponseEntity<ControllerResponse> =
         when (val action = slackRequestValidator.process(
             RawSlackRequest(
                 currentTime = clock.read(),
-                timestamp = request.getHeader("X-Slack-Request-Timestamp"),
-                body = request.reader.use { it.readText() },
-                signatureClaim = request.getHeader("X-Slack-Signature")
+                timestamp = timestamp,
+                body = body,
+                signatureClaim = signatureClaim
             )
         )) {
             is AuthenticityRejection ->

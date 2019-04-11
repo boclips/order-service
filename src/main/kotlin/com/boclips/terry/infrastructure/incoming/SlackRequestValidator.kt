@@ -15,7 +15,13 @@ class SlackRequestValidator(
     companion object : KLogging()
 
     fun process(rawSlackRequest: RawSlackRequest): Action =
-        when (slackSignature.verify(rawSlackRequest)) {
+        when (slackSignature.verify(rawSlackRequest.let { request ->
+            if (request.body.startsWith("payload=%7B")) {
+                request.copy(body = request.body.replace("*", "%2A"))
+            } else {
+                request
+            }
+        })) {
             is SignatureMismatch -> {
                 AuthenticityRejection(
                     reason = "Signature mismatch: ${rawSlackRequest.signatureClaim}\nat timestamp: ${rawSlackRequest.timestamp}",
