@@ -54,24 +54,29 @@ class Terry {
 
     private fun transcriptResponse(request: TranscriptRequest): Action =
         transcriptCodeToKalturaTag[request.code]?.let { kalturaTag ->
-            VideoTagging(entryId = request.entryId, tag = kalturaTag) { response ->
-                when (response) {
-                    is Success ->
-                        ChatReply(
-                            slackMessage = SlackMessage(
-                                channel = request.channel,
-                                text = """<@${request.user}> OK, I requested a transcript for "${response.title}"."""
+            VideoTagging(
+                entryId = request.entryId,
+                tag = kalturaTag,
+                responseUrl = request.responseUrl,
+                onComplete =
+                { response ->
+                    when (response) {
+                        is Success ->
+                            ChatReply(
+                                slackMessage = SlackMessage(
+                                    channel = request.channel,
+                                    text = """<@${request.user}> OK, I requested a transcript for "${response.entryId}"."""
+                                )
                             )
-                        )
-                    is Failure ->
-                        ChatReply(
-                            slackMessage = SlackMessage(
-                                channel = request.channel,
-                                text = """<@${request.user}> Sorry! I don't think "${response.title}" could be tagged: "${response.error}"."""
+                        is Failure ->
+                            ChatReply(
+                                slackMessage = SlackMessage(
+                                    channel = request.channel,
+                                    text = """<@${request.user}> Sorry! I don't think "${response.entryId}" could be tagged: "${response.error}"."""
+                                )
                             )
-                        )
-                }
-            }
+                    }
+                })
         } ?: MalformedRequestRejection
 
     private fun blockActionsToTranscriptRequest(blockActions: BlockActions): TranscriptRequest =
@@ -81,7 +86,8 @@ class Terry {
                     entryId = videoCode.entryId,
                     code = videoCode.code,
                     channel = blockActions.channel.id,
-                    user = blockActions.user.id
+                    user = blockActions.user.id,
+                    responseUrl = blockActions.responseUrl
                 )
             }
 
@@ -162,5 +168,6 @@ data class TranscriptRequest(
     val entryId: String,
     val channel: String,
     val user: String,
-    val code: String
+    val code: String,
+    val responseUrl: String
 )

@@ -22,5 +22,6 @@ data class VideoRetrieval(
 data class VideoTagging(
     val entryId: String,
     val tag: String,
-    val onComplete: (TaggingResponse) -> ChatReply
+    val onComplete: (TaggingResponse) -> ChatReply,
+    val responseUrl: String
 ) : Action()

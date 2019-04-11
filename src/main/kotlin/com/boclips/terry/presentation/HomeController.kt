@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletRequest
 
 @RestController
 class HomeController(
@@ -94,7 +93,7 @@ class HomeController(
             videoService = videoService,
             kalturaClient = kalturaClient
         )
-            .chat(action.slackMessage)
+            .chat(action.slackMessage, "https://slack.com/api/chat.postMessage")
     }
 
     private fun ok(obj: ControllerResponse = Success) =

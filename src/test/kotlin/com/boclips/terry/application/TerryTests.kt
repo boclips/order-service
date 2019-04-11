@@ -212,7 +212,8 @@ class TerryTests {
                         )
                     ),
                     channel = BlockActionIdentifiable(id = "#orders"),
-                    user = BlockActionIdentifiable(id = "THAD666")
+                    user = BlockActionIdentifiable(id = "THAD666"),
+                    responseUrl = "https://response.to.me/please"
                 )
             ).action as VideoTagging).tag
         ).isEqualTo("caption48british")
@@ -229,7 +230,8 @@ class TerryTests {
                         )
                     ),
                     channel = BlockActionIdentifiable(id = "#orders"),
-                    user = BlockActionIdentifiable(id = "THAD666")
+                    user = BlockActionIdentifiable(id = "THAD666"),
+                    responseUrl = "http://www.example.com/"
                 )
             ).action
         ).isInstanceOf(MalformedRequestRejection::class.java)
@@ -245,11 +247,12 @@ class TerryTests {
                     )
                 ),
                 channel = BlockActionIdentifiable(id = "#orders"),
-                user = BlockActionIdentifiable(id = "THAD666")
+                user = BlockActionIdentifiable(id = "THAD666"),
+                responseUrl = "https://my.response.url"
             )
         ).action) {
             is VideoTagging ->
-                assertThat(action.onComplete(Success(title = "Interview with Oasis")))
+                assertThat(action.onComplete(Success(entryId = "interviewWithOasis")))
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(
@@ -273,11 +276,12 @@ class TerryTests {
                     )
                 ),
                 channel = BlockActionIdentifiable(id = "#orders"),
-                user = BlockActionIdentifiable(id = "THAD666")
+                user = BlockActionIdentifiable(id = "THAD666"),
+                responseUrl = "http://hit.me.up"
             )
         ).action) {
             is VideoTagging ->
-                assertThat(action.onComplete(Failure(title = "Interview with Blur", error = "Kaltura fail")))
+                assertThat(action.onComplete(Failure(entryId = "interviewWithBlur", error = "Kaltura fail")))
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(

@@ -19,20 +19,26 @@ open class HomeControllerJobs(
     open fun getVideo(action: VideoRetrieval) {
         action
             .onComplete(videoService.get(action.videoId))
-            .apply { chat(slackMessage) }
+            .apply { chat(slackMessage, "https://slack.com/api/chat.postMessage") }
     }
 
     @Async
-    open fun chat(slackMessage: SlackMessage): Unit =
-        when (slackPoster.chatPostMessage(slackMessage)) {
+    open fun tagVideo(action: VideoTagging) {
+        kalturaClient.tag(action.entryId, listOf(action.tag))
+        chat(
+            action.onComplete(
+                com.boclips.terry.infrastructure.outgoing.transcripts.Success(entryId = action.entryId)
+            ).slackMessage,
+            action.responseUrl
+        )
+    }
+
+    @Async
+    open fun chat(slackMessage: SlackMessage, url: String): Unit =
+        when (slackPoster.chatPostMessage(slackMessage, url = url)) {
             is PostSuccess ->
                 HomeController.logger.debug { "Successful post of $slackMessage" }
             is PostFailure ->
                 HomeController.logger.error { "Failed post to Slack" }
         }
-
-    @Async
-    open fun tagVideo(action: VideoTagging) {
-        kalturaClient.tag(action.entryId, listOf(action.tag))
-    }
 }

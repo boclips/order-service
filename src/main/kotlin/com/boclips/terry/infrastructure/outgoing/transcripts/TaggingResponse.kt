@@ -3,10 +3,10 @@ package com.boclips.terry.infrastructure.outgoing.transcripts
 sealed class TaggingResponse
 
 data class Success(
-    val title: String
+    val entryId: String
 ) : TaggingResponse()
 
 data class Failure(
-    val title: String,
+    val entryId: String,
     val error: String
 ) : TaggingResponse()

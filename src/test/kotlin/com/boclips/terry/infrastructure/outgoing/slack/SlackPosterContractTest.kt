@@ -13,7 +13,6 @@ class FakeSlackPosterTests : SlackPosterTests() {
         poster = FakeSlackPoster().respondWith(
             PostSuccess(timestamp = BigDecimal(System.currentTimeMillis() / 1000 + 1))
         )
-        failingPoster = FakeSlackPoster().respondWith(PostFailure(message = "401 UNAUTHORIZED"))
     }
 }
 
@@ -21,12 +20,7 @@ class HTTPSlackPosterTests : SlackPosterTests() {
     @BeforeEach
     fun setUp() {
         poster = HTTPSlackPoster(
-            slackURI = "https://slack.com/api/chat.postMessage",
             botToken = System.getenv("SLACK_BOT_TOKEN")
-        )
-        failingPoster = HTTPSlackPoster(
-            slackURI = "https://httpbin.org/status/401",
-            botToken = "bad-token"
         )
     }
 }
@@ -34,7 +28,6 @@ class HTTPSlackPosterTests : SlackPosterTests() {
 @Disabled
 abstract class SlackPosterTests {
     var poster: SlackPoster? = null
-    var failingPoster: SlackPoster? = null
     private val timeout = BigDecimal(30)
 
     @Test
@@ -53,7 +46,8 @@ abstract class SlackPosterTests {
                         playbackId = "12345561359"
                     )
                 )
-            )
+            ),
+            url = "https://slack.com/api/chat.postMessage"
         )
         when (response) {
             is PostSuccess ->
@@ -67,11 +61,12 @@ abstract class SlackPosterTests {
 
     @Test
     fun `failures produce PostFailures`() {
-        when (val response = failingPoster!!.chatPostMessage(
+        when (val response = poster!!.chatPostMessage(
             SlackMessage(
                 text = "I hope this won't work",
                 channel = "#terry-test-output"
-            )
+            ),
+            url = "https://httpbin.org/status/401"
         )) {
             is PostSuccess ->
                 fail<String>("Expected post to Slack to fail, but it was successful: $response")

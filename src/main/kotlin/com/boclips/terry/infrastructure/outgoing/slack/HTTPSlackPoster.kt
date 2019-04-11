@@ -9,17 +9,16 @@ import org.springframework.web.client.postForObject
 import java.math.BigDecimal
 
 class HTTPSlackPoster(
-    private val slackURI: String,
     private val botToken: String
 ) : SlackPoster {
-    override fun chatPostMessage(slackMessage: SlackMessage): PosterResponse {
+    override fun chatPostMessage(slackMessage: SlackMessage, url: String): PosterResponse {
         val headers = HttpHeaders()
         headers.set("Authorization", "Bearer $botToken")
         val body = MessageConverter().convert(slackMessage)
         val entity = HttpEntity(body, headers)
         val response: HTTPSlackPostResponse? = try {
             RestTemplate().postForObject(
-                slackURI,
+                url,
                 entity,
                 HTTPSlackPostResponse::class
             )

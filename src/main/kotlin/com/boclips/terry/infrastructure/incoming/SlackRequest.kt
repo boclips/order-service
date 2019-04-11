@@ -60,7 +60,9 @@ data class EventNotification(
 data class BlockActions(
     val channel: BlockActionIdentifiable,
     val actions: List<BlockAction>,
-    val user: BlockActionIdentifiable
+    val user: BlockActionIdentifiable,
+    @JsonProperty("response_url")
+    val responseUrl: String
 ) : SlackRequest()
 
 @JsonIgnoreProperties(ignoreUnknown = true)

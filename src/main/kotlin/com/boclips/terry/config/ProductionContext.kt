@@ -25,7 +25,6 @@ import org.springframework.web.filter.HiddenHttpMethodFilter
 class ProductionContext {
     @Bean
     fun slackPoster(): SlackPoster = HTTPSlackPoster(
-        slackURI = "https://slack.com/api/chat.postMessage",
         botToken = System.getenv("SLACK_BOT_TOKEN")
     )
 

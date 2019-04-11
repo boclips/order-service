@@ -235,17 +235,16 @@ class HomeControllerIntegrationTests {
     @Test
     fun `transcript requests tag videos in Kaltura`() {
         val fixtureTimestamp: Long = 1554829933
-        val body = transcriptRequestBody("0_fgc6nmmt")
+        val body = transcriptRequestBody(
+            entryId = "0_fgc6nmmt",
+            channel = "CH1HFTDT2",
+            userId = "UBS7V80PR",
+            responseUrlEncoded = "https%3A%5C%2F%5C%2Fhooks.slack.com%5C%2Factions%5C%2FT04CX5TQC%5C%2F605457088357%5C%2FoJeQpwXhyqrppUBFrs7beIcp"
+        )
         val fixtureSignature = "v0=bcbaee6fc659d43ce2e1151f136190de4c3284563981bf4ccf9a045c54d45f3e"
 
-        assertThat(
-            slackSignature.compute(
-                timestamp = fixtureTimestamp.toString(),
-                body = body
-            )
-        ).isEqualTo(fixtureSignature)
-
         clock.nextTime = fixtureTimestamp
+        slackPoster.nextResponse = PostSuccess(timestamp = fixtureTimestamp.toBigDecimal())
         postFromSlack(
             body = body,
             contentType = MediaType.APPLICATION_FORM_URLENCODED,
@@ -254,11 +253,34 @@ class HomeControllerIntegrationTests {
         )
             .andExpect(status().isOk)
 
+
+        assertThat(
+            slackSignature.compute(
+                timestamp = fixtureTimestamp.toString(),
+                body = body
+            )
+        ).isEqualTo(fixtureSignature)
         assertThat(kalturaClient.getBaseEntry("0_fgc6nmmt").tags).containsExactly("caption48british")
+        assertThat(slackPoster.slackMessages).isEqualTo(
+            listOf(
+                SlackMessage(
+                    channel = "CH1HFTDT2",
+                    text = """<@UBS7V80PR> OK, I requested a transcript for "0_fgc6nmmt"."""
+                )
+            )
+        )
+        assertThat(slackPoster.urlsUsed).containsExactly(
+            "https://hooks.slack.com/actions/T04CX5TQC/605457088357/oJeQpwXhyqrppUBFrs7beIcp"
+        )
     }
 
-    private fun transcriptRequestBody(entryId: String): String =
-        """payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T04CX5TQC%22%2C%22domain%22%3A%22boclips%22%7D%2C%22user%22%3A%7B%22id%22%3A%22UBS7V80PR%22%2C%22username%22%3A%22andrew%22%2C%22name%22%3A%22andrew%22%2C%22team_id%22%3A%22T04CX5TQC%22%7D%2C%22api_app_id%22%3A%22AH343GQTZ%22%2C%22token%22%3A%22eboarPAkhN2k0rafp4SNNfGh%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22message_ts%22%3A%221554829923.013200%22%2C%22channel_id%22%3A%22CH1HFTDT2%22%2C%22is_ephemeral%22%3Afalse%7D%2C%22trigger_id%22%3A%22596234579393.4439197828.ac1a9302100ccae9475d5c5a7a4ca5ab%22%2C%22channel%22%3A%7B%22id%22%3A%22CH1HFTDT2%22%2C%22name%22%3A%22terry-test-output%22%7D%2C%22message%22%3A%7B%22type%22%3A%22message%22%2C%22subtype%22%3A%22bot_message%22%2C%22text%22%3A%22This+content+can%27t+be+displayed.%22%2C%22ts%22%3A%221554829923.013200%22%2C%22username%22%3A%22Terry%22%2C%22bot_id%22%3A%22BH3ADPWM8%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22yC1E%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2A%3C%40UBS7V80PR%3E+Here+are+the+video+details+for+1234%3A%2A%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22KJi%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ywI%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22fallback%22%3A%22435x250px+image%22%2C%22image_url%22%3A%22https%3A%5C%2F%5C%2Fcdnapisec.kaltura.com%5C%2Fp%5C%2F1776261%5C%2Fthumbnail%5C%2Fentry_id%5C%2F$entryId%5C%2Fheight%5C%2F250%5C%2Fvid_slices%5C%2F3%5C%2Fvid_slice%5C%2F2%22%2C%22image_width%22%3A435%2C%22image_height%22%3A250%2C%22image_bytes%22%3A22949%2C%22type%22%3A%22image%22%2C%22alt_text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ZjhdX%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+ID%2A%5Cn$entryId%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22CSQ%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+Provider%2A%5CnKaltura%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%2264gj7%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AVideo+ID%2A%5Cn5c54a6c7d8eafeecae072ca4%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Request+transcript%3A%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22static_select%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22US+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22us-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%5D%2C%22action_id%22%3A%2278%3D%22%7D%7D%5D%7D%2C%22response_url%22%3A%22https%3A%5C%2F%5C%2Fhooks.slack.com%5C%2Factions%5C%2FT04CX5TQC%5C%2F605457088357%5C%2FoJeQpwXhyqrppUBFrs7beIcp%22%2C%22actions%22%3A%5B%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%2278%3D%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22action_ts%22%3A%221554829933.145715%22%7D%5D%7D"""
+    private fun transcriptRequestBody(
+        entryId: String,
+        channel: String,
+        userId: String,
+        responseUrlEncoded: String
+    ): String =
+        """payload=%7B%22type%22%3A%22block_actions%22%2C%22team%22%3A%7B%22id%22%3A%22T04CX5TQC%22%2C%22domain%22%3A%22boclips%22%7D%2C%22user%22%3A%7B%22id%22%3A%22$userId%22%2C%22username%22%3A%22andrew%22%2C%22name%22%3A%22andrew%22%2C%22team_id%22%3A%22T04CX5TQC%22%7D%2C%22api_app_id%22%3A%22AH343GQTZ%22%2C%22token%22%3A%22eboarPAkhN2k0rafp4SNNfGh%22%2C%22container%22%3A%7B%22type%22%3A%22message%22%2C%22message_ts%22%3A%221554829923.013200%22%2C%22channel_id%22%3A%22$channel%22%2C%22is_ephemeral%22%3Afalse%7D%2C%22trigger_id%22%3A%22596234579393.4439197828.ac1a9302100ccae9475d5c5a7a4ca5ab%22%2C%22channel%22%3A%7B%22id%22%3A%22$channel%22%2C%22name%22%3A%22terry-test-output%22%7D%2C%22message%22%3A%7B%22type%22%3A%22message%22%2C%22subtype%22%3A%22bot_message%22%2C%22text%22%3A%22This+content+can%27t+be+displayed.%22%2C%22ts%22%3A%221554829923.013200%22%2C%22username%22%3A%22Terry%22%2C%22bot_id%22%3A%22BH3ADPWM8%22%2C%22blocks%22%3A%5B%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22yC1E%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2A%3C%40$userId%3E+Here+are+the+video+details+for+1234%3A%2A%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22divider%22%2C%22block_id%22%3A%22KJi%22%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ywI%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22fallback%22%3A%22435x250px+image%22%2C%22image_url%22%3A%22https%3A%5C%2F%5C%2Fcdnapisec.kaltura.com%5C%2Fp%5C%2F1776261%5C%2Fthumbnail%5C%2Fentry_id%5C%2F$entryId%5C%2Fheight%5C%2F250%5C%2Fvid_slices%5C%2F3%5C%2Fvid_slice%5C%2F2%22%2C%22image_width%22%3A435%2C%22image_height%22%3A250%2C%22image_bytes%22%3A22949%2C%22type%22%3A%22image%22%2C%22alt_text%22%3A%22Is+Islamic+State+Planning+Attacks+on+the+West%3F%22%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22ZjhdX%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+ID%2A%5Cn$entryId%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22CSQ%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2APlayback+Provider%2A%5CnKaltura%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%2264gj7%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22%2AVideo+ID%2A%5Cn5c54a6c7d8eafeecae072ca4%22%2C%22verbatim%22%3Afalse%7D%7D%2C%7B%22type%22%3A%22section%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22text%22%3A%7B%22type%22%3A%22mrkdwn%22%2C%22text%22%3A%22Request+transcript%3A%22%2C%22verbatim%22%3Afalse%7D%2C%22accessory%22%3A%7B%22type%22%3A%22static_select%22%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22options%22%3A%5B%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22US+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22us-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%5D%2C%22action_id%22%3A%2278%3D%22%7D%7D%5D%7D%2C%22response_url%22%3A%22$responseUrlEncoded%22%2C%22actions%22%3A%5B%7B%22type%22%3A%22static_select%22%2C%22action_id%22%3A%2278%3D%22%2C%22block_id%22%3A%22G7%5C%2FCK%22%2C%22selected_option%22%3A%7B%22text%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22British+English%22%2C%22emoji%22%3Atrue%7D%2C%22value%22%3A%22%7B%5C%22code%5C%22%3A%5C%22british-english%5C%22%2C%5C%22entryId%5C%22%3A%5C%22$entryId%5C%22%7D%22%7D%2C%22placeholder%22%3A%7B%22type%22%3A%22plain_text%22%2C%22text%22%3A%22Choose+transcript+type%22%2C%22emoji%22%3Atrue%7D%2C%22action_ts%22%3A%221554829933.145715%22%7D%5D%7D"""
 
     private val timestampBufferSeconds = 10
 
