@@ -12,10 +12,10 @@ class KalturaConfig {
     @Bean
     @ConditionalOnMissingBean(KalturaClient::class)
     fun kalturaClient(kalturaProperties: KalturaProperties): KalturaClient = KalturaClient.create(
-            KalturaClientConfig.builder()
-                    .partnerId(kalturaProperties.partnerId)
-                    .userId(kalturaProperties.userId)
-                    .secret(kalturaProperties.secret)
-                    .build()
+        KalturaClientConfig.builder()
+            .partnerId(kalturaProperties.partnerId)
+            .userId(kalturaProperties.userId)
+            .secret(kalturaProperties.secret)
+            .build()
     )
 }

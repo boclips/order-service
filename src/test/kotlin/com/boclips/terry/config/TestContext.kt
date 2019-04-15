@@ -29,6 +29,5 @@ class TestContext {
     fun fakeVideoService(): VideoService = FakeVideoService()
 
     @Bean
-    fun fakeKalturaClient(): KalturaClient =
-        TestKalturaClient()
+    fun fakeKalturaClient(): KalturaClient = TestKalturaClient()
 }

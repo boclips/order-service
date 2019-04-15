@@ -12,14 +12,13 @@ class SlackConfig {
 
     @Bean
     fun slackSignature(): SlackSignature = SlackSignature(
-            "v0",
-            System.getenv("SLACK_SIGNING_SECRET").toByteArray()
+        "v0",
+        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
     )
 
     @Bean
     @ConditionalOnMissingBean(SlackPoster::class)
     fun slackPoster(): SlackPoster = HTTPSlackPoster(
-            botToken = System.getenv("SLACK_BOT_TOKEN")
+        botToken = System.getenv("SLACK_BOT_TOKEN")
     )
-
 }
