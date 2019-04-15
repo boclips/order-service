@@ -82,7 +82,8 @@ class HomeControllerIntegrationTests {
                 "challenge": "iamchallenging",
                 "type": "url_verification"
             }
-        """
+        """,
+            path = "/slack"
         )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", "application/json;charset=UTF-8"))
@@ -101,7 +102,8 @@ class HomeControllerIntegrationTests {
                     }
                 """,
             timestamp = timestamp,
-            signature = slackSignature.compute(timestamp.toString(), "different-body")
+            signature = slackSignature.compute(timestamp.toString(), "different-body"),
+            path = "/slack"
         )
             .andExpect(status().isUnauthorized)
     }
@@ -116,7 +118,8 @@ class HomeControllerIntegrationTests {
                 "type": "url_verification"
             }
         """,
-            timestamp = staleTimestamp()
+            timestamp = staleTimestamp(),
+            path = "/slack"
         )
             .andExpect(status().isUnauthorized)
     }
@@ -129,7 +132,8 @@ class HomeControllerIntegrationTests {
                 "token": "sometoken",
                 "poo": "iamchallenging",
                 "type": "url_verification"
-            }""".trimIndent()
+            }""".trimIndent(),
+            path = "/slack"
         )
             .andExpect(status().is4xxClientError)
     }
@@ -159,7 +163,8 @@ class HomeControllerIntegrationTests {
                 "authed_users": [
                     "U0LAN0Z89"
                 ]
-            }""".trimIndent()
+            }""".trimIndent(),
+            path = "/slack"
         )
             .andExpect(status().isOk)
             .andExpect(content().json("{}"))
@@ -209,7 +214,8 @@ class HomeControllerIntegrationTests {
                 "authed_users": [
                     "U0LAN0Z89"
                 ]
-            }""".trimIndent()
+            }""".trimIndent(),
+            path = "/slack"
         )
             .andExpect(status().isOk)
 
@@ -249,8 +255,9 @@ class HomeControllerIntegrationTests {
         postFromSlack(
             body = body,
             contentType = MediaType.APPLICATION_FORM_URLENCODED,
+            timestamp = fixtureTimestamp,
             signature = fixtureSignature,
-            timestamp = fixtureTimestamp
+            path = "/slack-interaction"
         )
             .andExpect(status().isOk)
 
@@ -295,10 +302,11 @@ class HomeControllerIntegrationTests {
         body: String,
         contentType: MediaType = MediaType.APPLICATION_JSON_UTF8,
         timestamp: Long = validTimestamp(),
-        signature: String = slackSignature.compute(timestamp = timestamp.toString(), body = body)
+        signature: String = slackSignature.compute(timestamp = timestamp.toString(), body = body),
+        path: String
     ): ResultActions =
         mockMvc.perform(
-            post("/slack")
+            post(path)
                 .header("X-Slack-Request-Timestamp", timestamp)
                 .header("X-Slack-Signature", signature)
                 .contentType(contentType)
