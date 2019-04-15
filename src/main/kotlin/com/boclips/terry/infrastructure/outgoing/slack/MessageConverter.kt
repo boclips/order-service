@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.slack
 
 import com.boclips.terry.application.Terry
-import com.boclips.terry.application.TranscriptCode
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

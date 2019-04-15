@@ -40,6 +40,6 @@ data class HTTPSlackPostResponse(
     var ts: BigDecimal?
 )
 
-data class HTTPSlackPostResponseMetadata (
+data class HTTPSlackPostResponseMetadata(
     val messages: List<String>
 )

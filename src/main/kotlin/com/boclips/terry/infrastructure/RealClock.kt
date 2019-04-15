@@ -1,6 +1,5 @@
 package com.boclips.terry.infrastructure
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 
 @Component

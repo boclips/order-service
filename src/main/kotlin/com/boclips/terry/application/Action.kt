@@ -11,6 +11,7 @@ data class AuthenticityRejection(
     val request: RawSlackRequest,
     val reason: String
 ) : Action()
+
 object MalformedRequestRejection : Action()
 data class VerificationResponse(val challenge: String) : Action()
 data class ChatReply(val slackMessage: SlackMessage) : Action()

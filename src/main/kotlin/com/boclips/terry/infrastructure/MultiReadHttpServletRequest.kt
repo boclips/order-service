@@ -1,12 +1,15 @@
 package com.boclips.terry.infrastructure
 
 import org.apache.tomcat.util.http.fileupload.IOUtils
-
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
 import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
-import java.io.*
 
 // Adapted from https://stackoverflow.com/a/30748533
 class MultiReadHttpServletRequest(request: HttpServletRequest) : HttpServletRequestWrapper(request) {

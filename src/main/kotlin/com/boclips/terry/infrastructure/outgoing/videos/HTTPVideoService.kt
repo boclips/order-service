@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.videos
 
 import com.boclips.terry.config.VideoServiceProperties
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
