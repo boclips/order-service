@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.net.URLDecoder
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 class HomeController(
@@ -40,8 +42,8 @@ class HomeController(
         handleSlack(request)
 
     @PostMapping("/slack-interaction")
-    fun slackInteraction(@RequestParam(value = "payload") payload: String): ResponseEntity<ControllerResponse> =
-        handleSlack(hydrate(payload))
+    fun slackInteraction(request: HttpServletRequest): ResponseEntity<ControllerResponse> =
+        handleSlack(hydrate(URLDecoder.decode(request.reader.readText().substringAfter("payload="), "UTF-8")))
 
     private fun hydrate(payload: String): SlackRequest =
         try {
