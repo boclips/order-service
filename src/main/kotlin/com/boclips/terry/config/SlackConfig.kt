@@ -47,10 +47,17 @@ class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val cloc
         val rawSlackRequest = RawSlackRequest.fromRequest(wrapper, clock.read())
 
         rawSlackRequest?.let {
-            when (slackSignature.verify(rawSlackRequest)) {
-                SignatureMismatch, StaleTimestamp ->
+            return when (slackSignature.verify(rawSlackRequest)) {
+                SignatureMismatch ->
                     response.run {
-                        logger.warn { "Invalid Slack request: $rawSlackRequest" }
+                        logger.warn { "Signature mismatch: $rawSlackRequest" }
+                        status = 401
+                        flushBuffer()
+                    }
+
+                StaleTimestamp ->
+                    response.run {
+                        logger.warn { "Stale timestamp: $rawSlackRequest" }
                         status = 401
                         flushBuffer()
                     }
