@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.incoming
 
 import com.boclips.terry.application.Action
-import com.boclips.terry.application.AuthenticityRejection
 import com.boclips.terry.application.Terry
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
@@ -11,35 +10,14 @@ import java.net.URLDecoder
 @Component
 class SlackRequestValidator(
     val terry: Terry,
-    val slackSignature: SlackSignature,
     val objectMapper: ObjectMapper
 ) {
     companion object : KLogging()
 
     fun process(rawSlackRequest: RawSlackRequest): Action =
-        when (slackSignature.verify(rawSlackRequest.let { request ->
-            if (request.body.startsWith("payload=%7B")) {
-                request.copy(body = request.body.replace("*", "%2A"))
-            } else {
-                request
-            }
-        })) {
-            is SignatureMismatch -> {
-                AuthenticityRejection(
-                    reason = "Signature mismatch: ${rawSlackRequest.signatureClaim}\nat timestamp: ${rawSlackRequest.timestamp}",
-                    request = rawSlackRequest
-                )
-            }
-            is StaleTimestamp ->
-                AuthenticityRejection(
-                    reason = "Stale timestamp: ${rawSlackRequest.timestamp}",
-                    request = rawSlackRequest
-                )
-            Verified ->
-                terry.receiveSlack(hydrate(rawSlackRequest))
-                    .apply { logger.info { log } }
-                    .run { action }
-        }
+        terry.receiveSlack(hydrate(rawSlackRequest))
+            .apply { logger.info { log } }
+            .run { action }
 
     private fun hydrate(rawSlackRequest: RawSlackRequest): SlackRequest =
         try {
