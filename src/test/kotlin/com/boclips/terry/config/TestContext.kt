@@ -10,6 +10,7 @@ import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 
 @Configuration
@@ -20,6 +21,7 @@ class TestContext {
     fun fakeSlackPoster(): SlackPoster = FakeSlackPoster()
 
     @Bean
+    @Primary
     fun fakeClock(): Clock = FakeClock()
 
     @Bean
