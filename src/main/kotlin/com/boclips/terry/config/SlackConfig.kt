@@ -9,6 +9,7 @@ import com.boclips.terry.infrastructure.incoming.StaleTimestamp
 import com.boclips.terry.infrastructure.incoming.Verified
 import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
+import mu.KLogging
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -39,6 +40,7 @@ class SlackConfig {
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE)
 class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val clock: Clock) : HttpFilter() {
+    companion object : KLogging()
 
     override fun doFilter(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val wrapper = MultiReadHttpServletRequest(request)
@@ -48,6 +50,7 @@ class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val cloc
             when (slackSignature.verify(rawSlackRequest)) {
                 SignatureMismatch, StaleTimestamp ->
                     response.run {
+                        logger.warn { "Invalid Slack request: $rawSlackRequest" }
                         status = 401
                         flushBuffer()
                     }
