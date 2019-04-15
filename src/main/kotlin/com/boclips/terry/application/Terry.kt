@@ -20,12 +20,14 @@ import com.boclips.terry.infrastructure.outgoing.videos.FoundYouTubeVideo
 import com.boclips.terry.infrastructure.outgoing.videos.MissingVideo
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.springframework.stereotype.Component
 
 data class TranscriptCode(
     val tag: String,
     val displayName: String
 )
 
+@Component
 class Terry {
     companion object {
         val transcriptCodeToKalturaTag = mapOf(

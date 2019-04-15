@@ -5,8 +5,10 @@ import com.boclips.terry.application.AuthenticityRejection
 import com.boclips.terry.application.Terry
 import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KLogging
+import org.springframework.stereotype.Component
 import java.net.URLDecoder
 
+@Component
 class SlackRequestValidator(
     val terry: Terry,
     val slackSignature: SlackSignature,

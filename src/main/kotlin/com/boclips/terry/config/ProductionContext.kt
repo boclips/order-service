@@ -21,31 +21,11 @@ import org.springframework.web.filter.HiddenHttpMethodFilter
 
 @EnableAsync
 @Configuration
-@Profile("production")
+@Profile("!test")
 class ProductionContext {
-    @Bean
-    fun slackPoster(): SlackPoster = HTTPSlackPoster(
-        botToken = System.getenv("SLACK_BOT_TOKEN")
-    )
 
     @Bean
     fun videoService(): VideoService = HTTPVideoService(System.getenv("VIDEO_SERVICE_URI"))
-
-    @Bean
-    fun terry(): Terry = Terry()
-
-    @Bean
-    fun slackSignature(): SlackSignature = SlackSignature(
-        "v0",
-        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
-    )
-
-    @Bean
-    fun slackRequestValidator(): SlackRequestValidator = SlackRequestValidator(
-        terry = terry(),
-        slackSignature = slackSignature(),
-        objectMapper = jacksonObjectMapper()
-    )
 
     @Bean
     fun clock(): Clock = RealClock()

@@ -14,37 +14,27 @@ import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 
 @Configuration
 @Profile("test")
 class TestContext {
-    @Bean
-    fun slackPoster(): SlackPoster = FakeSlackPoster()
 
     @Bean
-    fun terry(): Terry = Terry()
+    @Primary
+    fun fakeSlackPoster(): SlackPoster = FakeSlackPoster()
 
     @Bean
-    fun slackSignature(): SlackSignature = SlackSignature(
-        "v0",
-        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
-    )
+    @Primary
+    fun fakeClock(): Clock = FakeClock()
 
     @Bean
-    fun clock(): Clock = FakeClock()
+    @Primary
+    fun fakeVideoService(): VideoService = FakeVideoService()
 
     @Bean
-    fun slackRequestValidator(): SlackRequestValidator = SlackRequestValidator(
-        terry = terry(),
-        slackSignature = slackSignature(),
-        objectMapper = jacksonObjectMapper()
-    )
-
-    @Bean
-    fun videoService(): VideoService = FakeVideoService()
-
-    @Bean
-    fun kalturaClient(): KalturaClient =
+    @Primary
+    fun fakeKalturaClient(): KalturaClient =
         TestKalturaClient()
 }
