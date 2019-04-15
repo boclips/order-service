@@ -25,15 +25,15 @@ import javax.servlet.http.HttpServletResponse
 class SlackConfig {
 
     @Bean
-    fun slackSignature(): SlackSignature = SlackSignature(
+    fun slackSignature(slackProperties: SlackProperties): SlackSignature = SlackSignature(
         "v0",
-        System.getenv("SLACK_SIGNING_SECRET").toByteArray()
+        slackProperties.signingSecret.toByteArray()
     )
 
     @Bean
     @ConditionalOnMissingBean(SlackPoster::class)
-    fun slackPoster(): SlackPoster = HTTPSlackPoster(
-        botToken = System.getenv("SLACK_BOT_TOKEN")
+    fun slackPoster(slackProperties: SlackProperties): SlackPoster = HTTPSlackPoster(
+        botToken = slackProperties.slackBotToken
     )
 }
 
