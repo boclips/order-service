@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.outgoing.videos
 
+import com.boclips.terry.config.VideoServiceProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -36,9 +37,12 @@ class FakeVideoServiceTests : VideoServiceTests() {
 class HTTPVideoServiceTests : VideoServiceTests() {
     @BeforeEach
     fun setUp() {
-        videoServiceForKaltura = HTTPVideoService("https://api.boclips.com/v1/videos")
-        videoServiceForYouTube = HTTPVideoService("https://api.boclips.com/v1/videos")
-        missingVideoService = HTTPVideoService("https://httpbin.org/status/404")
+        videoServiceForKaltura =
+            HTTPVideoService(VideoServiceProperties().apply { uri = "https://api.boclips.com/v1/videos" })
+        videoServiceForYouTube =
+            HTTPVideoService(VideoServiceProperties().apply { uri = "https://api.boclips.com/v1/videos" })
+        missingVideoService =
+            HTTPVideoService(VideoServiceProperties().apply { uri = "https://httpbin.org/status/404" })
     }
 }
 

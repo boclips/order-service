@@ -1,14 +1,19 @@
 package com.boclips.terry.infrastructure.outgoing.videos
 
+import com.boclips.terry.config.VideoServiceProperties
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForObject
 
-class HTTPVideoService(private val videoServiceURI: String) : VideoService {
+@Component
+@ConditionalOnMissingBean(VideoService::class)
+class HTTPVideoService(private val videoServiceProperties: VideoServiceProperties) : VideoService {
     override fun get(videoId: String): VideoServiceResponse = try {
         val response: HTTPVideoServiceGetResponse? = RestTemplate().getForObject(
-            "$videoServiceURI/$videoId",
+            "${videoServiceProperties.uri}/$videoId",
             HTTPVideoServiceGetResponse::class
         )
         when (response?.playback?.type) {
