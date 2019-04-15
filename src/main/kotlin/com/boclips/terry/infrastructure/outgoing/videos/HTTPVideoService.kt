@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForObject
 
 @Component
-@ConditionalOnMissingBean(VideoService::class)
 class HTTPVideoService(private val videoServiceProperties: VideoServiceProperties) : VideoService {
     override fun get(videoId: String): VideoServiceResponse = try {
         val response: HTTPVideoServiceGetResponse? = RestTemplate().getForObject(

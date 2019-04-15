@@ -25,6 +25,7 @@ class TestContext {
     fun fakeClock(): Clock = FakeClock()
 
     @Bean
+    @Primary
     fun fakeVideoService(): VideoService = FakeVideoService()
 
     @Bean
