@@ -38,7 +38,7 @@ class SlackConfig {
 }
 
 @Component
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val clock: Clock) : HttpFilter() {
     companion object : KLogging()
 
