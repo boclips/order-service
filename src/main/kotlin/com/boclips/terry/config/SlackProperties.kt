@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties("slack")
 class SlackProperties {
     lateinit var signingSecret: String
-    lateinit var slackBotToken: String
+    lateinit var botToken: String
 }

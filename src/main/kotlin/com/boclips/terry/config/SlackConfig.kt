@@ -33,7 +33,7 @@ class SlackConfig {
     @Bean
     @ConditionalOnMissingBean(SlackPoster::class)
     fun slackPoster(slackProperties: SlackProperties): SlackPoster = HTTPSlackPoster(
-        botToken = slackProperties.slackBotToken
+        botToken = slackProperties.botToken
     )
 }
 
