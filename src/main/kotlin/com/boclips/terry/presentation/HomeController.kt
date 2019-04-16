@@ -45,7 +45,7 @@ class HomeController(
     fun slackInteraction(request: HttpServletRequest): ResponseEntity<ControllerResponse> =
         handleSlack(hydrate(URLDecoder.decode(
             request.reader.readText().substringAfter("payload="),
-            Charset.defaultCharset()
+            Charset.defaultCharset().toString()
         )))
 
     private fun hydrate(payload: String): SlackRequest =
