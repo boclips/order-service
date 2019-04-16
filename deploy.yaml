@@ -1,3 +1,4 @@
+---
 app: terry
 port: 8080
 scale: Large
@@ -5,7 +6,7 @@ bootTime: Fast
 healthPath: /
 environments:
   production:
-    replicas: 1
+    replicas: 2
     urls:
       - terry.boclips.com
   staging:
