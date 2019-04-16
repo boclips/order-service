@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
@@ -37,6 +38,9 @@ import java.math.BigDecimal
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+
+// This is a rotated secret, used because we hard-code an example signed by Slack with this secret
+@TestPropertySource(properties = ["slack.signingSecret=f873d35529ed55a0ab71ac068488684d"])
 class HomeControllerIntegrationTests {
 
     @Autowired
