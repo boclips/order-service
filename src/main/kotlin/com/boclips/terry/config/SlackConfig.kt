@@ -10,12 +10,13 @@ import com.boclips.terry.infrastructure.incoming.Verified
 import com.boclips.terry.infrastructure.outgoing.slack.HTTPSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import mu.KLogging
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import org.springframework.stereotype.Component
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpFilter
 import javax.servlet.http.HttpServletRequest
@@ -23,6 +24,10 @@ import javax.servlet.http.HttpServletResponse
 
 @Configuration
 class SlackConfig {
+    @Autowired
+    lateinit var slackSignature: SlackSignature
+    @Autowired
+    lateinit var clock: Clock
 
     @Bean
     fun slackSignature(slackProperties: SlackProperties): SlackSignature = SlackSignature(
@@ -35,9 +40,16 @@ class SlackConfig {
     fun slackPoster(slackProperties: SlackProperties): SlackPoster = HTTPSlackPoster(
         botToken = slackProperties.botToken
     )
+
+    @Bean
+    fun signatureFilter(): FilterRegistrationBean<SlackSignatureValidatorFilter> =
+        FilterRegistrationBean<SlackSignatureValidatorFilter>().apply {
+            filter = SlackSignatureValidatorFilter(slackSignature, clock)
+            addUrlPatterns("/slack")
+            addUrlPatterns(("/slack-interaction"))
+        }
 }
 
-@Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val clock: Clock) : HttpFilter() {
     companion object : KLogging()
@@ -46,7 +58,13 @@ class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val cloc
         val wrapper = MultiReadHttpServletRequest(request)
         val rawSlackRequest = RawSlackRequest.fromRequest(wrapper, clock.read())
 
-        rawSlackRequest?.let {
+        if (rawSlackRequest == null) {
+            logger.warn { "No signature headers found" }
+            response.run {
+                status = 401
+                flushBuffer()
+            }
+        } else {
             return when (slackSignature.verify(rawSlackRequest)) {
                 SignatureMismatch ->
                     response.run {
@@ -66,6 +84,6 @@ class SlackSignatureValidatorFilter(val slackSignature: SlackSignature, val cloc
                     chain.doFilter(wrapper, response)
 
             }
-        } ?: chain.doFilter(wrapper, response)
+        }
     }
 }

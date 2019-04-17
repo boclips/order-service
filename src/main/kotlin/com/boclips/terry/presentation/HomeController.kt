@@ -56,8 +56,8 @@ class HomeController(
             Malformed
         }
 
-    private fun handleSlack(body: SlackRequest): ResponseEntity<ControllerResponse> {
-        return when (val action = terry.receiveSlack(body).action) {
+    private fun handleSlack(request: SlackRequest): ResponseEntity<ControllerResponse> {
+        return when (val action = terry.receiveSlack(request).action) {
             is AuthenticityRejection ->
                 unauthorized()
                     .also {
