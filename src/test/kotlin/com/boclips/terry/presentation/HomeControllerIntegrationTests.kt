@@ -185,41 +185,6 @@ class HomeControllerIntegrationTests {
     }
 
     @Test
-    fun `Slack mentions without signature headers are unauthorised`() {
-        mockMvc.perform(
-            post("/slack")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(
-                    """
-            {
-                "token": "ZZZZZZWSxiZZZ2yIvs3peJ",
-                "team_id": "T061EG9R6",
-                "api_app_id": "A0MDYCDME",
-                "event": {
-                    "funny_unknown_property": "to-test-ignoring-unknown-properties",
-                    "type": "app_mention",
-                    "user": "U061F7AUR",
-                    "text": "What ever *happened* to <@U0LAN0Z89>?",
-                    "ts": "1515449438.000011",
-                    "channel": "C0LAN2Q65",
-                    "event_ts": "1515449438000011"
-                },
-                "type": "event_callback",
-                "event_id": "Ev0MDYGDKJ",
-                "event_time": 1515449438000011,
-                "authed_users": [
-                    "U0LAN0Z89"
-                ]
-            }""".trimIndent()
-                )
-        )
-            .andExpect(status().isUnauthorized)
-
-        assertThat(slackPoster.slackMessages)
-            .isEmpty()
-    }
-
-    @Test
     fun `videos are retrieved`() {
         videoService.respondWith(
             FoundKalturaVideo(

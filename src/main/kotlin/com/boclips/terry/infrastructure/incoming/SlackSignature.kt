@@ -13,8 +13,7 @@ object Verified : Result()
 class SlackSignature(
     val version: String,
     private val secretKey: ByteArray,
-    private val signatureTimeoutSeconds: Int = 5 * 60,
-    private val sleepNanoseconds: Int = 1
+    private val signatureTimeoutSeconds: Int = 5 * 60
 ) {
     private val type = "HmacSHA256"
 
@@ -23,7 +22,7 @@ class SlackSignature(
             when {
                 timestamp.toLong() < currentTime - signatureTimeoutSeconds ->
                     StaleTimestamp
-                !timingSafeEquals(signatureClaim, compute(timestamp = timestamp, body = body)) ->
+                compute(timestamp = timestamp, body = body) != signatureClaim ->
                     SignatureMismatch
                 else ->
                     Verified
@@ -42,22 +41,6 @@ class SlackSignature(
                             .run { encoded(doFinal(formatted(timestamp, body))) }
                     }
         }
-
-    private fun timingSafeEquals(xStr: String, yStr: String): Boolean {
-        val x = paddedByteArray(xStr)
-        val y = paddedByteArray(yStr)
-        var result = 0
-
-        for (i in 0 until x.size - 1) {
-            result = result or (x[i].toInt() xor y[i].toInt())
-            Thread.sleep(0, sleepNanoseconds)
-        }
-
-        return result == 0
-    }
-
-    private fun paddedByteArray(x: String) =
-        x.padEnd(1000, 'X').toByteArray()
 
     private fun encoded(text: ByteArray): String =
         "v0=${Hex.encodeHexString(text)}"
