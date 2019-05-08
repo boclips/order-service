@@ -5,7 +5,7 @@ import com.boclips.events.types.LegacyOrderSubmitted
 import org.springframework.cloud.stream.annotation.StreamListener
 
 class NewOrder {
-    @StreamListener(Subscriptions.LEGACY_ORDER_SUBMISSIONS)
+    @StreamListener(Subscriptions.LEGACY_ORDER_SUBMITTED)
     fun onLegacyOrderSubmitted(event: LegacyOrderSubmitted) {
 
     }
