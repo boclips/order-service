@@ -16,10 +16,5 @@ import org.springframework.scheduling.annotation.EnableAsync
 @Profile("production")
 class MongoConfig(val mongoProperties: MongoProperties) {
     @Bean
-    fun mongoClient(): MongoClient {
-        return KMongo.createClient(MongoClientURI(mongoProperties.determineUri()))
-    }
-
-    @Bean
-    fun ordersRepository(): OrdersRepository = MongoOrdersRepository(mongoClient())
+    fun ordersRepository(): OrdersRepository = MongoOrdersRepository(mongoProperties.determineUri())
 }

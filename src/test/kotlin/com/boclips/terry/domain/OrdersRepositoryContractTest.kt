@@ -1,5 +1,7 @@
 package com.boclips.terry.domain
 
+import com.boclips.terry.infrastructure.MongoOrdersRepository
+import com.mongodb.MongoClientURI
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter
 import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder
@@ -11,8 +13,10 @@ import mu.KLogging
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.litote.kmongo.KMongo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -20,24 +24,16 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class OrdersRepositoryTest {
+    lateinit var repo: OrdersRepository
+    var mongoProcess: MongodProcess? = null
 
-    @Autowired
-    lateinit var ordersRepository: OrdersRepository
-
-    companion object : KLogging() {
-        private var mongoProcess: MongodProcess? = null
-
-        @BeforeAll
-        @JvmStatic
-        fun beforeAll() {
-            if (mongoProcess == null) {
-                mongoProcess = TestMongoProcess.process
-            }
+    @BeforeEach
+    internal fun setUp() {
+        repo = MongoOrdersRepository("mongodb://localhost/test")
+        if (mongoProcess == null) {
+            mongoProcess = TestMongoProcess.process
         }
     }
 
@@ -47,9 +43,9 @@ class OrdersRepositoryTest {
             id = ObjectId().toHexString()
         )
 
-        ordersRepository.add(order)
+        repo.add(order)
 
-        assertThat(ordersRepository.findAll()).containsExactly(order)
+        assertThat(repo.findAll()).containsExactly(order)
     }
 }
 

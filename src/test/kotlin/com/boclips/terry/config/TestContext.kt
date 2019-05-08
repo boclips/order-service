@@ -38,8 +38,5 @@ class TestContext(val mongoProperties: MongoProperties) {
     fun fakeKalturaClient(): KalturaClient = TestKalturaClient()
 
     @Bean
-    fun mongoClient(): MongoClient = KMongo.createClient(MongoClientURI(mongoProperties.determineUri()))
-
-    @Bean
-    fun ordersRepository(): OrdersRepository = MongoOrdersRepository(mongoClient())
+    fun ordersRepository(): OrdersRepository = MongoOrdersRepository(mongoProperties.determineUri())
 }
