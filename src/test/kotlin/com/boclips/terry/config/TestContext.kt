@@ -5,14 +5,11 @@ import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.domain.OrdersRepository
 import com.boclips.terry.infrastructure.Clock
 import com.boclips.terry.infrastructure.FakeClock
-import com.boclips.terry.infrastructure.MongoOrdersRepository
+import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
-import org.litote.kmongo.KMongo
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -38,5 +35,6 @@ class TestContext(val mongoProperties: MongoProperties) {
     fun fakeKalturaClient(): KalturaClient = TestKalturaClient()
 
     @Bean
-    fun ordersRepository(): OrdersRepository = MongoOrdersRepository(mongoProperties.determineUri())
+    fun ordersRepository(): OrdersRepository =
+        MongoOrdersRepository(mongoProperties.determineUri())
 }

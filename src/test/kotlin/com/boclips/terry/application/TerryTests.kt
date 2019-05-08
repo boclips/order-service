@@ -212,7 +212,7 @@ class TerryTests {
                             selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
                         )
                     ),
-                    channel = BlockActionIdentifiable(id = "#orders"),
+                    channel = BlockActionIdentifiable(id = "#legacyOrders"),
                     user = BlockActionIdentifiable(id = "THAD666"),
                     responseUrl = "https://response.to.me/please"
                 )
@@ -230,7 +230,7 @@ class TerryTests {
                             selectedOption = BlockActionSelectedOption("""{"code":"unknown","entryId":"a_Kaltura1D"}""")
                         )
                     ),
-                    channel = BlockActionIdentifiable(id = "#orders"),
+                    channel = BlockActionIdentifiable(id = "#legacyOrders"),
                     user = BlockActionIdentifiable(id = "THAD666"),
                     responseUrl = "http://www.example.com/"
                 )
@@ -247,7 +247,7 @@ class TerryTests {
                         selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
                     )
                 ),
-                channel = BlockActionIdentifiable(id = "#orders"),
+                channel = BlockActionIdentifiable(id = "#legacyOrders"),
                 user = BlockActionIdentifiable(id = "THAD666"),
                 responseUrl = "https://my.response.url"
             )
@@ -257,7 +257,7 @@ class TerryTests {
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(
-                                channel = "#orders",
+                                channel = "#legacyOrders",
                                 text = """<@THAD666> OK, I requested a transcript for "interviewWithOasis" (British English)."""
                             )
                         )
@@ -276,7 +276,7 @@ class TerryTests {
                         selectedOption = BlockActionSelectedOption("""{"code":"british-english","entryId":"a_Kaltura1D"}""")
                     )
                 ),
-                channel = BlockActionIdentifiable(id = "#orders"),
+                channel = BlockActionIdentifiable(id = "#legacyOrders"),
                 user = BlockActionIdentifiable(id = "THAD666"),
                 responseUrl = "http://hit.me.up"
             )
@@ -286,7 +286,7 @@ class TerryTests {
                     .isEqualTo(
                         ChatReply(
                             slackMessage = SlackMessage(
-                                channel = "#orders",
+                                channel = "#legacyOrders",
                                 text = """<@THAD666> Sorry! I don't think "interviewWithBlur" could be tagged: "Kaltura fail"."""
                             )
                         )

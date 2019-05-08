@@ -1,6 +1,6 @@
 package com.boclips.terry.domain
 
-import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
+import com.boclips.terry.infrastructure.legacyorders.MongoLegacyOrdersRepository
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter
 import de.flapdoodle.embed.mongo.config.MongoCmdOptionsBuilder
@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 
-class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
+class FakeLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
     @BeforeEach
     fun setUp() {
-        repo = FakeOrdersRepository()
+        repo = FakeLegacyOrdersRepository()
     }
 }
 
-class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
+class MongoLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
     companion object Setup {
         var mongoProcess: MongodProcess? = null
 
@@ -39,7 +39,7 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
 
     @BeforeEach
     fun setUp() {
-        repo = MongoOrdersRepository("mongodb://localhost/test")
+        repo = MongoLegacyOrdersRepository("mongodb://localhost/test")
     }
 
     object TestMongoProcess {
@@ -63,13 +63,13 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
 }
 
 @Disabled
-abstract class OrdersRepositoryTests {
-    lateinit var repo: OrdersRepository
+abstract class LegacyOrdersRepositoryTests {
+    lateinit var repo: LegacyOrdersRepository
 
     @Test
-    fun `creates an order`() {
-        val order = Order(id = ObjectId().toHexString())
-        repo.add(order)
-        assertThat(repo.findAll()).containsExactly(order)
+    fun `creates a legacy order`() {
+        val legacyOrder = LegacyOrder(id = ObjectId().toHexString())
+        repo.add(legacyOrder)
+        assertThat(repo.findAll()).containsExactly(legacyOrder)
     }
 }
