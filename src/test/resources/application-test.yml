@@ -1,0 +1,6 @@
+---
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: false
