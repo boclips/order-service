@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.litote.kmongo.KMongo
@@ -24,27 +25,34 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ActiveProfiles("test")
-class OrdersRepositoryTest {
-    lateinit var repo: OrdersRepository
-    var mongoProcess: MongodProcess? = null
+class MongoOrdersRepositoryTest : OrdersRepositoryTests() {
+    companion object Setup {
+        var mongoProcess: MongodProcess? = null
 
-    @BeforeEach
-    internal fun setUp() {
-        repo = MongoOrdersRepository("mongodb://localhost/test")
-        if (mongoProcess == null) {
-            mongoProcess = TestMongoProcess.process
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            if (mongoProcess == null) {
+                print("STARTING MONGO!!!!!!")
+                mongoProcess = TestMongoProcess.process
+            }
         }
     }
 
+    @BeforeEach
+    fun setUp() {
+        repo = MongoOrdersRepository("mongodb://localhost/test")
+    }
+}
+
+@Disabled
+abstract class OrdersRepositoryTests {
+    lateinit var repo: OrdersRepository
+
     @Test
     fun `creates an order`() {
-        val order = Order(
-            id = ObjectId().toHexString()
-        )
-
+        val order = Order(id = ObjectId().toHexString())
         repo.add(order)
-
         assertThat(repo.findAll()).containsExactly(order)
     }
 }
