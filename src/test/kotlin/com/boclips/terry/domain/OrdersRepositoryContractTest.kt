@@ -33,7 +33,6 @@ class MongoOrdersRepositoryTest : OrdersRepositoryTests() {
         @JvmStatic
         fun beforeAll() {
             if (mongoProcess == null) {
-                print("STARTING MONGO!!!!!!")
                 mongoProcess = TestMongoProcess.process
             }
         }
