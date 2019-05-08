@@ -46,7 +46,7 @@ class MongoLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
         val process: MongodProcess by lazy {
             val starter = MongodStarter.getDefaultInstance()
             val host = "localhost"
-            val port = MongoProperties.DEFAULT_PORT
+            val port = MongoProperties.DEFAULT_PORT + 1
 
             KLogging().logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
 
