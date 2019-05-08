@@ -25,7 +25,14 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-class MongoOrdersRepositoryTest : OrdersRepositoryTests() {
+class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
+    @BeforeEach
+    fun setUp() {
+        repo = FakeOrdersRepository()
+    }
+}
+
+class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
     companion object Setup {
         var mongoProcess: MongodProcess? = null
 
@@ -42,6 +49,25 @@ class MongoOrdersRepositoryTest : OrdersRepositoryTests() {
     fun setUp() {
         repo = MongoOrdersRepository("mongodb://localhost/test")
     }
+
+    object TestMongoProcess {
+        val process: MongodProcess by lazy {
+            val starter = MongodStarter.getDefaultInstance()
+            val host = "localhost"
+            val port = MongoProperties.DEFAULT_PORT
+
+            KLogging().logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
+
+            val mongoConfig = MongodConfigBuilder()
+                .version(Version.Main.V3_6)
+                .cmdOptions(MongoCmdOptionsBuilder().useStorageEngine("ephemeralForTest").build())
+                .net(Net(host, port, Network.localhostIsIPv6()))
+                .build()
+
+            val mongoExecutable = starter.prepare(mongoConfig)
+            mongoExecutable.start()
+        }
+    }
 }
 
 @Disabled
@@ -53,24 +79,5 @@ abstract class OrdersRepositoryTests {
         val order = Order(id = ObjectId().toHexString())
         repo.add(order)
         assertThat(repo.findAll()).containsExactly(order)
-    }
-}
-
-object TestMongoProcess {
-    val process: MongodProcess by lazy {
-        val starter = MongodStarter.getDefaultInstance()
-        val host = "localhost"
-        val port = MongoProperties.DEFAULT_PORT
-
-        KLogging().logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
-
-        val mongoConfig = MongodConfigBuilder()
-            .version(Version.Main.V3_6)
-            .cmdOptions(MongoCmdOptionsBuilder().useStorageEngine("ephemeralForTest").build())
-            .net(Net(host, port, Network.localhostIsIPv6()))
-            .build()
-
-        val mongoExecutable = starter.prepare(mongoConfig)
-        mongoExecutable.start()
     }
 }
