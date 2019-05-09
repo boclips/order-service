@@ -42,24 +42,6 @@ class MongoLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
         repo = MongoLegacyOrdersRepository("mongodb://localhost/test")
     }
 
-    object TestMongoProcess {
-        val process: MongodProcess by lazy {
-            val starter = MongodStarter.getDefaultInstance()
-            val host = "localhost"
-            val port = MongoProperties.DEFAULT_PORT + 1
-
-            KLogging().logger.info { "Booting up MongoDB ${Version.Main.V3_6} on $host:$port" }
-
-            val mongoConfig = MongodConfigBuilder()
-                .version(Version.Main.V3_6)
-                .cmdOptions(MongoCmdOptionsBuilder().useStorageEngine("ephemeralForTest").build())
-                .net(Net(host, port, Network.localhostIsIPv6()))
-                .build()
-
-            val mongoExecutable = starter.prepare(mongoConfig)
-            mongoExecutable.start()
-        }
-    }
 }
 
 @Disabled
