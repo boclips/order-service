@@ -8,24 +8,28 @@ import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import org.bson.types.ObjectId
 import org.litote.kmongo.KMongo
+import org.litote.kmongo.deleteMany
 import org.litote.kmongo.getCollection
 
 const val databaseName = "order-service"
 const val collectionName = "legacy-orders"
 
 class MongoLegacyOrdersRepository(private val uri: String) : LegacyOrdersRepository {
-    val mongoClient : MongoClient = KMongo.createClient(MongoClientURI(uri))
+    val mongoClient: MongoClient = KMongo.createClient(MongoClientURI(uri))
 
-    override fun add(order: LegacyOrder) =
+    override fun add(item: LegacyOrder) = this.also {
         collection()
-            .insertOne(LegacyOrderDocument(id = ObjectId(order.id)))
+            .insertOne(LegacyOrderDocument(legacyId = ObjectId(item.legacyId)))
+    }
+
+    override fun clear() = this.also { collection().deleteMany() }
 
     override fun findAll(): List<LegacyOrder> =
         collection()
             .find()
-            .map { document -> LegacyOrder(id = document.id.toHexString()) }
+            .map { document -> LegacyOrder(legacyId = document.legacyId.toString()) }
             .toList()
 
-    private fun collection() : MongoCollection<LegacyOrderDocument> =
+    private fun collection(): MongoCollection<LegacyOrderDocument> =
         mongoClient.getDatabase(databaseName).getCollection<LegacyOrderDocument>(collectionName)
 }

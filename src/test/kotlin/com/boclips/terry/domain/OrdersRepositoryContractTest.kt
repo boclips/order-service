@@ -68,6 +68,7 @@ abstract class OrdersRepositoryTests {
 
     @Test
     fun `creates an order`() {
+        repo.clear()
         val order = Order(id = ObjectId().toHexString())
         repo.add(order)
         assertThat(repo.findAll()).containsExactly(order)

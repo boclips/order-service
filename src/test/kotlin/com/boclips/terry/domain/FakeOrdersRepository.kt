@@ -1,10 +1,18 @@
 package com.boclips.terry.domain
 
 class FakeOrdersRepository : OrdersRepository {
-    var orders: MutableList<Order> = mutableListOf()
+    lateinit var orders: MutableList<Order>
 
-    override fun add(order: Order) {
-        orders.add(order)
+    init {
+        clear()
+    }
+
+    override fun clear(): OrdersRepository = this.also {
+        orders = mutableListOf()
+    }
+
+    override fun add(item: Order) = this.also {
+        orders.add(item)
     }
 
     override fun findAll(): List<Order> = orders

@@ -68,7 +68,8 @@ abstract class LegacyOrdersRepositoryTests {
 
     @Test
     fun `creates a legacy order`() {
-        val legacyOrder = LegacyOrder(id = ObjectId().toHexString())
+        repo.clear()
+        val legacyOrder = LegacyOrder(legacyId = ObjectId().toHexString())
         repo.add(legacyOrder)
         assertThat(repo.findAll()).containsExactly(legacyOrder)
     }
