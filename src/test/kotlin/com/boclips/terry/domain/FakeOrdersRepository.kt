@@ -18,7 +18,18 @@ class FakeOrdersRepository : OrdersRepository {
     }
 
     override fun add(order: Order, legacyDocument: LegacyOrderDocument) = this.also {
-        orderDocuments.add(OrderDocument(orderId = ObjectId(order.id), legacyDocument = legacyDocument))
+        orderDocuments.add(
+            OrderDocument(
+                id = ObjectId(order.id),
+                uuid = order.uuid,
+                status = order.status,
+                isbnOrProductNumber = order.isbnOrProductNumber,
+                creator = order.creator,
+                vendor = order.vendor,
+                updatedAt = order.updatedAt,
+                createdAt = order.createdAt,
+                legacyDocument = legacyDocument
+            ))
         orders.add(order)
     }
 
@@ -26,6 +37,6 @@ class FakeOrdersRepository : OrdersRepository {
 
     override fun documentForOrderId(orderId: String): LegacyOrderDocument? =
         orderDocuments
-            .find { orderDocument -> orderDocument.orderId.toHexString() == orderId }
+            .find { orderDocument -> orderDocument.id.toHexString() == orderId }
             ?.legacyDocument
 }

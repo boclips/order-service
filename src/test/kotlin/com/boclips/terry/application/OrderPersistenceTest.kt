@@ -7,6 +7,7 @@ import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.domain.FakeOrdersRepository
 import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -84,7 +85,16 @@ class OrderPersistenceTest {
 
         assertThat(repo.findAll())
             .containsExactly(
-                Order(id = legacyOrder.id)
+                Order(
+                    id = legacyOrder.id,
+                    uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+                    createdAt = orderCreatedAt.toInstant(),
+                    updatedAt = orderUpdatedAt.toInstant(),
+                    vendor = "boclips",
+                    creator = "big-bang",
+                    isbnOrProductNumber = "some-isbn",
+                    status = OrderStatus.CONFIRMED
+                )
             )
         assertThat(repo.documentForOrderId(legacyOrder.id))
             .isEqualTo(

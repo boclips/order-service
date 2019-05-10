@@ -24,7 +24,14 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
         collection()
             .insertOne(
                 OrderDocument(
-                    orderId = ObjectId(order.id),
+                    id = ObjectId(order.id),
+                    uuid = order.uuid,
+                    status = order.status,
+                    isbnOrProductNumber = order.isbnOrProductNumber,
+                    creator = order.creator,
+                    vendor = order.vendor,
+                    updatedAt = order.updatedAt,
+                    createdAt = order.createdAt,
                     legacyDocument = legacyDocument
                 )
             )
@@ -35,12 +42,23 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     override fun findAll(): List<Order> =
         collection()
             .find()
-            .map { document -> Order(id = document.orderId.toHexString()) }
+            .map { orderDocument ->
+                Order(
+                    id = orderDocument.id.toHexString(),
+                    uuid = orderDocument.uuid,
+                    creator = orderDocument.creator,
+                    vendor = orderDocument.vendor,
+                    status = orderDocument.status,
+                    isbnOrProductNumber = orderDocument.isbnOrProductNumber,
+                    updatedAt = orderDocument.updatedAt,
+                    createdAt = orderDocument.createdAt
+                )
+            }
             .toList()
 
     override fun documentForOrderId(orderId: String): LegacyOrderDocument? =
         collection()
-            .findOne(OrderDocument::orderId eq ObjectId(orderId))
+            .findOne(OrderDocument::id eq ObjectId(orderId))
             ?.legacyDocument
 
     private fun collection(): MongoCollection<OrderDocument> =
