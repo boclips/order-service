@@ -1,7 +1,9 @@
 package com.boclips.terry.infrastructure
 
-import org.bson.types.ObjectId
+import com.boclips.events.types.LegacyOrder
+import com.boclips.events.types.LegacyOrderItem
 
 data class LegacyOrderDocument(
-    val legacyId: ObjectId
+    val order: LegacyOrder,
+    val items: List<LegacyOrderItem>
 )
