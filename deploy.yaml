@@ -2,7 +2,7 @@
 app: terry
 port: 8080
 scale: Large
-bootTime: Fast
+bootTime: Slow
 healthPath: /
 mountedSecret: terry-google-application-credentials
 environments:
