@@ -7,7 +7,9 @@ import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.domain.OrdersRepository
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import org.springframework.cloud.stream.annotation.StreamListener
+import org.springframework.stereotype.Component
 
+@Component
 class OrderPersistence(
     private val repo: OrdersRepository
 ) {
