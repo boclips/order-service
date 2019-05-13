@@ -14,7 +14,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
-const val databaseName = "order-service"
+const val databaseName = "order-service-db"
 const val collectionName = "orders"
 
 class MongoOrdersRepository(uri: String) : OrdersRepository {
