@@ -4,7 +4,6 @@ port: 8080
 scale: Large
 bootTime: Slow
 healthPath: /
-mountedSecret: terry-google-application-credentials
 environments:
   production:
     replicas: 2
