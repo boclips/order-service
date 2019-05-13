@@ -2,6 +2,7 @@ package com.boclips.terry.application
 
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.LegacyOrderSubmitted
+import com.boclips.terry.domain.LegacyOrderProcessingException
 import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.domain.OrdersRepository
@@ -37,6 +38,7 @@ class OrderPersistence(
             )
         } catch (e: Exception) {
             logger.error { "Couldn't process legacy order: $e" }
+            throw LegacyOrderProcessingException(e)
         }
     }
 }
