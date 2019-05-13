@@ -10,6 +10,7 @@ import com.boclips.terry.infrastructure.LegacyOrderDocument
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 
 @Component
 class OrderPersistence(
@@ -36,9 +37,13 @@ class OrderPersistence(
                     items = event.orderItems
                 )
             )
+        } catch (e: IllegalStateException) {
+            logger.error { "Couldn't process legacy order: $e" }
         } catch (e: Exception) {
             logger.error { "Couldn't process legacy order: $e" }
-            throw LegacyOrderProcessingException(e)
+            if (e !is IllegalStateException) {
+                throw LegacyOrderProcessingException(e)
+            }
         }
     }
 }

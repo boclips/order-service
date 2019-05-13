@@ -18,19 +18,24 @@ class FakeOrdersRepository : OrdersRepository {
     }
 
     override fun add(order: Order, legacyDocument: LegacyOrderDocument) = this.also {
-        orderDocuments.add(
-            OrderDocument(
-                id = ObjectId(order.id),
-                uuid = order.uuid,
-                status = order.status,
-                isbnOrProductNumber = order.isbnOrProductNumber,
-                creator = order.creator,
-                vendor = order.vendor,
-                updatedAt = order.updatedAt,
-                createdAt = order.createdAt,
-                legacyDocument = legacyDocument
-            ))
-        orders.add(order)
+        if (order.id == "please-throw") {
+            throw Exception("deliberately thrown in test")
+        } else {
+            orderDocuments.add(
+                OrderDocument(
+                    id = ObjectId(order.id),
+                    uuid = order.uuid,
+                    status = order.status,
+                    isbnOrProductNumber = order.isbnOrProductNumber,
+                    creator = order.creator,
+                    vendor = order.vendor,
+                    updatedAt = order.updatedAt,
+                    createdAt = order.createdAt,
+                    legacyDocument = legacyDocument
+                )
+            )
+            orders.add(order)
+        }
     }
 
     override fun findAll(): List<Order> = orders

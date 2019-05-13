@@ -14,13 +14,27 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.util.Date
 
 class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
     @BeforeEach
-    fun setUp() {
+    override fun setUp() {
         repo = FakeOrdersRepository()
+        super.setUp()
+    }
+
+    @Test
+    fun `can throw given a magical ID`() {
+        val id = "please-throw"
+        val legacyOrder = legacyOrder(id)
+        val order = order(legacyOrder)
+        val legacyDocument = legacyOrderDocument(legacyOrder)
+
+        assertThrows<Exception> {
+            repo.add(order = order, legacyDocument = legacyDocument)
+        }
     }
 }
 
@@ -38,8 +52,9 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
     }
 
     @BeforeEach
-    fun setUp() {
+    override fun setUp() {
         repo = MongoOrdersRepository("mongodb://localhost/test")
+        super.setUp()
     }
 }
 
@@ -47,11 +62,25 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
 abstract class OrdersRepositoryTests {
     lateinit var repo: OrdersRepository
 
+    @BeforeEach
+    open fun setUp() {
+        repo.clear()
+    }
+
     @Test
     fun `creates an order`() {
-        repo.clear()
         val id = ObjectId().toHexString()
-        val legacyOrder = LegacyOrder
+        val legacyOrder = legacyOrder(id)
+        val order = order(legacyOrder)
+        val legacyDocument = legacyOrderDocument(legacyOrder)
+
+        repo.add(order = order, legacyDocument = legacyDocument)
+        assertThat(repo.findAll()).containsExactly(order)
+        assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
+    }
+
+    protected fun legacyOrder(id: String): LegacyOrder {
+        return LegacyOrder
             .builder()
             .id(id)
             .uuid("some-uuid")
@@ -75,7 +104,10 @@ abstract class OrdersRepositoryTests {
             )
             .status("KINGOFORDERS")
             .build()
-        val order = Order(
+    }
+
+    protected fun order(legacyOrder: LegacyOrder): Order {
+        return Order(
             id = legacyOrder.id,
             uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
             createdAt = Date().toInstant(),
@@ -85,7 +117,10 @@ abstract class OrdersRepositoryTests {
             isbnOrProductNumber = "some-isbn",
             status = OrderStatus.CONFIRMED
         )
-        val legacyDocument = LegacyOrderDocument(
+    }
+
+    protected fun legacyOrderDocument(legacyOrder: LegacyOrder): LegacyOrderDocument {
+        return LegacyOrderDocument(
             order = legacyOrder,
             items = listOf(
                 LegacyOrderItem
@@ -112,9 +147,5 @@ abstract class OrdersRepositoryTests {
                     .build()
             )
         )
-
-        repo.add(order = order, legacyDocument = legacyDocument)
-        assertThat(repo.findAll()).containsExactly(order)
-        assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
     }
 }
