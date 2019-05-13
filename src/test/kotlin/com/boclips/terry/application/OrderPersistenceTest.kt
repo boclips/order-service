@@ -1,5 +1,6 @@
 package com.boclips.terry.application
 
+import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.LegacyOrderExtraFields
 import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
@@ -12,14 +13,29 @@ import com.boclips.terry.infrastructure.LegacyOrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.messaging.support.MessageBuilder
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.math.BigDecimal
 import java.util.Date
 
+@ExtendWith(SpringExtension::class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class OrderPersistenceTest {
+    @Autowired
+    lateinit var subscriptions: Subscriptions
+
+    @Autowired
+    lateinit var repo: FakeOrdersRepository
+
     @Test
     fun `persists legacy-orders when they arrive`() {
-        val repo = FakeOrdersRepository()
-        val persistence = OrderPersistence(repo)
         val orderCreatedAt = Date(0)
         val orderUpdatedAt = Date(1)
         val item1CreatedAt = Date(2)
@@ -76,12 +92,16 @@ class OrderPersistenceTest {
                 .build()
         )
 
-        persistence.onLegacyOrderSubmitted(
-            event = LegacyOrderSubmitted.builder()
-                .order(legacyOrder)
-                .orderItems(items)
-                .build()
-        )
+        subscriptions.legacyOrderSubmissions()
+            .send(
+                MessageBuilder.withPayload(
+                    LegacyOrderSubmitted.builder()
+                        .order(legacyOrder)
+                        .orderItems(items)
+                        .build()
+                )
+                    .build()
+            )
 
         assertThat(repo.findAll())
             .containsExactly(

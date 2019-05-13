@@ -2,6 +2,7 @@ package com.boclips.terry.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.terry.domain.FakeOrdersRepository
 import com.boclips.terry.domain.OrdersRepository
 import com.boclips.terry.infrastructure.Clock
 import com.boclips.terry.infrastructure.FakeClock
@@ -36,5 +37,5 @@ class TestContext(val mongoProperties: MongoProperties) {
 
     @Bean
     fun ordersRepository(): OrdersRepository =
-        MongoOrdersRepository(mongoProperties.determineUri())
+        FakeOrdersRepository()
 }
