@@ -26,7 +26,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                 OrderDocument(
                     id = ObjectId(order.id),
                     uuid = order.uuid,
-                    status = order.status,
+                    status = order.status.toString(),
                     isbnOrProductNumber = order.isbnOrProductNumber,
                     creator = order.creator,
                     vendor = order.vendor,
@@ -42,18 +42,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     override fun findAll(): List<Order> =
         collection()
             .find()
-            .map { orderDocument ->
-                Order(
-                    id = orderDocument.id.toHexString(),
-                    uuid = orderDocument.uuid,
-                    creator = orderDocument.creator,
-                    vendor = orderDocument.vendor,
-                    status = orderDocument.status,
-                    isbnOrProductNumber = orderDocument.isbnOrProductNumber,
-                    updatedAt = orderDocument.updatedAt,
-                    createdAt = orderDocument.createdAt
-                )
-            }
+            .map(OrderDocument::toOrder)
             .toList()
 
     override fun documentForOrderId(orderId: String): LegacyOrderDocument? =

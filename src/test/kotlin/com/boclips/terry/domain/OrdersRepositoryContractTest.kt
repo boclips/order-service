@@ -19,6 +19,8 @@ import java.math.BigDecimal
 import java.util.Date
 
 class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
+    private val factories = TestFactories()
+
     @BeforeEach
     override fun setUp() {
         repo = FakeOrdersRepository()
@@ -28,7 +30,7 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
     @Test
     fun `can throw given a magical ID`() {
         val id = "please-throw"
-        val legacyOrder = legacyOrder(id)
+        val legacyOrder = factories.legacyOrder(id)
         val order = order(legacyOrder)
         val legacyDocument = legacyOrderDocument(legacyOrder)
 
@@ -61,6 +63,7 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
 @Disabled
 abstract class OrdersRepositoryTests {
     lateinit var repo: OrdersRepository
+    private val factories = TestFactories()
 
     @BeforeEach
     open fun setUp() {
@@ -70,40 +73,13 @@ abstract class OrdersRepositoryTests {
     @Test
     fun `creates an order`() {
         val id = ObjectId().toHexString()
-        val legacyOrder = legacyOrder(id)
+        val legacyOrder = factories.legacyOrder(id)
         val order = order(legacyOrder)
         val legacyDocument = legacyOrderDocument(legacyOrder)
 
         repo.add(order = order, legacyDocument = legacyDocument)
         assertThat(repo.findAll()).containsExactly(order)
         assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
-    }
-
-    protected fun legacyOrder(id: String): LegacyOrder {
-        return LegacyOrder
-            .builder()
-            .id(id)
-            .uuid("some-uuid")
-            .creator("big-bang")
-            .vendor("boclips")
-            .dateCreated(Date())
-            .dateUpdated(Date())
-            .nextStatus(
-                LegacyOrderNextStatus
-                    .builder()
-                    .roles(listOf("JAM", "BREAD"))
-                    .nextStates(listOf("DRUNK", "SLEEPING"))
-                    .build()
-            )
-            .extraFields(
-                LegacyOrderExtraFields
-                    .builder()
-                    .agreeTerms(true)
-                    .isbnOrProductNumber("good-book-number")
-                    .build()
-            )
-            .status("KINGOFORDERS")
-            .build()
     }
 
     protected fun order(legacyOrder: LegacyOrder): Order {

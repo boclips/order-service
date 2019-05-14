@@ -25,7 +25,7 @@ class FakeOrdersRepository : OrdersRepository {
                 OrderDocument(
                     id = ObjectId(order.id),
                     uuid = order.uuid,
-                    status = order.status,
+                    status = order.status.toString(),
                     isbnOrProductNumber = order.isbnOrProductNumber,
                     creator = order.creator,
                     vendor = order.vendor,
