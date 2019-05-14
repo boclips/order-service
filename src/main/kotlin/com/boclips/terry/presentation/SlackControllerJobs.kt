@@ -10,7 +10,7 @@ import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
 import org.springframework.scheduling.annotation.Async
 
-open class HomeControllerJobs(
+open class SlackControllerJobs(
     private val slackPoster: SlackPoster,
     private val videoService: VideoService,
     private val kalturaClient: KalturaClient
@@ -37,8 +37,8 @@ open class HomeControllerJobs(
     open fun chat(slackMessage: SlackMessage, url: String): Unit =
         when (slackPoster.chatPostMessage(slackMessage, url = url)) {
             is PostSuccess ->
-                HomeController.logger.debug { "Successful post of $slackMessage" }
+                SlackController.logger.debug { "Successful post of $slackMessage" }
             is PostFailure ->
-                HomeController.logger.error { "Failed post to Slack" }
+                SlackController.logger.error { "Failed post to Slack" }
         }
 }

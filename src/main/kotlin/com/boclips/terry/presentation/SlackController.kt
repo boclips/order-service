@@ -25,7 +25,7 @@ import java.nio.charset.Charset
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-class HomeController(
+class SlackController(
     private val terry: Terry,
     private val slackPoster: SlackPoster,
     private val videoService: VideoService,
@@ -81,7 +81,7 @@ class HomeController(
     }
 
     private fun tagVideo(action: VideoTagging) {
-        HomeControllerJobs(
+        SlackControllerJobs(
             slackPoster = slackPoster,
             videoService = videoService,
             kalturaClient = kalturaClient
@@ -90,7 +90,7 @@ class HomeController(
     }
 
     private fun getVideo(action: VideoRetrieval) {
-        HomeControllerJobs(
+        SlackControllerJobs(
             slackPoster = slackPoster,
             videoService = videoService,
             kalturaClient = kalturaClient
@@ -99,7 +99,7 @@ class HomeController(
     }
 
     private fun chat(action: ChatReply) {
-        HomeControllerJobs(
+        SlackControllerJobs(
             slackPoster = slackPoster,
             videoService = videoService,
             kalturaClient = kalturaClient
