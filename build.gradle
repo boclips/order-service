@@ -32,6 +32,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation("org.springframework.cloud:spring-cloud-gcp-starter-pubsub")
     implementation("org.springframework.cloud:spring-cloud-gcp-pubsub-stream-binder")
+    implementation("org.springframework.boot:spring-boot-starter-hateoas")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     implementation('org.litote.kmongo:kmongo:3.9.2')
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
@@ -41,6 +43,7 @@ dependencies {
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
     implementation "com.github.boclips:kaltura-client:0.58.0"
     implementation "com.github.boclips:events:0.34.0"
+    implementation('com.github.boclips:boclips-spring-security:0.93.0')
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
