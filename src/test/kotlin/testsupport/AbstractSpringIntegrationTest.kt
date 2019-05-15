@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("test", "fake-security")
 abstract class AbstractSpringIntegrationTest {
 
     @Autowired
