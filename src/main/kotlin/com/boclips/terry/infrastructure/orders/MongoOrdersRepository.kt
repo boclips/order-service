@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.Order
-import com.boclips.terry.domain.OrdersRepository
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import com.boclips.terry.infrastructure.OrderDocument
 import com.mongodb.MongoClient

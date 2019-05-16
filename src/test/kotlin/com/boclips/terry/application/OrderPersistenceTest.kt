@@ -7,7 +7,7 @@ import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
-import com.boclips.terry.domain.FakeOrdersRepository
+import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument

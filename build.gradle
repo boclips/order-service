@@ -54,6 +54,7 @@ dependencies {
     testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.3.0'
     testImplementation("org.springframework.cloud:spring-cloud-stream-test-support")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+    testImplementation("org.springframework.security:spring-security-test")
 
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.2.0"
 }

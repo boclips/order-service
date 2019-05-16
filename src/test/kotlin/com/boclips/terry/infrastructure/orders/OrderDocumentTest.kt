@@ -1,16 +1,16 @@
-package com.boclips.terry.infrastructure
+package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.domain.TestFactories
+import com.boclips.terry.infrastructure.LegacyOrderDocument
+import com.boclips.terry.infrastructure.OrderDocument
+import testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class OrderDocumentTest {
-    private val factories = TestFactories()
-
     @Test
     fun `can convert itself to an Order`() {
         val id = ObjectId()
@@ -23,7 +23,7 @@ class OrderDocumentTest {
                 creator = "bob",
                 isbnOrProductNumber = "anisbn",
                 legacyDocument = LegacyOrderDocument(
-                    order = factories.legacyOrder("foo"),
+                    order = TestFactories.legacyOrder("foo"),
                     items = emptyList()
                 ),
                 status = "COMPLETED",

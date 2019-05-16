@@ -1,4 +1,4 @@
-package com.boclips.terry.domain
+package com.boclips.terry.infrastructure.orders
 
 import de.flapdoodle.embed.mongo.MongodProcess
 import de.flapdoodle.embed.mongo.MongodStarter

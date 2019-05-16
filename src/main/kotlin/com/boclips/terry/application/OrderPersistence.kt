@@ -5,7 +5,7 @@ import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.domain.LegacyOrderProcessingException
 import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.domain.OrdersRepository
+import com.boclips.terry.infrastructure.orders.OrdersRepository
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener

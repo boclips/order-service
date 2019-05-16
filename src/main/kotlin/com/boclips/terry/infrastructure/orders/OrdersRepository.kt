@@ -1,5 +1,6 @@
-package com.boclips.terry.domain
+package com.boclips.terry.infrastructure.orders
 
+import com.boclips.terry.domain.Order
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 
 interface OrdersRepository {
