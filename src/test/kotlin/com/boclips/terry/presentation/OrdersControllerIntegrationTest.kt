@@ -16,9 +16,6 @@ import testsupport.asBackofficeStaff
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
-    lateinit var mockMvc: MockMvc
-
-    @Autowired
     lateinit var ordersRepository: FakeOrdersRepository
 
     @BeforeEach

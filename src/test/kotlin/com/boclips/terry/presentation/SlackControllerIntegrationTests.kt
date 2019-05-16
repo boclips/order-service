@@ -38,10 +38,6 @@ import java.math.BigDecimal
 // This is a rotated secret, used because we hard-code an example signed by Slack with this secret
 @TestPropertySource(properties = ["slack.signingSecret=f873d35529ed55a0ab71ac068488684d"])
 class SlackControllerIntegrationTests: AbstractSpringIntegrationTest() {
-
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
     @Autowired
     lateinit var slackPoster: FakeSlackPoster
 

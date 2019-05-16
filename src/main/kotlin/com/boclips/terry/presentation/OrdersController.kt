@@ -15,13 +15,17 @@ class OrdersController(
     private val getOrders: GetOrders
 ) {
     companion object {
-        fun getOrdersLink(): Link =
+        fun getOrdersLink(): Link = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
+        ).withRel("orders")
+
+        fun getSelfOrdersLink(): Link =
             ControllerLinkBuilder.linkTo(
                 ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
-            ).withSelfRel()
+            ).withRel("orders").withSelfRel()
     }
 
     @GetMapping
     fun getOrderList(): Resources<OrderResource> =
-        Resources(getOrders(), getOrdersLink())
+        Resources(getOrders(), getSelfOrdersLink())
 }
