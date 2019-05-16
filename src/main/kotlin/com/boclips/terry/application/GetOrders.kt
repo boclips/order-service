@@ -1,7 +1,7 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.domain.OrderService
-import com.boclips.terry.presentation.OrderResource
+import com.boclips.terry.presentation.resources.OrderResource
 import org.springframework.stereotype.Component
 
 @Component

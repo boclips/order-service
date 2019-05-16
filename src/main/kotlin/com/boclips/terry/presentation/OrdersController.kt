@@ -1,6 +1,7 @@
 package com.boclips.terry.presentation
 
 import com.boclips.terry.application.GetOrders
+import com.boclips.terry.presentation.resources.OrderResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder

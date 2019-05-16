@@ -1,7 +1,7 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
-import com.boclips.terry.presentation.OrderResource
+import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
