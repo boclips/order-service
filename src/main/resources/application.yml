@@ -1,2 +1,4 @@
 slack:
     signingSecret: a-fake-secret
+server:
+    use-forward-headers: true
