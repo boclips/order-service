@@ -9,3 +9,11 @@ environments:
     replicas: 2
     urls:
       - terry.boclips.com
+  staging:
+    replicas: 1
+    urls:
+      - terry.staging-boclips.com
+  testing:
+    replicas: 1
+    urls:
+      - terry.testing-boclips.com
