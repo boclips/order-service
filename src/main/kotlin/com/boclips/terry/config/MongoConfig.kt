@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync
 
 @EnableAsync
 @Configuration
-@Profile("production")
+@Profile("!test")
 class MongoConfig(val mongoProperties: MongoProperties) {
     @Bean
     fun ordersRepository(): OrdersRepository =
