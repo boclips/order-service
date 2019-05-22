@@ -1,8 +1,9 @@
 package com.boclips.terry.presentation
 
 import com.boclips.terry.application.GetOrders
-import com.boclips.terry.presentation.resources.OrderResource
+import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
 import org.springframework.hateoas.Link
+import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,6 +27,13 @@ class OrdersController(
     }
 
     @GetMapping
-    fun getOrderList(): Resources<OrderResource> =
-        Resources(getOrders(), getSelfOrdersLink())
+    fun getOrderList(): Resources<*> {
+        val orders = getOrders()
+
+        val orderResources = orders
+            .map { Resource(it) }
+            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+
+        return Resources(orderResources, getSelfOrdersLink())
+    }
 }
