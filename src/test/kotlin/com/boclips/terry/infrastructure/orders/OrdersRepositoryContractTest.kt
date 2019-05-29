@@ -1,6 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
-import testsupport.TestFactories
+import com.boclips.terry.domain.OrderStatus
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import testsupport.TestFactories
+import java.time.Instant
 
 class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
 
@@ -22,7 +24,14 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
     fun `can throw given a magical ID`() {
         val id = "please-throw"
         val legacyOrder = TestFactories.legacyOrder(id)
-        val order = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        val order = TestFactories.order(
+            legacyOrder,
+            "boclips",
+            "big-bang",
+            OrderStatus.CONFIRMED,
+            Instant.EPOCH,
+            Instant.EPOCH
+        )
         val legacyDocument = TestFactories.legacyOrderDocument(
             legacyOrder,
             "creator@theworld.example",
@@ -69,7 +78,14 @@ abstract class OrdersRepositoryTests {
     fun `creates an order`() {
         val id = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id)
-        val order = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        val order = TestFactories.order(
+            legacyOrder,
+            "boclips",
+            "big-bang",
+            OrderStatus.CONFIRMED,
+            Instant.EPOCH,
+            Instant.EPOCH
+        )
         val legacyDocument = TestFactories.legacyOrderDocument(
             legacyOrder,
             "creator@theworld.example",

@@ -1,8 +1,8 @@
 package com.boclips.terry.presentation
 
+import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import org.bson.types.ObjectId
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.TestFactories
 import testsupport.asBackofficeStaff
+import java.time.Instant
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -32,28 +33,33 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get orders`() {
-        val id = ObjectId().toHexString()
-        val legacyOrder = TestFactories.legacyOrder(id)
-
-        ordersRepository.add(
-            TestFactories.order(
-                legacyOrder = legacyOrder,
-                creatorEmail = "creator@proper.order",
-                vendorEmail = "vendor@proper.order"
-            ),
-            TestFactories.legacyOrderDocument(
-                legacyOrder = legacyOrder,
-                creatorEmail = "creator@in.legacy.document",
-                vendorEmail = "vendor@in.legacy.document"
+        TestFactories.run {
+            ordersRepository.add(
+                order(
+                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
+                    creatorEmail = "creator@proper.order",
+                    vendorEmail = "vendor@proper.order",
+                    status = OrderStatus.CONFIRMED,
+                    createdAt = Instant.EPOCH,
+                    updatedAt = Instant.EPOCH.plusMillis(1)
+                ),
+                legacyOrderDocument(
+                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
+                    creatorEmail = "creator@in.legacy.document",
+                    vendorEmail = "vendor@in.legacy.document"
+                )
             )
-        )
+        }
 
         mockMvc.perform(
             get("/v1/orders").asBackofficeStaff()
         ).andExpect(status().isOk)
-            .andExpect(jsonPath("$._embedded.orders[0].id", equalTo(id)))
+            .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
             .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))
+            .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
+            .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
+            .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$._links.self").exists())
     }
 

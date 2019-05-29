@@ -9,6 +9,7 @@ import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import java.math.BigDecimal
+import java.time.Instant
 import java.util.Date
 
 class TestFactories {
@@ -41,17 +42,20 @@ class TestFactories {
         fun order(
             legacyOrder: LegacyOrder,
             creatorEmail: String,
-            vendorEmail: String
+            vendorEmail: String,
+            status: OrderStatus,
+            createdAt: Instant,
+            updatedAt: Instant
         ): Order {
             return Order(
                 id = legacyOrder.id,
                 uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-                createdAt = Date().toInstant(),
-                updatedAt = Date().toInstant(),
+                createdAt = createdAt,
+                updatedAt = updatedAt,
                 creatorEmail = creatorEmail,
                 vendorEmail = vendorEmail,
                 isbnOrProductNumber = "some-isbn",
-                status = OrderStatus.CONFIRMED
+                status = status
             )
         }
 

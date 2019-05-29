@@ -7,14 +7,20 @@ import org.springframework.hateoas.core.Relation
 data class OrderResource(
     val id: String,
     val creatorEmail: String,
-    val vendorEmail: String
+    val vendorEmail: String,
+    val status: String,
+    val createdAt: String,
+    val updatedAt: String
 ) {
     companion object {
         fun fromOrder(order: Order): OrderResource =
             OrderResource(
                 id = order.id,
                 creatorEmail = order.creatorEmail,
-                vendorEmail = order.vendorEmail
+                vendorEmail = order.vendorEmail,
+                createdAt = order.createdAt.toString(),
+                updatedAt = order.updatedAt.toString(),
+                status = order.status.toString()
             )
     }
 }
