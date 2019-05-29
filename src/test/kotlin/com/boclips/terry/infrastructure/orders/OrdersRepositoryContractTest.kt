@@ -22,8 +22,12 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
     fun `can throw given a magical ID`() {
         val id = "please-throw"
         val legacyOrder = TestFactories.legacyOrder(id)
-        val order = TestFactories.order(legacyOrder)
-        val legacyDocument = TestFactories.legacyOrderDocument(legacyOrder)
+        val order = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        val legacyDocument = TestFactories.legacyOrderDocument(
+            legacyOrder,
+            "creator@theworld.example",
+            "some@vendor.4u"
+        )
 
         assertThrows<Exception> {
             repo.add(order = order, legacyDocument = legacyDocument)
@@ -65,8 +69,12 @@ abstract class OrdersRepositoryTests {
     fun `creates an order`() {
         val id = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id)
-        val order = TestFactories.order(legacyOrder)
-        val legacyDocument = TestFactories.legacyOrderDocument(legacyOrder)
+        val order = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        val legacyDocument = TestFactories.legacyOrderDocument(
+            legacyOrder,
+            "creator@theworld.example",
+            "some@vendor.4u"
+        )
 
         repo.add(order = order, legacyDocument = legacyDocument)
         assertThat(repo.findAll()).containsExactly(order)

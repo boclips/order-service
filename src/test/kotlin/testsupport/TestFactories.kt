@@ -17,8 +17,8 @@ class TestFactories {
             .builder()
             .id(id)
             .uuid("some-uuid")
-            .creator("big-bang")
-            .vendor("boclips")
+            .creator("illegible-creator-uuid")
+            .vendor("illegible-vendor-uuid")
             .dateCreated(Date())
             .dateUpdated(Date())
             .nextStatus(
@@ -38,20 +38,28 @@ class TestFactories {
             .status("KINGOFORDERS")
             .build()
 
-        fun order(legacyOrder: LegacyOrder): Order {
+        fun order(
+            legacyOrder: LegacyOrder,
+            creatorEmail: String,
+            vendorEmail: String
+        ): Order {
             return Order(
                 id = legacyOrder.id,
                 uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                 createdAt = Date().toInstant(),
                 updatedAt = Date().toInstant(),
-                vendorEmail = "boclips",
-                creatorEmail = "big-bang",
+                creatorEmail = creatorEmail,
+                vendorEmail = vendorEmail,
                 isbnOrProductNumber = "some-isbn",
                 status = OrderStatus.CONFIRMED
             )
         }
 
-        fun legacyOrderDocument(legacyOrder: LegacyOrder): LegacyOrderDocument {
+        fun legacyOrderDocument(
+            legacyOrder: LegacyOrder,
+            creatorEmail: String,
+            vendorEmail: String
+        ): LegacyOrderDocument {
             return LegacyOrderDocument(
                 order = legacyOrder,
                 items = listOf(
@@ -78,8 +86,8 @@ class TestFactories {
                         )
                         .build()
                 ),
-                creator = "creator@theworld.example",
-                vendor = "some@vendor.4u"
+                creator = creatorEmail,
+                vendor = vendorEmail
             )
         }
     }

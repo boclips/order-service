@@ -35,12 +35,25 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val id = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id)
 
-        ordersRepository.add(TestFactories.order(legacyOrder), TestFactories.legacyOrderDocument(legacyOrder))
+        ordersRepository.add(
+            TestFactories.order(
+                legacyOrder = legacyOrder,
+                creatorEmail = "creator@proper.order",
+                vendorEmail = "vendor@proper.order"
+            ),
+            TestFactories.legacyOrderDocument(
+                legacyOrder = legacyOrder,
+                creatorEmail = "creator@in.legacy.document",
+                vendorEmail = "vendor@in.legacy.document"
+            )
+        )
 
         mockMvc.perform(
             get("/v1/orders").asBackofficeStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.orders[0].id", equalTo(id)))
+            .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
+            .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))
             .andExpect(jsonPath("$._links.self").exists())
     }
 

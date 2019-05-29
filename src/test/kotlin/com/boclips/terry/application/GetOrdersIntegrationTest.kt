@@ -20,13 +20,13 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can get a list of order resources`() {
         val id1 = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id1)
-        val order1 = TestFactories.order(legacyOrder)
-        repo.add(order1, TestFactories.legacyOrderDocument(legacyOrder))
+        val order1 = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        repo.add(order1, TestFactories.legacyOrderDocument(legacyOrder, "creator@theworld.example", "some@vendor.4u"))
 
         val id2 = ObjectId().toHexString()
         val legacyOrder2 = TestFactories.legacyOrder(id2)
-        val order2 = TestFactories.order(legacyOrder)
-        repo.add(order2, TestFactories.legacyOrderDocument(legacyOrder2))
+        val order2 = TestFactories.order(legacyOrder, "boclips", "big-bang")
+        repo.add(order2, TestFactories.legacyOrderDocument(legacyOrder2, "creator@theworld.example", "some@vendor.4u"))
 
         assertThat(getOrders())
             .isEqualTo(
