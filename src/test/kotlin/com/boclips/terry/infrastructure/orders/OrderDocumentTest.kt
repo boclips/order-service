@@ -4,10 +4,10 @@ import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import com.boclips.terry.infrastructure.OrderDocument
-import testsupport.TestFactories
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import testsupport.TestFactories
 import java.time.Instant
 
 class OrderDocumentTest {
@@ -20,14 +20,16 @@ class OrderDocumentTest {
                 uuid = "c001-1d34",
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.MAX,
-                creator = "bob",
+                creatorEmail = "me@creators.lol",
+                vendorEmail = "you@vendors.biz",
                 isbnOrProductNumber = "anisbn",
                 legacyDocument = LegacyOrderDocument(
                     order = TestFactories.legacyOrder("foo"),
-                    items = emptyList()
+                    items = emptyList(),
+                    creator = "me@creators.lol",
+                    vendor = "you@vendors.biz"
                 ),
-                status = "COMPLETED",
-                vendor = "ethel pat"
+                status = "COMPLETED"
             ).toOrder()
         ).isEqualTo(
             Order(
@@ -35,10 +37,10 @@ class OrderDocumentTest {
                 uuid = "c001-1d34",
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.MAX,
-                creator = "bob",
+                creatorEmail = "me@creators.lol",
+                vendorEmail = "you@vendors.biz",
                 isbnOrProductNumber = "anisbn",
-                status = OrderStatus.COMPLETED,
-                vendor = "ethel pat"
+                status = OrderStatus.COMPLETED
             )
         )
     }

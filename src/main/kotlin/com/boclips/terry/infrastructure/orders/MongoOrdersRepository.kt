@@ -27,8 +27,8 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                     uuid = order.uuid,
                     status = order.status.toString(),
                     isbnOrProductNumber = order.isbnOrProductNumber,
-                    creator = order.creator,
-                    vendor = order.vendor,
+                    creatorEmail = order.creatorEmail,
+                    vendorEmail = order.vendorEmail,
                     updatedAt = order.updatedAt,
                     createdAt = order.createdAt,
                     legacyDocument = legacyDocument

@@ -34,8 +34,8 @@ data class Order(
     val id: String,
     val uuid: String,
     val status: OrderStatus,
-    val vendor: String,
-    val creator: String,
+    val vendorEmail: String,
+    val creatorEmail: String,
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String

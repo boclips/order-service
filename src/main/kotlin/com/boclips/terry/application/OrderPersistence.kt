@@ -27,14 +27,16 @@ class OrderPersistence(
                     uuid = event.order.uuid,
                     createdAt = event.order.dateCreated.toInstant(),
                     updatedAt = event.order.dateUpdated.toInstant(),
-                    creator = event.order.creator,
-                    vendor = event.order.vendor,
+                    creatorEmail = event.creator,
+                    vendorEmail = event.vendor,
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
                     status = OrderStatus.parse(event.order.status)
                 ),
                 legacyDocument = LegacyOrderDocument(
                     order = event.order,
-                    items = event.orderItems
+                    items = event.orderItems,
+                    creator = event.creator,
+                    vendor = event.vendor
                 )
             )
         } catch (e: IllegalStateException) {

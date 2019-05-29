@@ -44,8 +44,8 @@ class TestFactories {
                 uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                 createdAt = Date().toInstant(),
                 updatedAt = Date().toInstant(),
-                vendor = "boclips",
-                creator = "big-bang",
+                vendorEmail = "boclips",
+                creatorEmail = "big-bang",
                 isbnOrProductNumber = "some-isbn",
                 status = OrderStatus.CONFIRMED
             )
@@ -77,7 +77,9 @@ class TestFactories {
                                 .build()
                         )
                         .build()
-                )
+                ),
+                creator = "creator@theworld.example",
+                vendor = "some@vendor.4u"
             )
         }
     }

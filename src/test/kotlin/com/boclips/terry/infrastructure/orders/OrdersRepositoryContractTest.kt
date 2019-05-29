@@ -55,7 +55,6 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
 @Disabled
 abstract class OrdersRepositoryTests {
     lateinit var repo: OrdersRepository
-    private val factories = TestFactories()
 
     @BeforeEach
     open fun setUp() {

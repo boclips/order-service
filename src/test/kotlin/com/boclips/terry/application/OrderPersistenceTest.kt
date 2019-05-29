@@ -7,10 +7,10 @@ import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
-import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.domain.Order
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
@@ -53,11 +53,24 @@ class OrderPersistenceTest {
         val license1CreatedAt = Date(4)
         val license1UpdatedAt = Date(5)
         val orderId = ObjectId().toHexString()
-        val legacyOrder = legacyOrder(orderId, orderCreatedAt, orderUpdatedAt)
+        val legacyOrder = legacyOrder(
+            orderId = orderId,
+            orderCreatedAt = orderCreatedAt,
+            orderUpdatedAt = orderUpdatedAt,
+            vendorUuid = "illegible-vendor-uuid",
+            creatorUuid = "illegible-creator-uuid"
+        )
         val items = singularItemList(item1CreatedAt, item1UpdatedAt, license1CreatedAt, license1UpdatedAt)
 
         subscriptions.legacyOrderSubmissions()
-            .send(message(legacyOrder, items))
+            .send(
+                message(
+                    legacyOrder = legacyOrder,
+                    items = items,
+                    creator = "creator@their-company.net",
+                    vendor = "vendor@their-company.biz"
+                )
+            )
 
         assertThat(repo.findAll())
             .containsExactly(
@@ -66,8 +79,8 @@ class OrderPersistenceTest {
                     uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                     createdAt = orderCreatedAt.toInstant(),
                     updatedAt = orderUpdatedAt.toInstant(),
-                    vendor = "boclips",
-                    creator = "big-bang",
+                    creatorEmail = "creator@their-company.net",
+                    vendorEmail = "vendor@their-company.biz",
                     isbnOrProductNumber = "some-isbn",
                     status = OrderStatus.CONFIRMED
                 )
@@ -76,7 +89,9 @@ class OrderPersistenceTest {
             .isEqualTo(
                 LegacyOrderDocument(
                     order = legacyOrder,
-                    items = items
+                    items = items,
+                    creator = "creator@their-company.net",
+                    vendor = "vendor@their-company.biz"
                 )
             )
     }
@@ -87,8 +102,10 @@ class OrderPersistenceTest {
             subscriptions.legacyOrderSubmissions()
                 .send(
                     message(
-                        legacyOrder("please-throw", Date(0), Date(1)),
-                        singularItemList(Date(2), Date(3), Date(4), Date(5))
+                        legacyOrder = legacyOrder("please-throw", Date(0), Date(1), "deadb33f", "f33df00d"),
+                        items = singularItemList(Date(2), Date(3), Date(4), Date(5)),
+                        creator = "hi@there.eu",
+                        vendor = "bye@there.eu"
                     )
                 )
         }
@@ -139,13 +156,15 @@ class OrderPersistenceTest {
     private fun legacyOrder(
         orderId: String,
         orderCreatedAt: Date,
-        orderUpdatedAt: Date
+        orderUpdatedAt: Date,
+        vendorUuid: String,
+        creatorUuid: String
     ): LegacyOrder = LegacyOrder
         .builder()
         .id(orderId)
         .uuid("deadb33f-f33df00d-d00fb3ad-c00bfeed")
-        .vendor("boclips")
-        .creator("big-bang")
+        .vendor(vendorUuid)
+        .creator(creatorUuid)
         .dateCreated(orderCreatedAt)
         .dateUpdated(orderUpdatedAt)
         .extraFields(
@@ -167,11 +186,15 @@ class OrderPersistenceTest {
 
     private fun message(
         legacyOrder: LegacyOrder,
-        items: List<LegacyOrderItem>
+        items: List<LegacyOrderItem>,
+        creator: String,
+        vendor: String
     ): Message<LegacyOrderSubmitted> = MessageBuilder.withPayload(
         LegacyOrderSubmitted.builder()
             .order(legacyOrder)
             .orderItems(items)
+            .creator(creator)
+            .vendor(vendor)
             .build()
     )
         .build()
