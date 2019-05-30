@@ -38,5 +38,10 @@ data class Order(
     val creatorEmail: String,
     val updatedAt: Instant,
     val createdAt: Instant,
-    val isbnOrProductNumber: String
+    val isbnOrProductNumber: String,
+    val items: List<OrderItem>
+)
+
+data class OrderItem(
+    val uuid: String
 )

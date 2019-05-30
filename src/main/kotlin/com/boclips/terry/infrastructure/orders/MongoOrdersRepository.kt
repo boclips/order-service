@@ -3,6 +3,7 @@ package com.boclips.terry.infrastructure.orders
 import com.boclips.terry.domain.Order
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import com.boclips.terry.infrastructure.OrderDocument
+import com.boclips.terry.infrastructure.OrderItemDocument
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
@@ -26,12 +27,14 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                     id = ObjectId(order.id),
                     uuid = order.uuid,
                     status = order.status.toString(),
-                    isbnOrProductNumber = order.isbnOrProductNumber,
-                    creatorEmail = order.creatorEmail,
                     vendorEmail = order.vendorEmail,
+                    creatorEmail = order.creatorEmail,
                     updatedAt = order.updatedAt,
                     createdAt = order.createdAt,
-                    legacyDocument = legacyDocument
+                    isbnOrProductNumber = order.isbnOrProductNumber,
+                    legacyDocument = legacyDocument,
+                    items = legacyDocument.items
+                        .map { item -> OrderItemDocument(uuid = item.uuid) }
                 )
             )
     }

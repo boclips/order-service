@@ -30,7 +30,8 @@ class OrderPersistence(
                     creatorEmail = event.creator,
                     vendorEmail = event.vendor,
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
-                    status = OrderStatus.parse(event.order.status)
+                    status = OrderStatus.parse(event.order.status),
+                    items = emptyList()
                 ),
                 legacyDocument = LegacyOrderDocument(
                     order = event.order,

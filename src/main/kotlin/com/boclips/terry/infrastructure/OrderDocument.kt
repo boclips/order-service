@@ -14,7 +14,8 @@ data class OrderDocument(
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String,
-    val legacyDocument: LegacyOrderDocument
+    val legacyDocument: LegacyOrderDocument,
+    val items: List<OrderItemDocument>
 ) {
     fun toOrder(): Order =
         Order(
@@ -25,6 +26,11 @@ data class OrderDocument(
             status = OrderStatus.parse(status),
             isbnOrProductNumber = isbnOrProductNumber,
             updatedAt = updatedAt,
-            createdAt = createdAt
+            createdAt = createdAt,
+            items = emptyList()
         )
 }
+
+data class OrderItemDocument(
+    val uuid: String
+)

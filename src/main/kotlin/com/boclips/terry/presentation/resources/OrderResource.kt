@@ -10,7 +10,8 @@ data class OrderResource(
     val vendorEmail: String,
     val status: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val items: List<OrderItemResource>
 ) {
     companion object {
         fun fromOrder(order: Order): OrderResource =
@@ -20,7 +21,13 @@ data class OrderResource(
                 vendorEmail = order.vendorEmail,
                 createdAt = order.createdAt.toString(),
                 updatedAt = order.updatedAt.toString(),
-                status = order.status.toString()
+                status = order.status.toString(),
+                items = order.items
+                    .map { item -> OrderItemResource(uuid = item.uuid) }
             )
     }
 }
+
+data class OrderItemResource(
+    val uuid: String
+)

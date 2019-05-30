@@ -1,5 +1,8 @@
 package com.boclips.terry.presentation
 
+import com.boclips.events.types.LegacyOrderItem
+import com.boclips.events.types.LegacyOrderItemLicense
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -12,7 +15,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.TestFactories
 import testsupport.asBackofficeStaff
+import java.math.BigDecimal
 import java.time.Instant
+import java.util.Date
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -41,12 +46,59 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     vendorEmail = "vendor@proper.order",
                     status = OrderStatus.CONFIRMED,
                     createdAt = Instant.EPOCH,
-                    updatedAt = Instant.EPOCH.plusMillis(1)
+                    updatedAt = Instant.EPOCH.plusMillis(1),
+                    items = listOf(OrderItem(uuid = "awesome-item-uuid"))
                 ),
                 legacyOrderDocument(
                     legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
                     creatorEmail = "creator@in.legacy.document",
-                    vendorEmail = "vendor@in.legacy.document"
+                    vendorEmail = "vendor@in.legacy.document",
+                    items = listOf(
+                        LegacyOrderItem
+                            .builder()
+                            .id("item1")
+                            .uuid("item1-uuid")
+                            .assetId("item1-assetid")
+                            .status("PRETTYUSELESS")
+                            .transcriptsRequired(true)
+                            .price(BigDecimal.ONE)
+                            .dateCreated(Date())
+                            .dateUpdated(Date())
+                            .license(
+                                LegacyOrderItemLicense
+                                    .builder()
+                                    .id("license1")
+                                    .uuid("license1-uuid")
+                                    .description("license to kill")
+                                    .code("007")
+                                    .dateCreated(Date())
+                                    .dateUpdated(Date())
+                                    .build()
+                            )
+                            .build(),
+                        LegacyOrderItem
+                            .builder()
+                            .id("item2")
+                            .uuid("item2-uuid")
+                            .assetId("item2-assetid")
+                            .status("PRETTYUSELESS")
+                            .transcriptsRequired(false)
+                            .price(BigDecimal.TEN)
+                            .dateCreated(Date())
+                            .dateUpdated(Date())
+                            .license(
+                                LegacyOrderItemLicense
+                                    .builder()
+                                    .id("license1")
+                                    .uuid("license1-uuid")
+                                    .description("license to kill")
+                                    .code("007")
+                                    .dateCreated(Date())
+                                    .dateUpdated(Date())
+                                    .build()
+                            )
+                            .build()
+                    )
                 )
             )
         }
@@ -60,6 +112,16 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
+
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("item1-uuid")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].price", equalTo("£1.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptions", equalTo(listOf("us-english"))))
+
+
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("item2-uuid")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].price", equalTo("£10.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptions", equalTo(emptyList<String>())))
+
             .andExpect(jsonPath("$._links.self").exists())
     }
 

@@ -3,12 +3,11 @@ package testsupport
 import com.boclips.events.types.LegacyOrder
 import com.boclips.events.types.LegacyOrderExtraFields
 import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
-import java.math.BigDecimal
 import java.time.Instant
 import java.util.Date
 
@@ -45,7 +44,8 @@ class TestFactories {
             vendorEmail: String,
             status: OrderStatus,
             createdAt: Instant,
-            updatedAt: Instant
+            updatedAt: Instant,
+            items: List<OrderItem>
         ): Order {
             return Order(
                 id = legacyOrder.id,
@@ -55,41 +55,20 @@ class TestFactories {
                 creatorEmail = creatorEmail,
                 vendorEmail = vendorEmail,
                 isbnOrProductNumber = "some-isbn",
-                status = status
+                status = status,
+                items = items
             )
         }
 
         fun legacyOrderDocument(
             legacyOrder: LegacyOrder,
             creatorEmail: String,
-            vendorEmail: String
+            vendorEmail: String,
+            items: List<LegacyOrderItem>
         ): LegacyOrderDocument {
             return LegacyOrderDocument(
                 order = legacyOrder,
-                items = listOf(
-                    LegacyOrderItem
-                        .builder()
-                        .id("item1")
-                        .uuid("item1-uuid")
-                        .assetId("item1-assetid")
-                        .status("IHATETYPING")
-                        .transcriptsRequired(true)
-                        .price(BigDecimal.ONE)
-                        .dateCreated(Date())
-                        .dateUpdated(Date())
-                        .license(
-                            LegacyOrderItemLicense
-                                .builder()
-                                .id("license1")
-                                .uuid("license1-uuid")
-                                .description("license to kill")
-                                .code("007")
-                                .dateCreated(Date())
-                                .dateUpdated(Date())
-                                .build()
-                        )
-                        .build()
-                ),
+                items = items,
                 creator = creatorEmail,
                 vendor = vendorEmail
             )

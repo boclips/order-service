@@ -1,5 +1,8 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.events.types.LegacyOrderItem
+import com.boclips.events.types.LegacyOrderItemLicense
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +13,9 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import testsupport.TestFactories
+import java.math.BigDecimal
 import java.time.Instant
+import java.util.Date
 
 class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
 
@@ -30,12 +35,37 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
             "big-bang",
             OrderStatus.CONFIRMED,
             Instant.EPOCH,
-            Instant.EPOCH
+            Instant.EPOCH,
+            items = listOf(OrderItem(uuid = "this-is-not-the-magical-uuid"))
         )
         val legacyDocument = TestFactories.legacyOrderDocument(
             legacyOrder,
             "creator@theworld.example",
-            "some@vendor.4u"
+            "some@vendor.4u",
+            listOf(
+                LegacyOrderItem
+                    .builder()
+                    .id("item1")
+                    .uuid("item1-uuid")
+                    .assetId("item1-assetid")
+                    .status("IHATETYPING")
+                    .transcriptsRequired(true)
+                    .price(BigDecimal.ONE)
+                    .dateCreated(Date())
+                    .dateUpdated(Date())
+                    .license(
+                        LegacyOrderItemLicense
+                            .builder()
+                            .id("license1")
+                            .uuid("license1-uuid")
+                            .description("license to kill")
+                            .code("007")
+                            .dateCreated(Date())
+                            .dateUpdated(Date())
+                            .build()
+                    )
+                    .build()
+            )
         )
 
         assertThrows<Exception> {
@@ -84,12 +114,37 @@ abstract class OrdersRepositoryTests {
             "big-bang",
             OrderStatus.CONFIRMED,
             Instant.EPOCH,
-            Instant.EPOCH
+            Instant.EPOCH,
+            items = listOf(OrderItem(uuid = "just-make-the-order"))
         )
         val legacyDocument = TestFactories.legacyOrderDocument(
             legacyOrder,
             "creator@theworld.example",
-            "some@vendor.4u"
+            "some@vendor.4u",
+            listOf(
+                LegacyOrderItem
+                    .builder()
+                    .id("item1")
+                    .uuid("item1-uuid")
+                    .assetId("item1-assetid")
+                    .status("IHATETYPING")
+                    .transcriptsRequired(true)
+                    .price(BigDecimal.ONE)
+                    .dateCreated(Date())
+                    .dateUpdated(Date())
+                    .license(
+                        LegacyOrderItemLicense
+                            .builder()
+                            .id("license1")
+                            .uuid("license1-uuid")
+                            .description("license to kill")
+                            .code("007")
+                            .dateCreated(Date())
+                            .dateUpdated(Date())
+                            .build()
+                    )
+                    .build()
+            )
         )
 
         repo.add(order = order, legacyDocument = legacyDocument)
