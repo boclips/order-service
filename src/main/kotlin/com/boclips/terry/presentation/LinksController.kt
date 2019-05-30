@@ -3,6 +3,7 @@ package com.boclips.terry.presentation
 import com.boclips.security.utils.UserExtractor
 import com.boclips.terry.config.security.UserRoles
 import org.springframework.hateoas.Resource
+import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,6 +16,9 @@ class LinksController {
         if (UserExtractor.getCurrentUser()?.hasRole(UserRoles.VIEW_ORDERS) == true) {
             Resource("", listOf(OrdersController.getOrdersLink()))
         } else {
-            Resource("")
+            Resource(
+                "",
+                ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(LinksController::class.java).getLinks()).withSelfRel()
+            )
         }
 }

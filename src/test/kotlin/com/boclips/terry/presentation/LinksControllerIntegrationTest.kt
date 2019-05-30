@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.asBackofficeStaff
+import testsupport.asNonBackOfficeStaff
 
 class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -22,5 +23,12 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.orders").exists())
             .andExpect(jsonPath("$._links.orders.href", endsWith("/orders")))
+    }
+
+    @Test
+    fun `valid without correct roles gets an empty link`() {
+        mockMvc.perform(get("/v1/").asNonBackOfficeStaff())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links").exists())
     }
 }

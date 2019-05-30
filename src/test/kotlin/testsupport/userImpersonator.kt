@@ -11,3 +11,8 @@ fun MockHttpServletRequestBuilder.asBackofficeStaff() = this.with(
             UserRoles.VIEW_ORDERS
         )
 )
+
+fun MockHttpServletRequestBuilder.asNonBackOfficeStaff() = this.with(
+    SecurityMockMvcRequestPostProcessors
+        .user("ateacher")
+)
