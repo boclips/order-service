@@ -1,5 +1,6 @@
 package com.boclips.terry.presentation
 
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.TestFactories
 import testsupport.asBackofficeStaff
+import java.math.BigDecimal
 import java.time.Instant
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -41,12 +43,35 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     vendorEmail = "vendor@proper.order",
                     status = OrderStatus.CONFIRMED,
                     createdAt = Instant.EPOCH,
-                    updatedAt = Instant.EPOCH.plusMillis(1)
+                    updatedAt = Instant.EPOCH.plusMillis(1),
+                    items = listOf(
+                        OrderItem(
+                            uuid = "awesome-item-uuid",
+                            price = BigDecimal.valueOf(1),
+                            transcriptRequested = true
+                        ), OrderItem(
+                            uuid = "awesome-item-uuid2",
+                            price = BigDecimal.valueOf(10),
+                            transcriptRequested = false
+                        )
+                    )
                 ),
                 legacyOrderDocument(
                     legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
                     creatorEmail = "creator@in.legacy.document",
-                    vendorEmail = "vendor@in.legacy.document"
+                    vendorEmail = "vendor@in.legacy.document",
+                    items = listOf(
+                        legacyOrderItem(
+                            id = "awesome-item-uuid",
+                            price = BigDecimal.valueOf(1),
+                            transcriptsRequired = true
+                        ),
+                        legacyOrderItem(
+                            id = "awesome-item-uuid2",
+                            price = BigDecimal.valueOf(10),
+                            transcriptsRequired = true
+                        )
+                    )
                 )
             )
         }
@@ -60,6 +85,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
+
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("£1.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
+
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("awesome-item-uuid2")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("£10.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
+
             .andExpect(jsonPath("$._links.self").exists())
     }
 

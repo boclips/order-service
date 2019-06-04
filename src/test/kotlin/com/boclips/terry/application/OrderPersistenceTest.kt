@@ -8,6 +8,7 @@ import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
@@ -60,7 +61,13 @@ class OrderPersistenceTest {
             vendorUuid = "illegible-vendor-uuid",
             creatorUuid = "illegible-creator-uuid"
         )
-        val items = singularItemList(item1CreatedAt, item1UpdatedAt, license1CreatedAt, license1UpdatedAt)
+        val items = singularItemList(
+            createdAt = item1CreatedAt,
+            updatedAt = item1UpdatedAt,
+            licenseCreatedAt = license1CreatedAt,
+            licenseUpdatedAt = license1UpdatedAt,
+            uuid = "item-1-uuid"
+        )
 
         subscriptions.legacyOrderSubmissions()
             .send(
@@ -82,7 +89,10 @@ class OrderPersistenceTest {
                     creatorEmail = "creator@their-company.net",
                     vendorEmail = "vendor@their-company.biz",
                     isbnOrProductNumber = "some-isbn",
-                    status = OrderStatus.CONFIRMED
+                    status = OrderStatus.CONFIRMED,
+                    items = listOf(
+                        OrderItem(uuid = "item-1-uuid", price = BigDecimal.ONE, transcriptRequested = true)
+                    )
                 )
             )
         assertThat(repo.documentForOrderId(legacyOrder.id))
@@ -103,7 +113,7 @@ class OrderPersistenceTest {
                 .send(
                     message(
                         legacyOrder = legacyOrder("please-throw", Date(0), Date(1), "deadb33f", "f33df00d"),
-                        items = singularItemList(Date(2), Date(3), Date(4), Date(5)),
+                        items = singularItemList(Date(2), Date(3), Date(4), Date(5), "item-1-uuid"),
                         creator = "hi@there.eu",
                         vendor = "bye@there.eu"
                     )
@@ -124,18 +134,19 @@ class OrderPersistenceTest {
     }
 
     private fun singularItemList(
-        item1CreatedAt: Date,
-        item1UpdatedAt: Date,
-        license1CreatedAt: Date,
-        license1UpdatedAt: Date
+        createdAt: Date,
+        updatedAt: Date,
+        licenseCreatedAt: Date,
+        licenseUpdatedAt: Date,
+        uuid: String
     ): List<LegacyOrderItem> = listOf(
         LegacyOrderItem
             .builder()
             .id("item-1-id")
-            .uuid("item-1-uuid")
+            .uuid(uuid)
             .assetId("item-1-assetid")
-            .dateCreated(item1CreatedAt)
-            .dateUpdated(item1UpdatedAt)
+            .dateCreated(createdAt)
+            .dateUpdated(updatedAt)
             .license(
                 LegacyOrderItemLicense
                     .builder()
@@ -143,8 +154,8 @@ class OrderPersistenceTest {
                     .uuid("license1-uuid")
                     .code("license1-code")
                     .description("license to kill")
-                    .dateCreated(license1CreatedAt)
-                    .dateUpdated(license1UpdatedAt)
+                    .dateCreated(licenseCreatedAt)
+                    .dateUpdated(licenseUpdatedAt)
                     .build()
             )
             .price(BigDecimal.ONE)

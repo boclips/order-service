@@ -3,6 +3,7 @@ package com.boclips.terry.infrastructure.orders
 import com.boclips.terry.domain.Order
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import com.boclips.terry.infrastructure.OrderDocument
+import com.boclips.terry.infrastructure.OrderItemDocument
 import org.bson.types.ObjectId
 
 class FakeOrdersRepository : OrdersRepository {
@@ -27,12 +28,20 @@ class FakeOrdersRepository : OrdersRepository {
                     id = ObjectId(order.id),
                     uuid = order.uuid,
                     status = order.status.toString(),
-                    isbnOrProductNumber = order.isbnOrProductNumber,
-                    creatorEmail = order.creatorEmail,
                     vendorEmail = order.vendorEmail,
+                    creatorEmail = order.creatorEmail,
                     updatedAt = order.updatedAt,
                     createdAt = order.createdAt,
-                    legacyDocument = legacyDocument
+                    isbnOrProductNumber = order.isbnOrProductNumber,
+                    legacyDocument = legacyDocument,
+                    items = legacyDocument.items
+                        .map { item ->
+                            OrderItemDocument(
+                                uuid = item.uuid,
+                                price = item.price,
+                                transcriptRequested = item.transcriptsRequired
+                            )
+                        }
                 )
             )
             orders.add(order)

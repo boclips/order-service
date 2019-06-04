@@ -6,6 +6,7 @@ import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.LegacyOrderDocument
 import java.math.BigDecimal
@@ -40,12 +41,13 @@ class TestFactories {
             .build()
 
         fun order(
-            legacyOrder: LegacyOrder,
+            legacyOrder: LegacyOrder = legacyOrder("1234"),
             creatorEmail: String,
             vendorEmail: String,
             status: OrderStatus,
             createdAt: Instant,
-            updatedAt: Instant
+            updatedAt: Instant,
+            items: List<OrderItem>
         ): Order {
             return Order(
                 id = legacyOrder.id,
@@ -55,41 +57,61 @@ class TestFactories {
                 creatorEmail = creatorEmail,
                 vendorEmail = vendorEmail,
                 isbnOrProductNumber = "some-isbn",
-                status = status
+                status = status,
+                items = items
             )
         }
 
+        fun legacyOrderItemLicense(
+            code: String = "code",
+            dateCreated: Date = Date.from(Instant.now()),
+            dateUpdated: Date = Date.from(Instant.now()),
+            id: String = "id123",
+            uuid: String = "uuid123",
+            description: String = "adescription"
+        ): LegacyOrderItemLicense = LegacyOrderItemLicense.builder()
+            .code(code)
+            .dateCreated(dateCreated)
+            .dateUpdated(dateUpdated)
+            .id(id)
+            .uuid(uuid)
+            .description(description)
+            .build()
+
+        fun legacyOrderItem(
+            id: String = "123",
+            uuid: String = "123",
+            assetId: String = "assetId123",
+            dateCreated: Date = Date.from(Instant.now()),
+            dateUpdated: Date = Date.from(Instant.now()),
+            price: BigDecimal = BigDecimal.TEN,
+            status: String = "status",
+            transcriptsRequired: Boolean = false,
+            license: LegacyOrderItemLicense = legacyOrderItemLicense()
+        ): LegacyOrderItem = LegacyOrderItem
+            .builder()
+            .id(id)
+            .uuid(uuid)
+            .assetId(assetId)
+            .dateCreated(dateCreated)
+            .dateUpdated(
+                dateUpdated
+            )
+            .price(price)
+            .status(status)
+            .transcriptsRequired(transcriptsRequired)
+            .license(license)
+            .build()
+
         fun legacyOrderDocument(
-            legacyOrder: LegacyOrder,
-            creatorEmail: String,
-            vendorEmail: String
+            legacyOrder: LegacyOrder = legacyOrder(id = "1234"),
+            creatorEmail: String = "boclips@steve.com",
+            vendorEmail: String = "vendor@boclips.com",
+            items: List<LegacyOrderItem> = listOf(legacyOrderItem())
         ): LegacyOrderDocument {
             return LegacyOrderDocument(
                 order = legacyOrder,
-                items = listOf(
-                    LegacyOrderItem
-                        .builder()
-                        .id("item1")
-                        .uuid("item1-uuid")
-                        .assetId("item1-assetid")
-                        .status("IHATETYPING")
-                        .transcriptsRequired(true)
-                        .price(BigDecimal.ONE)
-                        .dateCreated(Date())
-                        .dateUpdated(Date())
-                        .license(
-                            LegacyOrderItemLicense
-                                .builder()
-                                .id("license1")
-                                .uuid("license1-uuid")
-                                .description("license to kill")
-                                .code("007")
-                                .dateCreated(Date())
-                                .dateUpdated(Date())
-                                .build()
-                        )
-                        .build()
-                ),
+                items = items,
                 creator = creatorEmail,
                 vendor = vendorEmail
             )

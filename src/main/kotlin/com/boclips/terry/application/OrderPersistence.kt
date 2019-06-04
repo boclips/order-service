@@ -4,6 +4,7 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.domain.LegacyOrderProcessingException
 import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.orders.OrdersRepository
 import com.boclips.terry.infrastructure.LegacyOrderDocument
@@ -30,7 +31,14 @@ class OrderPersistence(
                     creatorEmail = event.creator,
                     vendorEmail = event.vendor,
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
-                    status = OrderStatus.parse(event.order.status)
+                    status = OrderStatus.parse(event.order.status),
+                    items = event.orderItems.map {
+                        OrderItem(
+                            uuid = it.uuid,
+                            price = it.price,
+                            transcriptRequested = it.transcriptsRequired
+                        )
+                    }
                 ),
                 legacyDocument = LegacyOrderDocument(
                     order = event.order,

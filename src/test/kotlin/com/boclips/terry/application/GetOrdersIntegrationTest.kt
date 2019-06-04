@@ -1,5 +1,8 @@
 package com.boclips.terry.application
 
+import com.boclips.events.types.LegacyOrderItem
+import com.boclips.events.types.LegacyOrderItemLicense
+import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.presentation.resources.OrderResource
@@ -9,7 +12,10 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
+import testsupport.TestFactories.Companion.legacyOrderItem
+import java.math.BigDecimal
 import java.time.Instant
+import java.util.Date
 
 class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -28,16 +34,31 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(1),
-            updatedAt = now.plusMillis(2)
+            updatedAt = now.plusMillis(2),
+            items = listOf(
+                OrderItem(
+                    uuid = "i-love-uuids",
+                    price = BigDecimal.ONE,
+                    transcriptRequested = true
+                )
+            )
         )
         repo.add(
             order = order1,
             legacyDocument = TestFactories.legacyOrderDocument(
                 legacyOrder,
                 "creator@theworld.example",
-                "some@vendor.4u"
+                "some@vendor.4u",
+                listOf(
+                    TestFactories.legacyOrderItem(
+                        uuid = "i-love-uuids",
+                        price = BigDecimal.ONE,
+                        transcriptsRequired = true
+                    )
+                )
             )
         )
+
         val legacyOrder2 = TestFactories.legacyOrder(ObjectId().toHexString())
         val order2 = TestFactories.order(
             legacyOrder = legacyOrder,
@@ -45,14 +66,28 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(3),
-            updatedAt = now.plusMillis(4)
+            updatedAt = now.plusMillis(4),
+            items = listOf(
+                OrderItem(
+                    uuid = "i-also-lurve-uuids",
+                    price = BigDecimal.ONE,
+                    transcriptRequested = true
+                )
+            )
         )
         repo.add(
             order = order2,
             legacyDocument = TestFactories.legacyOrderDocument(
                 legacyOrder2,
                 "creator@theworld.example",
-                "some@vendor.4u"
+                "some@vendor.4u",
+                listOf(
+                    TestFactories.legacyOrderItem(
+                        uuid = "item1-uuid",
+                        transcriptsRequired = true,
+                        price = BigDecimal.ONE
+                    )
+                )
             )
         )
 
