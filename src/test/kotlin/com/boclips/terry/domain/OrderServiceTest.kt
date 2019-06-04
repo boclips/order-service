@@ -1,5 +1,6 @@
 package com.boclips.terry.domain
 
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.service.OrderService
@@ -7,6 +8,7 @@ import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import org.litote.kmongo.util.idValue
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
@@ -19,7 +21,7 @@ class OrderServiceTest {
         val id1 = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id1)
         val order1 = TestFactories.order(
-            legacyOrder,
+            OrderId(value = legacyOrder.id),
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -35,21 +37,13 @@ class OrderServiceTest {
         )
 
         repo.add(
-            order1, TestFactories.legacyOrderDocument(
-                legacyOrder, "creator@theworld.example", "some@vendor.4u", listOf(
-                    TestFactories.legacyOrderItem(
-                        uuid = "item1-uuid",
-                        price = BigDecimal.ONE,
-                        transcriptsRequired = true
-                    )
-                )
-            )
+            order1
         )
 
         val id2 = ObjectId().toHexString()
         val legacyOrder2 = TestFactories.legacyOrder(id2)
         val order2 = TestFactories.order(
-            legacyOrder,
+            OrderId(value = legacyOrder2.id),
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -64,15 +58,7 @@ class OrderServiceTest {
             )
         )
         repo.add(
-            order2, TestFactories.legacyOrderDocument(
-                legacyOrder2, "creator@theworld.example", "some@vendor.4u", listOf(
-                    TestFactories.legacyOrderItem(
-                        uuid = "item1-uuid",
-                        transcriptsRequired = true,
-                        price = BigDecimal.ONE
-                    )
-                )
-            )
+            order2
         )
 
         val service = OrderService(repo)

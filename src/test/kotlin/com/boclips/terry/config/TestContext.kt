@@ -2,10 +2,12 @@ package com.boclips.terry.config
 
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
-import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
+import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.Clock
 import com.boclips.terry.infrastructure.FakeClock
+import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
+import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
@@ -37,4 +39,9 @@ class TestContext(val mongoProperties: MongoProperties) {
     @Bean
     fun ordersRepository(): OrdersRepository =
         FakeOrdersRepository()
+
+    @Bean
+    fun legacyOrdersRepository(): LegacyOrdersRepository =
+        FakeLegacyOrdersRepository()
 }
+

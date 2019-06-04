@@ -3,6 +3,7 @@ package com.boclips.terry.application
 import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
+import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
@@ -12,11 +13,11 @@ import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import mu.KLogging
 import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 
 @Component
 class OrderPersistence(
-    private val repo: OrdersRepository
+    private val repo: OrdersRepository,
+    private val legacyOrdersRepository: LegacyOrdersRepository
 ) {
     companion object : KLogging()
 
@@ -40,8 +41,11 @@ class OrderPersistence(
                             transcriptRequested = it.transcriptsRequired
                         )
                     }
-                ),
-                legacyDocument = LegacyOrderDocument(
+                )
+            )
+
+            legacyOrdersRepository.add(
+                LegacyOrderDocument(
                     order = event.order,
                     items = event.orderItems,
                     creator = event.creator,

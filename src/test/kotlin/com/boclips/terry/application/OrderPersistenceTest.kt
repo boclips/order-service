@@ -11,8 +11,9 @@ import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
+import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
@@ -39,11 +40,15 @@ class OrderPersistenceTest {
     lateinit var subscriptions: Subscriptions
 
     @Autowired
-    lateinit var repo: FakeOrdersRepository
+    lateinit var ordersRepository: FakeOrdersRepository
+
+    @Autowired
+    lateinit var legacyOrdersRepository: FakeLegacyOrdersRepository
 
     @BeforeEach
     fun setUp() {
-        repo.clear()
+        ordersRepository.clear()
+        legacyOrdersRepository.clear()
     }
 
     @Test
@@ -80,7 +85,7 @@ class OrderPersistenceTest {
                 )
             )
 
-        assertThat(repo.findAll())
+        assertThat(ordersRepository.findAll())
             .containsExactly(
                 Order(
                     id = OrderId(value = legacyOrder.id),
@@ -100,7 +105,8 @@ class OrderPersistenceTest {
                     )
                 )
             )
-        assertThat(repo.documentForOrderId(OrderId(legacyOrder.id)))
+
+        assertThat(legacyOrdersRepository.findById(OrderId(legacyOrder.id)))
             .isEqualTo(
                 LegacyOrderDocument(
                     order = legacyOrder,
@@ -125,7 +131,7 @@ class OrderPersistenceTest {
                 )
         }
 
-        assertThat(repo.findAll())
+        assertThat(ordersRepository.findAll())
             .isEmpty()
     }
 
@@ -134,7 +140,7 @@ class OrderPersistenceTest {
         subscriptions.legacyOrderSubmissions()
             .send(GenericMessage("{}"))
 
-        assertThat(repo.findAll())
+        assertThat(ordersRepository.findAll())
             .isEmpty()
     }
 
