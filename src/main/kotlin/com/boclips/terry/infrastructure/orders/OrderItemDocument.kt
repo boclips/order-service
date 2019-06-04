@@ -1,8 +1,8 @@
-package com.boclips.terry.domain
+package com.boclips.terry.infrastructure.orders
 
 import java.math.BigDecimal
 
-data class OrderItem(
+data class OrderItemDocument(
     val uuid: String,
     val price: BigDecimal,
     val transcriptRequested: Boolean

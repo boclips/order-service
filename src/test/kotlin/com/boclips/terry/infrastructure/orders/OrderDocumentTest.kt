@@ -1,11 +1,8 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.terry.domain.Order
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.infrastructure.LegacyOrderDocument
-import com.boclips.terry.infrastructure.OrderDocument
-import com.boclips.terry.infrastructure.OrderItemDocument
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test

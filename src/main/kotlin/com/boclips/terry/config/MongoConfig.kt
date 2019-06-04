@@ -1,6 +1,6 @@
 package com.boclips.terry.config
 
-import com.boclips.terry.infrastructure.orders.OrdersRepository
+import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean

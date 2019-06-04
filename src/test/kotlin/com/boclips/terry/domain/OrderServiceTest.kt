@@ -1,7 +1,8 @@
 package com.boclips.terry.domain
 
-import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.Date
 
 class OrderServiceTest {
     @Test

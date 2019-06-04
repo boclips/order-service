@@ -1,7 +1,6 @@
-package com.boclips.terry.infrastructure.orders
+package com.boclips.terry.domain.model
 
-import com.boclips.terry.domain.Order
-import com.boclips.terry.infrastructure.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 
 interface OrdersRepository {
     fun add(order: Order, legacyDocument: LegacyOrderDocument): OrdersRepository

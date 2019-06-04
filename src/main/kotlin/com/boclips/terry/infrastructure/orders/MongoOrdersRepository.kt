@@ -1,9 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.terry.domain.Order
-import com.boclips.terry.infrastructure.LegacyOrderDocument
-import com.boclips.terry.infrastructure.OrderDocument
-import com.boclips.terry.infrastructure.OrderItemDocument
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrdersRepository
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
@@ -12,7 +10,6 @@ import org.litote.kmongo.KMongo
 import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
-import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
 
 const val databaseName = "order-service-db"

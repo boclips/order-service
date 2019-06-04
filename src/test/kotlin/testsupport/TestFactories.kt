@@ -5,10 +5,10 @@ import com.boclips.events.types.LegacyOrderExtraFields
 import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
-import com.boclips.terry.domain.Order
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.infrastructure.LegacyOrderDocument
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.Date

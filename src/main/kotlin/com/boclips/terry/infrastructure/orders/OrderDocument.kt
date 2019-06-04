@@ -1,8 +1,8 @@
-package com.boclips.terry.infrastructure
+package com.boclips.terry.infrastructure.orders
 
-import com.boclips.terry.domain.Order
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
 import org.bson.types.ObjectId
 import java.time.Instant
 

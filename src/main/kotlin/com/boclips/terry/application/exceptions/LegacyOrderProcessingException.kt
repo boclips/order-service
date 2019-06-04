@@ -1,3 +1,3 @@
-package com.boclips.terry.domain
+package com.boclips.terry.application.exceptions
 
 class LegacyOrderProcessingException(e: Exception) : Exception(e)

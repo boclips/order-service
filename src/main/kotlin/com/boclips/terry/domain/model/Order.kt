@@ -1,4 +1,4 @@
-package com.boclips.terry.domain
+package com.boclips.terry.domain.model
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.Instant

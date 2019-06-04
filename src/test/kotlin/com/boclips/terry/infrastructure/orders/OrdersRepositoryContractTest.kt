@@ -1,7 +1,8 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.OrdersRepository
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

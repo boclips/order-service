@@ -1,6 +1,7 @@
-package com.boclips.terry.domain
+package com.boclips.terry.domain.service
 
-import com.boclips.terry.infrastructure.orders.OrdersRepository
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrdersRepository
 import org.springframework.stereotype.Component
 
 @Component

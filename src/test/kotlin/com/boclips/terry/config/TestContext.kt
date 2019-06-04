@@ -3,7 +3,7 @@ package com.boclips.terry.config
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
-import com.boclips.terry.infrastructure.orders.OrdersRepository
+import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.Clock
 import com.boclips.terry.infrastructure.FakeClock
 import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster

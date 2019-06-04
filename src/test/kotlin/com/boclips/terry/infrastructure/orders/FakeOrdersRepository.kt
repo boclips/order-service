@@ -1,9 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.terry.domain.Order
-import com.boclips.terry.infrastructure.LegacyOrderDocument
-import com.boclips.terry.infrastructure.OrderDocument
-import com.boclips.terry.infrastructure.OrderItemDocument
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrdersRepository
 import org.bson.types.ObjectId
 
 class FakeOrdersRepository : OrdersRepository {

@@ -7,10 +7,10 @@ import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
-import com.boclips.terry.domain.Order
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.infrastructure.LegacyOrderDocument
+import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -91,7 +91,11 @@ class OrderPersistenceTest {
                     isbnOrProductNumber = "some-isbn",
                     status = OrderStatus.CONFIRMED,
                     items = listOf(
-                        OrderItem(uuid = "item-1-uuid", price = BigDecimal.ONE, transcriptRequested = true)
+                        OrderItem(
+                            uuid = "item-1-uuid",
+                            price = BigDecimal.ONE,
+                            transcriptRequested = true
+                        )
                     )
                 )
             )

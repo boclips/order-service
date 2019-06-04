@@ -1,7 +1,7 @@
 package com.boclips.terry.presentation
 
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo

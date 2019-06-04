@@ -1,4 +1,4 @@
-package com.boclips.terry.infrastructure
+package com.boclips.terry.infrastructure.orders
 
 import com.boclips.events.types.LegacyOrder
 import com.boclips.events.types.LegacyOrderItem

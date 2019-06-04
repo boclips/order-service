@@ -1,6 +1,6 @@
 package com.boclips.terry.presentation.resources
 
-import com.boclips.terry.domain.Order
+import com.boclips.terry.domain.model.Order
 import org.springframework.hateoas.core.Relation
 import java.math.BigDecimal
 import java.text.DecimalFormat

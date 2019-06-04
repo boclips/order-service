@@ -1,7 +1,7 @@
 package com.boclips.terry.application
 
-import com.boclips.terry.domain.OrderItem
-import com.boclips.terry.domain.OrderStatus
+import com.boclips.terry.domain.model.OrderItem
+import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
