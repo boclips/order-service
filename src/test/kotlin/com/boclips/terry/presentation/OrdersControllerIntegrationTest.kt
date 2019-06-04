@@ -123,4 +123,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
     }
+
+    @Test
+    fun `get appropriate response when getting non-existent order`() {
+        mockMvc.perform(get("/v1/orders/notthere").asBackofficeStaff())
+            .andExpect(status().isNotFound)
+    }
 }
