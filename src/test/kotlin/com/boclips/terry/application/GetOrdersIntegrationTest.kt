@@ -1,5 +1,6 @@
 package com.boclips.terry.application
 
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.presentation.resources.OrderResource
@@ -22,7 +23,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
         val legacyOrder = TestFactories.legacyOrder(ObjectId().toHexString())
         val now = Instant.EPOCH
         val order1 = TestFactories.order(
-            legacyOrder = legacyOrder,
+            id = OrderId(value = legacyOrder.id),
             creatorEmail = "boclips@example.com",
             vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
@@ -37,24 +38,12 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         fakeOrdersRepository.add(
-            order = order1,
-            legacyDocument = TestFactories.legacyOrderDocument(
-                legacyOrder,
-                "creator@theworld.example",
-                "some@vendor.4u",
-                listOf(
-                    TestFactories.legacyOrderItem(
-                        uuid = "i-love-uuids",
-                        price = BigDecimal.ONE,
-                        transcriptsRequired = true
-                    )
-                )
-            )
+            order = order1
         )
 
         val legacyOrder2 = TestFactories.legacyOrder(ObjectId().toHexString())
         val order2 = TestFactories.order(
-            legacyOrder = legacyOrder,
+            id = OrderId(value = legacyOrder.id),
             creatorEmail = "boclips@example.com",
             vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
@@ -69,19 +58,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         fakeOrdersRepository.add(
-            order = order2,
-            legacyDocument = TestFactories.legacyOrderDocument(
-                legacyOrder2,
-                "creator@theworld.example",
-                "some@vendor.4u",
-                listOf(
-                    TestFactories.legacyOrderItem(
-                        uuid = "item1-uuid",
-                        transcriptsRequired = true,
-                        price = BigDecimal.ONE
-                    )
-                )
-            )
+            order = order2
         )
 
         assertThat(getOrders())

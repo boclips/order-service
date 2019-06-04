@@ -1,5 +1,6 @@
 package com.boclips.terry.presentation
 
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -29,7 +30,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         TestFactories.run {
             fakeOrdersRepository.add(
                 order(
-                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
+                    id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                     creatorEmail = "creator@proper.order",
                     vendorEmail = "vendor@proper.order",
                     status = OrderStatus.CONFIRMED,
@@ -44,23 +45,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             uuid = "awesome-item-uuid2",
                             price = BigDecimal.valueOf(10),
                             transcriptRequested = false
-                        )
-                    )
-                ),
-                legacyOrderDocument(
-                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
-                    creatorEmail = "creator@in.legacy.document",
-                    vendorEmail = "vendor@in.legacy.document",
-                    items = listOf(
-                        legacyOrderItem(
-                            id = "awesome-item-uuid",
-                            price = BigDecimal.valueOf(1),
-                            transcriptsRequired = true
-                        ),
-                        legacyOrderItem(
-                            id = "awesome-item-uuid2",
-                            price = BigDecimal.valueOf(10),
-                            transcriptsRequired = true
                         )
                     )
                 )
@@ -102,7 +86,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         TestFactories.run {
             fakeOrdersRepository.add(
                 order(
-                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
+                    id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                     creatorEmail = "creator@proper.order",
                     vendorEmail = "vendor@proper.order",
                     status = OrderStatus.CONFIRMED,
@@ -117,23 +101,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             uuid = "awesome-item-uuid2",
                             price = BigDecimal.valueOf(10),
                             transcriptRequested = false
-                        )
-                    )
-                ),
-                legacyOrderDocument(
-                    legacyOrder = legacyOrder("5ceeb99bd0e30a1a57ae9767"),
-                    creatorEmail = "creator@in.legacy.document",
-                    vendorEmail = "vendor@in.legacy.document",
-                    items = listOf(
-                        legacyOrderItem(
-                            id = "awesome-item-uuid",
-                            price = BigDecimal.valueOf(1),
-                            transcriptsRequired = true
-                        ),
-                        legacyOrderItem(
-                            id = "awesome-item-uuid2",
-                            price = BigDecimal.valueOf(10),
-                            transcriptsRequired = true
                         )
                     )
                 )

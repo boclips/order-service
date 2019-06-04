@@ -22,6 +22,7 @@ class OrderPersistence(
 
     @StreamListener(Subscriptions.LEGACY_ORDER_SUBMITTED)
     fun onLegacyOrderSubmitted(event: LegacyOrderSubmitted) {
+        //TODO add to legacy document do a different repository
         try {
             repo.add(
                 order = Order(
@@ -40,12 +41,6 @@ class OrderPersistence(
                             transcriptRequested = it.transcriptsRequired
                         )
                     }
-                ),
-                legacyDocument = LegacyOrderDocument(
-                    order = event.order,
-                    items = event.orderItems,
-                    creator = event.creator,
-                    vendor = event.vendor
                 )
             )
         } catch (e: IllegalStateException) {

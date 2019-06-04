@@ -19,7 +19,7 @@ const val collectionName = "orders"
 class MongoOrdersRepository(uri: String) : OrdersRepository {
     private val mongoClient: MongoClient = KMongo.createClient(MongoClientURI(uri))
 
-    override fun add(order: Order, legacyDocument: LegacyOrderDocument) = this.also {
+    override fun add(order: Order) = this.also {
         collection()
             .insertOne(
                 OrderDocument(
@@ -31,13 +31,12 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                     updatedAt = order.updatedAt,
                     createdAt = order.createdAt,
                     isbnOrProductNumber = order.isbnOrProductNumber,
-                    legacyDocument = legacyDocument,
-                    items = legacyDocument.items
+                    items = order.items
                         .map { item ->
                             OrderItemDocument(
                                 uuid = item.uuid,
                                 price = item.price,
-                                transcriptRequested = item.transcriptsRequired
+                                transcriptRequested = item.transcriptRequested
                             )
                         }
                 )
@@ -52,10 +51,10 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             .map(OrderDocument::toOrder)
             .toList()
 
-    override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
-        collection()
-            .findOne(OrderDocument::id eq ObjectId(orderId.value))
-            ?.legacyDocument
+    // override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
+    //     collection()
+    //         .findOne(OrderDocument::id eq ObjectId(orderId.value))
+    //         ?.legacyDocument
 
     override fun findOne(id: OrderId): Order? {
         return collection().findOne(OrderDocument::id eq ObjectId(id.value))?.toOrder()

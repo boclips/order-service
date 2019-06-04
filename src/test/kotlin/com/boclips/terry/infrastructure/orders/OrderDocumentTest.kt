@@ -25,12 +25,6 @@ class OrderDocumentTest {
                 updatedAt = Instant.MAX,
                 createdAt = Instant.EPOCH,
                 isbnOrProductNumber = "anisbn",
-                legacyDocument = LegacyOrderDocument(
-                    order = TestFactories.legacyOrder("foo"),
-                    items = emptyList(),
-                    creator = "me@creators.lol",
-                    vendor = "you@vendors.biz"
-                ),
                 items = listOf(
                     OrderItemDocument(
                         uuid = "item1-uuid",

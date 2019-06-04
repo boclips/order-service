@@ -100,15 +100,16 @@ class OrderPersistenceTest {
                     )
                 )
             )
-        assertThat(repo.documentForOrderId(OrderId(legacyOrder.id)))
-            .isEqualTo(
-                LegacyOrderDocument(
-                    order = legacyOrder,
-                    items = items,
-                    creator = "creator@their-company.net",
-                    vendor = "vendor@their-company.biz"
-                )
-            )
+        assertThat(false).isTrue()
+        // assertThat(repo.documentForOrderId(OrderId(legacyOrder.id)))
+        //     .isEqualTo(
+        //         LegacyOrderDocument(
+        //             order = legacyOrder,
+        //             items = items,
+        //             creator = "creator@their-company.net",
+        //             vendor = "vendor@their-company.biz"
+        //         )
+        //     )
     }
 
     @Test

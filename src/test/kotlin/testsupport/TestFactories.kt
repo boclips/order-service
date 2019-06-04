@@ -42,7 +42,7 @@ class TestFactories {
             .build()
 
         fun order(
-            legacyOrder: LegacyOrder = legacyOrder("1234"),
+            id: OrderId,
             creatorEmail: String,
             vendorEmail: String,
             status: OrderStatus,
@@ -51,7 +51,7 @@ class TestFactories {
             items: List<OrderItem>
         ): Order {
             return Order(
-                id = OrderId(value = legacyOrder.id),
+                id = id,
                 uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                 createdAt = createdAt,
                 updatedAt = updatedAt,

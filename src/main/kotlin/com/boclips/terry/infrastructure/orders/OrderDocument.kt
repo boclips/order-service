@@ -16,7 +16,6 @@ data class OrderDocument(
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String,
-    val legacyDocument: LegacyOrderDocument,
     val items: List<OrderItemDocument>
 ) {
     fun toOrder(): Order =

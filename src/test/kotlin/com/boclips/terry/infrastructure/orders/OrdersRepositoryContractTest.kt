@@ -29,7 +29,7 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
         val id = "please-throw"
         val legacyOrder = TestFactories.legacyOrder(id)
         val order = TestFactories.order(
-            legacyOrder,
+            OrderId(legacyOrder.id),
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -43,17 +43,9 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
                 )
             )
         )
-        val legacyDocument = TestFactories.legacyOrderDocument(
-            legacyOrder,
-            "creator@theworld.example",
-            "some@vendor.4u",
-            listOf(
-                TestFactories.legacyOrderItem(uuid = "item1-uuid", price = BigDecimal.ONE, transcriptsRequired = true)
-            )
-        )
 
         assertThrows<Exception> {
-            repo.add(order = order, legacyDocument = legacyDocument)
+            repo.add(order = order)
         }
     }
 }
@@ -100,7 +92,7 @@ abstract class OrdersRepositoryTests {
         )
 
         val order = TestFactories.order(
-            legacyOrder,
+            OrderId(value = legacyOrder.id),
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -115,9 +107,10 @@ abstract class OrdersRepositoryTests {
             }
         )
 
-        repo.add(order = order, legacyDocument = legacyDocument)
+        repo.add(order = order)
         assertThat(repo.findAll()).containsExactly(order)
-        assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
+        assertThat(true).isFalse()
+        // assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
     }
 
     @Test
@@ -132,7 +125,7 @@ abstract class OrdersRepositoryTests {
         )
 
         val order = TestFactories.order(
-            legacyOrder,
+            OrderId(value = legacyOrder.id),
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -147,7 +140,7 @@ abstract class OrdersRepositoryTests {
             }
         )
 
-        repo.add(order = order, legacyDocument = legacyDocument)
+        repo.add(order = order)
 
         assertThat(repo.findOne(OrderId(value = id))).isEqualTo(order)
     }

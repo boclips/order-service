@@ -1,11 +1,14 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.events.types.LegacyOrder
+import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
 import org.bson.types.ObjectId
 
-class FakeOrdersRepository : OrdersRepository {
+class FakeOrdersRepository : OrdersRepository, LegacyOrdersRepository {
+
     lateinit var orderDocuments: MutableList<OrderDocument>
     lateinit var orders: MutableList<Order>
 
@@ -18,7 +21,7 @@ class FakeOrdersRepository : OrdersRepository {
         orders = mutableListOf()
     }
 
-    override fun add(order: Order, legacyDocument: LegacyOrderDocument) = this.also {
+    override fun add(order: Order) = this.also {
         if (order.id.value == "please-throw") {
             throw Exception("deliberately thrown in test")
         } else {
@@ -32,13 +35,12 @@ class FakeOrdersRepository : OrdersRepository {
                     updatedAt = order.updatedAt,
                     createdAt = order.createdAt,
                     isbnOrProductNumber = order.isbnOrProductNumber,
-                    legacyDocument = legacyDocument,
-                    items = legacyDocument.items
+                    items = order.items
                         .map { item ->
                             OrderItemDocument(
                                 uuid = item.uuid,
                                 price = item.price,
-                                transcriptRequested = item.transcriptsRequired
+                                transcriptRequested = item.transcriptRequested
                             )
                         }
                 )
@@ -53,8 +55,16 @@ class FakeOrdersRepository : OrdersRepository {
         return orders.find { it.id == id }
     }
 
-    override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
-        orderDocuments
-            .find { orderDocument -> orderDocument.id.toHexString() == orderId.value }
-            ?.legacyDocument
+    override fun add(legacyOrder: LegacyOrder) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun findById(orderId: OrderId): LegacyOrderDocument {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+    //
+    // override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
+    //     orderDocuments
+    //         .find { orderDocument -> orderDocument.id.toHexString() == orderId.value }
+    //         ?.legacyDocument
 }
