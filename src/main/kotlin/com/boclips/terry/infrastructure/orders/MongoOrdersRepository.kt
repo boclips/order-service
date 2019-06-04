@@ -12,6 +12,7 @@ import org.litote.kmongo.KMongo
 import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
+import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
 
 const val databaseName = "order-service-db"
@@ -57,6 +58,10 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
         collection()
             .findOne(OrderDocument::id eq ObjectId(orderId))
             ?.legacyDocument
+
+    override fun findOne(id: String): Order? {
+        return collection().findOne(OrderDocument::id eq ObjectId(id))?.toOrder()
+    }
 
     private fun collection(): MongoCollection<OrderDocument> =
         mongoClient.getDatabase(databaseName).getCollection<OrderDocument>(collectionName)

@@ -1,7 +1,5 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -15,7 +13,6 @@ import org.junit.jupiter.api.assertThrows
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.Date
 
 class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
 
@@ -119,5 +116,37 @@ abstract class OrdersRepositoryTests {
         repo.add(order = order, legacyDocument = legacyDocument)
         assertThat(repo.findAll()).containsExactly(order)
         assertThat(repo.documentForOrderId(order.id)).isEqualTo(legacyDocument)
+    }
+
+    @Test
+    fun `can get order by id`() {
+        val id = ObjectId().toHexString()
+        val legacyOrder = TestFactories.legacyOrder(id)
+
+        val legacyDocument = TestFactories.legacyOrderDocument(
+            legacyOrder,
+            "creator@theworld.example",
+            "some@vendor.4u"
+        )
+
+        val order = TestFactories.order(
+            legacyOrder,
+            "boclips",
+            "big-bang",
+            OrderStatus.CONFIRMED,
+            Instant.EPOCH,
+            Instant.EPOCH,
+            items = legacyDocument.items.map {
+                OrderItem(
+                    uuid = it.uuid,
+                    price = it.price,
+                    transcriptRequested = it.transcriptsRequired
+                )
+            }
+        )
+
+        repo.add(order = order, legacyDocument = legacyDocument)
+
+        assertThat(repo.findOne(id)).isEqualTo(order)
     }
 }

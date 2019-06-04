@@ -1,10 +1,7 @@
 package com.boclips.terry.application
 
-import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.terry.domain.OrderItem
 import com.boclips.terry.domain.OrderStatus
-import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -12,14 +9,10 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
-import testsupport.TestFactories.Companion.legacyOrderItem
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.Date
 
 class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
-    @Autowired
-    lateinit var repo: FakeOrdersRepository
 
     @Autowired
     lateinit var getOrders: GetOrders
@@ -43,7 +36,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
         )
-        repo.add(
+        fakeOrdersRepository.add(
             order = order1,
             legacyDocument = TestFactories.legacyOrderDocument(
                 legacyOrder,
@@ -75,7 +68,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
         )
-        repo.add(
+        fakeOrdersRepository.add(
             order = order2,
             legacyDocument = TestFactories.legacyOrderDocument(
                 legacyOrder2,

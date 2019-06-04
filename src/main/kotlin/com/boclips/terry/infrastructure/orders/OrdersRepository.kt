@@ -8,4 +8,5 @@ interface OrdersRepository {
     fun documentForOrderId(orderId: String): LegacyOrderDocument?
     fun clear(): OrdersRepository
     fun findAll(): List<Order>
+    fun findOne(id: String): Order?
 }

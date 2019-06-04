@@ -50,6 +50,10 @@ class FakeOrdersRepository : OrdersRepository {
 
     override fun findAll(): List<Order> = orders
 
+    override fun findOne(id: String): Order? {
+        return orders.find { it.id == id }
+    }
+
     override fun documentForOrderId(orderId: String): LegacyOrderDocument? =
         orderDocuments
             .find { orderDocument -> orderDocument.id.toHexString() == orderId }
