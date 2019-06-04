@@ -1,6 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import org.bson.types.ObjectId
@@ -20,7 +21,7 @@ data class OrderDocument(
 ) {
     fun toOrder(): Order =
         Order(
-            id = id.toHexString(),
+            id = OrderId(value = id.toHexString()),
             uuid = uuid,
             creatorEmail = creatorEmail,
             vendorEmail = vendorEmail,

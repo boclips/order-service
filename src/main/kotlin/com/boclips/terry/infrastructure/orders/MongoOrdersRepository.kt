@@ -1,6 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
@@ -22,7 +23,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
         collection()
             .insertOne(
                 OrderDocument(
-                    id = ObjectId(order.id),
+                    id = ObjectId(order.id.value),
                     uuid = order.uuid,
                     status = order.status.toString(),
                     vendorEmail = order.vendorEmail,
@@ -51,13 +52,13 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             .map(OrderDocument::toOrder)
             .toList()
 
-    override fun documentForOrderId(orderId: String): LegacyOrderDocument? =
+    override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
         collection()
-            .findOne(OrderDocument::id eq ObjectId(orderId))
+            .findOne(OrderDocument::id eq ObjectId(orderId.value))
             ?.legacyDocument
 
-    override fun findOne(id: String): Order? {
-        return collection().findOne(OrderDocument::id eq ObjectId(id))?.toOrder()
+    override fun findOne(id: OrderId): Order? {
+        return collection().findOne(OrderDocument::id eq ObjectId(id.value))?.toOrder()
     }
 
     private fun collection(): MongoCollection<OrderDocument> =

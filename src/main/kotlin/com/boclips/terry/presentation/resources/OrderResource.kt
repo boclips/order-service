@@ -18,7 +18,7 @@ data class OrderResource(
     companion object {
         fun fromOrder(order: Order): OrderResource =
             OrderResource(
-                id = order.id,
+                id = order.id.value,
                 creatorEmail = order.creatorEmail,
                 vendorEmail = order.vendorEmail,
                 createdAt = order.createdAt.toString(),

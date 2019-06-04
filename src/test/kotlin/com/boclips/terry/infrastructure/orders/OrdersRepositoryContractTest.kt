@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
@@ -148,6 +149,6 @@ abstract class OrdersRepositoryTests {
 
         repo.add(order = order, legacyDocument = legacyDocument)
 
-        assertThat(repo.findOne(id)).isEqualTo(order)
+        assertThat(repo.findOne(OrderId(value = id))).isEqualTo(order)
     }
 }

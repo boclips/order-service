@@ -1,6 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
 import org.bson.types.ObjectId
 
@@ -18,12 +19,12 @@ class FakeOrdersRepository : OrdersRepository {
     }
 
     override fun add(order: Order, legacyDocument: LegacyOrderDocument) = this.also {
-        if (order.id == "please-throw") {
+        if (order.id.value == "please-throw") {
             throw Exception("deliberately thrown in test")
         } else {
             orderDocuments.add(
                 OrderDocument(
-                    id = ObjectId(order.id),
+                    id = ObjectId(order.id.value),
                     uuid = order.uuid,
                     status = order.status.toString(),
                     vendorEmail = order.vendorEmail,
@@ -48,12 +49,12 @@ class FakeOrdersRepository : OrdersRepository {
 
     override fun findAll(): List<Order> = orders
 
-    override fun findOne(id: String): Order? {
+    override fun findOne(id: OrderId): Order? {
         return orders.find { it.id == id }
     }
 
-    override fun documentForOrderId(orderId: String): LegacyOrderDocument? =
+    override fun documentForOrderId(orderId: OrderId): LegacyOrderDocument? =
         orderDocuments
-            .find { orderDocument -> orderDocument.id.toHexString() == orderId }
+            .find { orderDocument -> orderDocument.id.toHexString() == orderId.value }
             ?.legacyDocument
 }

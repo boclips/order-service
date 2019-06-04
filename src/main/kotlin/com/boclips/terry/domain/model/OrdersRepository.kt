@@ -4,8 +4,8 @@ import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 
 interface OrdersRepository {
     fun add(order: Order, legacyDocument: LegacyOrderDocument): OrdersRepository
-    fun documentForOrderId(orderId: String): LegacyOrderDocument?
+    fun documentForOrderId(orderId: OrderId): LegacyOrderDocument?
     fun clear(): OrdersRepository
     fun findAll(): List<Order>
-    fun findOne(id: String): Order?
+    fun findOne(id: OrderId): Order?
 }

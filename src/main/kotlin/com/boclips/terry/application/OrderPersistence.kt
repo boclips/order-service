@@ -4,6 +4,7 @@ import com.boclips.events.config.Subscriptions
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
@@ -24,7 +25,7 @@ class OrderPersistence(
         try {
             repo.add(
                 order = Order(
-                    id = event.order.id,
+                    id = OrderId(event.order.id),
                     uuid = event.order.uuid,
                     createdAt = event.order.dateCreated.toInstant(),
                     updatedAt = event.order.dateUpdated.toInstant(),

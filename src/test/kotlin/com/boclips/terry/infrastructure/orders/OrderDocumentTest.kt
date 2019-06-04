@@ -1,6 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
@@ -40,7 +41,7 @@ class OrderDocumentTest {
             ).toOrder()
         ).isEqualTo(
             Order(
-                id = id.toHexString(),
+                id = OrderId(value = id.toHexString()),
                 uuid = "c001-1d34",
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.MAX,

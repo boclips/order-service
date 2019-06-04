@@ -6,6 +6,7 @@ import com.boclips.events.types.LegacyOrderItem
 import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
@@ -50,7 +51,7 @@ class TestFactories {
             items: List<OrderItem>
         ): Order {
             return Order(
-                id = legacyOrder.id,
+                id = OrderId(value = legacyOrder.id),
                 uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                 createdAt = createdAt,
                 updatedAt = updatedAt,

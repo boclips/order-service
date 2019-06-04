@@ -8,6 +8,7 @@ import com.boclips.events.types.LegacyOrderItemLicense
 import com.boclips.events.types.LegacyOrderNextStatus
 import com.boclips.events.types.LegacyOrderSubmitted
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
@@ -82,7 +83,7 @@ class OrderPersistenceTest {
         assertThat(repo.findAll())
             .containsExactly(
                 Order(
-                    id = legacyOrder.id,
+                    id = OrderId(value = legacyOrder.id),
                     uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
                     createdAt = orderCreatedAt.toInstant(),
                     updatedAt = orderUpdatedAt.toInstant(),
@@ -99,7 +100,7 @@ class OrderPersistenceTest {
                     )
                 )
             )
-        assertThat(repo.documentForOrderId(legacyOrder.id))
+        assertThat(repo.documentForOrderId(OrderId(legacyOrder.id)))
             .isEqualTo(
                 LegacyOrderDocument(
                     order = legacyOrder,

@@ -15,6 +15,7 @@ enum class OrderStatus {
     CANCELLED,
     PROCESSING;
 
+    //TODO this should be moved out of the domain
     companion object {
         fun parse(input: String): OrderStatus =
             when (input) {
@@ -31,7 +32,7 @@ enum class OrderStatus {
 }
 
 data class Order(
-    val id: String,
+    val id: OrderId,
     val uuid: String,
     val status: OrderStatus,
     val vendorEmail: String,
