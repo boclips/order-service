@@ -32,6 +32,10 @@ class OrdersController(
         fun getSelfOrderLink(id: String): Link = ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(id)
         ).withSelfRel()
+
+        fun getOrderLink(): Link = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(null)
+        ).withRel("order")
     }
 
     @GetMapping
@@ -47,7 +51,7 @@ class OrdersController(
 
     @RequestMapping("/{id}")
     @GetMapping
-    fun getOrderResource(@PathVariable("id") id: String): Resource<OrderResource> {
+    fun getOrderResource(@PathVariable("id") id: String?): Resource<OrderResource> {
         val order = getOrder(id)
 
         return wrapOrder(order)

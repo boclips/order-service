@@ -1,5 +1,6 @@
 package com.boclips.terry.application
 
+import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.application.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
@@ -50,6 +51,13 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws an exception when there's no order`() {
         assertThrows<OrderNotFoundException> {
             getOrder("ohaim8")
+        }
+    }
+
+    @Test
+    fun `throws an exception when ID not provided`() {
+        assertThrows<InvalidOrderRequest> {
+            getOrder(null)
         }
     }
 }

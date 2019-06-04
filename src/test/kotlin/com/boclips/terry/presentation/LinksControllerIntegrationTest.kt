@@ -23,6 +23,8 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.orders").exists())
             .andExpect(jsonPath("$._links.orders.href", endsWith("/orders")))
+            .andExpect(jsonPath("$._links.order").exists())
+            .andExpect(jsonPath("$._links.order.href", endsWith("/orders/{id}")))
     }
 
     @Test

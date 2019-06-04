@@ -14,7 +14,11 @@ class LinksController {
     @GetMapping
     fun getLinks(): Resource<String> =
         if (UserExtractor.getCurrentUser()?.hasRole(UserRoles.VIEW_ORDERS) == true) {
-            Resource("", listOf(OrdersController.getOrdersLink()))
+            Resource(
+                "",
+                OrdersController.getOrdersLink(),
+                OrdersController.getOrderLink()
+            )
         } else {
             Resource(
                 "",
