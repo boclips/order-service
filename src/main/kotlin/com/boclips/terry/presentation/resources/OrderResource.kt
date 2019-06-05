@@ -48,6 +48,6 @@ data class PriceResource(
 ) {
     companion object {
         fun fromBigDecimal(bigDecimal: BigDecimal): PriceResource =
-            PriceResource(value = bigDecimal, displayValue = "£${DecimalFormat("#0.00").format( bigDecimal)}")
+            PriceResource(value = bigDecimal, displayValue = "${DecimalFormat("#0.00").format( bigDecimal)}")
     }
 }

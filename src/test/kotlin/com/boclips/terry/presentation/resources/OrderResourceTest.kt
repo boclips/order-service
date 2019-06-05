@@ -23,7 +23,7 @@ class OrderResourceTest {
         assertThat(PriceResource.fromBigDecimal(price)).isEqualTo(
             PriceResource(
                 value = price,
-                displayValue = "£100.00"
+                displayValue = "100.00"
             )
         )
     }

@@ -63,11 +63,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0]._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("£1.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("awesome-item-uuid2")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("£10.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("10.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
 
             .andExpect(jsonPath("$._links.self").exists())
@@ -118,7 +118,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
 
             .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
-            .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("£1.00")))
+            .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
