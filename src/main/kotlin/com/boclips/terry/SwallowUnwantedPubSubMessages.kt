@@ -22,6 +22,9 @@ class SwallowUnwantedPubSubMessages {
     @StreamListener(Subscriptions.VIDEO_ANALYSED)
     fun ignoreVideoAnalysed() {}
 
+    @StreamListener(Subscriptions.LEGACY_ORDER_SUBMITTED)
+    fun ignoreLegacyOrderSubmitted() {}
+
     @StreamListener(Subscriptions.USER_ACTIVATED)
     fun ignoreUserActivated() {}
 
