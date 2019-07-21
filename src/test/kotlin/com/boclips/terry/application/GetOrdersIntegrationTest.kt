@@ -41,7 +41,6 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             order = order1
         )
 
-        val legacyOrder2 = TestFactories.legacyOrder(ObjectId().toHexString())
         val order2 = TestFactories.order(
             id = OrderId(value = legacyOrder.id),
             creatorEmail = "boclips@example.com",

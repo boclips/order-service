@@ -1,7 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
-import com.boclips.events.types.LegacyOrder
-import com.boclips.events.types.LegacyOrderItem
+import com.boclips.eventbus.events.order.LegacyOrder
+import com.boclips.eventbus.events.order.LegacyOrderItem
 
 data class LegacyOrderDocument(
     val order: LegacyOrder,

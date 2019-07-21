@@ -1,7 +1,7 @@
 package com.boclips.terry.application
 
-import com.boclips.events.config.Subscriptions
-import com.boclips.events.types.LegacyOrderSubmitted
+import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
@@ -11,7 +11,6 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import mu.KLogging
-import org.springframework.cloud.stream.annotation.StreamListener
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,7 +20,7 @@ class OrderPersistence(
 ) {
     companion object : KLogging()
 
-    @StreamListener(Subscriptions.LEGACY_ORDER_SUBMITTED)
+    @BoclipsEventListener
     fun onLegacyOrderSubmitted(event: LegacyOrderSubmitted) {
         try {
             repo.add(

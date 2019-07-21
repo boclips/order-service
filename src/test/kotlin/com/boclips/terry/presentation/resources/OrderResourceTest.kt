@@ -1,7 +1,7 @@
 package com.boclips.terry.presentation.resources
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 class OrderResourceTest {

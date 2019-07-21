@@ -1,12 +1,13 @@
 package com.boclips.terry.application
 
-import com.boclips.events.config.Subscriptions
-import com.boclips.events.types.LegacyOrder
-import com.boclips.events.types.LegacyOrderExtraFields
-import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
-import com.boclips.events.types.LegacyOrderNextStatus
-import com.boclips.events.types.LegacyOrderSubmitted
+import com.boclips.eventbus.events.order.LegacyOrder
+import com.boclips.eventbus.events.order.LegacyOrderExtraFields
+import com.boclips.eventbus.events.order.LegacyOrderItem
+import com.boclips.eventbus.events.order.LegacyOrderItemLicense
+import com.boclips.eventbus.events.order.LegacyOrderNextStatus
+import com.boclips.eventbus.events.order.LegacyOrderSubmitted
+import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
+import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
@@ -23,9 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.messaging.Message
-import org.springframework.messaging.support.GenericMessage
-import org.springframework.messaging.support.MessageBuilder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.math.BigDecimal
@@ -37,7 +35,7 @@ import java.util.Date
 @ActiveProfiles("test")
 class OrderPersistenceTest {
     @Autowired
-    lateinit var subscriptions: Subscriptions
+    lateinit var eventBus: SynchronousFakeEventBus
 
     @Autowired
     lateinit var ordersRepository: FakeOrdersRepository
@@ -75,15 +73,14 @@ class OrderPersistenceTest {
             uuid = "item-1-uuid"
         )
 
-        subscriptions.legacyOrderSubmissions()
-            .send(
-                message(
-                    legacyOrder = legacyOrder,
-                    items = items,
-                    creator = "creator@their-company.net",
-                    vendor = "vendor@their-company.biz"
-                )
+        eventBus.publish(
+            legacyOrderSubmitted(
+                legacyOrder = legacyOrder,
+                items = items,
+                creator = "creator@their-company.net",
+                vendor = "vendor@their-company.biz"
             )
+        )
 
         assertThat(ordersRepository.findAll())
             .containsExactly(
@@ -115,33 +112,6 @@ class OrderPersistenceTest {
                     vendor = "vendor@their-company.biz"
                 )
             )
-    }
-
-    @Test
-    fun `well-formed messages with processing problems throw exceptions, to enqueue a retry`() {
-        assertThrows<Exception> {
-            subscriptions.legacyOrderSubmissions()
-                .send(
-                    message(
-                        legacyOrder = legacyOrder("please-throw", Date(0), Date(1), "deadb33f", "f33df00d"),
-                        items = singularItemList(Date(2), Date(3), Date(4), Date(5), "item-1-uuid"),
-                        creator = "hi@there.eu",
-                        vendor = "bye@there.eu"
-                    )
-                )
-        }
-
-        assertThat(ordersRepository.findAll())
-            .isEmpty()
-    }
-
-    @Test
-    fun `malformed messages don't create orders, and are removed from the queue`() {
-        subscriptions.legacyOrderSubmissions()
-            .send(GenericMessage("{}"))
-
-        assertThat(ordersRepository.findAll())
-            .isEmpty()
     }
 
     private fun singularItemList(
@@ -206,18 +176,16 @@ class OrderPersistenceTest {
         .status("CONFIRMED")
         .build()
 
-    private fun message(
+    private fun legacyOrderSubmitted(
         legacyOrder: LegacyOrder,
         items: List<LegacyOrderItem>,
         creator: String,
         vendor: String
-    ): Message<LegacyOrderSubmitted> = MessageBuilder.withPayload(
+    ) =
         LegacyOrderSubmitted.builder()
             .order(legacyOrder)
             .orderItems(items)
             .creator(creator)
             .vendor(vendor)
             .build()
-    )
-        .build()
 }

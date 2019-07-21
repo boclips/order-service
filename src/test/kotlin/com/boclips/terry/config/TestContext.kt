@@ -1,5 +1,7 @@
 package com.boclips.terry.config
 
+import com.boclips.eventbus.EventBus
+import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
 import com.boclips.terry.domain.model.LegacyOrdersRepository
@@ -43,5 +45,8 @@ class TestContext(val mongoProperties: MongoProperties) {
     @Bean
     fun legacyOrdersRepository(): LegacyOrdersRepository =
         FakeLegacyOrdersRepository()
+
+    @Bean
+    fun eventBus(): EventBus = SynchronousFakeEventBus()
 }
 

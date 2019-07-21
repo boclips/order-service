@@ -1,10 +1,10 @@
 package testsupport
 
-import com.boclips.events.types.LegacyOrder
-import com.boclips.events.types.LegacyOrderExtraFields
-import com.boclips.events.types.LegacyOrderItem
-import com.boclips.events.types.LegacyOrderItemLicense
-import com.boclips.events.types.LegacyOrderNextStatus
+import com.boclips.eventbus.events.order.LegacyOrder
+import com.boclips.eventbus.events.order.LegacyOrderExtraFields
+import com.boclips.eventbus.events.order.LegacyOrderItem
+import com.boclips.eventbus.events.order.LegacyOrderItemLicense
+import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
