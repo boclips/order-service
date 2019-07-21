@@ -1,4 +1,6 @@
 slack:
-    signingSecret: a-fake-secret
+  signingSecret: a-fake-secret
 server:
-    use-forward-headers: true
+  use-forward-headers: true
+pubsub:
+  consumerGroup: order-service
