@@ -38,6 +38,7 @@ dependencies {
     implementation "com.github.boclips:kaltura-client:0.58.0"
     implementation "com.github.boclips:event-bus:1.7.0"
     implementation('com.github.boclips:boclips-spring-security:0.93.0')
+    implementation('io.sentry:sentry-logback:1.7.23')
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
