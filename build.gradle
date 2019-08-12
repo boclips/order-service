@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.3.RELEASE'
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
     id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.3.21'
     id 'org.owasp.dependencycheck' version '5.0.0-M2'
@@ -39,6 +39,11 @@ dependencies {
     implementation "com.github.boclips:event-bus:1.7.0"
     implementation('com.github.boclips:boclips-spring-security:0.93.0')
     implementation('io.sentry:sentry-logback:1.7.23')
+    implementation 'com.github.boclips:videos:0.327.0'
+
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
+    
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
