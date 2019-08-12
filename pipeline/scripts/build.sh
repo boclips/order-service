@@ -4,9 +4,6 @@ set -eu
 
 export GRADLE_USER_HOME="$(pwd)/.gradle"
 
-echo "Failing deliberately to test the pipeline"
-false
-
 version=$(cat version/version)
 
 (
