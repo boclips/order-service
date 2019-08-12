@@ -13,6 +13,7 @@ import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.orderBy
 
 const val databaseName = "order-service-db"
 
@@ -35,6 +36,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     override fun findAll(): List<Order> =
         collection()
             .find()
+            .sort(orderBy(OrderDocument::updatedAt, ascending = false))
             .map(OrderDocumentConverter::toOrder)
             .toList()
 

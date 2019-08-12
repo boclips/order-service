@@ -9,7 +9,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import testsupport.TestFactories
@@ -71,7 +70,6 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
         super.setUp()
     }
 }
-
 
 abstract class OrdersRepositoryTests {
     lateinit var repo: OrdersRepository
@@ -144,5 +142,16 @@ abstract class OrdersRepositoryTests {
         repo.add(order = order)
 
         assertThat(repo.findOne(OrderId(value = id))).isEqualTo(order)
+    }
+
+    @Test
+    fun `orders are ordered by updated at`() {
+        val firstUpdated = TestFactories.order(updatedAt = Instant.ofEpochSecond(1))
+        val lastUpdated = TestFactories.order(updatedAt = Instant.ofEpochSecond(2))
+
+        repo.add(order = firstUpdated)
+        repo.add(order = lastUpdated)
+
+        assertThat(repo.findAll().first()).isEqualTo(lastUpdated)
     }
 }

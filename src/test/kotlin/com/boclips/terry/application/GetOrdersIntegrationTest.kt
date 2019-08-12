@@ -27,8 +27,8 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             creatorEmail = "boclips@example.com",
             vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
-            createdAt = now.plusMillis(1),
-            updatedAt = now.plusMillis(2),
+            createdAt = now.plusMillis(6),
+            updatedAt = now.plusMillis(5),
             items = listOf(
                 OrderItem(
                     uuid = "i-love-uuids",

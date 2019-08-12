@@ -29,7 +29,7 @@ class FakeOrdersRepository : OrdersRepository {
         }
     }
 
-    override fun findAll(): List<Order> = orders
+    override fun findAll(): List<Order> = orders.sortedByDescending { it.updatedAt }
 
     override fun findOne(id: OrderId): Order? {
         return orders.find { it.id == id }

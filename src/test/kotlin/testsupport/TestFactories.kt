@@ -50,13 +50,13 @@ class TestFactories {
             .build()
 
         fun order(
-            id: OrderId,
-            creatorEmail: String,
-            vendorEmail: String,
-            status: OrderStatus,
-            createdAt: Instant,
-            updatedAt: Instant,
-            items: List<OrderItem>
+            id: OrderId = OrderId(value = ObjectId.get().toHexString()),
+            creatorEmail: String = "email@creator.com",
+            vendorEmail: String = "vendor@email.com",
+            status: OrderStatus = OrderStatus.COMPLETED,
+            createdAt: Instant = Instant.now(),
+            updatedAt: Instant = Instant.now(),
+            items: List<OrderItem> = emptyList()
         ): Order {
             return Order(
                 id = id,
