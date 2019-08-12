@@ -8,7 +8,6 @@ import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
-import org.litote.kmongo.util.idValue
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
@@ -31,7 +30,8 @@ class OrderServiceTest {
                 OrderItem(
                     uuid = "hi-again-its-a-uuid",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )
@@ -53,7 +53,8 @@ class OrderServiceTest {
                 OrderItem(
                     uuid = "oh-guess-what-its-a-uuid",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )

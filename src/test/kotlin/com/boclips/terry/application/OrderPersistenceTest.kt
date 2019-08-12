@@ -7,7 +7,6 @@ import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
@@ -15,38 +14,37 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.videos.service.client.CreateContentPartnerRequest
+import com.boclips.videos.service.client.VideoServiceClient
+import com.boclips.videos.service.client.VideoType
+import com.boclips.videos.service.client.internal.FakeClient
+import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import testsupport.TestFactories
 import java.math.BigDecimal
 import java.util.Date
 
-@ExtendWith(SpringExtension::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class OrderPersistenceTest {
+class OrderPersistenceTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventBus: SynchronousFakeEventBus
-
-    @Autowired
-    lateinit var ordersRepository: FakeOrdersRepository
 
     @Autowired
     lateinit var legacyOrdersRepository: FakeLegacyOrdersRepository
 
     @BeforeEach
     fun setUp() {
-        ordersRepository.clear()
+        fakeOrdersRepository.clear()
         legacyOrdersRepository.clear()
+        fakeVideoClient.setUseInternalProjection(true)
     }
 
     @Test
@@ -65,12 +63,25 @@ class OrderPersistenceTest {
             vendorUuid = "illegible-vendor-uuid",
             creatorUuid = "illegible-creator-uuid"
         )
+
+        val contentPartnerId =
+            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+
+        val videoId = fakeVideoClient.createVideo(
+            TestFactories.createVideoRequest(
+                title = "hippos are cool",
+                providerId = contentPartnerId.value,
+                contentType = VideoType.NEWS
+            )
+        )
+
         val items = singularItemList(
             createdAt = item1CreatedAt,
             updatedAt = item1UpdatedAt,
             licenseCreatedAt = license1CreatedAt,
             licenseUpdatedAt = license1UpdatedAt,
-            uuid = "item-1-uuid"
+            uuid = "item-1-uuid",
+            videoId = videoId.value
         )
 
         eventBus.publish(
@@ -82,7 +93,8 @@ class OrderPersistenceTest {
             )
         )
 
-        assertThat(ordersRepository.findAll())
+
+        assertThat(fakeOrdersRepository.findAll())
             .containsExactly(
                 Order(
                     id = OrderId(value = legacyOrder.id),
@@ -97,7 +109,13 @@ class OrderPersistenceTest {
                         OrderItem(
                             uuid = "item-1-uuid",
                             price = BigDecimal.ONE,
-                            transcriptRequested = true
+                            transcriptRequested = true,
+                            video = TestFactories.video(
+                                id = videoId.value,
+                                title = "hippos are cool",
+                                source = "ted",
+                                videoType = VideoType.NEWS
+                            )
                         )
                     )
                 )
@@ -119,11 +137,12 @@ class OrderPersistenceTest {
         updatedAt: Date,
         licenseCreatedAt: Date,
         licenseUpdatedAt: Date,
-        uuid: String
+        uuid: String,
+        videoId: String
     ): List<LegacyOrderItem> = listOf(
         LegacyOrderItem
             .builder()
-            .id("item-1-id")
+            .id(videoId)
             .uuid(uuid)
             .assetId("item-1-assetid")
             .dateCreated(createdAt)

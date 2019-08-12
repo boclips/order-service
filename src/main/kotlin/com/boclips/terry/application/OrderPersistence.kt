@@ -9,14 +9,18 @@ import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.domain.model.Video
+import com.boclips.terry.domain.model.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
 import org.springframework.stereotype.Component
 
 @Component
 class OrderPersistence(
     private val repo: OrdersRepository,
-    private val legacyOrdersRepository: LegacyOrdersRepository
+    private val legacyOrdersRepository: LegacyOrdersRepository,
+    private val videoServiceClient: VideoServiceClient
 ) {
     companion object : KLogging()
 
@@ -37,7 +41,8 @@ class OrderPersistence(
                         OrderItem(
                             uuid = it.uuid,
                             price = it.price,
-                            transcriptRequested = it.transcriptsRequired
+                            transcriptRequested = it.transcriptsRequired,
+                            video = getVideo(it.id)
                         )
                     }
                 )
@@ -59,5 +64,15 @@ class OrderPersistence(
                 throw LegacyOrderProcessingException(e)
             }
         }
+    }
+
+    fun getVideo(videoId: String): Video = videoServiceClient.rawIdToVideoId(videoId).let {
+        val videoResource = videoServiceClient.get(it)
+        return Video(
+            id = VideoId(videoResource.videoId.value),
+            title = videoResource.title,
+            source = videoResource.createdBy,
+            type = videoResource.type.toString()
+        )
     }
 }

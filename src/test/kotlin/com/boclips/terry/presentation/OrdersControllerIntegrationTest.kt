@@ -3,6 +3,7 @@ package com.boclips.terry.presentation
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
@@ -40,11 +41,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         OrderItem(
                             uuid = "awesome-item-uuid",
                             price = BigDecimal.valueOf(1),
-                            transcriptRequested = true
+                            transcriptRequested = true,
+                            video = TestFactories.video(
+                                id = "123",
+                                title = "A Video",
+                                source = "The source",
+                                videoType = VideoType.STOCK
+                            )
                         ), OrderItem(
                             uuid = "awesome-item-uuid2",
                             price = BigDecimal.valueOf(10),
-                            transcriptRequested = false
+                            transcriptRequested = false,
+                            video = TestFactories.video()
                         )
                     )
                 )
@@ -65,6 +73,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("123")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.source", equalTo("The source")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("awesome-item-uuid2")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("$10.00")))
@@ -96,11 +108,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         OrderItem(
                             uuid = "awesome-item-uuid",
                             price = BigDecimal.valueOf(1),
-                            transcriptRequested = true
+                            transcriptRequested = true,
+                            video = TestFactories.video(
+                                id = "123",
+                                title = "A Video",
+                                source = "The source",
+                                videoType = VideoType.STOCK
+                            )
                         ), OrderItem(
                             uuid = "awesome-item-uuid2",
                             price = BigDecimal.valueOf(10),
-                            transcriptRequested = false
+                            transcriptRequested = false,
+                            video = TestFactories.video()
                         )
                     )
                 )
@@ -120,6 +139,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
+            .andExpect(jsonPath("$.items[0].video.id", equalTo("123")))
+            .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
+            .andExpect(jsonPath("$.items[0].video.source", equalTo("The source")))
+            .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
     }

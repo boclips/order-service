@@ -33,7 +33,8 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                 OrderItem(
                     uuid = "i-love-uuids",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )
@@ -52,7 +53,8 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                 OrderItem(
                     uuid = "i-also-lurve-uuids",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )

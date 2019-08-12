@@ -3,6 +3,7 @@ package com.boclips.terry.infrastructure.orders
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
@@ -25,24 +26,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     override fun add(order: Order) = this.also {
         collection()
             .insertOne(
-                OrderDocument(
-                    id = ObjectId(order.id.value),
-                    uuid = order.uuid,
-                    status = order.status.toString(),
-                    vendorEmail = order.vendorEmail,
-                    creatorEmail = order.creatorEmail,
-                    updatedAt = order.updatedAt,
-                    createdAt = order.createdAt,
-                    isbnOrProductNumber = order.isbnOrProductNumber,
-                    items = order.items
-                        .map { item ->
-                            OrderItemDocument(
-                                uuid = item.uuid,
-                                price = item.price,
-                                transcriptRequested = item.transcriptRequested
-                            )
-                        }
-                )
+                OrderDocumentConverter.toOrderDocument(order)
             )
     }
 
@@ -51,11 +35,13 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     override fun findAll(): List<Order> =
         collection()
             .find()
-            .map(OrderDocument::toOrder)
+            .map(OrderDocumentConverter::toOrder)
             .toList()
 
     override fun findOne(id: OrderId): Order? {
-        return collection().findOne(OrderDocument::id eq ObjectId(id.value))?.toOrder()
+        return collection().findOne(OrderDocument::id eq ObjectId(id.value))?.let(
+            OrderDocumentConverter::toOrder
+        )
     }
 
     private fun collection(): MongoCollection<OrderDocument> =

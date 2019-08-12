@@ -2,9 +2,6 @@ package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.Order
 import org.springframework.hateoas.core.Relation
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.Locale
 
 @Relation(collectionRelation = "orders")
 data class OrderResource(
@@ -30,7 +27,13 @@ data class OrderResource(
                         OrderItemResource(
                             uuid = item.uuid,
                             price = PriceResource.fromBigDecimal(item.price),
-                            transcriptRequested = item.transcriptRequested
+                            transcriptRequested = item.transcriptRequested,
+                            video = VideoResource(
+                                id = item.video.id.value,
+                                title = item.video.title,
+                                source = item.video.source,
+                                type = item.video.type.toString()
+                            )
                         )
                     }
             )
@@ -40,19 +43,7 @@ data class OrderResource(
 data class OrderItemResource(
     val uuid: String,
     val price: PriceResource,
-    val transcriptRequested: Boolean
+    val transcriptRequested: Boolean,
+    val video: VideoResource
 )
 
-data class PriceResource(
-    val value: BigDecimal,
-    val displayValue: String
-) {
-    companion object {
-        fun fromBigDecimal(bigDecimal: BigDecimal): PriceResource {
-            return PriceResource(
-                value = bigDecimal,
-                displayValue = NumberFormat.getCurrencyInstance(Locale.US).format(bigDecimal)
-            )
-        }
-    }
-}

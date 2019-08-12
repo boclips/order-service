@@ -5,5 +5,6 @@ import java.math.BigDecimal
 data class OrderItemDocument(
     val uuid: String,
     val price: BigDecimal,
-    val transcriptRequested: Boolean
+    val transcriptRequested: Boolean,
+    val video: VideoDocument
 )

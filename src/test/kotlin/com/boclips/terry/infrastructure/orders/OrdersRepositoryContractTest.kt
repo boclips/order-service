@@ -39,7 +39,8 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
                 OrderItem(
                     uuid = "this-is-not-the-magical-uuid",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )
@@ -71,7 +72,7 @@ class MongoOrdersRepositoryTests : OrdersRepositoryTests() {
     }
 }
 
-@Disabled
+
 abstract class OrdersRepositoryTests {
     lateinit var repo: OrdersRepository
 
@@ -102,7 +103,8 @@ abstract class OrdersRepositoryTests {
                 OrderItem(
                     uuid = it.uuid,
                     price = it.price,
-                    transcriptRequested = it.transcriptsRequired
+                    transcriptRequested = it.transcriptsRequired,
+                    video = TestFactories.video()
                 )
             }
         )
@@ -133,7 +135,8 @@ abstract class OrdersRepositoryTests {
                 OrderItem(
                     uuid = it.uuid,
                     price = it.price,
-                    transcriptRequested = it.transcriptsRequired
+                    transcriptRequested = it.transcriptsRequired,
+                    video = TestFactories.video()
                 )
             }
         )

@@ -36,7 +36,8 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 OrderItem(
                     uuid = "i-love-uuids",
                     price = BigDecimal.ONE,
-                    transcriptRequested = true
+                    transcriptRequested = true,
+                    video = TestFactories.video()
                 )
             )
         )

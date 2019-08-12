@@ -3,7 +3,7 @@ package com.boclips.terry.infrastructure.orders
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
-import org.bson.types.ObjectId
+import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
 
 class FakeOrdersRepository : OrdersRepository {
 
@@ -23,26 +23,8 @@ class FakeOrdersRepository : OrdersRepository {
         if (order.id.value == "please-throw") {
             throw Exception("deliberately thrown in test")
         } else {
-            orderDocuments.add(
-                OrderDocument(
-                    id = ObjectId(order.id.value),
-                    uuid = order.uuid,
-                    status = order.status.toString(),
-                    vendorEmail = order.vendorEmail,
-                    creatorEmail = order.creatorEmail,
-                    updatedAt = order.updatedAt,
-                    createdAt = order.createdAt,
-                    isbnOrProductNumber = order.isbnOrProductNumber,
-                    items = order.items
-                        .map { item ->
-                            OrderItemDocument(
-                                uuid = item.uuid,
-                                price = item.price,
-                                transcriptRequested = item.transcriptRequested
-                            )
-                        }
-                )
-            )
+            orderDocuments.add(OrderDocumentConverter.toOrderDocument(order))
+
             orders.add(order)
         }
     }

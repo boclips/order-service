@@ -9,9 +9,17 @@ import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.Video
+import com.boclips.terry.domain.model.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.VideoDocument
+import com.boclips.videos.service.client.CreateVideoRequest
+import com.boclips.videos.service.client.PlaybackProvider
+import com.boclips.videos.service.client.VideoType
+import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.LocalDate
 import java.util.Date
 
 class TestFactories {
@@ -115,6 +123,62 @@ class TestFactories {
                 items = items,
                 creator = creatorEmail,
                 vendor = vendorEmail
+            )
+        }
+
+        fun createVideoRequest(
+            providerId: String = "providerId",
+            providerVideoId: String = "providerId video id",
+            title: String = "title",
+            description: String = "description",
+            releasedOn: LocalDate = LocalDate.now(),
+            legalRestrictions: String? = "legal restrictions",
+            keywords: List<String> = emptyList(),
+            contentType: VideoType = VideoType.NEWS,
+            playbackId: String = "playback id",
+            playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
+            subjects: Set<String> = emptySet()
+        ): CreateVideoRequest {
+            return CreateVideoRequest.builder()
+                .providerId(providerId)
+                .providerVideoId(providerVideoId)
+                .title(title)
+                .description(description)
+                .releasedOn(releasedOn)
+                .legalRestrictions(legalRestrictions)
+                .keywords(keywords)
+                .videoType(contentType)
+                .playbackId(playbackId)
+                .playbackProvider(playbackProvider)
+                .subjects(subjects)
+                .build()
+        }
+
+        fun video(
+            id: String = ObjectId.get().toHexString(),
+            title: String = "joshua tree",
+            source: String = "National Parks",
+            videoType: VideoType = VideoType.OTHER
+        ): Video {
+            return Video(
+                id = VideoId(value = id),
+                title = title,
+                source = source,
+                type = videoType.toString()
+            )
+        }
+
+        fun videoDocument(
+            id: String = "123",
+            title: String = "hi",
+            source: String = "Source",
+            videoType: String = "NEWS"
+        ): VideoDocument {
+            return VideoDocument(
+                id = id,
+                title = title,
+                source = source,
+                type = videoType
             )
         }
     }
