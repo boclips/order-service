@@ -7,5 +7,5 @@ data class OrderItemDocument(
     val price: BigDecimal,
     val transcriptRequested: Boolean,
     val video: VideoDocument,
-    val contentPartner: ContentPartnerDocument
+    val source: SourceDocument
 )

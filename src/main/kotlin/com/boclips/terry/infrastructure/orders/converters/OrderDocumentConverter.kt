@@ -11,6 +11,7 @@ import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.OrderDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
+import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
 import org.bson.types.ObjectId
 
@@ -30,9 +31,12 @@ object OrderDocumentConverter {
                     uuid = it.uuid,
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
-                    contentPartner = ContentPartnerDocument(
-                        referenceId = it.contentPartner.referenceId.value,
-                        name = it.contentPartner.name
+                    source = SourceDocument(
+                        contentPartner = ContentPartnerDocument(
+                            referenceId = it.contentPartner.referenceId.value,
+                            name = it.contentPartner.name
+                        ),
+                        videoReference = it.video.videoReference
                     ),
                     video = VideoDocument(
                         referenceId = it.video.referenceId.value,
@@ -61,13 +65,14 @@ object OrderDocumentConverter {
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
                     contentPartner = ContentPartner(
-                        referenceId = ContentPartnerId(value = it.contentPartner.referenceId),
-                        name = it.contentPartner.name
+                        referenceId = ContentPartnerId(value = it.source.contentPartner.referenceId),
+                        name = it.source.contentPartner.name
                     ),
                     video = Video(
                         referenceId = VideoId(value = it.video.referenceId),
                         title = it.video.title,
-                        type = it.video.type
+                        type = it.video.type,
+                        videoReference = it.source.videoReference
                     )
                 )
             } ?: emptyList()

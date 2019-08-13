@@ -77,7 +77,8 @@ class OrderPersistence(
             video = Video(
                 referenceId = VideoId(value = videoResource.videoId.value),
                 title = videoResource.title,
-                type = videoResource.type.toString()
+                type = videoResource.type.toString(),
+                videoReference = videoResource.contentPartnerVideoId
             )
         )
     }
