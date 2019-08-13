@@ -7,12 +7,8 @@ import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.ContentPartner
-import com.boclips.terry.domain.model.orderItem.ContentPartnerId
-import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
@@ -87,36 +83,29 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             )
         )
 
+        val order = fakeOrdersRepository.findOne(OrderId(value = legacyOrder.id))!!
+        assertThat(order.id).isEqualTo(
+            OrderId(value = (legacyOrder.id))
+        )
 
-        assertThat(fakeOrdersRepository.findAll())
-            .containsExactly(
-                Order(
-                    id = OrderId(value = legacyOrder.id),
-                    uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-                    createdAt = orderCreatedAt.toInstant(),
-                    updatedAt = orderUpdatedAt.toInstant(),
-                    creatorEmail = "creator@their-company.net",
-                    vendorEmail = "vendor@their-company.biz",
-                    isbnOrProductNumber = "some-isbn",
-                    status = OrderStatus.CONFIRMED,
-                    items = listOf(
-                        OrderItem(
-                            uuid = "item-1-uuid",
-                            price = BigDecimal.ONE,
-                            transcriptRequested = true,
-                            contentPartner = ContentPartner(
-                                contentPartnerId = ContentPartnerId(contentPartnerId.value),
-                                name = "ted"
-                            ),
-                            video = TestFactories.video(
-                                id = videoId.value,
-                                title = "hippos are cool",
-                                videoType = VideoType.NEWS
-                            )
-                        )
-                    )
-                )
-            )
+        assertThat(order.uuid).isEqualTo("deadb33f-f33df00d-d00fb3ad-c00bfeed")
+        assertThat(order.createdAt).isEqualTo(orderCreatedAt.toInstant())
+        assertThat(order.updatedAt).isEqualTo(orderUpdatedAt.toInstant())
+        assertThat(order.creatorEmail).isEqualTo("creator@their-company.net")
+        assertThat(order.vendorEmail).isEqualTo("vendor@their-company.biz")
+        assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")
+        assertThat(order.status).isEqualTo(OrderStatus.CONFIRMED)
+
+        assertThat(order.items.size).isEqualTo(1)
+        val item = order.items.first()
+        assertThat(item.uuid).isEqualTo("item-1-uuid")
+        assertThat(item.price).isEqualTo(BigDecimal.ONE)
+        assertThat(item.transcriptRequested).isEqualTo(true)
+        assertThat(item.contentPartner.referenceId.value).isEqualTo(contentPartnerId.value)
+        assertThat(item.contentPartner.name).isEqualTo("ted")
+        assertThat(item.video.referenceId.value).isEqualTo(videoId.value)
+        assertThat(item.video.title).isEqualTo("hippos are cool")
+        assertThat(item.video.type).isEqualTo(VideoType.NEWS.name)
 
         assertThat(legacyOrdersRepository.findById(OrderId(legacyOrder.id)))
             .isEqualTo(

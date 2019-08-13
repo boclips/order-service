@@ -27,11 +27,9 @@ class OrderDocumentConverterTest {
                     price = BigDecimal.TEN,
                     transcriptRequested = false,
                     contentPartner = TestFactories.contentPartner(
-                        id = ObjectId.get().toHexString(),
                         name = "Bob was here"
                     ),
                     video = TestFactories.video(
-                        id = "456",
                         title = "a video",
                         videoType = VideoType.NEWS
                     )

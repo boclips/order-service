@@ -157,36 +157,24 @@ class TestFactories {
         }
 
         fun contentPartner(
-            id: String = ObjectId.get().toHexString(),
-            name: String = "Flux"
+            name: String = "Flux",
+            referenceId: String = "video-service-id"
         ): ContentPartner {
             return ContentPartner(
-                contentPartnerId = ContentPartnerId(value = id),
-                name = name
+                name = name,
+                referenceId = ContentPartnerId(value = referenceId)
             )
         }
 
         fun video(
-            id: String = ObjectId.get().toHexString(),
+            referenceId: String = "video-service-id",
             title: String = "joshua tree",
             videoType: VideoType = VideoType.OTHER
         ): Video {
             return Video(
-                id = VideoId(value = id),
+                referenceId = VideoId(value = referenceId),
                 title = title,
                 type = videoType.toString()
-            )
-        }
-
-        fun videoDocument(
-            id: String = "123",
-            title: String = "hi",
-            videoType: String = "NEWS"
-        ): VideoDocument {
-            return VideoDocument(
-                id = id,
-                title = title,
-                type = videoType
             )
         }
     }

@@ -50,11 +50,11 @@ class OrderResourceTest {
                         price = BigDecimal.TEN,
                         transcriptRequested = false,
                         contentPartner = TestFactories.contentPartner(
-                            id = "paper",
+                            referenceId = "paper",
                             name = "cup"
                         ),
                         video = TestFactories.video(
-                            id = "video-id",
+                            referenceId = "video-id",
                             videoType = VideoType.STOCK,
                             title = "video title"
                         )

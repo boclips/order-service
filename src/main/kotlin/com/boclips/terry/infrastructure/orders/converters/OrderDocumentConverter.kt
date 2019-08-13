@@ -31,11 +31,11 @@ object OrderDocumentConverter {
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
                     contentPartner = ContentPartnerDocument(
-                        id = ObjectId(it.contentPartner.contentPartnerId.value),
+                        referenceId = it.contentPartner.referenceId.value,
                         name = it.contentPartner.name
                     ),
                     video = VideoDocument(
-                        id = it.video.id.value,
+                        referenceId = it.video.referenceId.value,
                         title = it.video.title,
                         type = it.video.type
                     )
@@ -61,11 +61,11 @@ object OrderDocumentConverter {
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
                     contentPartner = ContentPartner(
-                        contentPartnerId = ContentPartnerId(value = it.contentPartner.id.toHexString()),
+                        referenceId = ContentPartnerId(value = it.contentPartner.referenceId),
                         name = it.contentPartner.name
                     ),
                     video = Video(
-                        id = VideoId(it.video.id),
+                        referenceId = VideoId(value = it.video.referenceId),
                         title = it.video.title,
                         type = it.video.type
                     )

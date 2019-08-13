@@ -29,11 +29,11 @@ data class OrderResource(
                             price = PriceResource.fromBigDecimal(item.price),
                             transcriptRequested = item.transcriptRequested,
                             contentPartner = ContentPartnerResource(
-                                item.contentPartner.contentPartnerId.value,
+                                item.contentPartner.referenceId.value,
                                 item.contentPartner.name
                             ),
                             video = VideoResource(
-                                id = item.video.id.value,
+                                id = item.video.referenceId.value,
                                 title = item.video.title,
                                 type = item.video.type
                             )

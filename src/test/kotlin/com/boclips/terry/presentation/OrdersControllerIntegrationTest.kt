@@ -44,11 +44,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             price = BigDecimal.valueOf(1),
                             transcriptRequested = true,
                             contentPartner = TestFactories.contentPartner(
-                                id = "5ceeb99bd0e30a1a57ae9767",
+                                referenceId = "123",
                                 name = "bob is still here"
                             ),
                             video = video(
-                                id = "123",
+                                referenceId = "1234",
                                 title = "A Video",
                                 videoType = VideoType.STOCK
                             )
@@ -78,11 +78,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("123")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("awesome-item-uuid2")))
@@ -117,11 +117,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             price = BigDecimal.valueOf(1),
                             transcriptRequested = true,
                             contentPartner = contentPartner(
-                                id = "5ceeb99bd0e30a1a57ae9767",
+                                referenceId = "cp-id",
                                 name = "eman"
                             ),
                             video = video(
-                                id = "123",
+                                referenceId = "video-id",
                                 title = "A Video",
                                 videoType = VideoType.STOCK
                             )
@@ -150,11 +150,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
-            .andExpect(jsonPath("$.items[0].video.id", equalTo("123")))
+            .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
 
-            .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
             .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))

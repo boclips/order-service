@@ -17,6 +17,7 @@ import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
+import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
 
 @Component
@@ -70,11 +71,11 @@ class OrderPersistence(
             price = item.price,
             transcriptRequested = item.transcriptsRequired,
             contentPartner = ContentPartner(
-                contentPartnerId = ContentPartnerId(videoResource.contentPartnerId),
+                referenceId = ContentPartnerId(value = videoResource.contentPartnerId),
                 name = videoResource.createdBy
             ),
             video = Video(
-                id = VideoId(videoResource.videoId.value),
+                referenceId = VideoId(value = videoResource.videoId.value),
                 title = videoResource.title,
                 type = videoResource.type.toString()
             )
