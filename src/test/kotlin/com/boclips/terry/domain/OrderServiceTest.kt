@@ -1,8 +1,8 @@
 package com.boclips.terry.domain
 
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -31,6 +31,7 @@ class OrderServiceTest {
                     uuid = "hi-again-its-a-uuid",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )
@@ -54,6 +55,7 @@ class OrderServiceTest {
                     uuid = "oh-guess-what-its-a-uuid",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )

@@ -18,7 +18,7 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `backoffice staff do see an orders link`() {
+    fun `backoffice staff has access to an orders link`() {
         mockMvc.perform(get("/v1/").asBackofficeStaff())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.orders").exists())

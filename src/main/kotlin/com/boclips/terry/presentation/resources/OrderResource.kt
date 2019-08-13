@@ -28,11 +28,14 @@ data class OrderResource(
                             uuid = item.uuid,
                             price = PriceResource.fromBigDecimal(item.price),
                             transcriptRequested = item.transcriptRequested,
+                            contentPartner = ContentPartnerResource(
+                                item.contentPartner.contentPartnerId.value,
+                                item.contentPartner.name
+                            ),
                             video = VideoResource(
                                 id = item.video.id.value,
                                 title = item.video.title,
-                                source = item.video.source,
-                                type = item.video.type.toString()
+                                type = item.video.type
                             )
                         )
                     }
@@ -44,6 +47,7 @@ data class OrderItemResource(
     val uuid: String,
     val price: PriceResource,
     val transcriptRequested: Boolean,
+    val contentPartner: ContentPartnerResource,
     val video: VideoResource
 )
 

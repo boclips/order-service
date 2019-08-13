@@ -1,7 +1,6 @@
 package com.boclips.terry.presentation.resources
 
-data class VideoResource(
+data class ContentPartnerResource(
     val id: String,
-    val type: String,
-    val title: String
+    val name: String
 )

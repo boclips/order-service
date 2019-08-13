@@ -1,5 +1,6 @@
 package com.boclips.terry.domain.model
 
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.Instant
 

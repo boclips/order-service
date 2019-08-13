@@ -3,8 +3,8 @@ package com.boclips.terry.application
 import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.application.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -37,6 +37,7 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
                     uuid = "i-love-uuids",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )

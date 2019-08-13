@@ -1,16 +1,19 @@
 package com.boclips.terry.application
 
 import com.boclips.eventbus.BoclipsEventListener
+import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
-import com.boclips.terry.domain.model.Video
-import com.boclips.terry.domain.model.VideoId
+import com.boclips.terry.domain.model.orderItem.ContentPartner
+import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.Video
+import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
@@ -37,14 +40,7 @@ class OrderPersistence(
                     vendorEmail = event.vendor,
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
                     status = OrderStatus.parse(event.order.status),
-                    items = event.orderItems.map {
-                        OrderItem(
-                            uuid = it.uuid,
-                            price = it.price,
-                            transcriptRequested = it.transcriptsRequired,
-                            video = getVideo(it.id)
-                        )
-                    }
+                    items = event.orderItems.map { createOrderItem(it) }
                 )
             )
 
@@ -66,13 +62,22 @@ class OrderPersistence(
         }
     }
 
-    fun getVideo(videoId: String): Video = videoServiceClient.rawIdToVideoId(videoId).let {
-        val videoResource = videoServiceClient.get(it)
-        return Video(
-            id = VideoId(videoResource.videoId.value),
-            title = videoResource.title,
-            source = videoResource.createdBy,
-            type = videoResource.type.toString()
+    fun createOrderItem(item: LegacyOrderItem): OrderItem {
+        val videoResource = videoServiceClient.rawIdToVideoId(item.id).let { videoServiceClient.get(it) }
+
+        return OrderItem(
+            uuid = item.uuid,
+            price = item.price,
+            transcriptRequested = item.transcriptsRequired,
+            contentPartner = ContentPartner(
+                contentPartnerId = ContentPartnerId(videoResource.contentPartnerId),
+                name = videoResource.createdBy
+            ),
+            video = Video(
+                id = VideoId(videoResource.videoId.value),
+                title = videoResource.title,
+                type = videoResource.type.toString()
+            )
         )
     }
 }

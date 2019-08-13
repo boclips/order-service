@@ -9,26 +9,20 @@ import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.ContentPartner
+import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
-import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
-import com.boclips.videos.service.client.VideoServiceClient
 import com.boclips.videos.service.client.VideoType
-import com.boclips.videos.service.client.internal.FakeClient
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.util.Date
@@ -110,10 +104,13 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
                             uuid = "item-1-uuid",
                             price = BigDecimal.ONE,
                             transcriptRequested = true,
+                            contentPartner = ContentPartner(
+                                contentPartnerId = ContentPartnerId(contentPartnerId.value),
+                                name = "ted"
+                            ),
                             video = TestFactories.video(
                                 id = videoId.value,
                                 title = "hippos are cool",
-                                source = "ted",
                                 videoType = VideoType.NEWS
                             )
                         )

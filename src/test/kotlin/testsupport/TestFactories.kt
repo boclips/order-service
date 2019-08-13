@@ -7,10 +7,12 @@ import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.Video
-import com.boclips.terry.domain.model.VideoId
+import com.boclips.terry.domain.model.orderItem.ContentPartner
+import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.Video
+import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
 import com.boclips.videos.service.client.CreateVideoRequest
@@ -154,16 +156,24 @@ class TestFactories {
                 .build()
         }
 
+        fun contentPartner(
+            id: String = ObjectId.get().toHexString(),
+            name: String = "Flux"
+        ): ContentPartner {
+            return ContentPartner(
+                contentPartnerId = ContentPartnerId(value = id),
+                name = name
+            )
+        }
+
         fun video(
             id: String = ObjectId.get().toHexString(),
             title: String = "joshua tree",
-            source: String = "National Parks",
             videoType: VideoType = VideoType.OTHER
         ): Video {
             return Video(
                 id = VideoId(value = id),
                 title = title,
-                source = source,
                 type = videoType.toString()
             )
         }
@@ -171,13 +181,11 @@ class TestFactories {
         fun videoDocument(
             id: String = "123",
             title: String = "hi",
-            source: String = "Source",
             videoType: String = "NEWS"
         ): VideoDocument {
             return VideoDocument(
                 id = id,
                 title = title,
-                source = source,
                 type = videoType
             )
         }

@@ -1,8 +1,8 @@
 package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -49,9 +49,12 @@ class OrderResourceTest {
                         uuid = "123",
                         price = BigDecimal.TEN,
                         transcriptRequested = false,
+                        contentPartner = TestFactories.contentPartner(
+                            id = "paper",
+                            name = "cup"
+                        ),
                         video = TestFactories.video(
                             id = "video-id",
-                            source = "Source",
                             videoType = VideoType.STOCK,
                             title = "video title"
                         )
@@ -75,9 +78,12 @@ class OrderResourceTest {
                         uuid = "123",
                         price = PriceResource.fromBigDecimal(BigDecimal.TEN),
                         transcriptRequested = false,
+                        contentPartner = ContentPartnerResource(
+                            id = "paper",
+                            name = "cup"
+                        ),
                         video = VideoResource(
                             id = "video-id",
-                            source = "Source",
                             type = "STOCK",
                             title = "video title"
                         )

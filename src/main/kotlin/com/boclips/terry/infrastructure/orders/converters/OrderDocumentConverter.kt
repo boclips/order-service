@@ -2,10 +2,13 @@ package com.boclips.terry.infrastructure.orders.converters
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.Video
-import com.boclips.terry.domain.model.VideoId
+import com.boclips.terry.domain.model.orderItem.ContentPartner
+import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.Video
+import com.boclips.terry.domain.model.orderItem.VideoId
+import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.OrderDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
@@ -27,10 +30,13 @@ object OrderDocumentConverter {
                     uuid = it.uuid,
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
+                    contentPartner = ContentPartnerDocument(
+                        id = ObjectId(it.contentPartner.contentPartnerId.value),
+                        name = it.contentPartner.name
+                    ),
                     video = VideoDocument(
                         id = it.video.id.value,
                         title = it.video.title,
-                        source = it.video.source,
                         type = it.video.type
                     )
                 )
@@ -54,10 +60,13 @@ object OrderDocumentConverter {
                     uuid = it.uuid,
                     price = it.price,
                     transcriptRequested = it.transcriptRequested,
+                    contentPartner = ContentPartner(
+                        contentPartnerId = ContentPartnerId(value = it.contentPartner.id.toHexString()),
+                        name = it.contentPartner.name
+                    ),
                     video = Video(
                         id = VideoId(it.video.id),
                         title = it.video.title,
-                        source = it.video.source,
                         type = it.video.type
                     )
                 )

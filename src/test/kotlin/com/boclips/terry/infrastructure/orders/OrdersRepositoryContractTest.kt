@@ -1,9 +1,9 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -39,6 +39,7 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
                     uuid = "this-is-not-the-magical-uuid",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )
@@ -102,6 +103,7 @@ abstract class OrdersRepositoryTests {
                     uuid = it.uuid,
                     price = it.price,
                     transcriptRequested = it.transcriptsRequired,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             }
@@ -134,6 +136,7 @@ abstract class OrdersRepositoryTests {
                     uuid = it.uuid,
                     price = it.price,
                     transcriptRequested = it.transcriptsRequired,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             }

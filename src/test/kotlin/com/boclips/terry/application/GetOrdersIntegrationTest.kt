@@ -1,8 +1,8 @@
 package com.boclips.terry.application
 
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -34,6 +34,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                     uuid = "i-love-uuids",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )
@@ -54,6 +55,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
                     uuid = "i-also-lurve-uuids",
                     price = BigDecimal.ONE,
                     transcriptRequested = true,
+                    contentPartner = TestFactories.contentPartner(),
                     video = TestFactories.video()
                 )
             )

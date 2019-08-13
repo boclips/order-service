@@ -1,10 +1,11 @@
 package com.boclips.terry.infrastructure.orders.converters
 
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderItem
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -25,10 +26,13 @@ class OrderDocumentConverterTest {
                     uuid = "123",
                     price = BigDecimal.TEN,
                     transcriptRequested = false,
+                    contentPartner = TestFactories.contentPartner(
+                        id = ObjectId.get().toHexString(),
+                        name = "Bob was here"
+                    ),
                     video = TestFactories.video(
                         id = "456",
                         title = "a video",
-                        source = "A Source",
                         videoType = VideoType.NEWS
                     )
                 )
