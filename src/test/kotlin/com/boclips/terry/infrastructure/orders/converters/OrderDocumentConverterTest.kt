@@ -5,7 +5,6 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -16,6 +15,7 @@ class OrderDocumentConverterTest {
     fun `converts an order to document to order`() {
         val originalOrder = TestFactories.order(
             id = OrderId(value = "5c1786db5236de0001d77747"),
+            orderProviderId = "order-provider",
             creatorEmail = "creator@s.com",
             vendorEmail = "vendor@m.com",
             status = OrderStatus.COMPLETED,

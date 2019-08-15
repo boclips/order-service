@@ -83,12 +83,14 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val order = fakeOrdersRepository.findOne(OrderId(value = legacyOrder.id))!!
-        assertThat(order.id).isEqualTo(
-            OrderId(value = (legacyOrder.id))
-        )
+        val orders = fakeOrdersRepository.findAll()
 
-        assertThat(order.uuid).isEqualTo("deadb33f-f33df00d-d00fb3ad-c00bfeed")
+        assertThat(orders).hasSize(1)
+
+        val order = orders.first()
+        assertThat(order.id).isNotNull()
+
+        assertThat(order.orderProviderId).isEqualTo(legacyOrder.id)
         assertThat(order.createdAt).isEqualTo(orderCreatedAt.toInstant())
         assertThat(order.updatedAt).isEqualTo(orderUpdatedAt.toInstant())
         assertThat(order.creatorEmail).isEqualTo("creator@their-company.net")
@@ -97,6 +99,7 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         assertThat(order.status).isEqualTo(OrderStatus.CONFIRMED)
 
         assertThat(order.items.size).isEqualTo(1)
+
         val item = order.items.first()
         assertThat(item.uuid).isEqualTo("item-1-uuid")
         assertThat(item.price).isEqualTo(BigDecimal.ONE)

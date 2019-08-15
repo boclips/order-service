@@ -21,6 +21,7 @@ class OrderServiceTest {
         val legacyOrder = TestFactories.legacyOrder(id1)
         val order1 = TestFactories.order(
             OrderId(value = legacyOrder.id),
+            "an-provider-id",
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -45,6 +46,7 @@ class OrderServiceTest {
         val legacyOrder2 = TestFactories.legacyOrder(id2)
         val order2 = TestFactories.order(
             OrderId(value = legacyOrder2.id),
+            "an-provider-id",
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,

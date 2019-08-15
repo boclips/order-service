@@ -14,9 +14,6 @@ import com.boclips.terry.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.terry.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.terry.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.terry.infrastructure.outgoing.videos.VideoService
-import com.boclips.videos.service.client.VideoServiceClient
-import com.boclips.videos.service.client.internal.FakeClient
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -34,7 +34,7 @@ enum class OrderStatus {
 
 data class Order(
     val id: OrderId,
-    val uuid: String,
+    val orderProviderId: String,
     val status: OrderStatus,
     val vendorEmail: String,
     val creatorEmail: String,

@@ -29,6 +29,7 @@ class FakeOrdersRepositoryTests : OrdersRepositoryTests() {
         val legacyOrder = TestFactories.legacyOrder(id)
         val order = TestFactories.order(
             OrderId(legacyOrder.id),
+            "an-provider-id",
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -93,6 +94,7 @@ abstract class OrdersRepositoryTests {
 
         val order = TestFactories.order(
             OrderId(value = legacyOrder.id),
+            "an-provider-id",
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,
@@ -126,6 +128,7 @@ abstract class OrdersRepositoryTests {
 
         val order = TestFactories.order(
             OrderId(value = legacyOrder.id),
+            "an-provider-id",
             "boclips",
             "big-bang",
             OrderStatus.CONFIRMED,

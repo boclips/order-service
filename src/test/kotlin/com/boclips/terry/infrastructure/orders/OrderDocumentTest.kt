@@ -13,7 +13,7 @@ class OrderDocumentTest {
         assertThat(
             OrderDocument(
                 id = id,
-                uuid = "c001-1d34",
+                orderProviderId = "1234",
                 status = "COMPLETED",
                 vendorEmail = "you@vendors.biz",
                 creatorEmail = "me@creators.lol",

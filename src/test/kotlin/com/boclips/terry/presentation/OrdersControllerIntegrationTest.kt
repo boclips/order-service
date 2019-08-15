@@ -28,46 +28,46 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get orders`() {
-        TestFactories.run {
-            fakeOrdersRepository.add(
-                order(
-                    id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
-                    creatorEmail = "creator@proper.order",
-                    vendorEmail = "vendor@proper.order",
-                    status = OrderStatus.CONFIRMED,
-                    createdAt = Instant.EPOCH,
-                    updatedAt = Instant.EPOCH.plusMillis(1),
-                    items = listOf(
-                        OrderItem(
-                            uuid = "awesome-item-uuid",
-                            price = BigDecimal.valueOf(1),
-                            transcriptRequested = true,
-                            contentPartner = TestFactories.contentPartner(
-                                referenceId = "123",
-                                name = "bob is still here"
-                            ),
-                            video = video(
-                                referenceId = "1234",
-                                videoReference = "AP-123",
-                                title = "A Video",
-                                videoType = VideoType.STOCK
-                            )
-                        ), OrderItem(
-                            uuid = "awesome-item-uuid2",
-                            price = BigDecimal.valueOf(10),
-                            transcriptRequested = false,
-                            contentPartner = contentPartner(),
-                            video = video()
+        fakeOrdersRepository.add(
+            TestFactories.order(
+                id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
+                orderProviderId = "456",
+                creatorEmail = "creator@proper.order",
+                vendorEmail = "vendor@proper.order",
+                status = OrderStatus.CONFIRMED,
+                createdAt = Instant.EPOCH,
+                updatedAt = Instant.EPOCH.plusMillis(1),
+                items = listOf(
+                    OrderItem(
+                        uuid = "awesome-item-uuid",
+                        price = BigDecimal.valueOf(1),
+                        transcriptRequested = true,
+                        contentPartner = TestFactories.contentPartner(
+                            referenceId = "123",
+                            name = "bob is still here"
+                        ),
+                        video = TestFactories.video(
+                            referenceId = "1234",
+                            videoReference = "AP-123",
+                            title = "A Video",
+                            videoType = VideoType.STOCK
                         )
+                    ), OrderItem(
+                        uuid = "awesome-item-uuid2",
+                        price = BigDecimal.valueOf(10),
+                        transcriptRequested = false,
+                        contentPartner = TestFactories.contentPartner(),
+                        video = TestFactories.video()
                     )
                 )
             )
-        }
+        )
 
         mockMvc.perform(
             get("/v1/orders").asBackofficeStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$._embedded.orders[0].orderProviderId", equalTo("456")))
             .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
@@ -103,46 +103,46 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get an order`() {
-        TestFactories.run {
-            fakeOrdersRepository.add(
-                order(
-                    id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
-                    creatorEmail = "creator@proper.order",
-                    vendorEmail = "vendor@proper.order",
-                    status = OrderStatus.CONFIRMED,
-                    createdAt = Instant.EPOCH,
-                    updatedAt = Instant.EPOCH.plusMillis(1),
-                    items = listOf(
-                        OrderItem(
-                            uuid = "awesome-item-uuid",
-                            price = BigDecimal.valueOf(1),
-                            transcriptRequested = true,
-                            contentPartner = contentPartner(
-                                referenceId = "cp-id",
-                                name = "eman"
-                            ),
-                            video = video(
-                                referenceId = "video-id",
-                                title = "A Video",
-                                videoType = VideoType.STOCK,
-                                videoReference = "AP-123"
-                            )
-                        ), OrderItem(
-                            uuid = "awesome-item-uuid2",
-                            price = BigDecimal.valueOf(10),
-                            transcriptRequested = false,
-                            contentPartner = contentPartner(),
-                            video = video()
+        fakeOrdersRepository.add(
+            TestFactories.order(
+                id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
+                orderProviderId = "456",
+                creatorEmail = "creator@proper.order",
+                vendorEmail = "vendor@proper.order",
+                status = OrderStatus.CONFIRMED,
+                createdAt = Instant.EPOCH,
+                updatedAt = Instant.EPOCH.plusMillis(1),
+                items = listOf(
+                    OrderItem(
+                        uuid = "awesome-item-uuid",
+                        price = BigDecimal.valueOf(1),
+                        transcriptRequested = true,
+                        contentPartner = TestFactories.contentPartner(
+                            referenceId = "cp-id",
+                            name = "eman"
+                        ),
+                        video = TestFactories.video(
+                            referenceId = "video-id",
+                            title = "A Video",
+                            videoType = VideoType.STOCK,
+                            videoReference = "AP-123"
                         )
+                    ), OrderItem(
+                        uuid = "awesome-item-uuid2",
+                        price = BigDecimal.valueOf(10),
+                        transcriptRequested = false,
+                        contentPartner = TestFactories.contentPartner(),
+                        video = TestFactories.video()
                     )
                 )
             )
-        }
+        )
 
         mockMvc.perform(
             get("/v1/orders/5ceeb99bd0e30a1a57ae9767").asBackofficeStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$.orderProviderId", equalTo("456")))
             .andExpect(jsonPath("$.creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$.vendorEmail", equalTo("vendor@proper.order")))
             .andExpect(jsonPath("$.status", equalTo("CONFIRMED")))
@@ -156,7 +156,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
             .andExpect(jsonPath("$.items[0].video.videoReference", equalTo("AP-123")))
-
 
             .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
             .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))

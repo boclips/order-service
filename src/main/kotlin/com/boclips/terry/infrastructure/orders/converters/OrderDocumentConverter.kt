@@ -19,7 +19,7 @@ object OrderDocumentConverter {
     fun toOrderDocument(order: Order): OrderDocument {
         return OrderDocument(
             id = ObjectId(order.id.value),
-            uuid = order.uuid,
+            orderProviderId = order.orderProviderId,
             status = order.status.toString(),
             vendorEmail = order.vendorEmail,
             creatorEmail = order.creatorEmail,
@@ -52,7 +52,7 @@ object OrderDocumentConverter {
     fun toOrder(document: OrderDocument): Order {
         return Order(
             id = OrderId(document.id.toHexString()),
-            uuid = document.uuid,
+            orderProviderId = document.orderProviderId,
             status = OrderStatus.valueOf(document.status),
             vendorEmail = document.vendorEmail,
             creatorEmail = document.creatorEmail,

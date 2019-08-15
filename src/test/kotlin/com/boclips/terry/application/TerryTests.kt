@@ -7,9 +7,10 @@ import com.boclips.terry.infrastructure.incoming.BlockActionSelectedOption
 import com.boclips.terry.infrastructure.incoming.BlockActions
 import com.boclips.terry.infrastructure.incoming.EventNotification
 import com.boclips.terry.infrastructure.incoming.VerificationRequest
-import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.terry.infrastructure.outgoing.slack.SlackMessage
-import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.*
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
+import com.boclips.terry.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.YOUTUBE
 import com.boclips.terry.infrastructure.outgoing.transcripts.Failure
 import com.boclips.terry.infrastructure.outgoing.transcripts.Success
 import com.boclips.terry.infrastructure.outgoing.videos.Error

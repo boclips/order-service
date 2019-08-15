@@ -14,7 +14,6 @@ import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
-import com.boclips.terry.infrastructure.orders.VideoDocument
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -53,6 +52,7 @@ class TestFactories {
 
         fun order(
             id: OrderId = OrderId(value = ObjectId.get().toHexString()),
+            orderProviderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
             creatorEmail: String = "email@creator.com",
             vendorEmail: String = "vendor@email.com",
             status: OrderStatus = OrderStatus.COMPLETED,
@@ -62,7 +62,7 @@ class TestFactories {
         ): Order {
             return Order(
                 id = id,
-                uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+                orderProviderId = orderProviderId,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 creatorEmail = creatorEmail,

@@ -39,6 +39,7 @@ class OrderResourceTest {
         val orderResource = OrderResource.fromOrder(
             order = TestFactories.order(
                 id = OrderId(value = "123"),
+                orderProviderId = "456",
                 creatorEmail = "creator@email.com",
                 vendorEmail = "vendor@email.com",
                 status = OrderStatus.COMPLETED,
@@ -69,6 +70,7 @@ class OrderResourceTest {
         ).isEqualTo(
             OrderResource(
                 id = "123",
+                orderProviderId = "456",
                 creatorEmail = "creator@email.com",
                 vendorEmail = "vendor@email.com",
                 status = "COMPLETED",

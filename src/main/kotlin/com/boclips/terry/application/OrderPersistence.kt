@@ -33,8 +33,8 @@ class OrderPersistence(
         try {
             repo.add(
                 order = Order(
-                    id = OrderId(event.order.id),
-                    uuid = event.order.uuid,
+                    id = OrderId(value = ObjectId().toHexString()),
+                    orderProviderId = event.order.id,
                     createdAt = event.order.dateCreated.toInstant(),
                     updatedAt = event.order.dateUpdated.toInstant(),
                     creatorEmail = event.creator,
