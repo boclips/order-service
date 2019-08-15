@@ -56,7 +56,8 @@ class OrderResourceTest {
                         video = TestFactories.video(
                             referenceId = "video-id",
                             videoType = VideoType.STOCK,
-                            title = "video title"
+                            title = "video title",
+                            videoReference = "TED_11"
                         )
                     )
                 )
@@ -85,7 +86,8 @@ class OrderResourceTest {
                         video = VideoResource(
                             id = "video-id",
                             type = "STOCK",
-                            title = "video title"
+                            title = "video title",
+                            videoReference = "TED_11"
                         )
                     )
                 )

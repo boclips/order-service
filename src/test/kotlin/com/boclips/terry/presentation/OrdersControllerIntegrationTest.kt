@@ -2,7 +2,6 @@ package com.boclips.terry.presentation
 
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -49,6 +48,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             ),
                             video = video(
                                 referenceId = "1234",
+                                videoReference = "AP-123",
                                 title = "A Video",
                                 videoType = VideoType.STOCK
                             )
@@ -81,6 +81,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.videoReference", equalTo("AP-123")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
@@ -123,7 +124,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             video = video(
                                 referenceId = "video-id",
                                 title = "A Video",
-                                videoType = VideoType.STOCK
+                                videoType = VideoType.STOCK,
+                                videoReference = "AP-123"
                             )
                         ), OrderItem(
                             uuid = "awesome-item-uuid2",
@@ -153,6 +155,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$.items[0].video.videoReference", equalTo("AP-123")))
+
 
             .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
             .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))

@@ -35,7 +35,8 @@ data class OrderResource(
                             video = VideoResource(
                                 id = item.video.referenceId.value,
                                 title = item.video.title,
-                                type = item.video.type
+                                type = item.video.type,
+                                videoReference = item.video.videoReference
                             )
                         )
                     }
