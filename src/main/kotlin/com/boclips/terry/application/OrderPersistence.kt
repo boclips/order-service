@@ -64,7 +64,10 @@ class OrderPersistence(
     }
 
     fun createOrderItem(item: LegacyOrderItem): OrderItem {
-        val videoResource = videoServiceClient.rawIdToVideoId(item.id).let { videoServiceClient.get(it) }
+        val videoResource = videoServiceClient.rawIdToVideoId(item.id).let {
+            logger.info { "Fetching video: ${it.value}" }
+            videoServiceClient.get(it)
+        }
 
         return OrderItem(
             uuid = item.uuid,
