@@ -71,7 +71,7 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             licenseCreatedAt = license1CreatedAt,
             licenseUpdatedAt = license1UpdatedAt,
             uuid = "item-1-uuid",
-            videoId = videoId.value
+            assetId = videoId.value
         )
 
         eventBus.publish(
@@ -127,13 +127,13 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         licenseCreatedAt: Date,
         licenseUpdatedAt: Date,
         uuid: String,
-        videoId: String
+        assetId: String
     ): List<LegacyOrderItem> = listOf(
         LegacyOrderItem
             .builder()
-            .id(videoId)
+            .id(ObjectId.get().toHexString())
             .uuid(uuid)
-            .assetId("item-1-assetid")
+            .assetId(assetId)
             .dateCreated(createdAt)
             .dateUpdated(updatedAt)
             .license(
