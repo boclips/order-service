@@ -41,7 +41,7 @@ dependencies {
     implementation('io.sentry:sentry-logback:1.7.23')
     implementation 'com.github.boclips:videos:0.327.0'
     implementation 'com.damnhandy:handy-uri-templates:2.1.8'
-    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.0'
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.2'
 
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
