@@ -5,6 +5,8 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
+import com.boclips.eventbus.events.order.LegacyOrderOrganisation
+import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
@@ -118,14 +120,43 @@ class TestFactories {
             legacyOrder: LegacyOrder = legacyOrder(id = "1234"),
             creatorEmail: String = "boclips@steve.com",
             vendorEmail: String = "vendor@boclips.com",
-            items: List<LegacyOrderItem> = listOf(legacyOrderItem())
+            items: List<LegacyOrderItem> = listOf(legacyOrderItem()),
+            authorisingUser: LegacyOrderUser = legacyOrderUser(),
+            requestingUser: LegacyOrderUser = legacyOrderUser()
         ): LegacyOrderDocument {
             return LegacyOrderDocument(
                 order = legacyOrder,
                 items = items,
                 creator = creatorEmail,
-                vendor = vendorEmail
+                vendor = vendorEmail,
+                authorisingUser = authorisingUser,
+                requestingUser = requestingUser
             )
+        }
+
+        fun legacyOrderOrganisation(
+            name: String = "TheOrg",
+            id: String = "TheId"
+        ): LegacyOrderOrganisation {
+            return LegacyOrderOrganisation.builder().id(id).name(name).build()
+        }
+
+        fun legacyOrderUser(
+            firstName: String = "Bob",
+            lastName: String = "Bill",
+            userName: String = "billBob",
+            id: String = "bobBill",
+            email: String = "bill@bob.bill",
+            organisation: LegacyOrderOrganisation = legacyOrderOrganisation()
+        ): LegacyOrderUser {
+            return LegacyOrderUser.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .username(userName)
+                .email(email)
+                .id(id)
+                .organisation(organisation)
+                .build()
         }
 
         fun createVideoRequest(

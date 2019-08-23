@@ -6,6 +6,7 @@ import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
+import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
@@ -74,12 +75,16 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             assetId = videoId.value
         )
 
+
+        val genericUser = TestFactories.legacyOrderUser()
         eventBus.publish(
             legacyOrderSubmitted(
                 legacyOrder = legacyOrder,
                 items = items,
                 creator = "creator@their-company.net",
-                vendor = "vendor@their-company.biz"
+                vendor = "vendor@their-company.biz",
+                requestingUser = genericUser,
+                authorisingUser = genericUser
             )
         )
 
@@ -116,7 +121,9 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
                     order = legacyOrder,
                     items = items,
                     creator = "creator@their-company.net",
-                    vendor = "vendor@their-company.biz"
+                    vendor = "vendor@their-company.biz",
+                    authorisingUser = genericUser,
+                    requestingUser = genericUser
                 )
             )
     }
@@ -188,12 +195,16 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         legacyOrder: LegacyOrder,
         items: List<LegacyOrderItem>,
         creator: String,
-        vendor: String
+        vendor: String,
+        authorisingUser: LegacyOrderUser,
+        requestingUser: LegacyOrderUser
     ) =
         LegacyOrderSubmitted.builder()
             .order(legacyOrder)
             .orderItems(items)
             .creator(creator)
             .vendor(vendor)
+            .authorisingUser(authorisingUser)
+            .requestingUser(requestingUser)
             .build()
 }
