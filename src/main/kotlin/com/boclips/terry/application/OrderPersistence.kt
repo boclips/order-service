@@ -40,7 +40,7 @@ class OrderPersistence(
                     creatorEmail = event.creator,
                     vendorEmail = event.vendor,
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
-                    status = OrderStatus.parse(event.order.status),
+                    status = OrderStatusConverter.from(event.order.status),
                     items = event.orderItems.map { createOrderItem(it) }
                 )
             )

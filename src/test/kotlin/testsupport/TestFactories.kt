@@ -6,6 +6,7 @@ import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderOrganisation
+import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
@@ -27,29 +28,36 @@ import java.util.Date
 
 class TestFactories {
     companion object {
-        fun legacyOrder(id: String): LegacyOrder = LegacyOrder
-            .builder()
+        fun legacyOrder(
+            id: String = ObjectId.get().toHexString(),
+            uuid: String = "uuid-123",
+            creator: String = "creator@boclips.com",
+            vendor: String = "vendor@boclips.com",
+            dateCreated: Date = Date(),
+            dateUpdated: Date = Date(),
+            legacyOrderNextStatus: LegacyOrderNextStatus = LegacyOrderNextStatus.builder()
+                .nextStates(emptyList())
+                .roles(emptyList())
+                .build(),
+            legacyOrderExtraFields: LegacyOrderExtraFields = LegacyOrderExtraFields.builder()
+                .agreeTerms(true)
+                .isbnOrProductNumber("a number")
+                .build(),
+            status: String = "PROCESSING"
+        ): LegacyOrder = LegacyOrder.builder()
             .id(id)
-            .uuid("some-uuid")
-            .creator("illegible-creator-uuid")
-            .vendor("illegible-vendor-uuid")
-            .dateCreated(Date())
-            .dateUpdated(Date())
+            .uuid(uuid)
+            .creator(creator)
+            .vendor(vendor)
+            .dateCreated(dateCreated)
+            .dateUpdated(dateUpdated)
             .nextStatus(
-                LegacyOrderNextStatus
-                    .builder()
-                    .roles(listOf("JAM", "BREAD"))
-                    .nextStates(listOf("DRUNK", "SLEEPING"))
-                    .build()
+                legacyOrderNextStatus
             )
             .extraFields(
-                LegacyOrderExtraFields
-                    .builder()
-                    .agreeTerms(true)
-                    .isbnOrProductNumber("good-book-number")
-                    .build()
+                legacyOrderExtraFields
             )
-            .status("KINGOFORDERS")
+            .status(status)
             .build()
 
         fun order(
@@ -117,7 +125,25 @@ class TestFactories {
             .build()
 
         fun legacyOrderDocument(
-            legacyOrder: LegacyOrder = legacyOrder(id = "1234"),
+            legacyOrder: LegacyOrder = legacyOrder(
+                id = "1234",
+                uuid = "some-uuid",
+                creator = "illegible-creator-uuid",
+                vendor = "illegible-vendor-uuid",
+                dateCreated = Date(),
+                dateUpdated = Date(),
+                legacyOrderNextStatus = LegacyOrderNextStatus
+                    .builder()
+                    .roles(listOf("JAM", "BREAD"))
+                    .nextStates(listOf("DRUNK", "SLEEPING"))
+                    .build(),
+                legacyOrderExtraFields = LegacyOrderExtraFields
+                    .builder()
+                    .agreeTerms(true)
+                    .isbnOrProductNumber("good-book-number")
+                    .build(),
+                status = "KINGOFORDERS"
+            ),
             creatorEmail: String = "boclips@steve.com",
             vendorEmail: String = "vendor@boclips.com",
             items: List<LegacyOrderItem> = listOf(legacyOrderItem()),
@@ -209,6 +235,24 @@ class TestFactories {
                 type = videoType.toString(),
                 videoReference = videoReference
             )
+        }
+
+        fun legacyOrderSubmitted(
+            legacyOrder: LegacyOrder,
+            legacyOrderItems: List<LegacyOrderItem>,
+            creator: String,
+            vendor: String,
+            requestingUser: LegacyOrderUser,
+            authorisingUser: LegacyOrderUser
+        ): LegacyOrderSubmitted {
+            return LegacyOrderSubmitted.builder()
+                .order(legacyOrder)
+                .orderItems(legacyOrderItems)
+                .creator(creator)
+                .vendor(vendor)
+                .requestingUser(requestingUser)
+                .authorisingUser(authorisingUser)
+                .build()
         }
     }
 }

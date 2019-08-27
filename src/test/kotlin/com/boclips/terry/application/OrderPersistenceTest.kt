@@ -3,7 +3,6 @@ package com.boclips.terry.application
 import com.boclips.eventbus.events.order.LegacyOrder
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.events.order.LegacyOrderItem
-import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
@@ -44,8 +43,6 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         val orderUpdatedAt = Date(1)
         val item1CreatedAt = Date(2)
         val item1UpdatedAt = Date(3)
-        val license1CreatedAt = Date(4)
-        val license1UpdatedAt = Date(5)
         val orderId = ObjectId().toHexString()
         val legacyOrder = legacyOrder(
             orderId = orderId,
@@ -66,15 +63,16 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val items = singularItemList(
-            createdAt = item1CreatedAt,
-            updatedAt = item1UpdatedAt,
-            licenseCreatedAt = license1CreatedAt,
-            licenseUpdatedAt = license1UpdatedAt,
-            uuid = "item-1-uuid",
-            assetId = videoId.value
+        val items = listOf(
+            TestFactories.legacyOrderItem(
+                dateCreated = item1CreatedAt,
+                dateUpdated = item1UpdatedAt,
+                uuid = "item-1-uuid",
+                assetId = videoId.value,
+                price = BigDecimal.ONE,
+                transcriptsRequired = true
+            )
         )
-
 
         val genericUser = TestFactories.legacyOrderUser()
         eventBus.publish(
@@ -93,7 +91,7 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         assertThat(orders).hasSize(1)
 
         val order = orders.first()
-        assertThat(order.id).isNotNull()
+        assertThat(order.id).isNotNull
 
         assertThat(order.orderProviderId).isEqualTo(legacyOrder.id)
         assertThat(order.createdAt).isEqualTo(orderCreatedAt.toInstant())
@@ -128,68 +126,31 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             )
     }
 
-    private fun singularItemList(
-        createdAt: Date,
-        updatedAt: Date,
-        licenseCreatedAt: Date,
-        licenseUpdatedAt: Date,
-        uuid: String,
-        assetId: String
-    ): List<LegacyOrderItem> = listOf(
-        LegacyOrderItem
-            .builder()
-            .id(ObjectId.get().toHexString())
-            .uuid(uuid)
-            .assetId(assetId)
-            .dateCreated(createdAt)
-            .dateUpdated(updatedAt)
-            .license(
-                LegacyOrderItemLicense
-                    .builder()
-                    .id("license1-id")
-                    .uuid("license1-uuid")
-                    .code("license1-code")
-                    .description("license to kill")
-                    .dateCreated(licenseCreatedAt)
-                    .dateUpdated(licenseUpdatedAt)
-                    .build()
-            )
-            .price(BigDecimal.ONE)
-            .transcriptsRequired(true)
-            .status("KINGOFITEMS")
-            .build()
-    )
-
     private fun legacyOrder(
         orderId: String,
         orderCreatedAt: Date,
         orderUpdatedAt: Date,
         vendorUuid: String,
         creatorUuid: String
-    ): LegacyOrder = LegacyOrder
-        .builder()
-        .id(orderId)
-        .uuid("deadb33f-f33df00d-d00fb3ad-c00bfeed")
-        .vendor(vendorUuid)
-        .creator(creatorUuid)
-        .dateCreated(orderCreatedAt)
-        .dateUpdated(orderUpdatedAt)
-        .extraFields(
-            LegacyOrderExtraFields
-                .builder()
-                .agreeTerms(true)
-                .isbnOrProductNumber("some-isbn")
-                .build()
-        )
-        .nextStatus(
-            LegacyOrderNextStatus
-                .builder()
-                .nextStates(listOf("GOOD", "BAD"))
-                .roles(listOf("jam", "vegan-sausage"))
-                .build()
-        )
-        .status("CONFIRMED")
-        .build()
+    ): LegacyOrder = TestFactories.legacyOrder(
+        id = orderId,
+        uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+        vendor = vendorUuid,
+        creator = creatorUuid,
+        dateCreated = orderCreatedAt,
+        dateUpdated = orderUpdatedAt,
+        legacyOrderExtraFields = LegacyOrderExtraFields
+            .builder()
+            .agreeTerms(true)
+            .isbnOrProductNumber("some-isbn")
+            .build(),
+        legacyOrderNextStatus = LegacyOrderNextStatus
+            .builder()
+            .nextStates(listOf("GOOD", "BAD"))
+            .roles(listOf("jam", "vegan-sausage"))
+            .build(),
+        status = "CONFIRMED"
+    )
 
     private fun legacyOrderSubmitted(
         legacyOrder: LegacyOrder,

@@ -18,7 +18,7 @@ class OrderServiceTest {
         val repo = FakeOrdersRepository()
 
         val id1 = ObjectId().toHexString()
-        val legacyOrder = TestFactories.legacyOrder(id1)
+        val legacyOrder = TestFactories.legacyOrder(id = id1)
         val order1 = TestFactories.order(
             OrderId(value = legacyOrder.id),
             "an-provider-id",

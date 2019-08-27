@@ -24,7 +24,8 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get an order resource`() {
-        val legacyOrder = TestFactories.legacyOrder(ObjectId().toHexString())
+        val legacyOrder = TestFactories.legacyOrder()
+
         val order = TestFactories.order(
             id = OrderId(legacyOrder.id),
             creatorEmail = "boclips@example.com",

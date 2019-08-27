@@ -1,5 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.eventbus.events.order.LegacyOrderExtraFields
+import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrdersRepository

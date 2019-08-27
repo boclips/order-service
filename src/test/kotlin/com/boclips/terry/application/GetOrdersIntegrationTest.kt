@@ -20,7 +20,8 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get a list of order resources`() {
-        val legacyOrder = TestFactories.legacyOrder(ObjectId().toHexString())
+        val legacyOrder = TestFactories.legacyOrder()
+
         val now = Instant.EPOCH
         val order1 = TestFactories.order(
             id = OrderId(value = legacyOrder.id),
