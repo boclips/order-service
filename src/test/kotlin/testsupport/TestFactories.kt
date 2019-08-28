@@ -10,13 +10,17 @@ import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
+import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.OrderOrganisationDocument
+import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -63,8 +67,8 @@ class TestFactories {
         fun order(
             id: OrderId = OrderId(value = ObjectId.get().toHexString()),
             orderProviderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-            creatorEmail: String = "email@creator.com",
-            vendorEmail: String = "vendor@email.com",
+            requestingUser: OrderUser = orderUser(),
+            authorisingUser: OrderUser = orderUser(),
             status: OrderStatus = OrderStatus.COMPLETED,
             createdAt: Instant = Instant.now(),
             updatedAt: Instant = Instant.now(),
@@ -75,8 +79,8 @@ class TestFactories {
                 orderProviderId = orderProviderId,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
-                creatorEmail = creatorEmail,
-                vendorEmail = vendorEmail,
+                requestingUser = requestingUser,
+                authorisingUser = authorisingUser,
                 isbnOrProductNumber = "some-isbn",
                 status = status,
                 items = items
@@ -108,7 +112,8 @@ class TestFactories {
             price: BigDecimal = BigDecimal.TEN,
             status: String = "status",
             transcriptsRequired: Boolean = false,
-            license: LegacyOrderItemLicense = legacyOrderItemLicense()
+            license: LegacyOrderItemLicense = legacyOrderItemLicense(),
+            trimming: String = "10 - 15"
         ): LegacyOrderItem = LegacyOrderItem
             .builder()
             .id(id)
@@ -122,6 +127,7 @@ class TestFactories {
             .status(status)
             .transcriptsRequired(transcriptsRequired)
             .license(license)
+            .trimming(trimming)
             .build()
 
         fun legacyOrderDocument(
@@ -253,6 +259,58 @@ class TestFactories {
                 .requestingUser(requestingUser)
                 .authorisingUser(authorisingUser)
                 .build()
+        }
+
+        fun orderOrganisation(
+            sourceOrganisationId: String = "source123",
+            name: String = "Org Pub"
+        ): OrderOrganisation {
+            return OrderOrganisation(
+                sourceOrganisationId = sourceOrganisationId,
+                name = name
+            )
+        }
+
+        fun orderUser(
+            firstName: String = "OrderingBob",
+            lastName: String = "Smith",
+            email: String = "bobsmith@hello.com",
+            sourceUserId: String = "abc123",
+            organisation: OrderOrganisation = orderOrganisation()
+        ): OrderUser {
+            return OrderUser(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                sourceUserId = sourceUserId,
+                organisation = organisation
+            )
+        }
+
+        fun orderOrganisationDocument(
+            sourceOrganisationId: String = "source123",
+            name: String = "Org Pub"
+        ): OrderOrganisationDocument {
+            return OrderOrganisationDocument(
+                sourceOrganisationId = sourceOrganisationId,
+                name = name
+            )
+        }
+
+        fun orderUserDocument(
+            firstName: String = "OrderingBob",
+            lastName: String = "Smith",
+            email: String = "bobsmith@hello.com",
+            sourceUserId: String = "abc123",
+            organisation: OrderOrganisationDocument = orderOrganisationDocument()
+        ): OrderUserDocument {
+            return OrderUserDocument(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                sourceUserId = sourceUserId,
+                organisation = organisation
+            )
         }
     }
 }

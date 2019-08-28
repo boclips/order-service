@@ -32,8 +32,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 orderProviderId = "456",
-                creatorEmail = "creator@proper.order",
-                vendorEmail = "vendor@proper.order",
+                authorisingUser = TestFactories.orderUser(
+                    firstName = "vendor",
+                    lastName = "hello",
+                    email = "vendor@proper.order",
+                    organisation = TestFactories.orderOrganisation(name = "An Org")
+                ),
+                requestingUser = TestFactories.orderUser(
+                    firstName = "Kata",
+                    lastName = "Kovacs",
+                    email = "creator@proper.order",
+                    organisation = TestFactories.orderOrganisation(name = "Req Org")
+                ),
                 status = OrderStatus.CONFIRMED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
@@ -70,6 +80,19 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].orderProviderId", equalTo("456")))
             .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))
+            .andExpect(jsonPath("$._embedded.orders[0].userDetails.organisationLabel", equalTo("An Org")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.orders[0].userDetails.requestingUserLabel",
+                    equalTo("Kata Kovacs <creator@proper.order>")
+                )
+            )
+            .andExpect(
+                jsonPath(
+                    "$._embedded.orders[0].userDetails.authorisingUserLabel",
+                    equalTo("vendor hello <vendor@proper.order>")
+                )
+            )
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
@@ -107,8 +130,17 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 orderProviderId = "456",
-                creatorEmail = "creator@proper.order",
-                vendorEmail = "vendor@proper.order",
+                authorisingUser = TestFactories.orderUser(
+                    email = "vendor@proper.order",
+                    firstName = "hi",
+                    organisation = TestFactories.orderOrganisation(name = "An Org"),
+                    lastName = "there"
+                ),
+                requestingUser = TestFactories.orderUser(
+                    firstName = "hello",
+                    lastName = "you",
+                    email = "creator@proper.order"
+                ),
                 status = OrderStatus.CONFIRMED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
@@ -145,6 +177,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.orderProviderId", equalTo("456")))
             .andExpect(jsonPath("$.creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$.vendorEmail", equalTo("vendor@proper.order")))
+            .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
+            .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))
+            .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("hi there <vendor@proper.order>")))
             .andExpect(jsonPath("$.status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))

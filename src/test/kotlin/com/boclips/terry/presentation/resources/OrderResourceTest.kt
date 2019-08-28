@@ -40,8 +40,18 @@ class OrderResourceTest {
             order = TestFactories.order(
                 id = OrderId(value = "123"),
                 orderProviderId = "456",
-                creatorEmail = "creator@email.com",
-                vendorEmail = "vendor@email.com",
+                authorisingUser = TestFactories.orderUser(
+                    firstName = "authJoe",
+                    lastName = "Mac",
+                    email = "vendor@email.com",
+                    organisation = TestFactories.orderOrganisation(name = "Auth Test Org")
+                ),
+                requestingUser = TestFactories.orderUser(
+                    firstName = "requestorJack",
+                    lastName = "Smith",
+                    email = "creator@email.com",
+                    organisation = TestFactories.orderOrganisation(name = "Sub Test Org")
+                ),
                 status = OrderStatus.COMPLETED,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
@@ -65,14 +75,18 @@ class OrderResourceTest {
             )
         )
 
-        assertThat(
-            orderResource
-        ).isEqualTo(
+        assertThat(orderResource).isEqualTo(
             OrderResource(
                 id = "123",
                 orderProviderId = "456",
                 creatorEmail = "creator@email.com",
                 vendorEmail = "vendor@email.com",
+                userDetails = UserDetailsResource(
+                    requestingUserLabel = "requestorJack Smith <creator@email.com>",
+                    authorisingUserLabel = "authJoe Mac <vendor@email.com>",
+                    organisationLabel = "Auth Test Org"
+
+                ),
                 status = "COMPLETED",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),

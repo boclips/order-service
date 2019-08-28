@@ -20,13 +20,11 @@ class OrderServiceTest {
         val id1 = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(id = id1)
         val order1 = TestFactories.order(
-            OrderId(value = legacyOrder.id),
-            "an-provider-id",
-            "boclips",
-            "big-bang",
-            OrderStatus.CONFIRMED,
-            Instant.EPOCH,
-            Instant.EPOCH,
+            id = OrderId(value = legacyOrder.id),
+            orderProviderId = "an-provider-id",
+            status = OrderStatus.CONFIRMED,
+            createdAt = Instant.EPOCH,
+            updatedAt = Instant.EPOCH,
             items = listOf(
                 OrderItem(
                     uuid = "hi-again-its-a-uuid",
@@ -45,13 +43,11 @@ class OrderServiceTest {
         val id2 = ObjectId().toHexString()
         val legacyOrder2 = TestFactories.legacyOrder(id2)
         val order2 = TestFactories.order(
-            OrderId(value = legacyOrder2.id),
-            "an-provider-id",
-            "boclips",
-            "big-bang",
-            OrderStatus.CONFIRMED,
-            Instant.EPOCH,
-            Instant.EPOCH,
+            id = OrderId(value = legacyOrder2.id),
+            orderProviderId = "an-provider-id",
+            status = OrderStatus.CONFIRMED,
+            updatedAt = Instant.EPOCH,
+            createdAt = Instant.EPOCH,
             items = listOf(
                 OrderItem(
                     uuid = "oh-guess-what-its-a-uuid",

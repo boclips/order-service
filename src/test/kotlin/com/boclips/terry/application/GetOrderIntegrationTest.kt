@@ -28,8 +28,6 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val order = TestFactories.order(
             id = OrderId(legacyOrder.id),
-            creatorEmail = "boclips@example.com",
-            vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
             createdAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             updatedAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),

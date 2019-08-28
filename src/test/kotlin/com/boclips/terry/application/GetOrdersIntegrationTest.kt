@@ -25,8 +25,6 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
         val now = Instant.EPOCH
         val order1 = TestFactories.order(
             id = OrderId(value = legacyOrder.id),
-            creatorEmail = "boclips@example.com",
-            vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(6),
             updatedAt = now.plusMillis(5),
@@ -46,8 +44,6 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
 
         val order2 = TestFactories.order(
             id = OrderId(value = legacyOrder.id),
-            creatorEmail = "boclips@example.com",
-            vendorEmail = "big-bang@example.com",
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(3),
             updatedAt = now.plusMillis(4),

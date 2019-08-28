@@ -23,7 +23,7 @@ import testsupport.TestFactories
 import java.math.BigDecimal
 import java.util.Date
 
-class OrderPersistenceTest : AbstractSpringIntegrationTest() {
+class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventBus: SynchronousFakeEventBus
 
@@ -74,7 +74,18 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val genericUser = TestFactories.legacyOrderUser()
+        val genericUser = TestFactories.legacyOrderUser(
+            firstName = "Steve",
+            lastName = "Jobs",
+            userName = "macs",
+            id = "123",
+            email = "123@macs.com",
+            organisation = TestFactories.legacyOrderOrganisation(
+                name = "organisation",
+                id = "456"
+            )
+        )
+
         eventBus.publish(
             legacyOrderSubmitted(
                 legacyOrder = legacyOrder,
@@ -96,8 +107,24 @@ class OrderPersistenceTest : AbstractSpringIntegrationTest() {
         assertThat(order.orderProviderId).isEqualTo(legacyOrder.id)
         assertThat(order.createdAt).isEqualTo(orderCreatedAt.toInstant())
         assertThat(order.updatedAt).isEqualTo(orderUpdatedAt.toInstant())
-        assertThat(order.creatorEmail).isEqualTo("creator@their-company.net")
-        assertThat(order.vendorEmail).isEqualTo("vendor@their-company.biz")
+        assertThat(order.requestingUser).isEqualTo(
+            TestFactories.orderUser(
+                firstName = "Steve",
+                lastName = "Jobs",
+                sourceUserId = "123",
+                email = "123@macs.com",
+                organisation = TestFactories.orderOrganisation(name = "organisation", sourceOrganisationId = "456")
+            )
+        )
+        assertThat(order.authorisingUser).isEqualTo(
+            TestFactories.orderUser(
+                firstName = "Steve",
+                lastName = "Jobs",
+                sourceUserId = "123",
+                email = "123@macs.com",
+                organisation = TestFactories.orderOrganisation(name = "organisation", sourceOrganisationId = "456")
+            )
+        )
         assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")
         assertThat(order.status).isEqualTo(OrderStatus.CONFIRMED)
 

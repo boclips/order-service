@@ -3,11 +3,13 @@ package com.boclips.terry.application
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
+import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
 import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
-import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.OrderOrganisation
+import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
@@ -37,8 +39,8 @@ class OrderPersistence(
                     orderProviderId = event.order.id,
                     createdAt = event.order.dateCreated.toInstant(),
                     updatedAt = event.order.dateUpdated.toInstant(),
-                    creatorEmail = event.creator,
-                    vendorEmail = event.vendor,
+                    requestingUser = createOrderUser(event.requestingUser),
+                    authorisingUser = createOrderUser(event.authorisingUser),
                     isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
                     status = OrderStatusConverter.from(event.order.status),
                     items = event.orderItems.map { createOrderItem(it) }
@@ -63,6 +65,19 @@ class OrderPersistence(
                 throw LegacyOrderProcessingException(e)
             }
         }
+    }
+
+    private fun createOrderUser(user: LegacyOrderUser): OrderUser {
+        return OrderUser(
+            firstName = user.firstName,
+            lastName = user.lastName,
+            email = user.email,
+            sourceUserId = user.id,
+            organisation = OrderOrganisation(
+                sourceOrganisationId = user.organisation.id,
+                name = user.organisation.name
+            )
+        )
     }
 
     fun createOrderItem(item: LegacyOrderItem): OrderItem {

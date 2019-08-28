@@ -3,16 +3,8 @@ package com.boclips.terry.infrastructure.orders.converters
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.ContentPartner
-import com.boclips.terry.domain.model.orderItem.ContentPartnerId
-import com.boclips.terry.domain.model.orderItem.OrderItem
-import com.boclips.terry.domain.model.orderItem.Video
-import com.boclips.terry.domain.model.orderItem.VideoId
-import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.OrderDocument
-import com.boclips.terry.infrastructure.orders.OrderItemDocument
-import com.boclips.terry.infrastructure.orders.SourceDocument
-import com.boclips.terry.infrastructure.orders.VideoDocument
+import com.boclips.terry.infrastructure.orders.converters.OrderItemDocumentConverter.toOrderItem
 import org.bson.types.ObjectId
 
 object OrderDocumentConverter {
@@ -21,30 +13,12 @@ object OrderDocumentConverter {
             id = ObjectId(order.id.value),
             orderProviderId = order.orderProviderId,
             status = order.status.toString(),
-            vendorEmail = order.vendorEmail,
-            creatorEmail = order.creatorEmail,
+            authorisingUser = OrderUserDocumentConverter.toOrderUserDocument(orderUser = order.authorisingUser),
+            requestingUser = OrderUserDocumentConverter.toOrderUserDocument(orderUser = order.requestingUser),
             updatedAt = order.updatedAt,
             createdAt = order.createdAt,
             isbnOrProductNumber = order.isbnOrProductNumber,
-            items = order.items.map {
-                OrderItemDocument(
-                    uuid = it.uuid,
-                    price = it.price,
-                    transcriptRequested = it.transcriptRequested,
-                    source = SourceDocument(
-                        contentPartner = ContentPartnerDocument(
-                            referenceId = it.contentPartner.referenceId.value,
-                            name = it.contentPartner.name
-                        ),
-                        videoReference = it.video.videoReference
-                    ),
-                    video = VideoDocument(
-                        referenceId = it.video.referenceId.value,
-                        title = it.video.title,
-                        type = it.video.type
-                    )
-                )
-            }
+            items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument)
 
         )
     }
@@ -54,28 +28,12 @@ object OrderDocumentConverter {
             id = OrderId(document.id.toHexString()),
             orderProviderId = document.orderProviderId,
             status = OrderStatus.valueOf(document.status),
-            vendorEmail = document.vendorEmail,
-            creatorEmail = document.creatorEmail,
+            authorisingUser = OrderUserDocumentConverter.toOrderUser(document.authorisingUser),
+            requestingUser = OrderUserDocumentConverter.toOrderUser(document.requestingUser),
             createdAt = document.createdAt,
             updatedAt = document.updatedAt,
             isbnOrProductNumber = document.isbnOrProductNumber,
-            items = document.items?.map {
-                OrderItem(
-                    uuid = it.uuid,
-                    price = it.price,
-                    transcriptRequested = it.transcriptRequested,
-                    contentPartner = ContentPartner(
-                        referenceId = ContentPartnerId(value = it.source.contentPartner.referenceId),
-                        name = it.source.contentPartner.name
-                    ),
-                    video = Video(
-                        referenceId = VideoId(value = it.video.referenceId),
-                        title = it.video.title,
-                        type = it.video.type,
-                        videoReference = it.source.videoReference
-                    )
-                )
-            } ?: emptyList()
+            items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList()
         )
     }
 }
