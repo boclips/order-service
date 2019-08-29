@@ -16,11 +16,16 @@ import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
+import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.OrderOrganisationDocument
 import com.boclips.terry.infrastructure.orders.OrderUserDocument
+import com.boclips.terry.infrastructure.orders.SourceDocument
+import com.boclips.terry.infrastructure.orders.VideoDocument
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -63,29 +68,6 @@ class TestFactories {
             )
             .status(status)
             .build()
-
-        fun order(
-            id: OrderId = OrderId(value = ObjectId.get().toHexString()),
-            orderProviderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-            requestingUser: OrderUser = orderUser(),
-            authorisingUser: OrderUser = orderUser(),
-            status: OrderStatus = OrderStatus.COMPLETED,
-            createdAt: Instant = Instant.now(),
-            updatedAt: Instant = Instant.now(),
-            items: List<OrderItem> = emptyList()
-        ): Order {
-            return Order(
-                id = id,
-                orderProviderId = orderProviderId,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-                requestingUser = requestingUser,
-                authorisingUser = authorisingUser,
-                isbnOrProductNumber = "some-isbn",
-                status = status,
-                items = items
-            )
-        }
 
         fun legacyOrderItemLicense(
             code: String = "code",
@@ -189,6 +171,47 @@ class TestFactories {
                 .id(id)
                 .organisation(organisation)
                 .build()
+        }
+
+        fun order(
+            id: OrderId = OrderId(value = ObjectId.get().toHexString()),
+            orderProviderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+            requestingUser: OrderUser = orderUser(),
+            authorisingUser: OrderUser = orderUser(),
+            status: OrderStatus = OrderStatus.COMPLETED,
+            createdAt: Instant = Instant.now(),
+            updatedAt: Instant = Instant.now(),
+            items: List<OrderItem> = emptyList()
+        ): Order {
+            return Order(
+                id = id,
+                orderProviderId = orderProviderId,
+                createdAt = createdAt,
+                updatedAt = updatedAt,
+                requestingUser = requestingUser,
+                authorisingUser = authorisingUser,
+                isbnOrProductNumber = "some-isbn",
+                status = status,
+                items = items
+            )
+        }
+
+        fun orderItem(
+            uuid: String = "i-love-uuids",
+            price: BigDecimal = BigDecimal.ONE,
+            transcriptRequested: Boolean = true,
+            contentPartner: ContentPartner = contentPartner(),
+            video: Video = video(),
+            trim: TrimRequest = TrimRequest.NoTrimming
+        ): OrderItem {
+            return OrderItem(
+                uuid = uuid,
+                price = price,
+                transcriptRequested = transcriptRequested,
+                contentPartner = contentPartner,
+                video = video,
+                trim = trim
+            )
         }
 
         fun createVideoRequest(
@@ -310,6 +333,49 @@ class TestFactories {
                 email = email,
                 sourceUserId = sourceUserId,
                 organisation = organisation
+            )
+        }
+
+        fun orderItemDocument(
+            uuid: String = "i-love-uuids",
+            price: BigDecimal = BigDecimal.ONE,
+            transcriptRequested: Boolean = true,
+            source: SourceDocument = sourceDocument(),
+            video: VideoDocument = videoDocument(),
+            trim: String? = "hello"
+        ): OrderItemDocument {
+            return OrderItemDocument(
+                uuid = uuid,
+                price = price,
+                transcriptRequested = transcriptRequested,
+                source = source,
+                video = video,
+                trim = trim
+            )
+        }
+
+        fun videoDocument(
+            referenceId: String = "12345679",
+            title: String = "A great vide",
+            type: String = "NEWS"
+        ): VideoDocument {
+            return VideoDocument(referenceId = referenceId, title = title, type = type)
+        }
+
+        fun sourceDocument(
+            contentPartner: ContentPartnerDocument = contentPartnerDocument(),
+            videoReference: String = "12345"
+        ): SourceDocument {
+            return SourceDocument(
+                contentPartner = contentPartner,
+                videoReference = videoReference
+            )
+        }
+
+        fun contentPartnerDocument(name: String = "hello", referenceId: String = "id-yo"): ContentPartnerDocument {
+            return ContentPartnerDocument(
+                name = name,
+                referenceId = referenceId
             )
         }
     }

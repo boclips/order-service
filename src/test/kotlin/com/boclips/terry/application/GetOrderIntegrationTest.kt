@@ -31,15 +31,7 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
             status = OrderStatus.CONFIRMED,
             createdAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             updatedAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
-            items = listOf(
-                OrderItem(
-                    uuid = "i-love-uuids",
-                    price = BigDecimal.ONE,
-                    transcriptRequested = true,
-                    contentPartner = TestFactories.contentPartner(),
-                    video = TestFactories.video()
-                )
-            )
+            items = listOf(TestFactories.orderItem())
         )
         fakeOrdersRepository.add(
             order = order

@@ -6,6 +6,7 @@ data class OrderItem(
     val uuid: String,
     val price: BigDecimal,
     val transcriptRequested: Boolean,
+    val trim: TrimRequest,
     val video: Video,
     val contentPartner: ContentPartner
 )

@@ -2,7 +2,7 @@ package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -56,7 +56,7 @@ class OrderResourceTest {
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 items = listOf(
-                    OrderItem(
+                    TestFactories.orderItem(
                         uuid = "123",
                         price = BigDecimal.TEN,
                         transcriptRequested = false,
@@ -64,6 +64,7 @@ class OrderResourceTest {
                             referenceId = "paper",
                             name = "cup"
                         ),
+                        trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
                             referenceId = "video-id",
                             videoType = VideoType.STOCK,
@@ -99,6 +100,7 @@ class OrderResourceTest {
                             id = "paper",
                             name = "cup"
                         ),
+                        trim = "blah",
                         video = VideoResource(
                             id = "video-id",
                             type = "STOCK",

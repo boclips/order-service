@@ -2,11 +2,12 @@ package com.boclips.terry.presentation
 
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -48,10 +49,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
-                    OrderItem(
+                    TestFactories.orderItem(
                         uuid = "awesome-item-uuid",
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
+                        trim = TrimRequest.WithTrimming("4 - 10"),
                         contentPartner = TestFactories.contentPartner(
                             referenceId = "123",
                             name = "bob is still here"
@@ -62,7 +64,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             title = "A Video",
                             videoType = VideoType.STOCK
                         )
-                    ), OrderItem(
+                    ), TestFactories.orderItem(
                         uuid = "awesome-item-uuid2",
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
@@ -101,6 +103,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
@@ -145,10 +148,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
-                    OrderItem(
+                    TestFactories.orderItem(
                         uuid = "awesome-item-uuid",
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
+                        trim = TrimRequest.NoTrimming,
                         contentPartner = TestFactories.contentPartner(
                             referenceId = "cp-id",
                             name = "eman"
@@ -159,7 +163,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoType = VideoType.STOCK,
                             videoReference = "AP-123"
                         )
-                    ), OrderItem(
+                    ), TestFactories.orderItem(
                         uuid = "awesome-item-uuid2",
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
@@ -187,6 +191,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
+            .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))
             .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))

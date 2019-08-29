@@ -9,6 +9,7 @@ import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
@@ -70,7 +71,8 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
                 uuid = "item-1-uuid",
                 assetId = videoId.value,
                 price = BigDecimal.ONE,
-                transcriptsRequired = true
+                transcriptsRequired = true,
+                trimming = "40 - 100"
             )
         )
 
@@ -134,6 +136,7 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.uuid).isEqualTo("item-1-uuid")
         assertThat(item.price).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
+        assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.contentPartner.referenceId.value).isEqualTo(contentPartnerId.value)
         assertThat(item.contentPartner.name).isEqualTo("ted")
         assertThat(item.video.referenceId.value).isEqualTo(videoId.value)

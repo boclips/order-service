@@ -3,6 +3,7 @@ package com.boclips.terry.infrastructure.orders.converters
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
@@ -23,6 +24,7 @@ object OrderItemDocumentConverter {
                 ),
                 videoReference = it.video.videoReference
             ),
+            trim = toTrimmingString(it.trim),
             video = VideoDocument(
                 referenceId = it.video.referenceId.value,
                 title = it.video.title,
@@ -40,6 +42,7 @@ object OrderItemDocumentConverter {
                 referenceId = ContentPartnerId(value = it.source.contentPartner.referenceId),
                 name = it.source.contentPartner.name
             ),
+            trim = it.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(
                 referenceId = VideoId(value = it.video.referenceId),
                 title = it.video.title,
@@ -47,5 +50,14 @@ object OrderItemDocumentConverter {
                 videoReference = it.source.videoReference
             )
         )
+    }
+
+    private fun toTrimmingString(
+        trim: TrimRequest
+    ): String? {
+        return when (trim) {
+            is TrimRequest.WithTrimming -> trim.label
+            TrimRequest.NoTrimming -> null
+        }
     }
 }

@@ -94,6 +94,7 @@ class OrderPersistence(
                 referenceId = ContentPartnerId(value = videoResource.contentPartnerId),
                 name = videoResource.createdBy
             ),
+            trim = TrimmingConverter.toTrimRequest(item.trimming),
             video = Video(
                 referenceId = VideoId(value = videoResource.videoId.value),
                 title = videoResource.title,

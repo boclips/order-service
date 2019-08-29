@@ -28,15 +28,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(6),
             updatedAt = now.plusMillis(5),
-            items = listOf(
-                OrderItem(
-                    uuid = "i-love-uuids",
-                    price = BigDecimal.ONE,
-                    transcriptRequested = true,
-                    contentPartner = TestFactories.contentPartner(),
-                    video = TestFactories.video()
-                )
-            )
+            items = listOf(TestFactories.orderItem())
         )
         fakeOrdersRepository.add(
             order = order1
@@ -47,15 +39,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             status = OrderStatus.CONFIRMED,
             createdAt = now.plusMillis(3),
             updatedAt = now.plusMillis(4),
-            items = listOf(
-                OrderItem(
-                    uuid = "i-also-lurve-uuids",
-                    price = BigDecimal.ONE,
-                    transcriptRequested = true,
-                    contentPartner = TestFactories.contentPartner(),
-                    video = TestFactories.video()
-                )
-            )
+            items = listOf(TestFactories.orderItem())
         )
         fakeOrdersRepository.add(
             order = order2

@@ -25,15 +25,7 @@ class OrderServiceTest {
             status = OrderStatus.CONFIRMED,
             createdAt = Instant.EPOCH,
             updatedAt = Instant.EPOCH,
-            items = listOf(
-                OrderItem(
-                    uuid = "hi-again-its-a-uuid",
-                    price = BigDecimal.ONE,
-                    transcriptRequested = true,
-                    contentPartner = TestFactories.contentPartner(),
-                    video = TestFactories.video()
-                )
-            )
+            items = listOf(TestFactories.orderItem())
         )
 
         repo.add(
@@ -48,15 +40,7 @@ class OrderServiceTest {
             status = OrderStatus.CONFIRMED,
             updatedAt = Instant.EPOCH,
             createdAt = Instant.EPOCH,
-            items = listOf(
-                OrderItem(
-                    uuid = "oh-guess-what-its-a-uuid",
-                    price = BigDecimal.ONE,
-                    transcriptRequested = true,
-                    contentPartner = TestFactories.contentPartner(),
-                    video = TestFactories.video()
-                )
-            )
+            items = listOf(TestFactories.orderItem())
         )
         repo.add(
             order2

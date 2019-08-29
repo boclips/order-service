@@ -27,32 +27,8 @@ data class OrderResource(
                 updatedAt = order.updatedAt.toString(),
                 status = order.status.toString(),
                 items = order.items
-                    .map { item ->
-                        OrderItemResource(
-                            uuid = item.uuid,
-                            price = PriceResource.fromBigDecimal(item.price),
-                            transcriptRequested = item.transcriptRequested,
-                            contentPartner = ContentPartnerResource(
-                                item.contentPartner.referenceId.value,
-                                item.contentPartner.name
-                            ),
-                            video = VideoResource(
-                                id = item.video.referenceId.value,
-                                title = item.video.title,
-                                type = item.video.type,
-                                videoReference = item.video.videoReference
-                            )
-                        )
-                    }
+                    .map(OrderItemResource.Companion::fromOrderItem)
             )
     }
 }
-
-data class OrderItemResource(
-    val uuid: String,
-    val price: PriceResource,
-    val transcriptRequested: Boolean,
-    val contentPartner: ContentPartnerResource,
-    val video: VideoResource
-)
 
