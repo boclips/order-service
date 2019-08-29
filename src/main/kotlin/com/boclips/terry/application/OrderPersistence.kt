@@ -100,7 +100,8 @@ class OrderPersistence(
                 title = videoResource.title,
                 type = videoResource.type.toString(),
                 videoReference = videoResource.contentPartnerVideoId
-            )
+            ),
+            license = LicenseConverter.toOrderItemLicense(item.license)
         )
     }
 }

@@ -2,11 +2,14 @@ package com.boclips.terry.infrastructure.orders.converters
 
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
+import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
@@ -29,6 +32,11 @@ object OrderItemDocumentConverter {
                 referenceId = it.video.referenceId.value,
                 title = it.video.title,
                 type = it.video.type
+            ),
+            license = LicenseDocument(
+                amount = it.license.duration.amount,
+                unit = it.license.duration.unit,
+                territory = it.license.territory
             )
         )
     }
@@ -48,6 +56,10 @@ object OrderItemDocumentConverter {
                 title = it.video.title,
                 type = it.video.type,
                 videoReference = it.source.videoReference
+            ),
+            license = OrderItemLicense(
+                duration = Duration(amount = it.license.amount, unit = it.license.unit),
+                territory = it.license.territory
             )
         )
     }

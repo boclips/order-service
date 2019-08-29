@@ -9,6 +9,7 @@ import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
 import java.math.BigDecimal
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.Date
 
 class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
@@ -72,7 +75,8 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
                 assetId = videoId.value,
                 price = BigDecimal.ONE,
                 transcriptsRequired = true,
-                trimming = "40 - 100"
+                trimming = "40 - 100",
+                license = TestFactories.legacyOrderItemLicense(code = "10YR_SR")
             )
         )
 
@@ -137,6 +141,9 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.price).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
+        assertThat(item.license.duration.amount).isEqualTo(10)
+        assertThat(item.license.duration.unit).isEqualTo(ChronoUnit.YEARS)
+        assertThat(item.license.territory).isEqualTo(Territory.SINGLE_REGION)
         assertThat(item.contentPartner.referenceId.value).isEqualTo(contentPartnerId.value)
         assertThat(item.contentPartner.name).isEqualTo("ted")
         assertThat(item.video.referenceId.value).isEqualTo(videoId.value)

@@ -8,5 +8,6 @@ data class OrderItemDocument(
     val transcriptRequested: Boolean,
     val trim: String?,
     val video: VideoDocument,
-    val source: SourceDocument
+    val source: SourceDocument,
+    val license: LicenseDocument
 )

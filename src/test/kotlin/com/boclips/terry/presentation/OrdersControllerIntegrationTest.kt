@@ -2,6 +2,8 @@ package com.boclips.terry.presentation
 
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.Duration
+import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -16,6 +18,7 @@ import testsupport.TestFactories
 import testsupport.asBackofficeStaff
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -63,6 +66,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoReference = "AP-123",
                             title = "A Video",
                             videoType = VideoType.STOCK
+                        ),
+                        license = TestFactories.orderItemLicense(
+                            duration = Duration(amount = 10, unit = ChronoUnit.YEARS),
+                            territory = Territory.SINGLE_REGION
                         )
                     ), TestFactories.orderItem(
                         uuid = "awesome-item-uuid2",
@@ -104,6 +111,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseDuration", equalTo("10 Years")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseTerritory", equalTo("Single Region")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
@@ -153,6 +162,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
                         trim = TrimRequest.NoTrimming,
+                        license = TestFactories.orderItemLicense(
+                            duration = Duration(10, ChronoUnit.YEARS),
+                            territory = Territory.WORLDWIDE
+                        ),
                         contentPartner = TestFactories.contentPartner(
                             referenceId = "cp-id",
                             name = "eman"
@@ -187,7 +200,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
-
+            .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
+            .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
             .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))

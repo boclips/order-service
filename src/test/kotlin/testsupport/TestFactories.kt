@@ -15,12 +15,16 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
+import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
+import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.OrderOrganisationDocument
 import com.boclips.terry.infrastructure.orders.OrderUserDocument
@@ -33,6 +37,7 @@ import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.Date
 
 class TestFactories {
@@ -202,7 +207,11 @@ class TestFactories {
             transcriptRequested: Boolean = true,
             contentPartner: ContentPartner = contentPartner(),
             video: Video = video(),
-            trim: TrimRequest = TrimRequest.NoTrimming
+            trim: TrimRequest = TrimRequest.NoTrimming,
+            license: OrderItemLicense = OrderItemLicense(
+                Duration(amount = 10, unit = ChronoUnit.YEARS),
+                territory = Territory.SINGLE_REGION
+            )
         ): OrderItem {
             return OrderItem(
                 uuid = uuid,
@@ -210,7 +219,8 @@ class TestFactories {
                 transcriptRequested = transcriptRequested,
                 contentPartner = contentPartner,
                 video = video,
-                trim = trim
+                trim = trim,
+                license = license
             )
         }
 
@@ -342,6 +352,7 @@ class TestFactories {
             transcriptRequested: Boolean = true,
             source: SourceDocument = sourceDocument(),
             video: VideoDocument = videoDocument(),
+            license: LicenseDocument = licenseDocument(),
             trim: String? = "hello"
         ): OrderItemDocument {
             return OrderItemDocument(
@@ -350,7 +361,20 @@ class TestFactories {
                 transcriptRequested = transcriptRequested,
                 source = source,
                 video = video,
+                license = license,
                 trim = trim
+            )
+        }
+
+        fun licenseDocument(
+            duration: Int = 1,
+            unit: ChronoUnit = ChronoUnit.YEARS,
+            territory: Territory = Territory.MULTI_REGION
+        ): LicenseDocument {
+            return LicenseDocument(
+                amount = duration,
+                unit = unit,
+                territory = territory
             )
         }
 
@@ -376,6 +400,19 @@ class TestFactories {
             return ContentPartnerDocument(
                 name = name,
                 referenceId = referenceId
+            )
+        }
+
+        fun orderItemLicense(
+            duration: Duration = Duration(
+                amount = 100,
+                unit = ChronoUnit.YEARS
+            ),
+            territory: Territory = Territory.WORLDWIDE
+        ): OrderItemLicense {
+            return OrderItemLicense(
+                duration = duration,
+                territory = territory
             )
         }
     }

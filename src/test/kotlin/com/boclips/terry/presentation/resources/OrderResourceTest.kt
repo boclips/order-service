@@ -2,6 +2,9 @@ package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.Duration
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
+import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Test
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 class OrderResourceTest {
     @Test
@@ -70,6 +74,10 @@ class OrderResourceTest {
                             videoType = VideoType.STOCK,
                             title = "video title",
                             videoReference = "TED_11"
+                        ),
+                        license = OrderItemLicense(
+                            duration = Duration(10, ChronoUnit.YEARS),
+                            territory = Territory.MULTI_REGION
                         )
                     )
                 )
@@ -106,7 +114,9 @@ class OrderResourceTest {
                             type = "STOCK",
                             title = "video title",
                             videoReference = "TED_11"
-                        )
+                        ),
+                        licenseDuration = "10 Years",
+                        licenseTerritory = "Multi Region"
                     )
                 )
             )
