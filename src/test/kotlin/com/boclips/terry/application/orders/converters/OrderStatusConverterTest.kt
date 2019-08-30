@@ -1,5 +1,6 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders.converters
 
+import com.boclips.terry.application.orders.converters.OrderStatusConverter
 import com.boclips.terry.domain.model.OrderStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

@@ -1,4 +1,4 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders.converters
 
 import com.boclips.terry.domain.model.OrderStatus
 

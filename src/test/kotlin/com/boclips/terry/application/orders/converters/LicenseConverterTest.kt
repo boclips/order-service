@@ -1,6 +1,7 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders.converters
 
 import com.boclips.terry.application.exceptions.InvalidLegacyOrderItemLicense
+import com.boclips.terry.application.orders.converters.LicenseConverter
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.Territory

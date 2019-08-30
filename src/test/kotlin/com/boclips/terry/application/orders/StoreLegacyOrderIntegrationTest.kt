@@ -1,9 +1,8 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders
 
 import com.boclips.eventbus.events.order.LegacyOrder
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.events.order.LegacyOrderItem
-import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
@@ -26,7 +25,7 @@ import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
 
-class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
+class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var eventBus: SynchronousFakeEventBus
 

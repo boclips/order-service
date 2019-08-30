@@ -1,19 +1,17 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.application.exceptions.OrderNotFoundException
+import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.presentation.resources.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
-import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
-import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset

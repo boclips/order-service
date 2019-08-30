@@ -1,7 +1,7 @@
 package com.boclips.terry.presentation
 
-import com.boclips.terry.application.GetOrder
-import com.boclips.terry.application.GetOrders
+import com.boclips.terry.application.orders.GetOrder
+import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
 import com.boclips.terry.presentation.resources.OrderResource
 import org.springframework.hateoas.Link

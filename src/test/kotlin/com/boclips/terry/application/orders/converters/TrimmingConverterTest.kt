@@ -1,5 +1,6 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders.converters
 
+import com.boclips.terry.application.orders.converters.TrimmingConverter
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue

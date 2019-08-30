@@ -1,10 +1,13 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders
 
 import com.boclips.eventbus.BoclipsEventListener
 import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
+import com.boclips.terry.application.orders.converters.LicenseConverter
+import com.boclips.terry.application.orders.converters.OrderStatusConverter
+import com.boclips.terry.application.orders.converters.TrimmingConverter
 import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
@@ -23,7 +26,7 @@ import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
 
 @Component
-class OrderPersistence(
+class StoreLegacyOrder(
     private val repo: OrdersRepository,
     private val legacyOrdersRepository: LegacyOrdersRepository,
     private val videoServiceClient: VideoServiceClient

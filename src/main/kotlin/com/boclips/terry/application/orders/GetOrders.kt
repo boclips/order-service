@@ -1,4 +1,4 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders
 
 import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.presentation.resources.OrderResource

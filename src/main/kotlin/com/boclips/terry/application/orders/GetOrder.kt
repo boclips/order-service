@@ -1,4 +1,4 @@
-package com.boclips.terry.application
+package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.application.exceptions.OrderNotFoundException
