@@ -75,7 +75,7 @@ class TestFactories {
             .build()
 
         fun legacyOrderItemLicense(
-            code: String = "code",
+            code: String = "10YR_MR",
             dateCreated: Date = Date.from(Instant.now()),
             dateUpdated: Date = Date.from(Instant.now()),
             id: String = "id123",

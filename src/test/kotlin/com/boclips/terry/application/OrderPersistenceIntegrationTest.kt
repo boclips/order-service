@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
 import java.math.BigDecimal
-import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.Date
 
@@ -43,17 +42,19 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `persists legacy-orders when they arrive`() {
-        val orderCreatedAt = Date(0)
-        val orderUpdatedAt = Date(1)
-        val item1CreatedAt = Date(2)
-        val item1UpdatedAt = Date(3)
+        val date = Date()
         val orderId = ObjectId().toHexString()
-        val legacyOrder = legacyOrder(
-            orderId = orderId,
-            orderCreatedAt = orderCreatedAt,
-            orderUpdatedAt = orderUpdatedAt,
-            vendorUuid = "illegible-vendor-uuid",
-            creatorUuid = "illegible-creator-uuid"
+        val legacyOrder = TestFactories.legacyOrder(
+            id = orderId,
+            dateCreated = date,
+            dateUpdated = date,
+            vendor = "illegible-vendor-uuid",
+            creator = "illegible-creator-uuid",
+            legacyOrderExtraFields = LegacyOrderExtraFields.builder()
+                .agreeTerms(true)
+                .isbnOrProductNumber("some-isbn")
+                .build(),
+            status = "CONFIRMED"
         )
 
         val contentPartnerId =
@@ -69,8 +70,8 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
 
         val items = listOf(
             TestFactories.legacyOrderItem(
-                dateCreated = item1CreatedAt,
-                dateUpdated = item1UpdatedAt,
+                dateCreated = date,
+                dateUpdated = date,
                 uuid = "item-1-uuid",
                 assetId = videoId.value,
                 price = BigDecimal.ONE,
@@ -109,10 +110,9 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
 
         val order = orders.first()
         assertThat(order.id).isNotNull
-
         assertThat(order.orderProviderId).isEqualTo(legacyOrder.id)
-        assertThat(order.createdAt).isEqualTo(orderCreatedAt.toInstant())
-        assertThat(order.updatedAt).isEqualTo(orderUpdatedAt.toInstant())
+        assertThat(order.createdAt).isEqualTo(date.toInstant())
+        assertThat(order.updatedAt).isEqualTo(date.toInstant())
         assertThat(order.requestingUser).isEqualTo(
             TestFactories.orderUser(
                 firstName = "Steve",
@@ -135,7 +135,6 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(order.status).isEqualTo(OrderStatus.CONFIRMED)
 
         assertThat(order.items.size).isEqualTo(1)
-
         val item = order.items.first()
         assertThat(item.uuid).isEqualTo("item-1-uuid")
         assertThat(item.price).isEqualTo(BigDecimal.ONE)
@@ -149,6 +148,32 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.video.referenceId.value).isEqualTo(videoId.value)
         assertThat(item.video.title).isEqualTo("hippos are cool")
         assertThat(item.video.type).isEqualTo(VideoType.NEWS.name)
+    }
+
+    @Test
+    fun `dumps all legacy order data from an event`() {
+        val legacyOrder = TestFactories.legacyOrder()
+        val genericUser = TestFactories.legacyOrderUser()
+        val contentPartnerId =
+            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+
+        val videoId = fakeVideoClient.createVideo(
+            TestFactories.createVideoRequest(
+                providerId = contentPartnerId.value
+            )
+        )
+        val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
+
+        eventBus.publish(
+            legacyOrderSubmitted(
+                legacyOrder = legacyOrder,
+                items = items,
+                creator = "creator@their-company.net",
+                vendor = "vendor@their-company.biz",
+                requestingUser = genericUser,
+                authorisingUser = genericUser
+            )
+        )
 
         assertThat(legacyOrdersRepository.findById(OrderId(legacyOrder.id)))
             .isEqualTo(
@@ -162,32 +187,6 @@ class OrderPersistenceIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
     }
-
-    private fun legacyOrder(
-        orderId: String,
-        orderCreatedAt: Date,
-        orderUpdatedAt: Date,
-        vendorUuid: String,
-        creatorUuid: String
-    ): LegacyOrder = TestFactories.legacyOrder(
-        id = orderId,
-        uuid = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-        vendor = vendorUuid,
-        creator = creatorUuid,
-        dateCreated = orderCreatedAt,
-        dateUpdated = orderUpdatedAt,
-        legacyOrderExtraFields = LegacyOrderExtraFields
-            .builder()
-            .agreeTerms(true)
-            .isbnOrProductNumber("some-isbn")
-            .build(),
-        legacyOrderNextStatus = LegacyOrderNextStatus
-            .builder()
-            .nextStates(listOf("GOOD", "BAD"))
-            .roles(listOf("jam", "vegan-sausage"))
-            .build(),
-        status = "CONFIRMED"
-    )
 
     private fun legacyOrderSubmitted(
         legacyOrder: LegacyOrder,
