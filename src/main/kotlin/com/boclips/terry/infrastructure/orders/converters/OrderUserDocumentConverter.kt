@@ -9,7 +9,7 @@ object OrderUserDocumentConverter {
             firstName = orderUser.firstName,
             lastName = orderUser.lastName,
             email = orderUser.email,
-            sourceUserId = orderUser.sourceUserId,
+            legacyUserId = orderUser.legacyUserId,
             organisation = OrderOrganisationDocumentConverter.toOrderOrganisationDocument(orderUser.organisation)
         )
     }
@@ -19,7 +19,7 @@ object OrderUserDocumentConverter {
             firstName = orderUserDocument.firstName,
             lastName = orderUserDocument.lastName,
             email = orderUserDocument.email,
-            sourceUserId = orderUserDocument.sourceUserId,
+            legacyUserId = orderUserDocument.legacyUserId,
             organisation = OrderOrganisationDocumentConverter.toOrderOrganisation(orderUserDocument.organisation)
         )
     }

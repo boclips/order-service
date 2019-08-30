@@ -7,14 +7,14 @@ object OrderOrganisationDocumentConverter {
 
     fun toOrderOrganisationDocument(orderOrganisation: OrderOrganisation): OrderOrganisationDocument {
         return OrderOrganisationDocument(
-            sourceOrganisationId = orderOrganisation.sourceOrganisationId,
+            legacyOrganisationId = orderOrganisation.legacyOrganisationId,
             name = orderOrganisation.name
         )
     }
 
     fun toOrderOrganisation(orderOrganisationDocument: OrderOrganisationDocument): OrderOrganisation {
         return OrderOrganisation(
-            sourceOrganisationId = orderOrganisationDocument.sourceOrganisationId,
+            legacyOrganisationId = orderOrganisationDocument.legacyOrganisationId,
             name = orderOrganisationDocument.name
         )
     }

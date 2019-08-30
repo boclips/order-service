@@ -1,6 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
 data class OrderOrganisationDocument (
-    val sourceOrganisationId: String,
+    val legacyOrganisationId: String,
     val name: String
 )

@@ -22,14 +22,14 @@ object OrderItemDocumentConverter {
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    referenceId = it.contentPartner.referenceId.value,
+                    videoServiceContentPartnerId = it.contentPartner.videoServiceId.value,
                     name = it.contentPartner.name
                 ),
                 videoReference = it.video.videoReference
             ),
             trim = toTrimmingString(it.trim),
             video = VideoDocument(
-                referenceId = it.video.referenceId.value,
+                videoServiceId = it.video.videoServiceId.value,
                 title = it.video.title,
                 type = it.video.type
             ),
@@ -47,12 +47,12 @@ object OrderItemDocumentConverter {
             price = it.price,
             transcriptRequested = it.transcriptRequested,
             contentPartner = ContentPartner(
-                referenceId = ContentPartnerId(value = it.source.contentPartner.referenceId),
+                videoServiceId = ContentPartnerId(value = it.source.contentPartner.videoServiceContentPartnerId),
                 name = it.source.contentPartner.name
             ),
             trim = it.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(
-                referenceId = VideoId(value = it.video.referenceId),
+                videoServiceId = VideoId(value = it.video.videoServiceId),
                 title = it.video.title,
                 type = it.video.type,
                 videoReference = it.source.videoReference

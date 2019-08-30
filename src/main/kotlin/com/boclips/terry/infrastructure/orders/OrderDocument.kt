@@ -6,7 +6,7 @@ import java.time.Instant
 
 data class OrderDocument(
     @BsonId val id: ObjectId,
-    val orderProviderId: String,
+    val legacyOrderId: String,
     val status: String,
     val authorisingUser: OrderUserDocument,
     val requestingUser: OrderUserDocument,

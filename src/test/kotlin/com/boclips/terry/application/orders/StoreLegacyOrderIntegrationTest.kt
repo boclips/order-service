@@ -109,7 +109,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val order = orders.first()
         assertThat(order.id).isNotNull
-        assertThat(order.orderProviderId).isEqualTo(legacyOrder.id)
+        assertThat(order.legacyOrderId).isEqualTo(legacyOrder.id)
         assertThat(order.createdAt).isEqualTo(date.toInstant())
         assertThat(order.updatedAt).isEqualTo(date.toInstant())
         assertThat(order.requestingUser).isEqualTo(
@@ -142,9 +142,9 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.license.duration.amount).isEqualTo(10)
         assertThat(item.license.duration.unit).isEqualTo(ChronoUnit.YEARS)
         assertThat(item.license.territory).isEqualTo(Territory.SINGLE_REGION)
-        assertThat(item.contentPartner.referenceId.value).isEqualTo(contentPartnerId.value)
+        assertThat(item.contentPartner.videoServiceId.value).isEqualTo(contentPartnerId.value)
         assertThat(item.contentPartner.name).isEqualTo("ted")
-        assertThat(item.video.referenceId.value).isEqualTo(videoId.value)
+        assertThat(item.video.videoServiceId.value).isEqualTo(videoId.value)
         assertThat(item.video.title).isEqualTo("hippos are cool")
         assertThat(item.video.type).isEqualTo(VideoType.NEWS.name)
     }

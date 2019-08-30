@@ -5,7 +5,7 @@ import java.time.Instant
 
 data class Order(
     val id: OrderId,
-    val orderProviderId: String,
+    val legacyOrderId: String,
     val status: OrderStatus,
     val authorisingUser: OrderUser,
     val requestingUser: OrderUser,

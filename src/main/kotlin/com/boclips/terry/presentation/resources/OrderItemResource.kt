@@ -22,7 +22,7 @@ data class OrderItemResource(
                 price = PriceResource.fromBigDecimal(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
-                    item.contentPartner.referenceId.value,
+                    item.contentPartner.videoServiceId.value,
                     item.contentPartner.name
                 ),
                 trim = when (item.trim) {
@@ -30,7 +30,7 @@ data class OrderItemResource(
                     TrimRequest.NoTrimming -> null
                 },
                 video = VideoResource(
-                    id = item.video.referenceId.value,
+                    id = item.video.videoServiceId.value,
                     title = item.video.title,
                     type = item.video.type,
                     videoReference = item.video.videoReference

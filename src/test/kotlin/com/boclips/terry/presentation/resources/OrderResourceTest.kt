@@ -87,7 +87,7 @@ class OrderResourceTest {
         assertThat(orderResource).isEqualTo(
             OrderResource(
                 id = "123",
-                orderProviderId = "456",
+                legacyOrderId = "456",
                 creatorEmail = "creator@email.com",
                 vendorEmail = "vendor@email.com",
                 userDetails = UserDetailsResource(

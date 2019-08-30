@@ -6,7 +6,7 @@ import org.springframework.hateoas.core.Relation
 @Relation(collectionRelation = "orders")
 data class OrderResource(
     val id: String,
-    val orderProviderId: String,
+    val legacyOrderId: String,
     val creatorEmail: String,
     val vendorEmail: String,
     val userDetails: UserDetailsResource,
@@ -19,7 +19,7 @@ data class OrderResource(
         fun fromOrder(order: Order): OrderResource =
             OrderResource(
                 id = order.id.value,
-                orderProviderId = order.orderProviderId,
+                legacyOrderId = order.legacyOrderId,
                 creatorEmail = order.requestingUser.email,
                 vendorEmail = order.authorisingUser.email,
                 userDetails = UserDetailsResource.toResource(order),

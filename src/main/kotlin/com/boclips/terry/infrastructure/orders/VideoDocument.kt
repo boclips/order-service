@@ -1,7 +1,7 @@
 package com.boclips.terry.infrastructure.orders
 
 class VideoDocument(
-    val referenceId: String,
+    val videoServiceId: String,
     val title: String,
     val type: String
 )

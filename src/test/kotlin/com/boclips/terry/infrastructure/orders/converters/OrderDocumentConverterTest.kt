@@ -24,7 +24,7 @@ class OrderDocumentConverterTest {
         assertThat(
             OrderDocument(
                 id = id,
-                orderProviderId = "1234",
+                legacyOrderId = "1234",
                 status = "COMPLETED",
                 authorisingUser = TestFactories.orderUserDocument(),
                 requestingUser = TestFactories.orderUserDocument(),

@@ -39,7 +39,7 @@ class StoreLegacyOrder(
             repo.add(
                 order = Order(
                     id = OrderId(value = ObjectId().toHexString()),
-                    orderProviderId = event.order.id,
+                    legacyOrderId = event.order.id,
                     createdAt = event.order.dateCreated.toInstant(),
                     updatedAt = event.order.dateUpdated.toInstant(),
                     requestingUser = createOrderUser(event.requestingUser),
@@ -75,9 +75,9 @@ class StoreLegacyOrder(
             firstName = user.firstName,
             lastName = user.lastName,
             email = user.email,
-            sourceUserId = user.id,
+            legacyUserId = user.id,
             organisation = OrderOrganisation(
-                sourceOrganisationId = user.organisation.id,
+                legacyOrganisationId = user.organisation.id,
                 name = user.organisation.name
             )
         )
@@ -94,12 +94,12 @@ class StoreLegacyOrder(
             price = item.price,
             transcriptRequested = item.transcriptsRequired,
             contentPartner = ContentPartner(
-                referenceId = ContentPartnerId(value = videoResource.contentPartnerId),
+                videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
                 name = videoResource.createdBy
             ),
             trim = TrimmingConverter.toTrimRequest(item.trimming),
             video = Video(
-                referenceId = VideoId(value = videoResource.videoId.value),
+                videoServiceId = VideoId(value = videoResource.videoId.value),
                 title = videoResource.title,
                 type = videoResource.type.toString(),
                 videoReference = videoResource.contentPartnerVideoId

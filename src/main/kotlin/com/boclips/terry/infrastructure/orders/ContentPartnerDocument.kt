@@ -1,6 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
 data class ContentPartnerDocument(
-    val referenceId: String,
+    val videoServiceContentPartnerId: String,
     val name: String
 )

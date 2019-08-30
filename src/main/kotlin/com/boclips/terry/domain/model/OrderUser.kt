@@ -4,6 +4,6 @@ data class OrderUser(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val sourceUserId: String,
+    val legacyUserId: String,
     val organisation: OrderOrganisation
 )

@@ -190,7 +190,7 @@ class TestFactories {
         ): Order {
             return Order(
                 id = id,
-                orderProviderId = orderProviderId,
+                legacyOrderId = orderProviderId,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 requestingUser = requestingUser,
@@ -258,7 +258,7 @@ class TestFactories {
         ): ContentPartner {
             return ContentPartner(
                 name = name,
-                referenceId = ContentPartnerId(value = referenceId)
+                videoServiceId = ContentPartnerId(value = referenceId)
             )
         }
 
@@ -269,7 +269,7 @@ class TestFactories {
             videoReference: String = "ted_1234"
         ): Video {
             return Video(
-                referenceId = VideoId(value = referenceId),
+                videoServiceId = VideoId(value = referenceId),
                 title = title,
                 type = videoType.toString(),
                 videoReference = videoReference
@@ -299,7 +299,7 @@ class TestFactories {
             name: String = "Org Pub"
         ): OrderOrganisation {
             return OrderOrganisation(
-                sourceOrganisationId = sourceOrganisationId,
+                legacyOrganisationId = sourceOrganisationId,
                 name = name
             )
         }
@@ -315,7 +315,7 @@ class TestFactories {
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
-                sourceUserId = sourceUserId,
+                legacyUserId = sourceUserId,
                 organisation = organisation
             )
         }
@@ -325,7 +325,7 @@ class TestFactories {
             name: String = "Org Pub"
         ): OrderOrganisationDocument {
             return OrderOrganisationDocument(
-                sourceOrganisationId = sourceOrganisationId,
+                legacyOrganisationId = sourceOrganisationId,
                 name = name
             )
         }
@@ -341,7 +341,7 @@ class TestFactories {
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
-                sourceUserId = sourceUserId,
+                legacyUserId = sourceUserId,
                 organisation = organisation
             )
         }
@@ -383,7 +383,7 @@ class TestFactories {
             title: String = "A great vide",
             type: String = "NEWS"
         ): VideoDocument {
-            return VideoDocument(referenceId = referenceId, title = title, type = type)
+            return VideoDocument(videoServiceId = referenceId, title = title, type = type)
         }
 
         fun sourceDocument(
@@ -399,7 +399,7 @@ class TestFactories {
         fun contentPartnerDocument(name: String = "hello", referenceId: String = "id-yo"): ContentPartnerDocument {
             return ContentPartnerDocument(
                 name = name,
-                referenceId = referenceId
+                videoServiceContentPartnerId = referenceId
             )
         }
 
