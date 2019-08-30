@@ -13,6 +13,7 @@ data class OrderResource(
     val status: String,
     val createdAt: String,
     val updatedAt: String,
+    val isbnNumber: String,
     val items: List<OrderItemResource>
 ) {
     companion object {
@@ -20,6 +21,7 @@ data class OrderResource(
             OrderResource(
                 id = order.id.value,
                 legacyOrderId = order.legacyOrderId,
+                isbnNumber = order.isbnOrProductNumber,
                 creatorEmail = order.requestingUser.email,
                 vendorEmail = order.authorisingUser.email,
                 userDetails = UserDetailsResource.toResource(order),

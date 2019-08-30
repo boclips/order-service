@@ -35,6 +35,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fakeOrdersRepository.add(
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
+                isbnOrProductNumber = "a beautiful isbnNumber",
                 orderProviderId = "456",
                 authorisingUser = TestFactories.orderUser(
                     firstName = "vendor",
@@ -86,6 +87,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             get("/v1/orders").asBackofficeStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("a beautiful isbnNumber")))
             .andExpect(jsonPath("$._embedded.orders[0].legacyOrderId", equalTo("456")))
             .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))

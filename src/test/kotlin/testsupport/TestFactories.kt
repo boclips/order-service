@@ -186,8 +186,9 @@ class TestFactories {
             status: OrderStatus = OrderStatus.COMPLETED,
             createdAt: Instant = Instant.now(),
             updatedAt: Instant = Instant.now(),
-            items: List<OrderItem> = emptyList()
-        ): Order {
+            items: List<OrderItem> = emptyList(),
+            isbnOrProductNumber: String = "some-isbn"
+            ): Order {
             return Order(
                 id = id,
                 legacyOrderId = orderProviderId,
@@ -195,7 +196,7 @@ class TestFactories {
                 updatedAt = updatedAt,
                 requestingUser = requestingUser,
                 authorisingUser = authorisingUser,
-                isbnOrProductNumber = "some-isbn",
+                isbnOrProductNumber = isbnOrProductNumber,
                 status = status,
                 items = items
             )
