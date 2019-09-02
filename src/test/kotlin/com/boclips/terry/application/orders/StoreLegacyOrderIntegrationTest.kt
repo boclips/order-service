@@ -15,12 +15,14 @@ import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.sun.imageio.plugins.jpeg.JPEG.vendor
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
+import testsupport.TestFactories.Companion.legacyOrderSubmitted
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -47,8 +49,6 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             id = orderId,
             dateCreated = date,
             dateUpdated = date,
-            vendor = "illegible-vendor-uuid",
-            creator = "illegible-creator-uuid",
             legacyOrderExtraFields = LegacyOrderExtraFields.builder()
                 .agreeTerms(true)
                 .isbnOrProductNumber("some-isbn")
@@ -93,11 +93,9 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         eventBus.publish(
-            legacyOrderSubmitted(
+            TestFactories.legacyOrderSubmitted(
                 legacyOrder = legacyOrder,
-                items = items,
-                creator = "creator@their-company.net",
-                vendor = "vendor@their-company.biz",
+                legacyOrderItems = items,
                 requestingUser = genericUser,
                 authorisingUser = genericUser
             )
@@ -164,11 +162,9 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
 
         eventBus.publish(
-            legacyOrderSubmitted(
+            TestFactories.legacyOrderSubmitted(
                 legacyOrder = legacyOrder,
-                items = items,
-                creator = "creator@their-company.net",
-                vendor = "vendor@their-company.biz",
+                legacyOrderItems = items,
                 requestingUser = genericUser,
                 authorisingUser = genericUser
             )
@@ -179,28 +175,9 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 LegacyOrderDocument(
                     order = legacyOrder,
                     items = items,
-                    creator = "creator@their-company.net",
-                    vendor = "vendor@their-company.biz",
                     authorisingUser = genericUser,
                     requestingUser = genericUser
                 )
             )
     }
-
-    private fun legacyOrderSubmitted(
-        legacyOrder: LegacyOrder,
-        items: List<LegacyOrderItem>,
-        creator: String,
-        vendor: String,
-        authorisingUser: LegacyOrderUser,
-        requestingUser: LegacyOrderUser
-    ) =
-        LegacyOrderSubmitted.builder()
-            .order(legacyOrder)
-            .orderItems(items)
-            .creator(creator)
-            .vendor(vendor)
-            .authorisingUser(authorisingUser)
-            .requestingUser(requestingUser)
-            .build()
 }

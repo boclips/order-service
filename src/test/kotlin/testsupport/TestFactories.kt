@@ -45,8 +45,6 @@ class TestFactories {
         fun legacyOrder(
             id: String = ObjectId.get().toHexString(),
             uuid: String = "uuid-123",
-            creator: String = "creator@boclips.com",
-            vendor: String = "vendor@boclips.com",
             dateCreated: Date = Date(),
             dateUpdated: Date = Date(),
             legacyOrderNextStatus: LegacyOrderNextStatus = LegacyOrderNextStatus.builder()
@@ -61,8 +59,6 @@ class TestFactories {
         ): LegacyOrder = LegacyOrder.builder()
             .id(id)
             .uuid(uuid)
-            .creator(creator)
-            .vendor(vendor)
             .dateCreated(dateCreated)
             .dateUpdated(dateUpdated)
             .nextStatus(
@@ -121,8 +117,6 @@ class TestFactories {
             legacyOrder: LegacyOrder = legacyOrder(
                 id = "1234",
                 uuid = "some-uuid",
-                creator = "illegible-creator-uuid",
-                vendor = "illegible-vendor-uuid",
                 dateCreated = Date(),
                 dateUpdated = Date(),
                 legacyOrderNextStatus = LegacyOrderNextStatus
@@ -146,8 +140,6 @@ class TestFactories {
             return LegacyOrderDocument(
                 order = legacyOrder,
                 items = items,
-                creator = creatorEmail,
-                vendor = vendorEmail,
                 authorisingUser = authorisingUser,
                 requestingUser = requestingUser
             )
@@ -280,16 +272,12 @@ class TestFactories {
         fun legacyOrderSubmitted(
             legacyOrder: LegacyOrder,
             legacyOrderItems: List<LegacyOrderItem>,
-            creator: String,
-            vendor: String,
             requestingUser: LegacyOrderUser,
             authorisingUser: LegacyOrderUser
         ): LegacyOrderSubmitted {
             return LegacyOrderSubmitted.builder()
                 .order(legacyOrder)
                 .orderItems(legacyOrderItems)
-                .creator(creator)
-                .vendor(vendor)
                 .requestingUser(requestingUser)
                 .authorisingUser(authorisingUser)
                 .build()

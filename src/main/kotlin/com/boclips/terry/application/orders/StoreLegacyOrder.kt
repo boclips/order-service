@@ -54,8 +54,6 @@ class StoreLegacyOrder(
                 LegacyOrderDocument(
                     order = event.order,
                     items = event.orderItems,
-                    creator = event.creator,
-                    vendor = event.vendor,
                     requestingUser = event.requestingUser,
                     authorisingUser = event.authorisingUser
                 )
