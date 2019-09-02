@@ -131,8 +131,6 @@ class TestFactories {
                     .build(),
                 status = "KINGOFORDERS"
             ),
-            creatorEmail: String = "boclips@steve.com",
-            vendorEmail: String = "vendor@boclips.com",
             items: List<LegacyOrderItem> = listOf(legacyOrderItem()),
             authorisingUser: LegacyOrderUser = legacyOrderUser(),
             requestingUser: LegacyOrderUser = legacyOrderUser()
