@@ -170,7 +170,7 @@ class TestFactories {
 
         fun order(
             id: OrderId = OrderId(value = ObjectId.get().toHexString()),
-            orderProviderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+            legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
             requestingUser: OrderUser = orderUser(),
             authorisingUser: OrderUser = orderUser(),
             status: OrderStatus = OrderStatus.COMPLETED,
@@ -181,7 +181,7 @@ class TestFactories {
             ): Order {
             return Order(
                 id = id,
-                legacyOrderId = orderProviderId,
+                legacyOrderId = legacyOrderId,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
                 requestingUser = requestingUser,

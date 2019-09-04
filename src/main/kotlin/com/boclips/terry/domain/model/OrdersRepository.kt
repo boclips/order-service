@@ -5,4 +5,6 @@ interface OrdersRepository {
     fun clear(): OrdersRepository
     fun findAll(): List<Order>
     fun findOne(id: OrderId): Order?
+    fun findOneByLegacyId(legacyOrderId: String): Order?
+    fun update(orderUpdateCommand: OrderUpdateCommand): Order
 }

@@ -176,4 +176,34 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
     }
+
+    @Test
+    fun `updates pre-existing orders`() {
+        val order = TestFactories.order()
+        fakeOrdersRepository.add(order)
+
+        val genericUser = TestFactories.legacyOrderUser()
+        val contentPartnerId =
+            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+
+        val videoId = fakeVideoClient.createVideo(
+            TestFactories.createVideoRequest(
+                providerId = contentPartnerId.value
+            )
+        )
+        val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
+
+        eventBus.publish(
+            TestFactories.legacyOrderSubmitted(
+                legacyOrder = TestFactories.legacyOrder(id = order.legacyOrderId, status = "CANCELLED"),
+                legacyOrderItems = items,
+                authorisingUser = genericUser,
+                requestingUser = genericUser
+            )
+        )
+
+        val orders = fakeOrdersRepository.findAll()
+        assertThat(orders).hasSize(1)
+        assertThat(orders.first().status).isEqualTo(OrderStatus.CANCELLED)
+    }
 }

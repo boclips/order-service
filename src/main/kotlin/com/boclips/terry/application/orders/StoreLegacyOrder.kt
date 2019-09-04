@@ -12,6 +12,7 @@ import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderOrganisation
+import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.domain.model.orderItem.ContentPartner
@@ -36,19 +37,17 @@ class StoreLegacyOrder(
     @BoclipsEventListener
     fun onLegacyOrderSubmitted(event: LegacyOrderSubmitted) {
         try {
-            repo.add(
-                order = Order(
-                    id = OrderId(value = ObjectId().toHexString()),
-                    legacyOrderId = event.order.id,
-                    createdAt = event.order.dateCreated.toInstant(),
-                    updatedAt = event.order.dateUpdated.toInstant(),
-                    requestingUser = createOrderUser(event.requestingUser),
-                    authorisingUser = createOrderUser(event.authorisingUser),
-                    isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
-                    status = OrderStatusConverter.from(event.order.status),
-                    items = event.orderItems.map { createOrderItem(it) }
+            val order = convertLegacyOrder(event)
+
+            // Ideally and update and create would be two different events so we wouldn't have to distinguish them here
+            val foundOrder = repo.findOneByLegacyId(order.legacyOrderId)
+            if (foundOrder != null) {
+                repo.update(
+                    OrderUpdateCommand.ReplaceStatus(orderId = foundOrder.id, orderStatus = order.status)
                 )
-            )
+            } else {
+                repo.add(order = order)
+            }
 
             legacyOrdersRepository.add(
                 LegacyOrderDocument(
@@ -68,7 +67,21 @@ class StoreLegacyOrder(
         }
     }
 
-    private fun createOrderUser(user: LegacyOrderUser): OrderUser {
+    private fun convertLegacyOrder(event: LegacyOrderSubmitted): Order {
+        return Order(
+            id = OrderId(value = ObjectId().toHexString()),
+            legacyOrderId = event.order.id,
+            createdAt = event.order.dateCreated.toInstant(),
+            updatedAt = event.order.dateUpdated.toInstant(),
+            requestingUser = convertLegacyUser(event.requestingUser),
+            authorisingUser = convertLegacyUser(event.authorisingUser),
+            isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
+            status = OrderStatusConverter.from(event.order.status),
+            items = event.orderItems.map { convertLegacyItem(it) }
+        )
+    }
+
+    private fun convertLegacyUser(user: LegacyOrderUser): OrderUser {
         return OrderUser(
             firstName = user.firstName,
             lastName = user.lastName,
@@ -81,7 +94,7 @@ class StoreLegacyOrder(
         )
     }
 
-    fun createOrderItem(item: LegacyOrderItem): OrderItem {
+    fun convertLegacyItem(item: LegacyOrderItem): OrderItem {
         val videoResource = videoServiceClient.rawIdToVideoId(item.assetId).let {
             logger.info { "Fetching video: ${it.value}" }
             videoServiceClient.get(it)

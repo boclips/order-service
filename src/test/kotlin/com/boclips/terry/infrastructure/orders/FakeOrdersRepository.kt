@@ -2,11 +2,12 @@ package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
+import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
+import com.boclips.terry.infrastructure.orders.exceptions.OrderNotFoundException
 
 class FakeOrdersRepository : OrdersRepository {
-
     lateinit var orderDocuments: MutableList<OrderDocument>
     lateinit var orders: MutableList<Order>
 
@@ -33,5 +34,23 @@ class FakeOrdersRepository : OrdersRepository {
 
     override fun findOne(id: OrderId): Order? {
         return orders.find { it.id == id }
+    }
+
+    override fun findOneByLegacyId(legacyOrderId: String): Order? {
+        return orders.find { it.legacyOrderId == legacyOrderId }
+    }
+
+    override fun update(orderUpdateCommand: OrderUpdateCommand): Order {
+        when (orderUpdateCommand) {
+            is OrderUpdateCommand.ReplaceStatus -> {
+                val index = orders.indexOfFirst { it.id == orderUpdateCommand.orderId }
+
+                if (index != -1) {
+                    orders[index] = orders[index].copy(status = orderUpdateCommand.orderStatus)
+                }
+            }
+        }
+
+        return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(orderUpdateCommand.orderId)
     }
 }

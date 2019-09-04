@@ -44,7 +44,7 @@ class OrderResourceTest {
             order = TestFactories.order(
                 id = OrderId(value = "123"),
                 isbnOrProductNumber = "an isbn",
-                orderProviderId = "456",
+                legacyOrderId = "456",
 
                 authorisingUser = TestFactories.orderUser(
                     firstName = "authJoe",
