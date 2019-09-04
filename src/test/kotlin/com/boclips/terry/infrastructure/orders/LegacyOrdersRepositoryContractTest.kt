@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.LegacyOrdersRepository
-import com.boclips.terry.domain.model.OrderId
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -11,16 +10,16 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import testsupport.TestFactories
 
-class FakeLegacyOrdersRepositoryTests : OrdersRepositoryTests() {
+class FakeLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
 
     @BeforeEach
     override fun setUp() {
-        repo = FakeOrdersRepository()
+        repo = FakeLegacyOrdersRepository()
         super.setUp()
     }
 }
 
-class MongoLegacyOrdersRepositoryTests : OrdersRepositoryTests() {
+class MongoLegacyOrdersRepositoryTests : LegacyOrdersRepositoryTests() {
     companion object Setup {
         var mongoProcess: MongodProcess? = null
 
@@ -36,7 +35,7 @@ class MongoLegacyOrdersRepositoryTests : OrdersRepositoryTests() {
 
     @BeforeEach
     override fun setUp() {
-        repo = MongoOrdersRepository("mongodb://localhost/test")
+        repo = MongoLegacyOrdersRepository("mongodb://localhost/test")
         super.setUp()
     }
 }
@@ -60,6 +59,8 @@ abstract class LegacyOrdersRepositoryTests {
 
         repo.add(legacyOrderDocument)
 
-        assertThat(repo.findById(OrderId(value = legacyOrder.id))).isEqualTo(legacyOrderDocument)
+        val documents = repo.findAll()
+        assertThat(documents).hasSize(1)
+        assertThat(documents.first()).isEqualTo(legacyOrderDocument)
     }
 }

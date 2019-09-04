@@ -1,10 +1,6 @@
 package com.boclips.terry.application.orders
 
-import com.boclips.eventbus.events.order.LegacyOrder
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
-import com.boclips.eventbus.events.order.LegacyOrderItem
-import com.boclips.eventbus.events.order.LegacyOrderSubmitted
-import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
@@ -15,14 +11,12 @@ import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
-import com.sun.imageio.plugins.jpeg.JPEG.vendor
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
-import testsupport.TestFactories.Companion.legacyOrderSubmitted
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -170,7 +164,9 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(legacyOrdersRepository.findById(OrderId(legacyOrder.id)))
+        val legacyDocuments = legacyOrdersRepository.findAll()
+        assertThat(legacyDocuments).hasSize(1)
+        assertThat(legacyDocuments.first())
             .isEqualTo(
                 LegacyOrderDocument(
                     order = legacyOrder,

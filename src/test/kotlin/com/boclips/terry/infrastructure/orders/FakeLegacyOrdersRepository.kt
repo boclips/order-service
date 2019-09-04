@@ -1,7 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.LegacyOrdersRepository
-import com.boclips.terry.domain.model.OrderId
 
 class FakeLegacyOrdersRepository : LegacyOrdersRepository {
     lateinit var documents: MutableList<LegacyOrderDocument>
@@ -18,7 +17,7 @@ class FakeLegacyOrdersRepository : LegacyOrdersRepository {
         documents.add(document)
     }
 
-    override fun findById(orderId: OrderId): LegacyOrderDocument? {
-        return documents.find { it.order.id == orderId.value }
+    override fun findAll(): List<LegacyOrderDocument> {
+        return documents
     }
 }

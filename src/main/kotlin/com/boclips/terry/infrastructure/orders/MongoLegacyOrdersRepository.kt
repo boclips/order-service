@@ -1,14 +1,10 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.domain.model.LegacyOrdersRepository
-import com.boclips.terry.domain.model.OrderId
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
-import org.bson.types.ObjectId
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.deleteMany
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 class MongoLegacyOrdersRepository(uri: String) : LegacyOrdersRepository {
@@ -24,8 +20,8 @@ class MongoLegacyOrdersRepository(uri: String) : LegacyOrdersRepository {
 
     override fun clear() = this.also { collection().deleteMany() }
 
-    override fun findById(orderId: OrderId): LegacyOrderDocument? {
-        return collection().findOne(OrderDocument::id eq ObjectId(orderId.value))
+    override fun findAll(): List<LegacyOrderDocument> {
+        return collection().find().toList()
     }
 
     private fun collection(): MongoCollection<LegacyOrderDocument> =
