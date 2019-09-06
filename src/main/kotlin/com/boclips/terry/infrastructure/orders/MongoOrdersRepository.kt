@@ -17,6 +17,7 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.orderBy
 import org.litote.kmongo.set
+import java.time.Instant
 
 const val databaseName = "order-service-db"
 
@@ -63,6 +64,11 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                 set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())
             )
         }
+
+        collection().updateOne(
+            OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
+            set(OrderDocument::updatedAt, Instant.now())
+        )
 
         return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(orderUpdateCommand.orderId)
     }

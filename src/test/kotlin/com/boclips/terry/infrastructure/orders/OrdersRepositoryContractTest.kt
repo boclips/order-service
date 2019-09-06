@@ -107,6 +107,16 @@ abstract class OrdersRepositoryTests {
     }
 
     @Test
+    fun `updates to order update the updated at time`() {
+        val startOfTest = Instant.now().minusMillis(100)
+        val order = TestFactories.order(legacyOrderId = "legacy-id", updatedAt = startOfTest)
+        repo.add(order = order)
+        repo.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
+
+        assertThat(repo.findOne(order.id)!!.updatedAt).isAfter(startOfTest)
+    }
+
+    @Test
     fun `throws when updating a non existent order`() {
         assertThrows<OrderNotFoundException> {
             repo.update(

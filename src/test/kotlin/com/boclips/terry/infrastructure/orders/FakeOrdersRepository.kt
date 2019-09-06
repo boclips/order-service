@@ -6,6 +6,7 @@ import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
 import com.boclips.terry.infrastructure.orders.exceptions.OrderNotFoundException
+import java.time.Instant
 
 class FakeOrdersRepository : OrdersRepository {
     lateinit var orderDocuments: MutableList<OrderDocument>
@@ -46,7 +47,8 @@ class FakeOrdersRepository : OrdersRepository {
                 val index = orders.indexOfFirst { it.id == orderUpdateCommand.orderId }
 
                 if (index != -1) {
-                    orders[index] = orders[index].copy(status = orderUpdateCommand.orderStatus)
+                    orders[index] =
+                        orders[index].copy(status = orderUpdateCommand.orderStatus, updatedAt = Instant.now())
                 }
             }
         }
