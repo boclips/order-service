@@ -45,7 +45,8 @@ dependencies {
 
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
-    
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.8'
+
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'

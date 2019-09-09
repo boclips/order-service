@@ -171,14 +171,14 @@ class TestFactories {
         fun order(
             id: OrderId = OrderId(value = ObjectId.get().toHexString()),
             legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-            requestingUser: OrderUser = orderUser(),
-            authorisingUser: OrderUser = orderUser(),
+            requestingUser: OrderUser = completeOrderUser(),
+            authorisingUser: OrderUser = completeOrderUser(),
             status: OrderStatus = OrderStatus.COMPLETED,
             createdAt: Instant = Instant.now(),
             updatedAt: Instant = Instant.now(),
             items: List<OrderItem> = emptyList(),
             isbnOrProductNumber: String = "some-isbn"
-            ): Order {
+        ): Order {
             return Order(
                 id = id,
                 legacyOrderId = legacyOrderId,
@@ -291,14 +291,14 @@ class TestFactories {
             )
         }
 
-        fun orderUser(
+        fun completeOrderUser(
             firstName: String = "OrderingBob",
             lastName: String = "Smith",
             email: String = "bobsmith@hello.com",
             sourceUserId: String = "abc123",
             organisation: OrderOrganisation = orderOrganisation()
         ): OrderUser {
-            return OrderUser(
+            return OrderUser.CompleteUser(
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
@@ -306,6 +306,10 @@ class TestFactories {
                 organisation = organisation
             )
         }
+
+        fun basicOrderUser(
+            label: String = "Matt <hello@boclips.tom>"
+        ): OrderUser = OrderUser.BasicUser(label = label)
 
         fun orderOrganisationDocument(
             sourceOrganisationId: String = "source123",
@@ -318,18 +322,31 @@ class TestFactories {
         }
 
         fun orderUserDocument(
-            firstName: String = "OrderingBob",
-            lastName: String = "Smith",
-            email: String = "bobsmith@hello.com",
-            sourceUserId: String = "abc123",
-            organisation: OrderOrganisationDocument = orderOrganisationDocument()
+            firstName: String? = "OrderingBob",
+            lastName: String? = "Smith",
+            email: String? = "bobsmith@hello.com",
+            sourceUserId: String? = "abc123",
+            organisation: OrderOrganisationDocument? = orderOrganisationDocument(),
+            label: String? = null
         ): OrderUserDocument {
             return OrderUserDocument(
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
                 legacyUserId = sourceUserId,
-                organisation = organisation
+                organisation = organisation,
+                label = label
+            )
+        }
+
+        fun basicOrderUserDocument(label: String): OrderUserDocument {
+            return OrderUserDocument(
+                label = label,
+                firstName = null,
+                lastName = null,
+                email = null,
+                legacyUserId = null,
+                organisation = null
             )
         }
 

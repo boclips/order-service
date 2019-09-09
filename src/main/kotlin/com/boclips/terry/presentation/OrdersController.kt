@@ -1,8 +1,10 @@
 package com.boclips.terry.presentation
 
+import com.boclips.terry.application.orders.CreateOrderFromCsv
 import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
+import com.boclips.terry.presentation.resources.OrderCsvUploadConverter
 import com.boclips.terry.presentation.resources.OrderResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
@@ -13,19 +15,17 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.io.InputStream
 
 @RestController
 @RequestMapping("/v1/orders")
 class OrdersController(
     private val getOrders: GetOrders,
-    private val getOrder: GetOrder
+    private val getOrder: GetOrder,
+    private val createOrderFromCsv: CreateOrderFromCsv
 ) {
     companion object {
         fun getOrdersLink(): Link = ControllerLinkBuilder.linkTo(
@@ -66,7 +66,8 @@ class OrdersController(
     }
 
     @PostMapping(consumes = ["multipart/form-data"])
-    fun createOrder(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
+    fun createOrders(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
+        createOrderFromCsv.invoke(OrderCsvUploadConverter.convertToMetadata(file.bytes))
         return ResponseEntity(HttpStatus.CREATED)
     }
 

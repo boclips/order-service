@@ -2,7 +2,6 @@ package com.boclips.terry.application.orders
 
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
@@ -105,7 +104,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(order.createdAt).isEqualTo(date.toInstant())
         assertThat(order.updatedAt).isEqualTo(date.toInstant())
         assertThat(order.requestingUser).isEqualTo(
-            TestFactories.orderUser(
+            TestFactories.completeOrderUser(
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
@@ -114,7 +113,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         assertThat(order.authorisingUser).isEqualTo(
-            TestFactories.orderUser(
+            TestFactories.completeOrderUser(
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",

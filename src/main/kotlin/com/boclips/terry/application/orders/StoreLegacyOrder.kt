@@ -82,7 +82,7 @@ class StoreLegacyOrder(
     }
 
     private fun convertLegacyUser(user: LegacyOrderUser): OrderUser {
-        return OrderUser(
+        return OrderUser.CompleteUser(
             firstName = user.firstName,
             lastName = user.lastName,
             email = user.email,

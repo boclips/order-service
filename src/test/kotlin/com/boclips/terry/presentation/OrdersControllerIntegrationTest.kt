@@ -13,10 +13,8 @@ import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.TestFactories
@@ -44,13 +42,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 isbnOrProductNumber = "a beautiful isbnNumber",
                 legacyOrderId = "456",
-                authorisingUser = TestFactories.orderUser(
+                authorisingUser = TestFactories.completeOrderUser(
                     firstName = "vendor",
                     lastName = "hello",
                     email = "vendor@proper.order",
                     organisation = TestFactories.orderOrganisation(name = "An Org")
                 ),
-                requestingUser = TestFactories.orderUser(
+                requestingUser = TestFactories.completeOrderUser(
                     firstName = "Kata",
                     lastName = "Kovacs",
                     email = "creator@proper.order",
@@ -96,8 +94,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
             .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("a beautiful isbnNumber")))
             .andExpect(jsonPath("$._embedded.orders[0].legacyOrderId", equalTo("456")))
-            .andExpect(jsonPath("$._embedded.orders[0].creatorEmail", equalTo("creator@proper.order")))
-            .andExpect(jsonPath("$._embedded.orders[0].vendorEmail", equalTo("vendor@proper.order")))
             .andExpect(jsonPath("$._embedded.orders[0].userDetails.organisationLabel", equalTo("An Org")))
             .andExpect(
                 jsonPath(
@@ -151,13 +147,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 legacyOrderId = "456",
-                authorisingUser = TestFactories.orderUser(
+                authorisingUser = TestFactories.completeOrderUser(
                     email = "vendor@proper.order",
                     firstName = "hi",
                     organisation = TestFactories.orderOrganisation(name = "An Org"),
                     lastName = "there"
                 ),
-                requestingUser = TestFactories.orderUser(
+                requestingUser = TestFactories.completeOrderUser(
                     firstName = "hello",
                     lastName = "you",
                     email = "creator@proper.order"
@@ -201,8 +197,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
             .andExpect(jsonPath("$.legacyOrderId", equalTo("456")))
-            .andExpect(jsonPath("$.creatorEmail", equalTo("creator@proper.order")))
-            .andExpect(jsonPath("$.vendorEmail", equalTo("vendor@proper.order")))
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
             .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))
             .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("hi there <vendor@proper.order>")))

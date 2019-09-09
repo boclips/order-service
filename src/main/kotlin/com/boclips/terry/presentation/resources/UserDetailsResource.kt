@@ -2,6 +2,7 @@ package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderUser
+import org.litote.kmongo.or
 
 data class UserDetailsResource(
     val requestingUserLabel: String,
@@ -13,11 +14,16 @@ data class UserDetailsResource(
             return UserDetailsResource(
                 requestingUserLabel = createUserLabel(order.requestingUser),
                 authorisingUserLabel = createUserLabel(order.authorisingUser),
-                organisationLabel = order.authorisingUser.organisation.name
+                organisationLabel = when (order.authorisingUser) {
+                    is OrderUser.CompleteUser -> order.authorisingUser.organisation.name
+                    is OrderUser.BasicUser -> TODO()
+                }
             )
         }
 
-        private fun createUserLabel(user: OrderUser) =
-            "${user.firstName} ${user.lastName} <${user.email}>"
+        private fun createUserLabel(user: OrderUser) = when (user) {
+            is OrderUser.CompleteUser -> "${user.firstName} ${user.lastName} <${user.email}>"
+            is OrderUser.BasicUser -> user.label
+        }
     }
 }

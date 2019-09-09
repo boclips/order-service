@@ -46,13 +46,13 @@ class OrderResourceTest {
                 isbnOrProductNumber = "an isbn",
                 legacyOrderId = "456",
 
-                authorisingUser = TestFactories.orderUser(
+                authorisingUser = TestFactories.completeOrderUser(
                     firstName = "authJoe",
                     lastName = "Mac",
                     email = "vendor@email.com",
                     organisation = TestFactories.orderOrganisation(name = "Auth Test Org")
                 ),
-                requestingUser = TestFactories.orderUser(
+                requestingUser = TestFactories.completeOrderUser(
                     firstName = "requestorJack",
                     lastName = "Smith",
                     email = "creator@email.com",
@@ -91,8 +91,6 @@ class OrderResourceTest {
                 id = "123",
                 legacyOrderId = "456",
                 isbnNumber = "an isbn",
-                creatorEmail = "creator@email.com",
-                vendorEmail = "vendor@email.com",
                 userDetails = UserDetailsResource(
                     requestingUserLabel = "requestorJack Smith <creator@email.com>",
                     authorisingUserLabel = "authJoe Mac <vendor@email.com>",

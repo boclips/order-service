@@ -7,8 +7,6 @@ import org.springframework.hateoas.core.Relation
 data class OrderResource(
     val id: String,
     val legacyOrderId: String,
-    val creatorEmail: String,
-    val vendorEmail: String,
     val userDetails: UserDetailsResource,
     val status: String,
     val createdAt: String,
@@ -22,8 +20,6 @@ data class OrderResource(
                 id = order.id.value,
                 legacyOrderId = order.legacyOrderId,
                 isbnNumber = order.isbnOrProductNumber,
-                creatorEmail = order.requestingUser.email,
-                vendorEmail = order.authorisingUser.email,
                 userDetails = UserDetailsResource.toResource(order),
                 createdAt = order.createdAt.toString(),
                 updatedAt = order.updatedAt.toString(),
