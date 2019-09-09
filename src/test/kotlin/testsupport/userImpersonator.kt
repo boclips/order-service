@@ -8,7 +8,8 @@ fun MockHttpServletRequestBuilder.asBackofficeStaff() = this.with(
     SecurityMockMvcRequestPostProcessors
         .user("backofficestaff")
         .roles(
-            UserRoles.VIEW_ORDERS
+            UserRoles.VIEW_ORDERS,
+            UserRoles.CREATE_ORDERS
         )
 )
 

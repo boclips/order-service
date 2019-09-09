@@ -29,6 +29,7 @@ class OrderServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(HttpMethod.GET, "/v1/orders").hasRole(UserRoles.VIEW_ORDERS)
             .antMatchers(HttpMethod.GET, "/v1/orders/**").hasRole(UserRoles.VIEW_ORDERS)
+            .antMatchers(HttpMethod.POST, "/v1/orders").hasRole(UserRoles.CREATE_ORDERS)
 
             .anyRequest().denyAll()
     }

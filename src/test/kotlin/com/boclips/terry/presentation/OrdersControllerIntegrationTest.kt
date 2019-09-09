@@ -11,7 +11,12 @@ import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.TestFactories
@@ -21,6 +26,8 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
+    @Value("classpath:master-orders.csv")
+    lateinit var ordersCsv: Resource
 
     @Test
     fun `user without permission to view orders is forbidden from listing orders`() {
@@ -223,5 +230,22 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `get appropriate response when getting non-existent order`() {
         mockMvc.perform(get("/v1/orders/notthere").asBackofficeStaff())
             .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `can upload a csv of orders`() {
+        mockMvc.perform(
+            multipart("/v1/orders")
+                .file("file", ordersCsv.file.readBytes())
+                .asBackofficeStaff()
+        ).andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `only users with correct role can create orders`() {
+        mockMvc.perform(
+            multipart("/v1/orders")
+                .file("file", ordersCsv.file.readBytes())
+        ).andExpect(status().isForbidden)
     }
 }

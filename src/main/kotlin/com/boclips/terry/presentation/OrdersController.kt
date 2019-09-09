@@ -8,10 +8,18 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
+import java.io.InputStream
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -55,6 +63,11 @@ class OrdersController(
         val order = getOrder(id)
 
         return wrapOrder(order)
+    }
+
+    @PostMapping(consumes = ["multipart/form-data"])
+    fun createOrder(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
+        return ResponseEntity(HttpStatus.CREATED)
     }
 
     private fun wrapOrder(orderResource: OrderResource): Resource<OrderResource> {
