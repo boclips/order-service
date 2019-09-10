@@ -112,4 +112,13 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
 
         assertThat(orders.first().authorisingUser).isEqualTo(OrderUser.BasicUser("a great member"))
     }
+
+    @Test
+    fun `sets organisation`() {
+        val csvOrderItem = TestFactories.csvOrderItemMetadata(publisher = "E Corp")
+
+        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+
+        assertThat(orders.first().organisation.name).isEqualTo("E Corp")
+    }
 }

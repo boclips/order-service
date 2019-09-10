@@ -31,7 +31,8 @@ class OrderDocumentConverterTest {
                 updatedAt = Instant.MAX,
                 createdAt = Instant.EPOCH,
                 isbnOrProductNumber = "anisbn",
-                items = null
+                items = null,
+                organisation = ""
             ).let(OrderDocumentConverter::toOrder).items
         ).isEmpty()
     }

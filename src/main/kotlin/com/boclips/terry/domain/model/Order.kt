@@ -9,6 +9,7 @@ data class Order(
     val status: OrderStatus,
     val authorisingUser: OrderUser,
     val requestingUser: OrderUser,
+    val organisation: OrderOrganisation,
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String,

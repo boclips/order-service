@@ -1,10 +1,8 @@
 package com.boclips.terry.application.orders.converters
 
 import com.boclips.terry.application.exceptions.InvalidLegacyOrderItemLicense
-import com.boclips.terry.application.orders.converters.LicenseConverter
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,7 +22,7 @@ internal class LicenseConverterTest {
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
                 Duration(amount = 10, unit = ChronoUnit.YEARS),
-                territory = Territory.SINGLE_REGION
+                territory = OrderItemLicense.SINGLE_REGION
             )
         )
     }
@@ -40,7 +38,7 @@ internal class LicenseConverterTest {
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
                 Duration(amount = 5, unit = ChronoUnit.YEARS),
-                territory = Territory.MULTI_REGION
+                territory = OrderItemLicense.MULTI_REGION
             )
         )
     }
@@ -56,7 +54,7 @@ internal class LicenseConverterTest {
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
                 Duration(amount = 3, unit = ChronoUnit.YEARS),
-                territory = Territory.WORLDWIDE
+                territory = OrderItemLicense.WORLDWIDE
             )
         )
     }

@@ -2,7 +2,6 @@ package com.boclips.terry.infrastructure.orders.converters
 
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.LicenseDocument
 import org.assertj.core.api.Assertions.assertThat
@@ -42,7 +41,7 @@ class OrderItemDocumentConverterTest {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
                     Duration(amount = 10, unit = ChronoUnit.YEARS),
-                    territory = Territory.SINGLE_REGION
+                    territory = OrderItemLicense.SINGLE_REGION
                 )
             )
 
@@ -52,7 +51,7 @@ class OrderItemDocumentConverterTest {
                 LicenseDocument(
                     amount = 10,
                     unit = ChronoUnit.YEARS,
-                    territory = Territory.SINGLE_REGION
+                    territory = OrderItemLicense.SINGLE_REGION
                 )
             )
         }
@@ -88,7 +87,7 @@ class OrderItemDocumentConverterTest {
             val orderItemDocument = TestFactories.orderItemDocument(
                 license = TestFactories.licenseDocument(
                     duration = 3,
-                    territory = Territory.MULTI_REGION
+                    territory = OrderItemLicense.MULTI_REGION
                 )
             )
 
@@ -97,7 +96,7 @@ class OrderItemDocumentConverterTest {
             assertThat(convertedItem.license).isEqualTo(
                 OrderItemLicense(
                     Duration(amount = 3, unit = ChronoUnit.YEARS),
-                    territory = Territory.MULTI_REGION
+                    territory = OrderItemLicense.MULTI_REGION
                 )
             )
         }

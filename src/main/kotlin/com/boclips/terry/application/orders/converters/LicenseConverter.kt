@@ -4,7 +4,6 @@ import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.terry.application.exceptions.InvalidLegacyOrderItemLicense
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import java.time.temporal.ChronoUnit
 
 object LicenseConverter {
@@ -23,11 +22,11 @@ object LicenseConverter {
         )
     }
 
-    private fun getTerritory(license: LegacyOrderItemLicense): Territory {
+    private fun getTerritory(license: LegacyOrderItemLicense): String {
         return when (license.code.substringAfter("_")) {
-            "SR" -> Territory.SINGLE_REGION
-            "MR" -> Territory.MULTI_REGION
-            "WW" -> Territory.WORLDWIDE
+            "SR" -> OrderItemLicense.SINGLE_REGION
+            "MR" -> OrderItemLicense.MULTI_REGION
+            "WW" -> OrderItemLicense.WORLDWIDE
             else -> throw InvalidLegacyOrderItemLicense("Invalid territory: ${license.code} ")
         }
     }

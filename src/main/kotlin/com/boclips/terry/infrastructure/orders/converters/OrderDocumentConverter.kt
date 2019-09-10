@@ -2,6 +2,7 @@ package com.boclips.terry.infrastructure.orders.converters
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
+import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.infrastructure.orders.OrderDocument
 import org.bson.types.ObjectId
@@ -17,7 +18,8 @@ object OrderDocumentConverter {
             updatedAt = order.updatedAt,
             createdAt = order.createdAt,
             isbnOrProductNumber = order.isbnOrProductNumber,
-            items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument)
+            items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
+            organisation = order.organisation.name
 
         )
     }
@@ -32,7 +34,8 @@ object OrderDocumentConverter {
             createdAt = document.createdAt,
             updatedAt = document.updatedAt,
             isbnOrProductNumber = document.isbnOrProductNumber,
-            items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList()
+            items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList(),
+            organisation = OrderOrganisation(name = document.organisation)
         )
     }
 }

@@ -77,7 +77,8 @@ class StoreLegacyOrder(
             authorisingUser = convertLegacyUser(event.authorisingUser),
             isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
             status = OrderStatusConverter.from(event.order.status),
-            items = event.orderItems.map { convertLegacyItem(it) }
+            items = event.orderItems.map { convertLegacyItem(it) },
+            organisation = OrderOrganisation(name = event.authorisingUser.organisation.name)
         )
     }
 
@@ -86,11 +87,7 @@ class StoreLegacyOrder(
             firstName = user.firstName,
             lastName = user.lastName,
             email = user.email,
-            legacyUserId = user.id,
-            organisation = OrderOrganisation(
-                legacyOrganisationId = user.organisation.id,
-                name = user.organisation.name
-            )
+            legacyUserId = user.id
         )
     }
 
@@ -101,7 +98,6 @@ class StoreLegacyOrder(
         }
 
         return OrderItem(
-            uuid = item.uuid,
             price = item.price,
             transcriptRequested = item.transcriptsRequired,
             contentPartner = ContentPartner(

@@ -18,7 +18,6 @@ import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
@@ -26,7 +25,6 @@ import com.boclips.terry.infrastructure.orders.ContentPartnerDocument
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
-import com.boclips.terry.infrastructure.orders.OrderOrganisationDocument
 import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
@@ -178,7 +176,8 @@ class TestFactories {
             createdAt: Instant = Instant.now(),
             updatedAt: Instant = Instant.now(),
             items: List<OrderItem> = emptyList(),
-            isbnOrProductNumber: String = "some-isbn"
+            isbnOrProductNumber: String = "some-isbn",
+            orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp")
         ): Order {
             return Order(
                 id = id,
@@ -189,12 +188,12 @@ class TestFactories {
                 authorisingUser = authorisingUser,
                 isbnOrProductNumber = isbnOrProductNumber,
                 status = status,
-                items = items
+                items = items,
+                organisation = orderOrganisation
             )
         }
 
         fun orderItem(
-            uuid: String = "i-love-uuids",
             price: BigDecimal = BigDecimal.ONE,
             transcriptRequested: Boolean = true,
             contentPartner: ContentPartner = contentPartner(),
@@ -202,11 +201,10 @@ class TestFactories {
             trim: TrimRequest = TrimRequest.NoTrimming,
             license: OrderItemLicense = OrderItemLicense(
                 Duration(amount = 10, unit = ChronoUnit.YEARS),
-                territory = Territory.SINGLE_REGION
+                territory = OrderItemLicense.SINGLE_REGION
             )
         ): OrderItem {
             return OrderItem(
-                uuid = uuid,
                 price = price,
                 transcriptRequested = transcriptRequested,
                 contentPartner = contentPartner,
@@ -282,29 +280,17 @@ class TestFactories {
                 .build()
         }
 
-        fun orderOrganisation(
-            sourceOrganisationId: String = "source123",
-            name: String = "Org Pub"
-        ): OrderOrganisation {
-            return OrderOrganisation(
-                legacyOrganisationId = sourceOrganisationId,
-                name = name
-            )
-        }
-
         fun completeOrderUser(
             firstName: String = "OrderingBob",
             lastName: String = "Smith",
             email: String = "bobsmith@hello.com",
-            sourceUserId: String = "abc123",
-            organisation: OrderOrganisation = orderOrganisation()
+            sourceUserId: String = "abc123"
         ): OrderUser {
             return OrderUser.CompleteUser(
                 firstName = firstName,
                 lastName = lastName,
                 email = email,
-                legacyUserId = sourceUserId,
-                organisation = organisation
+                legacyUserId = sourceUserId
             )
         }
 
@@ -312,22 +298,11 @@ class TestFactories {
             label: String = "Matt <hello@boclips.tom>"
         ): OrderUser = OrderUser.BasicUser(label = label)
 
-        fun orderOrganisationDocument(
-            sourceOrganisationId: String = "source123",
-            name: String = "Org Pub"
-        ): OrderOrganisationDocument {
-            return OrderOrganisationDocument(
-                legacyOrganisationId = sourceOrganisationId,
-                name = name
-            )
-        }
-
         fun orderUserDocument(
             firstName: String? = "OrderingBob",
             lastName: String? = "Smith",
             email: String? = "bobsmith@hello.com",
             sourceUserId: String? = "abc123",
-            organisation: OrderOrganisationDocument? = orderOrganisationDocument(),
             label: String? = null
         ): OrderUserDocument {
             return OrderUserDocument(
@@ -335,7 +310,6 @@ class TestFactories {
                 lastName = lastName,
                 email = email,
                 legacyUserId = sourceUserId,
-                organisation = organisation,
                 label = label
             )
         }
@@ -346,13 +320,11 @@ class TestFactories {
                 firstName = null,
                 lastName = null,
                 email = null,
-                legacyUserId = null,
-                organisation = null
+                legacyUserId = null
             )
         }
 
         fun orderItemDocument(
-            uuid: String = "i-love-uuids",
             price: BigDecimal = BigDecimal.ONE,
             transcriptRequested: Boolean = true,
             source: SourceDocument = sourceDocument(),
@@ -361,7 +333,6 @@ class TestFactories {
             trim: String? = "hello"
         ): OrderItemDocument {
             return OrderItemDocument(
-                uuid = uuid,
                 price = price,
                 transcriptRequested = transcriptRequested,
                 source = source,
@@ -374,7 +345,7 @@ class TestFactories {
         fun licenseDocument(
             duration: Int = 1,
             unit: ChronoUnit = ChronoUnit.YEARS,
-            territory: Territory = Territory.MULTI_REGION
+            territory: String = OrderItemLicense.MULTI_REGION
         ): LicenseDocument {
             return LicenseDocument(
                 amount = duration,
@@ -413,7 +384,7 @@ class TestFactories {
                 amount = 100,
                 unit = ChronoUnit.YEARS
             ),
-            territory: Territory = Territory.WORLDWIDE
+            territory: String = OrderItemLicense.WORLDWIDE
         ): OrderItemLicense {
             return OrderItemLicense(
                 duration = duration,

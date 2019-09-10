@@ -17,7 +17,6 @@ import com.boclips.terry.infrastructure.orders.VideoDocument
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
         return OrderItemDocument(
-            uuid = it.uuid,
             price = it.price,
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
@@ -43,7 +42,6 @@ object OrderItemDocumentConverter {
 
     fun toOrderItem(it: OrderItemDocument): OrderItem {
         return OrderItem(
-            uuid = it.uuid,
             price = it.price,
             transcriptRequested = it.transcriptRequested,
             contentPartner = ContentPartner(

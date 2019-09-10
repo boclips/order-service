@@ -1,9 +1,10 @@
 package com.boclips.terry.presentation
 
 import com.boclips.terry.domain.model.OrderId
+import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.Duration
-import com.boclips.terry.domain.model.orderItem.Territory
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -45,21 +46,19 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 authorisingUser = TestFactories.completeOrderUser(
                     firstName = "vendor",
                     lastName = "hello",
-                    email = "vendor@proper.order",
-                    organisation = TestFactories.orderOrganisation(name = "An Org")
+                    email = "vendor@proper.order"
                 ),
                 requestingUser = TestFactories.completeOrderUser(
                     firstName = "Kata",
                     lastName = "Kovacs",
-                    email = "creator@proper.order",
-                    organisation = TestFactories.orderOrganisation(name = "Req Org")
+                    email = "creator@proper.order"
                 ),
+                orderOrganisation = OrderOrganisation(name = "An Org"),
                 status = OrderStatus.CONFIRMED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        uuid = "awesome-item-uuid",
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
                         trim = TrimRequest.WithTrimming("4 - 10"),
@@ -75,10 +74,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         ),
                         license = TestFactories.orderItemLicense(
                             duration = Duration(amount = 10, unit = ChronoUnit.YEARS),
-                            territory = Territory.SINGLE_REGION
+                            territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), TestFactories.orderItem(
-                        uuid = "awesome-item-uuid2",
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
                         contentPartner = TestFactories.contentPartner(),
@@ -112,7 +110,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$._embedded.orders[0]._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
@@ -126,7 +123,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[1].uuid", equalTo("awesome-item-uuid2")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("$10.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
 
@@ -150,7 +146,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 authorisingUser = TestFactories.completeOrderUser(
                     email = "vendor@proper.order",
                     firstName = "hi",
-                    organisation = TestFactories.orderOrganisation(name = "An Org"),
                     lastName = "there"
                 ),
                 requestingUser = TestFactories.completeOrderUser(
@@ -158,18 +153,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     lastName = "you",
                     email = "creator@proper.order"
                 ),
+                orderOrganisation = OrderOrganisation(name = "An Org"),
                 status = OrderStatus.CONFIRMED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        uuid = "awesome-item-uuid",
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
                         trim = TrimRequest.NoTrimming,
                         license = TestFactories.orderItemLicense(
                             duration = Duration(10, ChronoUnit.YEARS),
-                            territory = Territory.WORLDWIDE
+                            territory = OrderItemLicense.WORLDWIDE
                         ),
                         contentPartner = TestFactories.contentPartner(
                             referenceId = "cp-id",
@@ -182,7 +177,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoReference = "AP-123"
                         )
                     ), TestFactories.orderItem(
-                        uuid = "awesome-item-uuid2",
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
                         contentPartner = TestFactories.contentPartner(),
@@ -205,7 +199,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
-            .andExpect(jsonPath("$.items[0].uuid", equalTo("awesome-item-uuid")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
             .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))

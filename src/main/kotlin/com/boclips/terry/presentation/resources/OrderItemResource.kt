@@ -2,11 +2,9 @@ package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 
 data class OrderItemResource(
-    val uuid: String,
     val price: PriceResource,
     val transcriptRequested: Boolean,
     val contentPartner: ContentPartnerResource,
@@ -18,7 +16,6 @@ data class OrderItemResource(
     companion object {
         fun fromOrderItem(item: OrderItem): OrderItemResource =
             OrderItemResource(
-                uuid = item.uuid,
                 price = PriceResource.fromBigDecimal(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
@@ -36,11 +33,7 @@ data class OrderItemResource(
                     videoReference = item.video.videoReference
                 ),
                 licenseDuration = getDurationLabel(item.license),
-                licenseTerritory = when (item.license.territory) {
-                    Territory.SINGLE_REGION -> "Single Region"
-                    Territory.MULTI_REGION -> "Multi Region"
-                    Territory.WORLDWIDE -> "Worldwide"
-                }
+                licenseTerritory = item.license.territory
             )
 
         private fun getDurationLabel(license: OrderItemLicense): String {

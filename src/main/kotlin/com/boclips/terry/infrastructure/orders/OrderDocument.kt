@@ -13,5 +13,6 @@ data class OrderDocument(
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String,
-    val items: List<OrderItemDocument>?
+    val items: List<OrderItemDocument>?,
+    val organisation: String
 )

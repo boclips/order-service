@@ -1,10 +1,10 @@
 package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.OrderId
+import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
-import com.boclips.terry.domain.model.orderItem.Territory
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
@@ -49,21 +49,19 @@ class OrderResourceTest {
                 authorisingUser = TestFactories.completeOrderUser(
                     firstName = "authJoe",
                     lastName = "Mac",
-                    email = "vendor@email.com",
-                    organisation = TestFactories.orderOrganisation(name = "Auth Test Org")
+                    email = "vendor@email.com"
                 ),
                 requestingUser = TestFactories.completeOrderUser(
                     firstName = "requestorJack",
                     lastName = "Smith",
-                    email = "creator@email.com",
-                    organisation = TestFactories.orderOrganisation(name = "Sub Test Org")
+                    email = "creator@email.com"
                 ),
+                orderOrganisation = OrderOrganisation(name = "Auth Test Org"),
                 status = OrderStatus.COMPLETED,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 items = listOf(
                     TestFactories.orderItem(
-                        uuid = "123",
                         price = BigDecimal.TEN,
                         transcriptRequested = false,
                         contentPartner = TestFactories.contentPartner(
@@ -79,7 +77,7 @@ class OrderResourceTest {
                         ),
                         license = OrderItemLicense(
                             duration = Duration(10, ChronoUnit.YEARS),
-                            territory = Territory.MULTI_REGION
+                            territory = OrderItemLicense.MULTI_REGION
                         )
                     )
                 )
@@ -102,7 +100,6 @@ class OrderResourceTest {
                 updatedAt = Instant.ofEpochSecond(100).toString(),
                 items = listOf(
                     OrderItemResource(
-                        uuid = "123",
                         price = PriceResource.fromBigDecimal(BigDecimal.TEN),
                         transcriptRequested = false,
                         contentPartner = ContentPartnerResource(

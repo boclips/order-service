@@ -11,7 +11,6 @@ object OrderUserDocumentConverter {
                 lastName = orderUser.lastName,
                 email = orderUser.email,
                 legacyUserId = orderUser.legacyUserId,
-                organisation = OrderOrganisationDocumentConverter.toOrderOrganisationDocument(orderUser.organisation),
                 label = null
             )
             is OrderUser.BasicUser -> OrderUserDocument(
@@ -19,8 +18,7 @@ object OrderUserDocumentConverter {
                 firstName = null,
                 lastName = null,
                 email = null,
-                legacyUserId = null,
-                organisation = null
+                legacyUserId = null
             )
         }
     }
@@ -31,8 +29,7 @@ object OrderUserDocumentConverter {
                 firstName = orderUserDocument.firstName!!,
                 lastName = orderUserDocument.lastName!!,
                 email = orderUserDocument.email!!,
-                legacyUserId = orderUserDocument.legacyUserId!!,
-                organisation = OrderOrganisationDocumentConverter.toOrderOrganisation(orderUserDocument.organisation!!)
+                legacyUserId = orderUserDocument.legacyUserId!!
             )
         } else {
             OrderUser.BasicUser(label = orderUserDocument.label!!)

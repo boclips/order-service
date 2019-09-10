@@ -1,7 +1,7 @@
 package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.orderItem.Duration
-import com.boclips.terry.domain.model.orderItem.Territory
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -43,7 +43,7 @@ class OrderItemResourceTest {
                         amount = 3,
                         unit = ChronoUnit.YEARS
                     ),
-                    territory = Territory.SINGLE_REGION
+                    territory = OrderItemLicense.SINGLE_REGION
                 )
             )
 
@@ -57,7 +57,7 @@ class OrderItemResourceTest {
         fun `converts a Multi Region license`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    territory = Territory.MULTI_REGION
+                    territory = OrderItemLicense.MULTI_REGION
                 )
             )
 
@@ -70,7 +70,7 @@ class OrderItemResourceTest {
         fun `converts a Worldwide license`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    territory = Territory.WORLDWIDE
+                    territory = OrderItemLicense.WORLDWIDE
                 )
             )
 

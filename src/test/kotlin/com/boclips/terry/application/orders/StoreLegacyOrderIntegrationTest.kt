@@ -3,7 +3,7 @@ package com.boclips.terry.application.orders
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.orderItem.Territory
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
@@ -108,8 +108,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
-                email = "123@macs.com",
-                organisation = TestFactories.orderOrganisation(name = "organisation", sourceOrganisationId = "456")
+                email = "123@macs.com"
             )
         )
         assertThat(order.authorisingUser).isEqualTo(
@@ -117,8 +116,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
-                email = "123@macs.com",
-                organisation = TestFactories.orderOrganisation(name = "organisation", sourceOrganisationId = "456")
+                email = "123@macs.com"
             )
         )
         assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")
@@ -126,13 +124,12 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()
-        assertThat(item.uuid).isEqualTo("item-1-uuid")
         assertThat(item.price).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license.duration.amount).isEqualTo(10)
         assertThat(item.license.duration.unit).isEqualTo(ChronoUnit.YEARS)
-        assertThat(item.license.territory).isEqualTo(Territory.SINGLE_REGION)
+        assertThat(item.license.territory).isEqualTo(OrderItemLicense.SINGLE_REGION)
         assertThat(item.contentPartner.videoServiceId.value).isEqualTo(contentPartnerId.value)
         assertThat(item.contentPartner.name).isEqualTo("ted")
         assertThat(item.video.videoServiceId.value).isEqualTo(videoId.value)
