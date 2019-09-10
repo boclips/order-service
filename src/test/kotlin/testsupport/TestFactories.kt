@@ -30,6 +30,7 @@ import com.boclips.terry.infrastructure.orders.OrderOrganisationDocument
 import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
+import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -418,6 +419,56 @@ class TestFactories {
                 duration = duration,
                 territory = territory
             )
+        }
+
+        fun csvOrderItemMetadata(
+            legacyOrderId: String = ObjectId().toHexString(),
+            month: String = "August 2019",
+            requestDate: Date? = Date(),
+            fulfilmentDate: Date? = Date(),
+            quarter: String = "4",
+            memberRequest: String = "Jon Douglas",
+            memberAuthorise: String = "Douglas Authorise",
+            videoId: String = ObjectId().toHexString(),
+            title: String = "Wow, did you see that?",
+            source: String = "That's numberwang",
+            sourceCode: String = "0989890",
+            licenseDuration: Int = -1,
+            territory: String = "Scotland",
+            type: String = "NEWS",
+            price: String = "$100000000",
+            publisher: String = "Biclops",
+            isbnProductNumber: String = "rebmuntcudorpnbsi",
+            language: String = "English",
+            captioning: String = "",
+            trim: String = "",
+            notes: String = "what an order, Geoff",
+            remittanceNotes: String = ""
+        ): CsvOrderItemMetadata {
+            return CsvOrderItemMetadata().apply {
+                this.legacyOrderId = legacyOrderId
+                this.month = month
+                this.requestDate = requestDate
+                this.fulfilmentDate = fulfilmentDate
+                this.quarter = quarter
+                this.memberRequest = memberRequest
+                this.memberAuthorise = memberAuthorise
+                this.videoId = videoId
+                this.title = title
+                this.source = source
+                this.sourceCode = sourceCode
+                this.licenseDuration = licenseDuration
+                this.territory = territory
+                this.type = type
+                this.price = price
+                this.publisher = publisher
+                this.isbnProductNumber = isbnProductNumber
+                this.language = language
+                this.captioning = captioning
+                this.trim = trim
+                this.notes = notes
+                this.remittanceNotes = remittanceNotes
+            }
         }
     }
 }

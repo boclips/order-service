@@ -1,11 +1,10 @@
 package com.boclips.terry.application.orders
 
-import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.TestFactories
 
 class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -13,7 +12,7 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create an order`() {
-        val csvOrderMetadata = CsvOrderItemMetadata()
+        val csvOrderMetadata = TestFactories.csvOrderItemMetadata()
 
         createOrderFromCsv.invoke(listOf(csvOrderMetadata))
 

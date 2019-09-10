@@ -35,7 +35,7 @@ object OrderUserDocumentConverter {
                 organisation = OrderOrganisationDocumentConverter.toOrderOrganisation(orderUserDocument.organisation!!)
             )
         } else {
-            OrderUser.BasicUser(label = orderUserDocument.label!!) //TODO add a missing user
+            OrderUser.BasicUser(label = orderUserDocument.label!!)
         }
     }
 }

@@ -14,4 +14,3 @@ data class Order(
     val isbnOrProductNumber: String,
     val items: List<OrderItem>
 )
-
