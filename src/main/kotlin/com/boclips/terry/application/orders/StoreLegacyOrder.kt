@@ -15,11 +15,9 @@ import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.OrdersRepository
-import com.boclips.terry.domain.model.orderItem.ContentPartner
-import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.OrderItem
-import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
+import com.boclips.terry.domain.service.VideoProvider
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
@@ -30,7 +28,8 @@ import org.springframework.stereotype.Component
 class StoreLegacyOrder(
     private val repo: OrdersRepository,
     private val legacyOrdersRepository: LegacyOrdersRepository,
-    private val videoServiceClient: VideoServiceClient
+    private val videoServiceClient: VideoServiceClient,
+    private val videoProvider: VideoProvider
 ) {
     companion object : KLogging()
 
@@ -92,27 +91,14 @@ class StoreLegacyOrder(
     }
 
     fun convertLegacyItem(item: LegacyOrderItem): OrderItem {
-        val videoResource = videoServiceClient.rawIdToVideoId(item.assetId).let {
-            logger.info { "Fetching video: ${it.value}" }
-            videoServiceClient.get(it)
-        }
-
-        return OrderItem(
-            price = item.price,
-            transcriptRequested = item.transcriptsRequired,
-
-            trim = TrimmingConverter.toTrimRequest(item.trimming),
-            video = Video(
-                videoServiceId = VideoId(value = videoResource.videoId.value),
-                title = videoResource.title,
-                type = videoResource.type.toString(),
-                videoReference = videoResource.contentPartnerVideoId,
-                contentPartner = ContentPartner(
-                    videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
-                    name = videoResource.createdBy
-                )
-            ),
-            license = LicenseConverter.toOrderItemLicense(item.license)
-        )
+        return videoProvider.get(VideoId(value = item.assetId))?.let {
+            OrderItem(
+                price = item.price,
+                transcriptRequested = item.transcriptsRequired,
+                trim = TrimmingConverter.toTrimRequest(item.trimming),
+                video = it,
+                license = LicenseConverter.toOrderItemLicense(item.license)
+            )
+        } ?: throw IllegalStateException("Could not find video for: ${item.assetId}")
     }
 }

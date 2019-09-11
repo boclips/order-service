@@ -63,7 +63,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         transcriptRequested = true,
                         trim = TrimRequest.WithTrimming("4 - 10"),
                         video = TestFactories.video(
-                            referenceId = "1234",
+                            videoServiceId = "1234",
                             videoReference = "AP-123",
                             title = "A Video",
                             videoType = VideoType.STOCK,
@@ -168,7 +168,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             territory = OrderItemLicense.WORLDWIDE
                         ),
                         video = TestFactories.video(
-                            referenceId = "video-id",
+                            videoServiceId = "video-id",
                             title = "A Video",
                             videoType = VideoType.STOCK,
                             videoReference = "AP-123",
@@ -221,6 +221,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can upload a csv of orders`() {
+        this.defaultVideoClientResponse()
+
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", ordersCsv.file.readBytes())

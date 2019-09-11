@@ -2,15 +2,29 @@ package com.boclips.terry.application.orders.converters.metadataConverters
 
 import com.boclips.terry.application.orders.exceptions.InvalidLicenseException
 import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsException
+import com.boclips.terry.domain.service.VideoProvider
+import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import testsupport.TestFactories
 
 class OrderItemsFieldConverterTest {
-    val orderItemsFieldConverter = OrderItemsFieldConverter(orderItemFieldConverter = OrderItemFieldConverter())
+    private val mockProvider = mock(VideoProvider::class.java)
+    private val orderItemsFieldConverter =
+        OrderItemsFieldConverter(orderItemFieldConverter = OrderItemFieldConverter(mockProvider))
+
+    @BeforeEach
+    fun setup() {
+        doReturn(TestFactories.video())
+            .whenever(mockProvider)
+            .get(any())
+    }
 
     @Test
     fun `converts a list of valid order items`() {
@@ -35,9 +49,9 @@ class OrderItemsFieldConverterTest {
         val validItem = TestFactories.csvOrderItemMetadata()
         val inValidItem = TestFactories.csvOrderItemMetadata()
 
-        val spy = spy(OrderItemFieldConverter())
+        val spy = spy(OrderItemFieldConverter(mockProvider))
 
-        Mockito.`when`(spy.convert(inValidItem))
+        whenever(spy.convert(inValidItem))
             .thenThrow(InvalidLicenseException("bad"))
 
         val orderItems = OrderItemsFieldConverter(spy).convert(listOf(validItem, inValidItem))

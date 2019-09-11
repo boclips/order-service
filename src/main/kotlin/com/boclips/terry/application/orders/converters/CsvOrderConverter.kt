@@ -3,6 +3,7 @@ package com.boclips.terry.application.orders.converters
 import com.boclips.terry.application.orders.converters.metadataConverters.FulfilmentDateFieldConverter
 import com.boclips.terry.application.orders.converters.metadataConverters.OrderItemsFieldConverter
 import com.boclips.terry.application.orders.converters.metadataConverters.RequestDateFieldConverter
+import com.boclips.terry.application.orders.exceptions.InvalidCsvException
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderOrganisation
@@ -36,7 +37,7 @@ class CsvOrderConverter(
                         authorisingUser = OrderUser.BasicUser(it.value.first().memberAuthorise),
                         organisation = OrderOrganisation(name = it.value.first().publisher)
                     )
-                } catch (ex: Exception) {
+                } catch (ex: InvalidCsvException) {
                     return@mapNotNull null
                 }
 

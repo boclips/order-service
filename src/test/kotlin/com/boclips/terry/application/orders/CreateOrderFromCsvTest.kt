@@ -12,6 +12,8 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create an order`() {
+        this.defaultVideoClientResponse()
+
         val csvOrderMetadata = TestFactories.csvOrderItemMetadata()
 
         createOrderFromCsv.invoke(listOf(csvOrderMetadata))

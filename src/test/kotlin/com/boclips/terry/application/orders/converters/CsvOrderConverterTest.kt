@@ -4,6 +4,7 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
@@ -12,6 +13,11 @@ import java.util.Date
 class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var orderConverter: CsvOrderConverter
+
+    @BeforeEach
+    fun setUp() {
+        this.defaultVideoClientResponse()
+    }
 
     @Test
     fun `groups orders by id`() {
@@ -30,19 +36,17 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
     fun `creates a list of order items for grouped order`() {
         val csvOrderItems = listOf(
             TestFactories.csvOrderItemMetadata(
-                legacyOrderId = "1",
-                title = "hello"
+                legacyOrderId = "1"
+
             ),
             TestFactories.csvOrderItemMetadata(
-                legacyOrderId = "1",
-                title = "good bye"
+                legacyOrderId = "1"
             )
         )
 
         val orders = orderConverter.toOrders(csvOrderItems)
         assertThat(orders).hasSize(1)
         assertThat(orders.first().items).hasSize(2)
-        assertThat(orders.first().items.map { it.video.title }).containsExactlyInAnyOrder("hello", "good bye")
     }
 
     @Test

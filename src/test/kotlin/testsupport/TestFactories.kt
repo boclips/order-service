@@ -251,14 +251,14 @@ class TestFactories {
         }
 
         fun video(
-            referenceId: String = "video-service-id",
+            videoServiceId: String = "video-service-id",
             title: String = "joshua tree",
             videoType: VideoType = VideoType.OTHER,
             videoReference: String = "ted_1234",
             contentPartner: ContentPartner = contentPartner()
         ): Video {
             return Video(
-                videoServiceId = VideoId(value = referenceId),
+                videoServiceId = VideoId(value = videoServiceId),
                 title = title,
                 type = videoType.toString(),
                 videoReference = videoReference,

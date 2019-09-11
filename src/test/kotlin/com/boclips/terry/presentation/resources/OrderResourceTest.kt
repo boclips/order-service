@@ -66,7 +66,7 @@ class OrderResourceTest {
                         transcriptRequested = false,
                         trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
-                            referenceId = "video-id",
+                            videoServiceId = "video-id",
                             videoType = VideoType.STOCK,
                             title = "video title",
                             videoReference = "TED_11",
