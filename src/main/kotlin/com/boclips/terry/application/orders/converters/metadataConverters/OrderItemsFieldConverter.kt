@@ -6,9 +6,15 @@ import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import org.springframework.stereotype.Component
 
 @Component
-class OrderItemsFieldConverter {
+class OrderItemsFieldConverter(val orderItemFieldConverter: OrderItemFieldConverter) {
     fun convert(items: List<CsvOrderItemMetadata>): List<OrderItem> {
-        return items.map { OrderItemFieldConverter().convert(it) }.let {
+        return items.mapNotNull {
+            try {
+                orderItemFieldConverter.convert(it)
+            } catch (e: Exception) {
+                null
+            }
+        }.let {
             if (it.isEmpty()) {
                 throw InvalidMetadataItemsException("No valid items")
             } else {

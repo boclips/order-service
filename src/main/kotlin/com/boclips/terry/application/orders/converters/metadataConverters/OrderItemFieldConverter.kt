@@ -8,8 +8,10 @@ import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
+@Component
 class OrderItemFieldConverter {
     fun convert(csvItem: CsvOrderItemMetadata): OrderItem {
         return OrderItem(
