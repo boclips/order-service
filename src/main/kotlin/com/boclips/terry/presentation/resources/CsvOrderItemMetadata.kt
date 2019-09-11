@@ -67,7 +67,7 @@ class CsvOrderItemMetadata {
     var sourceCode: String = ""
 
     @JsonProperty(value = Companion.LICENSE_DURATION)
-    var licenseDuration: Int = -1
+    var licenseDuration: String = ""
 
     @JsonProperty(value = Companion.TERRITORY)
     var territory: String = ""

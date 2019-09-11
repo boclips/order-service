@@ -40,7 +40,7 @@ class OrderItemDocumentConverterTest {
         fun `converts a 10 Year single region license`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    Duration(amount = 10, unit = ChronoUnit.YEARS),
+                    Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                     territory = OrderItemLicense.SINGLE_REGION
                 )
             )
@@ -51,7 +51,8 @@ class OrderItemDocumentConverterTest {
                 LicenseDocument(
                     amount = 10,
                     unit = ChronoUnit.YEARS,
-                    territory = OrderItemLicense.SINGLE_REGION
+                    territory = OrderItemLicense.SINGLE_REGION,
+                    description = null
                 )
             )
         }
@@ -86,7 +87,29 @@ class OrderItemDocumentConverterTest {
         fun `converts 3 year multi region license`() {
             val orderItemDocument = TestFactories.orderItemDocument(
                 license = TestFactories.licenseDocument(
-                    duration = 3,
+                    amount = 3,
+                    territory = OrderItemLicense.MULTI_REGION,
+                    description = null
+                )
+            )
+
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument)
+
+            assertThat(convertedItem.license).isEqualTo(
+                OrderItemLicense(
+                    Duration.Time(amount = 3, unit = ChronoUnit.YEARS),
+                    territory = OrderItemLicense.MULTI_REGION
+                )
+            )
+        }
+
+        @Test
+        fun `converts license with description`() {
+            val orderItemDocument = TestFactories.orderItemDocument(
+                license = TestFactories.licenseDocument(
+                    description = "license description",
+                    amount = null,
+                    unit = null,
                     territory = OrderItemLicense.MULTI_REGION
                 )
             )
@@ -95,7 +118,7 @@ class OrderItemDocumentConverterTest {
 
             assertThat(convertedItem.license).isEqualTo(
                 OrderItemLicense(
-                    Duration(amount = 3, unit = ChronoUnit.YEARS),
+                    Duration.Description(label = "license description"),
                     territory = OrderItemLicense.MULTI_REGION
                 )
             )

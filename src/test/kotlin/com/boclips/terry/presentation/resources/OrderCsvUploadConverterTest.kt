@@ -32,7 +32,7 @@ class OrderCsvUploadConverterTest {
         assertThat(orderItem.title).isEqualTo("Why the Evolutionary Epic Matters: Crash Course Big History #203")
         assertThat(orderItem.source).isEqualTo("Crash Course History")
         assertThat(orderItem.sourceCode).isEqualTo("BigHistory203")
-        assertThat(orderItem.licenseDuration).isEqualTo(5)
+        assertThat(orderItem.licenseDuration).isEqualTo("5")
         assertThat(orderItem.territory).isEqualTo("Worldwide")
         assertThat(orderItem.type).isEqualTo("Instructional Clips")
         assertThat(orderItem.price).isEqualTo("USD $100")

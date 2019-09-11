@@ -200,7 +200,7 @@ class TestFactories {
             video: Video = video(),
             trim: TrimRequest = TrimRequest.NoTrimming,
             license: OrderItemLicense = OrderItemLicense(
-                Duration(amount = 10, unit = ChronoUnit.YEARS),
+                Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                 territory = OrderItemLicense.SINGLE_REGION
             )
         ): OrderItem {
@@ -343,14 +343,16 @@ class TestFactories {
         }
 
         fun licenseDocument(
-            duration: Int = 1,
-            unit: ChronoUnit = ChronoUnit.YEARS,
-            territory: String = OrderItemLicense.MULTI_REGION
+            amount: Int? = 1,
+            unit: ChronoUnit? = ChronoUnit.YEARS,
+            territory: String = OrderItemLicense.MULTI_REGION,
+            description: String? = "Life of work"
         ): LicenseDocument {
             return LicenseDocument(
-                amount = duration,
+                amount = amount,
                 unit = unit,
-                territory = territory
+                territory = territory,
+                description = description
             )
         }
 
@@ -380,7 +382,7 @@ class TestFactories {
         }
 
         fun orderItemLicense(
-            duration: Duration = Duration(
+            duration: Duration = Duration.Time(
                 amount = 100,
                 unit = ChronoUnit.YEARS
             ),
@@ -404,7 +406,7 @@ class TestFactories {
             title: String = "Wow, did you see that?",
             source: String = "That's numberwang",
             sourceCode: String = "0989890",
-            licenseDuration: Int = -1,
+            licenseDuration: String = "3",
             territory: String = "Scotland",
             type: String = "NEWS",
             price: String = "$100000000",

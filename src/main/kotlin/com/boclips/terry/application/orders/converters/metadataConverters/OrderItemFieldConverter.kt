@@ -3,14 +3,12 @@ package com.boclips.terry.application.orders.converters.metadataConverters
 import com.boclips.terry.application.orders.converters.TrimmingConverter
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
-import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import java.math.BigDecimal
-import java.time.temporal.ChronoUnit
 
 class OrderItemFieldConverter {
     fun convert(csvItem: CsvOrderItemMetadata): OrderItem {
@@ -25,7 +23,7 @@ class OrderItemFieldConverter {
                 videoReference = csvItem.sourceCode
             ),
             license = OrderItemLicense(
-                duration = Duration(csvItem.licenseDuration, ChronoUnit.YEARS),
+                duration = LicenseDurationFieldConverter().convert(csvItem),
                 territory = csvItem.territory
             ),
             contentPartner = ContentPartner(

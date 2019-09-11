@@ -39,7 +39,7 @@ class OrderItemResourceTest {
         fun `converts a valid license`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    duration = Duration(
+                    duration = Duration.Time(
                         amount = 3,
                         unit = ChronoUnit.YEARS
                     ),
@@ -82,12 +82,24 @@ class OrderItemResourceTest {
         fun `converts a license with single duration`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    duration = Duration(1, ChronoUnit.YEARS)
+                    duration = Duration.Time(1, ChronoUnit.YEARS)
                 )
             )
 
             val resource = OrderItemResource.fromOrderItem(orderItem)
             assertThat(resource.licenseDuration).isEqualTo("1 Year")
+        }
+
+        @Test
+        fun `converts a license with a description`() {
+            val orderItem = TestFactories.orderItem(
+                license = TestFactories.orderItemLicense(
+                    duration = Duration.Description("Life of work")
+                )
+            )
+
+            val resource = OrderItemResource.fromOrderItem(orderItem)
+            assertThat(resource.licenseDuration).isEqualTo("Life of work")
         }
     }
 }

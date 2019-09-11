@@ -1,5 +1,6 @@
 package com.boclips.terry.presentation.resources
 
+import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
@@ -37,15 +38,20 @@ data class OrderItemResource(
             )
 
         private fun getDurationLabel(license: OrderItemLicense): String {
-            val unit = license.duration.unit.name.toLowerCase().capitalize().let {
-                if (license.duration.amount > 1) {
-                    it
-                } else {
-                    it.removeSuffix("s")
-                }
-            }
+            return when (license.duration) {
+                is Duration.Time -> {
+                    val unit = license.duration.unit.name.toLowerCase().capitalize().let {
+                        if (license.duration.amount > 1) {
+                            it
+                        } else {
+                            it.removeSuffix("s")
+                        }
+                    }
 
-            return "${license.duration.amount} $unit"
+                    "${license.duration.amount} $unit"
+                }
+                is Duration.Description -> license.duration.label
+            }
         }
     }
 }

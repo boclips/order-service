@@ -76,7 +76,7 @@ class OrderResourceTest {
                             videoReference = "TED_11"
                         ),
                         license = OrderItemLicense(
-                            duration = Duration(10, ChronoUnit.YEARS),
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
                             territory = OrderItemLicense.MULTI_REGION
                         )
                     )
