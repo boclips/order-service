@@ -39,7 +39,7 @@ class OrderItemResourceTest {
         fun `converts a valid license`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    duration = Duration(
+                    duration = Duration.Time(
                         amount = 3,
                         unit = ChronoUnit.YEARS
                     ),
@@ -82,7 +82,7 @@ class OrderItemResourceTest {
         fun `converts a license with single duration`() {
             val orderItem = TestFactories.orderItem(
                 license = TestFactories.orderItemLicense(
-                    duration = Duration(1, ChronoUnit.YEARS)
+                    duration = Duration.Time(1, ChronoUnit.YEARS)
                 )
             )
 

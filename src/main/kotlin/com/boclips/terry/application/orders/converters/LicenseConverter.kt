@@ -15,7 +15,7 @@ object LicenseConverter {
     }
 
     private fun getDuration(license: LegacyOrderItemLicense): Duration {
-        return Duration(
+        return Duration.Time(
             amount = license.code.substringBefore("YR").toIntOrNull()
                 ?: throw InvalidLegacyOrderItemLicense("Invalid duration: ${license.code}"),
             unit = ChronoUnit.YEARS

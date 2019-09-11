@@ -10,7 +10,6 @@ import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import java.math.BigDecimal
-import java.time.temporal.ChronoUnit
 
 class OrderItemFieldConverter {
     fun convert(csvItem: CsvOrderItemMetadata): OrderItem {
@@ -25,7 +24,7 @@ class OrderItemFieldConverter {
                 videoReference = csvItem.sourceCode
             ),
             license = OrderItemLicense(
-                duration = Duration(csvItem.licenseDuration, ChronoUnit.YEARS),
+                duration = Duration.Description(""),
                 territory = csvItem.territory
             ),
             contentPartner = ContentPartner(

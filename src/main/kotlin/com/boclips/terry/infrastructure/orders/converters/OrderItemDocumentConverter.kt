@@ -32,11 +32,20 @@ object OrderItemDocumentConverter {
                 title = it.video.title,
                 type = it.video.type
             ),
-            license = LicenseDocument(
-                amount = it.license.duration.amount,
-                unit = it.license.duration.unit,
-                territory = it.license.territory
-            )
+            license = when (it.license.duration) {
+                is Duration.Time -> LicenseDocument(
+                    amount = it.license.duration.amount,
+                    unit = it.license.duration.unit,
+                    territory = it.license.territory,
+                    description = null
+                )
+                is Duration.Description -> LicenseDocument(
+                    amount = null,
+                    unit = null,
+                    territory = it.license.territory,
+                    description = it.license.duration.label
+                )
+            }
         )
     }
 
@@ -56,7 +65,14 @@ object OrderItemDocumentConverter {
                 videoReference = it.source.videoReference
             ),
             license = OrderItemLicense(
-                duration = Duration(amount = it.license.amount, unit = it.license.unit),
+                duration = when {
+                    it.license.isValidTime() -> Duration.Time(
+                        amount = it.license.amount!!,
+                        unit = it.license.unit!!
+                    )
+                    it.license.isValidDescription() -> Duration.Description(label = it.license.description!!)
+                    else -> throw IllegalStateException("Invalid duration")
+                },
                 territory = it.license.territory
             )
         )

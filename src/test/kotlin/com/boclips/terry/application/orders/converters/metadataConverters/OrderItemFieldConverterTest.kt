@@ -56,11 +56,11 @@ class OrderItemFieldConverterTest {
 
     @Test
     fun `converts license duration if present`() {
-        val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = 5)
+        val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = "5")
 
         val orderItem = OrderItemFieldConverter().convert(csvMetadataItem)
 
-        assertThat(orderItem.license.duration).isEqualTo(Duration(5, ChronoUnit.YEARS))
+        assertThat(orderItem.license.duration).isEqualTo(Duration.Time(5, ChronoUnit.YEARS))
     }
 
     @Test

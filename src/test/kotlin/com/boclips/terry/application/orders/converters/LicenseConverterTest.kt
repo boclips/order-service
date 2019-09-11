@@ -21,7 +21,7 @@ internal class LicenseConverterTest {
 
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
-                Duration(amount = 10, unit = ChronoUnit.YEARS),
+                Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                 territory = OrderItemLicense.SINGLE_REGION
             )
         )
@@ -37,7 +37,7 @@ internal class LicenseConverterTest {
 
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
-                Duration(amount = 5, unit = ChronoUnit.YEARS),
+                Duration.Time(amount = 5, unit = ChronoUnit.YEARS),
                 territory = OrderItemLicense.MULTI_REGION
             )
         )
@@ -53,7 +53,7 @@ internal class LicenseConverterTest {
 
         assertThat(convertedLicense).isEqualTo(
             OrderItemLicense(
-                Duration(amount = 3, unit = ChronoUnit.YEARS),
+                Duration.Time(amount = 3, unit = ChronoUnit.YEARS),
                 territory = OrderItemLicense.WORLDWIDE
             )
         )

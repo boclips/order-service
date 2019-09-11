@@ -3,6 +3,7 @@ package com.boclips.terry.application.orders
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
@@ -127,8 +128,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.price).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
-        assertThat(item.license.duration.amount).isEqualTo(10)
-        assertThat(item.license.duration.unit).isEqualTo(ChronoUnit.YEARS)
+        assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))
         assertThat(item.license.territory).isEqualTo(OrderItemLicense.SINGLE_REGION)
         assertThat(item.contentPartner.videoServiceId.value).isEqualTo(contentPartnerId.value)
         assertThat(item.contentPartner.name).isEqualTo("ted")

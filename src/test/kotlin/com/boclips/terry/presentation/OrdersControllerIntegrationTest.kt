@@ -73,7 +73,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoType = VideoType.STOCK
                         ),
                         license = TestFactories.orderItemLicense(
-                            duration = Duration(amount = 10, unit = ChronoUnit.YEARS),
+                            duration = Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                             territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), TestFactories.orderItem(
@@ -163,7 +163,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         transcriptRequested = true,
                         trim = TrimRequest.NoTrimming,
                         license = TestFactories.orderItemLicense(
-                            duration = Duration(10, ChronoUnit.YEARS),
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
                             territory = OrderItemLicense.WORLDWIDE
                         ),
                         contentPartner = TestFactories.contentPartner(
