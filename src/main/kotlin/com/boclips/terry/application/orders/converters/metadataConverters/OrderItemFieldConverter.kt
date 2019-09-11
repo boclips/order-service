@@ -22,15 +22,15 @@ class OrderItemFieldConverter {
                 videoServiceId = VideoId(value = csvItem.videoId),
                 title = csvItem.title,
                 type = csvItem.type,
-                videoReference = csvItem.sourceCode
+                videoReference = csvItem.sourceCode,
+                contentPartner = ContentPartner(
+                    videoServiceId = ContentPartnerId("how to get this"),
+                    name = csvItem.source
+                )
             ),
             license = OrderItemLicense(
                 duration = LicenseDurationFieldConverter().convert(csvItem),
                 territory = csvItem.territory
-            ),
-            contentPartner = ContentPartner(
-                videoServiceId = ContentPartnerId("how to get this"),
-                name = csvItem.source
             )
         )
     }

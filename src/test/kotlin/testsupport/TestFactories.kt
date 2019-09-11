@@ -196,7 +196,6 @@ class TestFactories {
         fun orderItem(
             price: BigDecimal = BigDecimal.ONE,
             transcriptRequested: Boolean = true,
-            contentPartner: ContentPartner = contentPartner(),
             video: Video = video(),
             trim: TrimRequest = TrimRequest.NoTrimming,
             license: OrderItemLicense = OrderItemLicense(
@@ -207,7 +206,6 @@ class TestFactories {
             return OrderItem(
                 price = price,
                 transcriptRequested = transcriptRequested,
-                contentPartner = contentPartner,
                 video = video,
                 trim = trim,
                 license = license
@@ -256,13 +254,15 @@ class TestFactories {
             referenceId: String = "video-service-id",
             title: String = "joshua tree",
             videoType: VideoType = VideoType.OTHER,
-            videoReference: String = "ted_1234"
+            videoReference: String = "ted_1234",
+            contentPartner: ContentPartner = contentPartner()
         ): Video {
             return Video(
                 videoServiceId = VideoId(value = referenceId),
                 title = title,
                 type = videoType.toString(),
-                videoReference = videoReference
+                videoReference = videoReference,
+                contentPartner = contentPartner
             )
         }
 

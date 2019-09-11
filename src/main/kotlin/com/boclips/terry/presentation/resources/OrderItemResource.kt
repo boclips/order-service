@@ -20,8 +20,8 @@ data class OrderItemResource(
                 price = PriceResource.fromBigDecimal(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
-                    item.contentPartner.videoServiceId.value,
-                    item.contentPartner.name
+                    item.video.contentPartner.videoServiceId.value,
+                    item.video.contentPartner.name
                 ),
                 trim = when (item.trim) {
                     is TrimRequest.WithTrimming -> item.trim.label

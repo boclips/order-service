@@ -100,16 +100,17 @@ class StoreLegacyOrder(
         return OrderItem(
             price = item.price,
             transcriptRequested = item.transcriptsRequired,
-            contentPartner = ContentPartner(
-                videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
-                name = videoResource.createdBy
-            ),
+
             trim = TrimmingConverter.toTrimRequest(item.trimming),
             video = Video(
                 videoServiceId = VideoId(value = videoResource.videoId.value),
                 title = videoResource.title,
                 type = videoResource.type.toString(),
-                videoReference = videoResource.contentPartnerVideoId
+                videoReference = videoResource.contentPartnerVideoId,
+                contentPartner = ContentPartner(
+                    videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
+                    name = videoResource.createdBy
+                )
             ),
             license = LicenseConverter.toOrderItemLicense(item.license)
         )

@@ -64,16 +64,16 @@ class OrderResourceTest {
                     TestFactories.orderItem(
                         price = BigDecimal.TEN,
                         transcriptRequested = false,
-                        contentPartner = TestFactories.contentPartner(
-                            referenceId = "paper",
-                            name = "cup"
-                        ),
                         trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
                             referenceId = "video-id",
                             videoType = VideoType.STOCK,
                             title = "video title",
-                            videoReference = "TED_11"
+                            videoReference = "TED_11",
+                            contentPartner = TestFactories.contentPartner(
+                                referenceId = "paper",
+                                name = "cup"
+                            )
                         ),
                         license = OrderItemLicense(
                             duration = Duration.Time(10, ChronoUnit.YEARS),

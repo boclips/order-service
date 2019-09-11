@@ -62,15 +62,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         price = BigDecimal.valueOf(1),
                         transcriptRequested = true,
                         trim = TrimRequest.WithTrimming("4 - 10"),
-                        contentPartner = TestFactories.contentPartner(
-                            referenceId = "123",
-                            name = "bob is still here"
-                        ),
                         video = TestFactories.video(
                             referenceId = "1234",
                             videoReference = "AP-123",
                             title = "A Video",
-                            videoType = VideoType.STOCK
+                            videoType = VideoType.STOCK,
+                            contentPartner = TestFactories.contentPartner(
+                                referenceId = "123",
+                                name = "bob is still here"
+                            )
                         ),
                         license = TestFactories.orderItemLicense(
                             duration = Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
@@ -79,8 +79,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     ), TestFactories.orderItem(
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
-                        contentPartner = TestFactories.contentPartner(),
-                        video = TestFactories.video()
+                        video = TestFactories.video(
+                            contentPartner = TestFactories.contentPartner()
+                        )
                     )
                 )
             )
@@ -166,20 +167,19 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             duration = Duration.Time(10, ChronoUnit.YEARS),
                             territory = OrderItemLicense.WORLDWIDE
                         ),
-                        contentPartner = TestFactories.contentPartner(
-                            referenceId = "cp-id",
-                            name = "eman"
-                        ),
                         video = TestFactories.video(
                             referenceId = "video-id",
                             title = "A Video",
                             videoType = VideoType.STOCK,
-                            videoReference = "AP-123"
+                            videoReference = "AP-123",
+                            contentPartner = TestFactories.contentPartner(
+                                referenceId = "cp-id",
+                                name = "eman"
+                            )
                         )
                     ), TestFactories.orderItem(
                         price = BigDecimal.valueOf(10),
                         transcriptRequested = false,
-                        contentPartner = TestFactories.contentPartner(),
                         video = TestFactories.video()
                     )
                 )

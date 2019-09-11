@@ -21,8 +21,8 @@ object OrderItemDocumentConverter {
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
-                    videoServiceContentPartnerId = it.contentPartner.videoServiceId.value,
-                    name = it.contentPartner.name
+                    videoServiceContentPartnerId = it.video.contentPartner.videoServiceId.value,
+                    name = it.video.contentPartner.name
                 ),
                 videoReference = it.video.videoReference
             ),
@@ -53,16 +53,17 @@ object OrderItemDocumentConverter {
         return OrderItem(
             price = it.price,
             transcriptRequested = it.transcriptRequested,
-            contentPartner = ContentPartner(
-                videoServiceId = ContentPartnerId(value = it.source.contentPartner.videoServiceContentPartnerId),
-                name = it.source.contentPartner.name
-            ),
+
             trim = it.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(
                 videoServiceId = VideoId(value = it.video.videoServiceId),
                 title = it.video.title,
                 type = it.video.type,
-                videoReference = it.source.videoReference
+                videoReference = it.source.videoReference,
+                contentPartner = ContentPartner(
+                    videoServiceId = ContentPartnerId(value = it.source.contentPartner.videoServiceContentPartnerId),
+                    name = it.source.contentPartner.name
+                )
             ),
             license = OrderItemLicense(
                 duration = when {
