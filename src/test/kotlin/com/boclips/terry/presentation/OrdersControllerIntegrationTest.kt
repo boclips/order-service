@@ -3,6 +3,7 @@ package com.boclips.terry.presentation
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
@@ -23,6 +24,7 @@ import testsupport.asBackofficeStaff
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:master-orders.csv")
@@ -59,7 +61,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        price = BigDecimal.valueOf(1),
+                        price = Price.WithCurrency(
+                            value = BigDecimal.valueOf(1),
+                            currency = Currency.getInstance("EUR")
+                        ),
                         transcriptRequested = true,
                         trim = TrimRequest.WithTrimming("4 - 10"),
                         video = TestFactories.video(
@@ -77,7 +82,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), TestFactories.orderItem(
-                        price = BigDecimal.valueOf(10),
+                        price = Price.WithCurrency(
+                            value = BigDecimal.valueOf(10),
+                            currency = Currency.getInstance("EUR")
+                        ),
                         transcriptRequested = false,
                         video = TestFactories.video(
                             contentPartner = TestFactories.contentPartner()
@@ -111,7 +119,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$._embedded.orders[0]._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("$1.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("EUR 1.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseDuration", equalTo("10 Years")))
@@ -124,7 +132,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("$10.00")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("EUR 10.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
 
             .andExpect(jsonPath("$._links.self").exists())
@@ -160,7 +168,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        price = BigDecimal.valueOf(1),
+                        price =  Price.WithCurrency(
+                            value = BigDecimal.valueOf(1),
+                            currency = Currency.getInstance("EUR")
+                        ),
                         transcriptRequested = true,
                         trim = TrimRequest.NoTrimming,
                         license = TestFactories.orderItemLicense(
@@ -178,7 +189,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             )
                         )
                     ), TestFactories.orderItem(
-                        price = BigDecimal.valueOf(10),
+                        price =  Price.WithCurrency(
+                            value = BigDecimal.valueOf(10),
+                            currency = Currency.getInstance("EUR")
+                        ),
                         transcriptRequested = false,
                         video = TestFactories.video()
                     )
@@ -199,7 +213,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
-            .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("$1.00")))
+            .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("EUR 1.00")))
             .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
             .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))
             .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))

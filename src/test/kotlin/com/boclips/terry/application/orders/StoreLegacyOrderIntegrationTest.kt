@@ -126,7 +126,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()
-        assertThat(item.price).isEqualTo(BigDecimal.ONE)
+        assertThat(item.price.value).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))

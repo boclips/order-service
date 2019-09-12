@@ -6,7 +6,7 @@ import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 
 data class OrderItemResource(
-    val price: PriceResource,
+    val price: PriceResource?,
     val transcriptRequested: Boolean,
     val contentPartner: ContentPartnerResource,
     val video: VideoResource,
@@ -17,7 +17,7 @@ data class OrderItemResource(
     companion object {
         fun fromOrderItem(item: OrderItem): OrderItemResource =
             OrderItemResource(
-                price = PriceResource.fromBigDecimal(item.price),
+                price = PriceResource.fromPrice(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
                     item.video.contentPartner.videoServiceId.value,

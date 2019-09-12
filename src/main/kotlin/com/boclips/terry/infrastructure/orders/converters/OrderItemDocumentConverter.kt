@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.orders.converters
 
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.Duration
@@ -13,11 +14,16 @@ import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
+import java.math.BigDecimal
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
         return OrderItemDocument(
-            price = it.price,
+            price = it.price.value,
+            currency = when (it.price) {
+                is Price.WithCurrency -> it.price.currency
+                else -> null
+            },
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
@@ -49,35 +55,48 @@ object OrderItemDocumentConverter {
         )
     }
 
-    fun toOrderItem(it: OrderItemDocument): OrderItem {
+    fun toOrderItem(document: OrderItemDocument): OrderItem {
         return OrderItem(
-            price = it.price,
-            transcriptRequested = it.transcriptRequested,
+            price = toPrice(document),
+            transcriptRequested = document.transcriptRequested,
 
-            trim = it.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
+            trim = document.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(
-                videoServiceId = VideoId(value = it.video.videoServiceId),
-                title = it.video.title,
-                type = it.video.type,
-                videoReference = it.source.videoReference,
+                videoServiceId = VideoId(value = document.video.videoServiceId),
+                title = document.video.title,
+                type = document.video.type,
+                videoReference = document.source.videoReference,
                 contentPartner = ContentPartner(
-                    videoServiceId = ContentPartnerId(value = it.source.contentPartner.videoServiceContentPartnerId),
-                    name = it.source.contentPartner.name
+                    videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
+                    name = document.source.contentPartner.name
                 )
             ),
             license = OrderItemLicense(
                 duration = when {
-                    it.license.isValidTime() -> Duration.Time(
-                        amount = it.license.amount!!,
-                        unit = it.license.unit!!
+                    document.license.isValidTime() -> Duration.Time(
+                        amount = document.license.amount!!,
+                        unit = document.license.unit!!
                     )
-                    it.license.isValidDescription() -> Duration.Description(label = it.license.description!!)
+                    document.license.isValidDescription() -> Duration.Description(label = document.license.description!!)
                     else -> throw IllegalStateException("Invalid duration")
                 },
-                territory = it.license.territory
+                territory = document.license.territory
             )
         )
     }
+
+    private fun toPrice(document: OrderItemDocument) =
+        when (document.currency) {
+            null -> if (document.price < BigDecimal.ZERO) {
+                Price.InvalidPrice
+            } else {
+                Price.WithoutCurrency(value = document.price)
+            }
+            else -> Price.WithCurrency(
+                value = document.price,
+                currency = document.currency!!
+            )
+        }
 
     private fun toTrimmingString(
         trim: TrimRequest

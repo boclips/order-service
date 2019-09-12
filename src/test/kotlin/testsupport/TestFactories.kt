@@ -13,6 +13,7 @@ import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.Duration
@@ -37,6 +38,7 @@ import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 import java.util.Date
 
 class TestFactories {
@@ -194,7 +196,10 @@ class TestFactories {
         }
 
         fun orderItem(
-            price: BigDecimal = BigDecimal.ONE,
+            price: Price = Price.WithCurrency(
+                value = BigDecimal.valueOf(100),
+                currency = Currency.getInstance("GBP")
+            ),
             transcriptRequested: Boolean = true,
             video: Video = video(),
             trim: TrimRequest = TrimRequest.NoTrimming,
@@ -326,6 +331,7 @@ class TestFactories {
 
         fun orderItemDocument(
             price: BigDecimal = BigDecimal.ONE,
+            currency: Currency? = Currency.getInstance("USD"),
             transcriptRequested: Boolean = true,
             source: SourceDocument = sourceDocument(),
             video: VideoDocument = videoDocument(),
@@ -338,7 +344,8 @@ class TestFactories {
                 source = source,
                 video = video,
                 license = license,
-                trim = trim
+                trim = trim,
+                currency = currency
             )
         }
 

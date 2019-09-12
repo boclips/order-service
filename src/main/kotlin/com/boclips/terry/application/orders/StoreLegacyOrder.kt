@@ -15,6 +15,7 @@ import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
@@ -93,7 +94,7 @@ class StoreLegacyOrder(
     fun convertLegacyItem(item: LegacyOrderItem): OrderItem {
         return videoProvider.get(VideoId(value = item.assetId))?.let {
             OrderItem(
-                price = item.price,
+                price = Price.WithoutCurrency(item.price),
                 transcriptRequested = item.transcriptsRequired,
                 trim = TrimmingConverter.toTrimRequest(item.trimming),
                 video = it,

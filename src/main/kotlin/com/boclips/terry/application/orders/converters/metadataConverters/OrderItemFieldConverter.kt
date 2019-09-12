@@ -14,7 +14,7 @@ import java.math.BigDecimal
 class OrderItemFieldConverter(val videoProvider: VideoProvider) {
     fun convert(csvItem: CsvOrderItemMetadata): OrderItem {
         return OrderItem(
-            price =  BigDecimal.ONE,
+            price = PriceFieldConverter.convert(csvItem.price),
             transcriptRequested = csvItem.captioning.toLowerCase() == "yes",
             trim = TrimmingConverter.toTrimRequest(csvItem.trim),
             video = videoProvider.get(VideoId(value = csvItem.videoId))

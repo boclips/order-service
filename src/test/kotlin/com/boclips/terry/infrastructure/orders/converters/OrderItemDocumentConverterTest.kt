@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.orders.converters
 
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
@@ -9,7 +10,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testsupport.TestFactories
+import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 
 class OrderItemDocumentConverterTest {
     @Nested
@@ -55,6 +58,32 @@ class OrderItemDocumentConverterTest {
                     description = null
                 )
             )
+        }
+
+        @Test
+        fun `converts price with currency`() {
+            val orderItem = TestFactories.orderItem(
+                price = Price.WithCurrency(
+                    value = BigDecimal.valueOf(10),
+                    currency = Currency.getInstance("USD")
+                )
+            )
+
+            val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
+            assertThat(convertedItem.price.toDouble()).isEqualTo(10.0)
+            assertThat(convertedItem.currency).isEqualTo(Currency.getInstance("USD"))
+        }
+
+        @Test
+        fun `converts price without currency`() {
+            val orderItem = TestFactories.orderItem(
+                price = Price.WithoutCurrency(
+                    value = BigDecimal.valueOf(10)
+                )
+            )
+
+            val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
+            assertThat(convertedItem.price.toDouble()).isEqualTo(10.0)
         }
     }
 
@@ -122,6 +151,39 @@ class OrderItemDocumentConverterTest {
                     territory = OrderItemLicense.MULTI_REGION
                 )
             )
+        }
+
+        @Test
+        fun `converts price with currency`() {
+            val orderItemDocument =
+                TestFactories.orderItemDocument(price = BigDecimal.ONE, currency = Currency.getInstance("GBP"))
+
+            val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument).price as Price.WithCurrency
+
+            assertThat(convertedPrice.value).isEqualTo(BigDecimal.ONE)
+            assertThat(convertedPrice.currency).isEqualTo(Currency.getInstance("GBP"))
+        }
+
+        @Test
+        fun `converts price with no currency`() {
+            val orderItemDocument =
+                TestFactories.orderItemDocument(price = BigDecimal.ONE, currency = null)
+
+            val convertedPrice =
+                OrderItemDocumentConverter.toOrderItem(orderItemDocument).price as Price.WithoutCurrency
+
+            assertThat(convertedPrice.value).isEqualTo(BigDecimal.ONE)
+        }
+
+        @Test
+        fun `converts an invalid price`() {
+            val orderItemDocument =
+                TestFactories.orderItemDocument(price = BigDecimal.valueOf(-1), currency = null)
+
+            val convertedPrice =
+                OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
+
+            assertThat(convertedPrice is Price.InvalidPrice).isTrue()
         }
     }
 }
