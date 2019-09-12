@@ -19,8 +19,8 @@ class CsvOrderConverter(
     val fulfilmentDateFieldConverter: FulfilmentDateFieldConverter,
     val orderItemsFieldConverter: OrderItemsFieldConverter
 ) {
-    fun toOrders(csvOrderItemMetadatas: List<CsvOrderItemMetadata>): List<Order> {
-        return csvOrderItemMetadatas
+    fun toOrders(csvOrderItems: List<CsvOrderItemMetadata>): List<Order> {
+        return csvOrderItems
             .groupBy {
                 it.legacyOrderId
             }.mapNotNull {

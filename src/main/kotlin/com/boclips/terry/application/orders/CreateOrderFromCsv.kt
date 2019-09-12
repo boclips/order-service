@@ -10,8 +10,8 @@ class CreateOrderFromCsv(
     private val ordersRepository: OrdersRepository,
     private val orderConverter: CsvOrderConverter
 ) {
-    fun invoke(csvOrderItemMetadatas: List<CsvOrderItemMetadata>) {
-        val orders = orderConverter.toOrders(csvOrderItemMetadatas)
+    fun invoke(csvOrderItems: List<CsvOrderItemMetadata>) {
+        val orders = orderConverter.toOrders(csvOrderItems)
 
         orders.map { ordersRepository.add(it) }
     }
