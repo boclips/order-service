@@ -1,6 +1,7 @@
 package com.boclips.terry.presentation.resources
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.util.DateUtil
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -24,7 +25,7 @@ class OrderCsvUploadConverterTest {
         val orderItem = request.first()
         assertThat(orderItem.legacyOrderId).isEqualTo("5d6cda057f0dc0dd363841ed")
         assertThat(orderItem.month).isEqualTo("Aug-19")
-        assertThat(orderItem.requestDate).isEqualTo("2019-08-30T01:00:00")
+        assertThat(DateUtil.truncateTime(orderItem.requestDate!!)).isEqualTo("2019-08-30")
         assertThat(orderItem.fulfilmentDate).isEqualTo(null)
         assertThat(orderItem.quarter).isEqualTo("2019 Q3")
         assertThat(orderItem.memberRequest).isEqualTo("")
