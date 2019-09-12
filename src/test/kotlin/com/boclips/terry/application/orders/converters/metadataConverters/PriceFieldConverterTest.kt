@@ -11,21 +11,21 @@ class PriceFieldConverterTest {
     @Test
     fun `converts $ to USD dollars`() {
         val price = priceFieldConverter.convert("$100") as Price.WithCurrency
-        assertThat(price.value).isEqualTo(100.0)
+        assertThat(price.value.toDouble()).isEqualTo(100.0)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 
     @Test
     fun `converts € to euros`() {
         val price = priceFieldConverter.convert("€100") as Price.WithCurrency
-        assertThat(price.value).isEqualTo(100.0)
+        assertThat(price.value.toDouble()).isEqualTo(100.0)
         assertThat(price.currency).isEqualTo(Currency.getInstance("EUR"))
     }
 
     @Test
     fun `still parses price when no currency present`() {
         val price = priceFieldConverter.convert("98.12") as Price.WithoutCurrency
-        assertThat(price.value).isEqualTo(98.12)
+        assertThat(price.value.toDouble()).isEqualTo(98.12)
     }
 
     @Test
@@ -37,7 +37,7 @@ class PriceFieldConverterTest {
     @Test
     fun `returns correct currency even with spaces`() {
         val price = priceFieldConverter.convert("$  100") as Price.WithCurrency
-        assertThat(price.value).isEqualTo(100.0)
+        assertThat(price.value.toDouble()).isEqualTo(100.0)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 
@@ -45,7 +45,7 @@ class PriceFieldConverterTest {
     fun `converts string with CAD $ to CAD dollars`() {
         val price = priceFieldConverter.convert("CAD $149.21") as Price.WithCurrency
 
-        assertThat(price.value).isEqualTo(149.21)
+        assertThat(price.value.toDouble()).isEqualTo(149.21)
         assertThat(price.currency).isEqualTo(Currency.getInstance("CAD"))
     }
 
@@ -53,7 +53,7 @@ class PriceFieldConverterTest {
     fun `converts string with USD $ to USD dollars`() {
         val price = priceFieldConverter.convert("USD $149.21") as Price.WithCurrency
 
-        assertThat(price.value).isEqualTo(149.21)
+        assertThat(price.value.toDouble()).isEqualTo(149.21)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 
@@ -61,7 +61,7 @@ class PriceFieldConverterTest {
     fun `converts string with USD to USD dollars`() {
         val price = priceFieldConverter.convert("USD149.21") as Price.WithCurrency
 
-        assertThat(price.value).isEqualTo(149.21)
+        assertThat(price.value.toDouble()).isEqualTo(149.21)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 
@@ -69,7 +69,7 @@ class PriceFieldConverterTest {
     fun `converts string with US$ to USD dollars`() {
         val price = priceFieldConverter.convert("US$199.50") as Price.WithCurrency
 
-        assertThat(price.value).isEqualTo(199.5)
+        assertThat(price.value.toDouble()).isEqualTo(199.5)
         assertThat(price.currency).isEqualTo(Currency.getInstance("USD"))
     }
 
@@ -78,7 +78,7 @@ class PriceFieldConverterTest {
     fun `converts string with EUR to euros`() {
         val price = priceFieldConverter.convert("EUR 199.50") as Price.WithCurrency
 
-        assertThat(price.value).isEqualTo(199.5)
+        assertThat(price.value.toDouble()).isEqualTo(199.5)
         assertThat(price.currency).isEqualTo(Currency.getInstance("EUR"))
     }
 }
