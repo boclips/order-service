@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import java.util.Currency
 
 class PriceFieldConverterTest {
-    val priceFieldConverter = PriceFieldConverter()
+    val priceFieldConverter = PriceFieldConverter
 
     @Test
     fun `converts $ to USD dollars`() {

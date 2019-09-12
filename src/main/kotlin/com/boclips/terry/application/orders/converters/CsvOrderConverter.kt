@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class CsvOrderConverter(
-    val requestDateFieldConverter: RequestDateFieldConverter,
-    val fulfilmentDateFieldConverter: FulfilmentDateFieldConverter,
     val orderItemsFieldConverter: OrderItemsFieldConverter
 ) {
     fun toOrders(csvOrderItems: List<CsvOrderItemMetadata>): List<Order> {
@@ -29,8 +27,8 @@ class CsvOrderConverter(
                         id = OrderId(ObjectId().toHexString()),
                         legacyOrderId = it.key,
                         status = OrderStatus.COMPLETED,
-                        createdAt = requestDateFieldConverter.convert(it.value),
-                        updatedAt = fulfilmentDateFieldConverter.convert(it.value),
+                        createdAt = RequestDateFieldConverter.convert(it.value),
+                        updatedAt = FulfilmentDateFieldConverter.convert(it.value),
                         isbnOrProductNumber = it.value.first().isbnProductNumber,
                         items = orderItemsFieldConverter.convert(it.value),
                         requestingUser = OrderUser.BasicUser(it.value.first().memberRequest),

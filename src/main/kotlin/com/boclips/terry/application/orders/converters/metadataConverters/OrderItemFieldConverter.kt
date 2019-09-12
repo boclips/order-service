@@ -20,7 +20,7 @@ class OrderItemFieldConverter(val videoProvider: VideoProvider) {
             video = videoProvider.get(VideoId(value = csvItem.videoId))
                 ?: throw InvalidVideoIdException("Can not provide video for id ${csvItem.videoId}"),
             license = OrderItemLicense(
-                duration = LicenseDurationFieldConverter().convert(csvItem),
+                duration = LicenseDurationFieldConverter.convert(csvItem),
                 territory = csvItem.territory
             )
         )

@@ -4,7 +4,7 @@ import com.boclips.terry.domain.model.Price
 import java.lang.NumberFormatException
 import java.util.Currency
 
-class PriceFieldConverter {
+object PriceFieldConverter {
     private val delimiterToCurrency: Map<String, Currency> = mapOf(
         "CAD $" to Currency.getInstance("CAD"),
         "USD $" to Currency.getInstance("USD"),

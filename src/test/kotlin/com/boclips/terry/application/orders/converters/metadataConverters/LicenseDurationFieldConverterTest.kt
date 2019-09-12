@@ -15,7 +15,7 @@ class LicenseDurationFieldConverterTest {
     fun `converts license duration when a number`() {
         val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = "5")
 
-        val duration = LicenseDurationFieldConverter().convert(csvMetadataItem)
+        val duration = LicenseDurationFieldConverter.convert(csvMetadataItem)
 
         Assertions.assertThat(duration).isEqualTo(Duration.Time(5, ChronoUnit.YEARS))
     }
@@ -24,7 +24,7 @@ class LicenseDurationFieldConverterTest {
     fun `converts license duration when a string`() {
         val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = "Life of Work")
 
-        val duration = LicenseDurationFieldConverter().convert(csvMetadataItem)
+        val duration = LicenseDurationFieldConverter.convert(csvMetadataItem)
 
         Assertions.assertThat(duration).isEqualTo(Duration.Description("Life of Work"))
     }
@@ -34,7 +34,7 @@ class LicenseDurationFieldConverterTest {
         val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = "")
 
         org.junit.jupiter.api.assertThrows<InvalidLicenseException> {
-            LicenseDurationFieldConverter().convert(csvMetadataItem)
+            LicenseDurationFieldConverter.convert(csvMetadataItem)
         }
 
     }

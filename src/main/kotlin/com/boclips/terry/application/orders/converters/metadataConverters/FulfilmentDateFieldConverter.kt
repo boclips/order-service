@@ -2,11 +2,9 @@ package com.boclips.terry.application.orders.converters.metadataConverters
 
 import com.boclips.terry.application.orders.exceptions.InvalidFulfilmentDateException
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
-import org.springframework.stereotype.Component
 import java.time.Instant
 
-@Component
-class FulfilmentDateFieldConverter {
+object FulfilmentDateFieldConverter {
     fun convert(items: List<CsvOrderItemMetadata>): Instant {
         return items.first().let {
             it.fulfilmentDate?.toInstant()

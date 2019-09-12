@@ -9,8 +9,8 @@ import testsupport.TestFactories
 import java.util.Date
 
 class RequestDateFieldConverterTest {
-    val converter: RequestDateFieldConverter =
-        RequestDateFieldConverter()
+    private val converter: RequestDateFieldConverter =
+        RequestDateFieldConverter
 
     @Test
     fun `throws when date is not present`() {

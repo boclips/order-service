@@ -5,7 +5,7 @@ import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import java.time.temporal.ChronoUnit
 
-class LicenseDurationFieldConverter {
+object LicenseDurationFieldConverter {
 
     fun convert(csvItem: CsvOrderItemMetadata): Duration {
         if (csvItem.licenseDuration.isBlank()) {

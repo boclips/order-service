@@ -10,7 +10,7 @@ import testsupport.TestFactories
 import java.util.Date
 
 class FulfilmentDateFieldConverterTest {
-    val converter = FulfilmentDateFieldConverter()
+    val converter = FulfilmentDateFieldConverter
 
     @Test
     fun `converts valid fulfilment date`() {
