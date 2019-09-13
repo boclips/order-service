@@ -2,7 +2,6 @@ package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.application.exceptions.OrderNotFoundException
-import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.presentation.resources.OrderResource
@@ -31,7 +30,7 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
             updatedAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             items = listOf(TestFactories.orderItem())
         )
-        fakeOrdersRepository.add(
+        ordersRepository.add(
             order = order
         )
 

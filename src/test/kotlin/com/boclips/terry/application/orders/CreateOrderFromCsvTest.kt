@@ -18,7 +18,7 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
         createOrderFromCsv.invoke(listOf(csvOrderMetadata))
 
-        val createdOrder = fakeOrdersRepository.findOneByLegacyId(csvOrderMetadata.legacyOrderId)
+        val createdOrder = ordersRepository.findOneByLegacyId(csvOrderMetadata.legacyOrderId)
 
         assertThat(createdOrder).isNotNull
     }

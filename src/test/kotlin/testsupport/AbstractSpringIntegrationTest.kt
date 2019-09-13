@@ -1,6 +1,8 @@
 package com.boclips.videos.service.testsupport
 
-import com.boclips.terry.infrastructure.orders.FakeOrdersRepository
+import com.boclips.terry.domain.model.LegacyOrdersRepository
+import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
+import com.boclips.terry.infrastructure.orders.TestMongoProcess
 import com.boclips.videos.service.client.Playback
 import com.boclips.videos.service.client.Video
 import com.boclips.videos.service.client.VideoId
@@ -9,7 +11,9 @@ import com.boclips.videos.service.client.internal.FakeClient
 import com.boclips.videos.service.client.spring.MockVideoServiceClient
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
+import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
@@ -30,18 +34,34 @@ import java.time.LocalDate
 @ActiveProfiles("test", "fake-security")
 @MockVideoServiceClient
 abstract class AbstractSpringIntegrationTest {
+    companion object Setup {
+        var mongoProcess: MongodProcess? = null
+
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            if (mongoProcess == null) {
+                mongoProcess =
+                    TestMongoProcess.process
+            }
+        }
+    }
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Autowired
-    lateinit var fakeOrdersRepository: FakeOrdersRepository
+    lateinit var ordersRepository: MongoOrdersRepository
 
     @Autowired
     lateinit var fakeVideoClient: FakeClient
 
+    @Autowired
+    lateinit var legacyOrdersRepository: LegacyOrdersRepository
+
     @BeforeEach
     fun setup() {
-        fakeOrdersRepository.clear()
+        ordersRepository.clear()
+        legacyOrdersRepository.clear()
     }
 
     @AfterEach

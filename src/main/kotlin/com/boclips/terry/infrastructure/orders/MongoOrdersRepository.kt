@@ -45,11 +45,11 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             .map(OrderDocumentConverter::toOrder)
             .toList()
 
-    override fun findOne(id: OrderId): Order? {
-        return collection().findOne(OrderDocument::id eq ObjectId(id.value))?.let(
-            OrderDocumentConverter::toOrder
-        )
-    }
+    override fun findOne(id: OrderId): Order? =
+        id.value
+            .takeIf { ObjectId.isValid(it) }
+            ?.let { collection().findOne(OrderDocument::id eq ObjectId(it)) }
+            ?.let(OrderDocumentConverter::toOrder)
 
     override fun findOneByLegacyId(legacyOrderId: String): Order? {
         return collection().findOne(OrderDocument::legacyOrderId eq legacyOrderId)?.let(
@@ -58,6 +58,10 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
     }
 
     override fun update(orderUpdateCommand: OrderUpdateCommand): Order {
+        if (!ObjectId.isValid(orderUpdateCommand.orderId.value)) {
+            throw OrderNotFoundException(orderUpdateCommand.orderId)
+        }
+
         when (orderUpdateCommand) {
             is OrderUpdateCommand.ReplaceStatus -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),

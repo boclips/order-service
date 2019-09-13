@@ -40,7 +40,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get orders`() {
-        fakeOrdersRepository.add(
+        ordersRepository.add(
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 isbnOrProductNumber = "a beautiful isbnNumber",
@@ -148,7 +148,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get an order`() {
-        fakeOrdersRepository.add(
+        ordersRepository.add(
             TestFactories.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 legacyOrderId = "456",

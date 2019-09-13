@@ -6,8 +6,8 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
-import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
+import com.boclips.terry.infrastructure.orders.MongoLegacyOrdersRepository
 import com.boclips.videos.service.client.CreateContentPartnerRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -22,15 +22,13 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
+
     @Autowired
     lateinit var eventBus: SynchronousFakeEventBus
 
-    @Autowired
-    lateinit var legacyOrdersRepository: FakeLegacyOrdersRepository
-
     @BeforeEach
     fun setUp() {
-        fakeOrdersRepository.clear()
+        ordersRepository.clear()
         legacyOrdersRepository.clear()
         fakeVideoClient.setUseInternalProjection(true)
     }
@@ -95,7 +93,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val orders = fakeOrdersRepository.findAll()
+        val orders = ordersRepository.findAll()
 
         assertThat(orders).hasSize(1)
 
@@ -176,7 +174,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `updates pre-existing orders`() {
         val order = TestFactories.order()
-        fakeOrdersRepository.add(order)
+        ordersRepository.add(order)
 
         val genericUser = TestFactories.legacyOrderUser()
         val contentPartnerId =
@@ -198,7 +196,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val orders = fakeOrdersRepository.findAll()
+        val orders = ordersRepository.findAll()
         assertThat(orders).hasSize(1)
         assertThat(orders.first().status).isEqualTo(OrderStatus.CANCELLED)
     }

@@ -452,3 +452,16 @@ class TestFactories {
         }
     }
 }
+
+object PriceFactory {
+
+    fun tenDollars() = Price(
+        BigDecimal.TEN,
+        Currency.getInstance("USD")
+    )
+
+    fun onePound() = Price(
+        BigDecimal.ONE,
+        Currency.getInstance("GBP")
+    )
+}
