@@ -14,16 +14,12 @@ import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
-import java.math.BigDecimal
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
         return OrderItemDocument(
-            price = it.price.value,
-            currency = when (it.price) {
-                is Price.WithCurrency -> it.price.currency
-                else -> null
-            },
+            price = it.price.amount,
+            currency = it.price.currency,
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
@@ -57,7 +53,7 @@ object OrderItemDocumentConverter {
 
     fun toOrderItem(document: OrderItemDocument): OrderItem {
         return OrderItem(
-            price = toPrice(document),
+            price = Price(document.price, document.currency),
             transcriptRequested = document.transcriptRequested,
 
             trim = document.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
@@ -84,19 +80,6 @@ object OrderItemDocumentConverter {
             )
         )
     }
-
-    private fun toPrice(document: OrderItemDocument) =
-        when (document.currency) {
-            null -> if (document.price < BigDecimal.ZERO) {
-                Price.InvalidPrice
-            } else {
-                Price.WithoutCurrency(value = document.price)
-            }
-            else -> Price.WithCurrency(
-                value = document.price,
-                currency = document.currency!!
-            )
-        }
 
     private fun toTrimmingString(
         trim: TrimRequest

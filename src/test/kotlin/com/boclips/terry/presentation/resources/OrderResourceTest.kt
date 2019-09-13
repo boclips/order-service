@@ -41,8 +41,8 @@ class OrderResourceTest {
                 createdAt = Instant.ofEpochSecond(100),
                 items = listOf(
                     TestFactories.orderItem(
-                        price = Price.WithCurrency(
-                            value = BigDecimal.valueOf(1),
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = false,
@@ -83,8 +83,8 @@ class OrderResourceTest {
                 items = listOf(
                     OrderItemResource(
                         price = PriceResource.fromPrice(
-                            Price.WithCurrency(
-                                value = BigDecimal.valueOf(1),
+                            Price(
+                                amount = BigDecimal.valueOf(1),
                                 currency = Currency.getInstance("EUR")
                             )
                         ),

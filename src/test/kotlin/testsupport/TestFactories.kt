@@ -196,8 +196,8 @@ class TestFactories {
         }
 
         fun orderItem(
-            price: Price = Price.WithCurrency(
-                value = BigDecimal.valueOf(100),
+            price: Price = Price(
+                amount = BigDecimal.valueOf(100),
                 currency = Currency.getInstance("GBP")
             ),
             transcriptRequested: Boolean = true,
@@ -330,7 +330,7 @@ class TestFactories {
         }
 
         fun orderItemDocument(
-            price: BigDecimal = BigDecimal.ONE,
+            price: BigDecimal? = BigDecimal.ONE,
             currency: Currency? = Currency.getInstance("USD"),
             transcriptRequested: Boolean = true,
             source: SourceDocument = sourceDocument(),

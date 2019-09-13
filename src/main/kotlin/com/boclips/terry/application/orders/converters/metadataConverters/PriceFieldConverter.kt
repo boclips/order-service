@@ -1,7 +1,6 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
 import com.boclips.terry.domain.model.Price
-import java.lang.NumberFormatException
 import java.math.BigDecimal
 import java.util.Currency
 
@@ -24,11 +23,11 @@ object PriceFieldConverter {
                 .takeIf { it }
                 ?.let { unparsedPrice.replace(delimiterToCurrencyPair.key, "") }
                 ?.let { it.toDoubleOrNull() }
-                ?.let { return Price.WithCurrency(BigDecimal.valueOf(it), currency = delimiterToCurrencyPair.value) }
+                ?.let { return Price(BigDecimal.valueOf(it), currency = delimiterToCurrencyPair.value) }
         }
 
 
-        return unparsedPrice.toDoubleOrNull()?.let { Price.WithoutCurrency(BigDecimal.valueOf(it)) }
-            ?: Price.InvalidPrice
+        return unparsedPrice.toDoubleOrNull()?.let { Price(amount = BigDecimal.valueOf(it), currency = null) }
+            ?: Price(amount = null, currency = null)
     }
 }

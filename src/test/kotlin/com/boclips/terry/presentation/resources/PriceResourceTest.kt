@@ -10,7 +10,7 @@ import java.util.Currency
 class PriceResourceTest {
     @Test
     fun `convert price with currency to price resource`() {
-        val price = Price.WithCurrency(value = BigDecimal.valueOf(1.12), currency = Currency.getInstance("GBP"))
+        val price = Price(amount = BigDecimal.valueOf(1.12), currency = Currency.getInstance("GBP"))
         assertThat(PriceResource.fromPrice(price))
             .isEqualTo(
                 PriceResource(
@@ -23,7 +23,7 @@ class PriceResourceTest {
 
     @Test
     fun `convert price with no currency to price resource`() {
-        val price = Price.WithoutCurrency(value = BigDecimal.valueOf(1.12))
+        val price = Price(amount = BigDecimal.valueOf(1.12), currency = null)
         assertThat(PriceResource.fromPrice(price))
             .isEqualTo(
                 PriceResource(
@@ -35,14 +35,20 @@ class PriceResourceTest {
     }
 
     @Test
-    fun `convert a invalid price`() {
-        val price = Price.InvalidPrice
+    fun `convert a price without an amount`() {
+        val price = Price(null, null)
+        assertThat(PriceResource.fromPrice(price)).isNull()
+    }
+
+    @Test
+    fun `convert a price with just currency`() {
+        val price = Price(amount = null, currency = Currency.getInstance("USD"))
         assertThat(PriceResource.fromPrice(price)).isNull()
     }
 
     @Test
     fun `convert price with lots of decimal places to price resource`() {
-        val price = Price.WithCurrency(value = BigDecimal.valueOf(1.1212321321), currency = Currency.getInstance("USD"))
+        val price = Price(amount = BigDecimal.valueOf(1.1212321321), currency = Currency.getInstance("USD"))
         assertThat(PriceResource.fromPrice(price))
 
             .isEqualTo(

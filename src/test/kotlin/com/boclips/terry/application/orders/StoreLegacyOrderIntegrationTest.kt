@@ -6,7 +6,6 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
-import com.boclips.terry.infrastructure.VideoServiceVideoProvider
 import com.boclips.terry.infrastructure.orders.FakeLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.service.client.CreateContentPartnerRequest
@@ -126,7 +125,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()
-        assertThat(item.price.value).isEqualTo(BigDecimal.ONE)
+        assertThat(item.price.amount).isEqualTo(BigDecimal.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))

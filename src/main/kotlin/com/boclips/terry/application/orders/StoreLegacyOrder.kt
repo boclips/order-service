@@ -94,7 +94,7 @@ class StoreLegacyOrder(
     fun convertLegacyItem(item: LegacyOrderItem): OrderItem {
         return videoProvider.get(VideoId(value = item.assetId))?.let {
             OrderItem(
-                price = Price.WithoutCurrency(item.price),
+                price = Price(amount = item.price, currency = null),
                 transcriptRequested = item.transcriptsRequired,
                 trim = TrimmingConverter.toTrimRequest(item.trimming),
                 video = it,

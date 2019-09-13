@@ -61,8 +61,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        price = Price.WithCurrency(
-                            value = BigDecimal.valueOf(1),
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = true,
@@ -82,8 +82,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), TestFactories.orderItem(
-                        price = Price.WithCurrency(
-                            value = BigDecimal.valueOf(10),
+                        price = Price(
+                            amount = BigDecimal.valueOf(10),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = false,
@@ -168,8 +168,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     TestFactories.orderItem(
-                        price =  Price.WithCurrency(
-                            value = BigDecimal.valueOf(1),
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = true,
@@ -189,8 +189,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             )
                         )
                     ), TestFactories.orderItem(
-                        price =  Price.WithCurrency(
-                            value = BigDecimal.valueOf(10),
+                        price = Price(
+                            amount = BigDecimal.valueOf(10),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = false,

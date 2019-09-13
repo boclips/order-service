@@ -17,6 +17,7 @@ import java.util.Currency
 class OrderItemDocumentConverterTest {
     @Nested
     inner class ToDocument {
+
         @Test
         fun `converts no trimming request to null`() {
             val orderItem = TestFactories.orderItem(
@@ -63,27 +64,26 @@ class OrderItemDocumentConverterTest {
         @Test
         fun `converts price with currency`() {
             val orderItem = TestFactories.orderItem(
-                price = Price.WithCurrency(
-                    value = BigDecimal.valueOf(10),
+                price = Price(
+                    amount = BigDecimal.TEN,
                     currency = Currency.getInstance("USD")
                 )
             )
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
-            assertThat(convertedItem.price.toDouble()).isEqualTo(10.0)
+            assertThat(convertedItem.price).isEqualTo("10")
             assertThat(convertedItem.currency).isEqualTo(Currency.getInstance("USD"))
         }
 
         @Test
-        fun `converts price without currency`() {
+        fun `converts invalid price`() {
             val orderItem = TestFactories.orderItem(
-                price = Price.WithoutCurrency(
-                    value = BigDecimal.valueOf(10)
-                )
+                price = Price(amount = null, currency = null)
             )
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
-            assertThat(convertedItem.price.toDouble()).isEqualTo(10.0)
+            assertThat(convertedItem.price).isNull()
+            assertThat(convertedItem.currency).isNull()
         }
     }
 
@@ -158,32 +158,21 @@ class OrderItemDocumentConverterTest {
             val orderItemDocument =
                 TestFactories.orderItemDocument(price = BigDecimal.ONE, currency = Currency.getInstance("GBP"))
 
-            val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument).price as Price.WithCurrency
+            val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
 
-            assertThat(convertedPrice.value).isEqualTo(BigDecimal.ONE)
+            assertThat(convertedPrice.amount).isEqualTo(BigDecimal.ONE)
             assertThat(convertedPrice.currency).isEqualTo(Currency.getInstance("GBP"))
-        }
-
-        @Test
-        fun `converts price with no currency`() {
-            val orderItemDocument =
-                TestFactories.orderItemDocument(price = BigDecimal.ONE, currency = null)
-
-            val convertedPrice =
-                OrderItemDocumentConverter.toOrderItem(orderItemDocument).price as Price.WithoutCurrency
-
-            assertThat(convertedPrice.value).isEqualTo(BigDecimal.ONE)
         }
 
         @Test
         fun `converts an invalid price`() {
             val orderItemDocument =
-                TestFactories.orderItemDocument(price = BigDecimal.valueOf(-1), currency = null)
+                TestFactories.orderItemDocument(price = null, currency = null)
 
             val convertedPrice =
                 OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
 
-            assertThat(convertedPrice is Price.InvalidPrice).isTrue()
+            assertThat(convertedPrice).isEqualTo(Price(amount = null, currency = null))
         }
     }
 }
