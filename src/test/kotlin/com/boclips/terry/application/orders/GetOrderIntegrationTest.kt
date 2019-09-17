@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.Instant
 import java.time.LocalDate
@@ -23,14 +24,14 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can get an order resource`() {
         val legacyOrder = TestFactories.legacyOrder()
 
-        val order = TestFactories.order(
+        val order = OrderFactory.order(
             id = OrderId(legacyOrder.id),
             status = OrderStatus.CONFIRMED,
             createdAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             updatedAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
-            items = listOf(TestFactories.orderItem())
+            items = listOf(OrderFactory.orderItem())
         )
-        ordersRepository.add(
+        ordersRepository.save(
             order = order
         )
 

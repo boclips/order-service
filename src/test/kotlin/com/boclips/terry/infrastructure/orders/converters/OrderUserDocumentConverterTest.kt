@@ -2,12 +2,13 @@ package com.boclips.terry.infrastructure.orders.converters
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import testsupport.OrderFactory
 import testsupport.TestFactories
 
 class OrderUserDocumentConverterTest {
     @Test
     fun `converts an orderUser to document to orderUser`() {
-        val originalModel = TestFactories.completeOrderUser(
+        val originalModel = OrderFactory.completeOrderUser(
             firstName = "Bob",
             lastName = "Smith",
             email = "test@test.com",
@@ -22,7 +23,7 @@ class OrderUserDocumentConverterTest {
 
     @Test
     fun `converts an complete user to document and back to order user`() {
-        val completeUser = TestFactories.completeOrderUser()
+        val completeUser = OrderFactory.completeOrderUser()
         val convertedDocument = OrderUserDocumentConverter.toOrderUserDocument(completeUser)
         val reconvertedModel = OrderUserDocumentConverter.toOrderUser(convertedDocument)
 
@@ -31,7 +32,7 @@ class OrderUserDocumentConverterTest {
 
     @Test
     fun `converts a basic user to document and back to order user`() {
-        val basicUser = TestFactories.basicOrderUser()
+        val basicUser = OrderFactory.basicOrderUser()
         val convertedDocument = OrderUserDocumentConverter.toOrderUserDocument(basicUser)
         val reconvertedModel = OrderUserDocumentConverter.toOrderUser(convertedDocument)
 

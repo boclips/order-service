@@ -46,7 +46,7 @@ class StoreLegacyOrder(
                     OrderUpdateCommand.ReplaceStatus(orderId = foundOrder.id, orderStatus = order.status)
                 )
             } else {
-                repo.add(order = order)
+                repo.save(order = order)
             }
 
             legacyOrdersRepository.add(

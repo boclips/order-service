@@ -9,7 +9,8 @@ fun MockHttpServletRequestBuilder.asBackofficeStaff() = this.with(
         .user("backofficestaff")
         .roles(
             UserRoles.VIEW_ORDERS,
-            UserRoles.CREATE_ORDERS
+            UserRoles.CREATE_ORDERS,
+            UserRoles.UPDATE_ORDERS
         )
 )
 

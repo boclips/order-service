@@ -1,7 +1,7 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.exceptions.InvalidLicenseException
-import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsException
+import com.boclips.terry.application.orders.exceptions.InvalidLicenseCsvException
+import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsCsvException
 import com.boclips.terry.domain.service.VideoProvider
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
@@ -39,7 +39,7 @@ class OrderItemsFieldConverterTest {
 
     @Test
     fun `throws if all items are invalid`() {
-        assertThrows<InvalidMetadataItemsException> {
+        assertThrows<InvalidMetadataItemsCsvException> {
             orderItemsFieldConverter.convert(emptyList())
         }
     }
@@ -52,7 +52,7 @@ class OrderItemsFieldConverterTest {
         val spy = spy(OrderItemFieldConverter(mockProvider))
 
         whenever(spy.convert(inValidItem))
-            .thenThrow(InvalidLicenseException("bad"))
+            .thenThrow(InvalidLicenseCsvException("bad"))
 
         val orderItems = OrderItemsFieldConverter(spy).convert(listOf(validItem, inValidItem))
 

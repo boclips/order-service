@@ -4,13 +4,14 @@ import com.boclips.terry.infrastructure.orders.OrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.Instant
 
 class OrderDocumentConverterTest {
     @Test
     fun `converts an order to document to order`() {
-        val originalOrder = TestFactories.order()
+        val originalOrder = OrderFactory.order()
 
         val document = OrderDocumentConverter.toOrderDocument(originalOrder)
         val reconvertedOrder = OrderDocumentConverter.toOrder(document)

@@ -1,7 +1,6 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.converters.metadataConverters.FulfilmentDateFieldConverter
-import com.boclips.terry.application.orders.exceptions.InvalidFulfilmentDateException
+import com.boclips.terry.application.orders.exceptions.InvalidFulfilmentDateCsvException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -36,6 +35,6 @@ class FulfilmentDateFieldConverterTest {
     fun `throws if fulfilment date and request date are both missing`() {
         val item = TestFactories.csvOrderItemMetadata(fulfilmentDate = null, requestDate = null)
 
-        assertThrows<InvalidFulfilmentDateException> { converter.convert(listOf(item)) }
+        assertThrows<InvalidFulfilmentDateCsvException> { converter.convert(listOf(item)) }
     }
 }

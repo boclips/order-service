@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
@@ -20,7 +21,7 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts no trimming request to null`() {
-            val orderItem = TestFactories.orderItem(
+            val orderItem = OrderFactory.orderItem(
                 trim = TrimRequest.NoTrimming
             )
 
@@ -31,7 +32,7 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts with trimming request to a string`() {
-            val orderItem = TestFactories.orderItem(
+            val orderItem = OrderFactory.orderItem(
                 trim = TrimRequest.WithTrimming("10 - 40")
             )
 
@@ -42,8 +43,8 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts a 10 Year single region license`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                     territory = OrderItemLicense.SINGLE_REGION
                 )
@@ -63,7 +64,7 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts price with currency`() {
-            val orderItem = TestFactories.orderItem(
+            val orderItem = OrderFactory.orderItem(
                 price = Price(
                     amount = BigDecimal.TEN,
                     currency = Currency.getInstance("USD")
@@ -77,7 +78,7 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts invalid price`() {
-            val orderItem = TestFactories.orderItem(
+            val orderItem = OrderFactory.orderItem(
                 price = Price(amount = null, currency = null)
             )
 

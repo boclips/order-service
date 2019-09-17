@@ -13,8 +13,6 @@ class CreateOrderFromCsv(
     fun invoke(csvOrderItems: List<CsvOrderItemMetadata>) {
         val orders = orderConverter.toOrders(csvOrderItems)
 
-        orders.map {
-            orderService.create(it)
-        }
+        orders.map { orderService.create(it) }
     }
 }

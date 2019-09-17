@@ -60,7 +60,7 @@ abstract class AbstractSpringIntegrationTest {
 
     @BeforeEach
     fun setup() {
-        ordersRepository.clear()
+        ordersRepository.deleteAll()
         legacyOrdersRepository.clear()
     }
 

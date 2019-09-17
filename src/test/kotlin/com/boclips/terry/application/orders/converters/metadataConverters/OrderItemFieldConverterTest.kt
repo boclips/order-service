@@ -1,6 +1,6 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.exceptions.InvalidVideoIdException
+import com.boclips.terry.application.orders.exceptions.InvalidVideoIdCsvException
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
@@ -111,7 +111,7 @@ class OrderItemFieldConverterTest {
             .whenever(videoProviderMock)
             .get(VideoId(value = "1234"))
 
-        assertThrows<InvalidVideoIdException> {
+        assertThrows<InvalidVideoIdCsvException> {
             itemFieldConverter.convert(TestFactories.csvOrderItemMetadata(videoId = "1234"))
         }
     }

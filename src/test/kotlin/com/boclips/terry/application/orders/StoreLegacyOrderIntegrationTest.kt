@@ -7,7 +7,6 @@ import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
-import com.boclips.terry.infrastructure.orders.MongoLegacyOrdersRepository
 import com.boclips.videos.service.client.CreateContentPartnerRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
@@ -16,6 +15,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
@@ -28,7 +28,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
     @BeforeEach
     fun setUp() {
-        ordersRepository.clear()
+        ordersRepository.deleteAll()
         legacyOrdersRepository.clear()
         fakeVideoClient.setUseInternalProjection(true)
     }
@@ -103,7 +103,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(order.createdAt).isEqualTo(date.toInstant())
         assertThat(order.updatedAt).isEqualTo(date.toInstant())
         assertThat(order.requestingUser).isEqualTo(
-            TestFactories.completeOrderUser(
+            OrderFactory.completeOrderUser(
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
@@ -111,7 +111,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         assertThat(order.authorisingUser).isEqualTo(
-            TestFactories.completeOrderUser(
+            OrderFactory.completeOrderUser(
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
@@ -173,8 +173,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `updates pre-existing orders`() {
-        val order = TestFactories.order()
-        ordersRepository.add(order)
+        val order = OrderFactory.order()
+        ordersRepository.save(order)
 
         val genericUser = TestFactories.legacyOrderUser()
         val contentPartnerId =

@@ -4,6 +4,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.OrderFactory
 import testsupport.TestFactories
 
 class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
@@ -13,8 +14,8 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get a list of order resources`() {
-        ordersRepository.add(TestFactories.order(legacyOrderId = "hello"))
-        ordersRepository.add(TestFactories.order(legacyOrderId = "bye"))
+        ordersRepository.save(OrderFactory.order(legacyOrderId = "hello"))
+        ordersRepository.save(OrderFactory.order(legacyOrderId = "bye"))
 
         val retrievedOrders = getOrders()
 

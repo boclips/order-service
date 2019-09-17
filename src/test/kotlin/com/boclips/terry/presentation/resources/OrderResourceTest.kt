@@ -10,6 +10,7 @@ import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
@@ -20,17 +21,17 @@ class OrderResourceTest {
     @Test
     fun `converts from an order`() {
         val orderResource = OrderResource.fromOrder(
-            order = TestFactories.order(
+            order = OrderFactory.order(
                 id = OrderId(value = "123"),
                 isbnOrProductNumber = "an isbn",
                 legacyOrderId = "456",
 
-                authorisingUser = TestFactories.completeOrderUser(
+                authorisingUser = OrderFactory.completeOrderUser(
                     firstName = "authJoe",
                     lastName = "Mac",
                     email = "vendor@email.com"
                 ),
-                requestingUser = TestFactories.completeOrderUser(
+                requestingUser = OrderFactory.completeOrderUser(
                     firstName = "requestorJack",
                     lastName = "Smith",
                     email = "creator@email.com"
@@ -40,7 +41,7 @@ class OrderResourceTest {
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 items = listOf(
-                    TestFactories.orderItem(
+                    OrderFactory.orderItem(
                         price = Price(
                             amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
@@ -81,6 +82,7 @@ class OrderResourceTest {
                 status = "COMPLETED",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
+                currency = "EUR",
                 items = listOf(
                     OrderItemResource(
                         price = PriceResource.fromPrice(

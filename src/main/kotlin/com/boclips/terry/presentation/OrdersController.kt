@@ -3,6 +3,7 @@ package com.boclips.terry.presentation
 import com.boclips.terry.application.orders.CreateOrderFromCsv
 import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.application.orders.GetOrders
+import com.boclips.terry.application.orders.UpdateOrderCurrency
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
 import com.boclips.terry.presentation.resources.OrderCsvUploadConverter
 import com.boclips.terry.presentation.resources.OrderResource
@@ -13,6 +14,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,7 +27,8 @@ import org.springframework.web.multipart.MultipartFile
 class OrdersController(
     private val getOrders: GetOrders,
     private val getOrder: GetOrder,
-    private val createOrderFromCsv: CreateOrderFromCsv
+    private val createOrderFromCsv: CreateOrderFromCsv,
+    private val updateOrderCurrency: UpdateOrderCurrency
 ) {
     companion object {
         fun getOrdersLink(): Link = ControllerLinkBuilder.linkTo(
@@ -47,31 +50,25 @@ class OrdersController(
     }
 
     @GetMapping
-    fun getOrderList(): Resources<*> {
-        val orders = getOrders()
+    fun getOrderList() = getOrders()
+        .map { wrapOrder(it) }
+        .let(HateoasEmptyCollection::fixIfEmptyCollection)
+        .let{Resources(it, getSelfOrdersLink()) }
 
-        val orderResources = orders
-            .map { wrapOrder(it) }
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+    @GetMapping("/{id}")
+    fun getOrderResource(@PathVariable("id") id: String?) = wrapOrder(getOrder(id))
 
-        return Resources(orderResources, getSelfOrdersLink())
-    }
-
-    @RequestMapping("/{id}")
-    @GetMapping
-    fun getOrderResource(@PathVariable("id") id: String?): Resource<OrderResource> {
-        val order = getOrder(id)
-
-        return wrapOrder(order)
-    }
+    @PatchMapping(value = ["/{id}"], params = ["currency"])
+    fun patchOrderCurrency(@PathVariable id: String, @RequestParam currency: String) =
+        updateOrderCurrency(orderId = id, currency = currency)
+            .run { getOrderResource(id) }
 
     @PostMapping(consumes = ["multipart/form-data"])
-    fun createOrders(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> {
-        createOrderFromCsv.invoke(OrderCsvUploadConverter.convertToMetadata(file.bytes))
-        return ResponseEntity(HttpStatus.CREATED)
-    }
+    fun createOrders(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> =
+        createOrderFromCsv.invoke(OrderCsvUploadConverter.convertToMetadata(file.bytes)).run {
+            ResponseEntity(HttpStatus.CREATED)
+        }
 
-    private fun wrapOrder(orderResource: OrderResource): Resource<OrderResource> {
-        return Resource(orderResource, getSelfOrderLink(orderResource.id))
-    }
+    private fun wrapOrder(orderResource: OrderResource) =
+        Resource(orderResource, getSelfOrderLink(orderResource.id))
 }

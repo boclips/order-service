@@ -5,6 +5,7 @@ import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.OrderFactory
 import testsupport.TestFactories
 
 class OrderServiceTest : AbstractSpringIntegrationTest() {
@@ -13,7 +14,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create an order`() {
-        val originalOrder = TestFactories.order()
+        val originalOrder = OrderFactory.order()
 
         orderService.create(originalOrder)
 
@@ -24,9 +25,9 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `ignores orders with a clashing legacy id`() {
-        ordersRepository.add(TestFactories.order(legacyOrderId = "hi", status = OrderStatus.OPEN))
+        ordersRepository.save(OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.OPEN))
 
-        val newOrder = TestFactories.order(legacyOrderId = "hi", status = OrderStatus.CANCELLED)
+        val newOrder = OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.CANCELLED)
 
         orderService.create(newOrder)
 

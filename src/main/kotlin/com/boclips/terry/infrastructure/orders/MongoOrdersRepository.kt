@@ -1,5 +1,6 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.terry.common.Do
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderUpdateCommand
@@ -17,6 +18,7 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.orderBy
 import org.litote.kmongo.set
+import org.litote.kmongo.updateOne
 import java.time.Instant
 
 const val databaseName = "order-service-db"
@@ -29,14 +31,16 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
         const val collectionName = "orders"
     }
 
-    override fun add(order: Order) = this.also {
+    override fun save(order: Order) =
         collection()
             .insertOne(
                 OrderDocumentConverter.toOrderDocument(order)
-            )
-    }
+            ).let { this.findOne(order.id) }!!
 
-    override fun clear() = this.also { collection().deleteMany() }
+
+    override fun deleteAll() {
+        collection().deleteMany()
+    }
 
     override fun findAll(): List<Order> =
         collection()
@@ -62,10 +66,14 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             throw OrderNotFoundException(orderUpdateCommand.orderId)
         }
 
-        when (orderUpdateCommand) {
+        Do exhaustive when (orderUpdateCommand) {
             is OrderUpdateCommand.ReplaceStatus -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
                 set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())
+            )
+            is OrderUpdateCommand.UpdateOrderItemsCurrency -> collection().updateOne(
+                OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
+                "{\$set:{'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
             )
         }
 

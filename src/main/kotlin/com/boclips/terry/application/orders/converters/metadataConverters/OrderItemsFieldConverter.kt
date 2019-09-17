@@ -1,7 +1,7 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
 import com.boclips.terry.application.orders.exceptions.InvalidCsvException
-import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsException
+import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsCsvException
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import mu.KLogging
@@ -23,7 +23,7 @@ class OrderItemsFieldConverter(val orderItemFieldConverter: OrderItemFieldConver
             }
         }.let {
             if (it.isEmpty()) {
-                throw InvalidMetadataItemsException("No valid items")
+                throw InvalidMetadataItemsCsvException("No valid items")
             } else {
                 it
             }

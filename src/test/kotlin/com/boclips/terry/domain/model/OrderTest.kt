@@ -4,6 +4,7 @@ import com.boclips.terry.domain.exceptions.IllegalCurrencyException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
 import java.util.Currency
@@ -12,9 +13,9 @@ class OrderTest {
 
     @Test
     fun `getCurrency returns currency of underlying items`() {
-        val order = TestFactories.order(
+        val order = OrderFactory.order(
             items = listOf(
-                TestFactories.orderItem(
+                OrderFactory.orderItem(
                     price = PriceFactory.tenDollars()
                 )
             )
@@ -25,7 +26,7 @@ class OrderTest {
 
     @Test
     fun `getCurrency returns null if no underlying items`() {
-        val order = TestFactories.order(
+        val order = OrderFactory.order(
             items = emptyList()
         )
 
@@ -34,16 +35,16 @@ class OrderTest {
 
     @Test
     fun `Throws when item is added with different currency`() {
-        TestFactories.order().apply {
+        OrderFactory.order().apply {
             addItem(
-                TestFactories.orderItem(
+                OrderFactory.orderItem(
                     price = PriceFactory.tenDollars()
                 )
             )
 
             assertThrows<IllegalCurrencyException> {
                 addItem(
-                    TestFactories.orderItem(
+                    OrderFactory.orderItem(
                         price = PriceFactory.onePound()
                     )
                 )

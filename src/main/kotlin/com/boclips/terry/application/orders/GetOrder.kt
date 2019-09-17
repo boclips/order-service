@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class GetOrder(private val ordersRepository: OrdersRepository) {
     operator fun invoke(id: String?): OrderResource {
         return findOrder(id)?.let { OrderResource.fromOrder(it) }
-            ?: throw OrderNotFoundException("Cannot find order for id: $id")
+            ?: throw OrderNotFoundException(OrderId(id.orEmpty()))
     }
 
     private fun findOrder(id: String?): Order? = id?.let {

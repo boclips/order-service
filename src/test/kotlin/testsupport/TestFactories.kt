@@ -169,56 +169,6 @@ class TestFactories {
                 .build()
         }
 
-        fun order(
-            id: OrderId = OrderId(value = ObjectId.get().toHexString()),
-            legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
-            requestingUser: OrderUser = completeOrderUser(),
-            authorisingUser: OrderUser = completeOrderUser(),
-            status: OrderStatus = OrderStatus.COMPLETED,
-            createdAt: Instant = Instant.now(),
-            updatedAt: Instant = Instant.now(),
-            items: List<OrderItem> = emptyList(),
-            isbnOrProductNumber: String = "some-isbn",
-            orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp")
-        ): Order {
-            return Order(
-                id = id,
-                legacyOrderId = legacyOrderId,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-                requestingUser = requestingUser,
-                authorisingUser = authorisingUser,
-                isbnOrProductNumber = isbnOrProductNumber,
-                status = status,
-                items = items,
-                organisation = orderOrganisation
-            )
-        }
-
-        fun orderItem(
-            price: Price = Price(
-                amount = BigDecimal.valueOf(100),
-                currency = Currency.getInstance("GBP")
-            ),
-            transcriptRequested: Boolean = true,
-            video: Video = video(),
-            trim: TrimRequest = TrimRequest.NoTrimming,
-            license: OrderItemLicense = OrderItemLicense(
-                Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
-                territory = OrderItemLicense.SINGLE_REGION
-            ),
-            notes: String? = "a note"
-        ): OrderItem {
-            return OrderItem(
-                price = price,
-                transcriptRequested = transcriptRequested,
-                video = video,
-                trim = trim,
-                license = license,
-                notes = notes
-            )
-        }
-
         fun createVideoRequest(
             providerId: String = "providerId",
             providerVideoId: String = "providerId video id",
@@ -286,24 +236,6 @@ class TestFactories {
                 .authorisingUser(authorisingUser)
                 .build()
         }
-
-        fun completeOrderUser(
-            firstName: String = "OrderingBob",
-            lastName: String = "Smith",
-            email: String = "bobsmith@hello.com",
-            sourceUserId: String = "abc123"
-        ): OrderUser {
-            return OrderUser.CompleteUser(
-                firstName = firstName,
-                lastName = lastName,
-                email = email,
-                legacyUserId = sourceUserId
-            )
-        }
-
-        fun basicOrderUser(
-            label: String = "Matt <hello@boclips.tom>"
-        ): OrderUser = OrderUser.BasicUser(label = label)
 
         fun orderUserDocument(
             firstName: String? = "OrderingBob",
@@ -392,19 +324,6 @@ class TestFactories {
             )
         }
 
-        fun orderItemLicense(
-            duration: Duration = Duration.Time(
-                amount = 100,
-                unit = ChronoUnit.YEARS
-            ),
-            territory: String = OrderItemLicense.WORLDWIDE
-        ): OrderItemLicense {
-            return OrderItemLicense(
-                duration = duration,
-                territory = territory
-            )
-        }
-
         fun csvOrderItemMetadata(
             legacyOrderId: String = ObjectId().toHexString(),
             month: String = "August 2019",
@@ -468,4 +387,93 @@ object PriceFactory {
         BigDecimal.ONE,
         Currency.getInstance("GBP")
     )
+}
+
+object OrderFactory {
+    fun order(
+        id: OrderId = OrderId(value = ObjectId.get().toHexString()),
+        legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+        requestingUser: OrderUser = completeOrderUser(),
+        authorisingUser: OrderUser = completeOrderUser(),
+        status: OrderStatus = OrderStatus.COMPLETED,
+        createdAt: Instant = Instant.now(),
+        updatedAt: Instant = Instant.now(),
+        items: List<OrderItem> = emptyList(),
+        isbnOrProductNumber: String = "some-isbn",
+        orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp")
+    ): Order {
+        return Order(
+            id = id,
+            legacyOrderId = legacyOrderId,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            requestingUser = requestingUser,
+            authorisingUser = authorisingUser,
+            isbnOrProductNumber = isbnOrProductNumber,
+            status = status,
+            items = items,
+            organisation = orderOrganisation
+        )
+    }
+
+    fun orderInPounds() = order(
+        items = listOf(orderItem(
+            price = PriceFactory.onePound())))
+
+    fun orderItem(
+        price: Price = Price(
+            amount = BigDecimal.valueOf(100),
+            currency = Currency.getInstance("GBP")
+        ),
+        transcriptRequested: Boolean = true,
+        video: Video = TestFactories.video(),
+        trim: TrimRequest = TrimRequest.NoTrimming,
+        license: OrderItemLicense = OrderItemLicense(
+            Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
+            territory = OrderItemLicense.SINGLE_REGION
+        ),
+        notes: String? = "a note"
+    ): OrderItem {
+        return OrderItem(
+            price = price,
+            transcriptRequested = transcriptRequested,
+            video = video,
+            trim = trim,
+            license = license,
+            notes = notes
+        )
+    }
+
+    fun orderItemLicense(
+        duration: Duration = Duration.Time(
+            amount = 100,
+            unit = ChronoUnit.YEARS
+        ),
+        territory: String = OrderItemLicense.WORLDWIDE
+    ): OrderItemLicense {
+        return OrderItemLicense(
+            duration = duration,
+            territory = territory
+        )
+    }
+
+
+    fun completeOrderUser(
+        firstName: String = "OrderingBob",
+        lastName: String = "Smith",
+        email: String = "bobsmith@hello.com",
+        sourceUserId: String = "abc123"
+    ): OrderUser {
+        return OrderUser.CompleteUser(
+            firstName = firstName,
+            lastName = lastName,
+            email = email,
+            legacyUserId = sourceUserId
+        )
+    }
+
+    fun basicOrderUser(
+        label: String = "Matt <hello@boclips.tom>"
+    ): OrderUser = OrderUser.BasicUser(label = label)
+
 }

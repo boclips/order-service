@@ -9,27 +9,29 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import testsupport.TestFactories
+import testsupport.OrderFactory
+import testsupport.PriceFactory
 import java.time.Instant
+import java.util.Currency
 
 class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `creates an order`() {
-        val order = TestFactories.order()
+        val order = OrderFactory.order()
 
-        ordersRepository.add(order = order)
+        ordersRepository.save(order = order)
         assertThat(ordersRepository.findAll()).containsExactly(order)
     }
 
     @Test
     fun `can get order by id`() {
         val id = ObjectId().toHexString()
-        val order = TestFactories.order(
+        val order = OrderFactory.order(
             id = OrderId(value = id)
         )
 
-        ordersRepository.add(order = order)
+        ordersRepository.save(order = order)
 
         assertThat(ordersRepository.findOne(OrderId(value = id))).isEqualTo(order)
     }
@@ -45,21 +47,21 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `orders are ordered by updated at`() {
-        val firstUpdated = TestFactories.order(updatedAt = Instant.ofEpochSecond(1))
-        val lastUpdated = TestFactories.order(updatedAt = Instant.ofEpochSecond(2))
+        val firstUpdated = OrderFactory.order(updatedAt = Instant.ofEpochSecond(1))
+        val lastUpdated = OrderFactory.order(updatedAt = Instant.ofEpochSecond(2))
 
-        ordersRepository.add(order = firstUpdated)
-        ordersRepository.add(order = lastUpdated)
+        ordersRepository.save(order = firstUpdated)
+        ordersRepository.save(order = lastUpdated)
 
         assertThat(ordersRepository.findAll().first()).isEqualTo(lastUpdated)
     }
 
     @Test
     fun `can find order by legacy id`() {
-        val order = TestFactories.order(legacyOrderId = "legacy-id")
-        val ignoredOrder = TestFactories.order(legacyOrderId = "other-legacy-id")
-        ordersRepository.add(order = order)
-        ordersRepository.add(order = ignoredOrder)
+        val order = OrderFactory.order(legacyOrderId = "legacy-id")
+        val ignoredOrder = OrderFactory.order(legacyOrderId = "other-legacy-id")
+        ordersRepository.save(order = order)
+        ordersRepository.save(order = ignoredOrder)
 
         val retrievedOrder = ordersRepository.findOneByLegacyId("legacy-id")
 
@@ -68,8 +70,8 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can update an order status`() {
-        val order = TestFactories.order(legacyOrderId = "legacy-id")
-        ordersRepository.add(order = order)
+        val order = OrderFactory.order(legacyOrderId = "legacy-id")
+        ordersRepository.save(order = order)
 
         ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
 
@@ -79,8 +81,8 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     @Test
     fun `updates to order update the updated at time`() {
         val startOfTest = Instant.now().minusMillis(100)
-        val order = TestFactories.order(legacyOrderId = "legacy-id", updatedAt = startOfTest)
-        ordersRepository.add(order = order)
+        val order = OrderFactory.order(legacyOrderId = "legacy-id", updatedAt = startOfTest)
+        ordersRepository.save(order = order)
         ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
 
         assertThat(ordersRepository.findOne(order.id)!!.updatedAt).isAfter(startOfTest)
@@ -110,5 +112,23 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             )
 
         }
+    }
+
+    @Test
+    fun `can update the currency for order items`() {
+        val originalOrder = ordersRepository.save(OrderFactory.order(items = listOf(
+            OrderFactory.orderItem(price = PriceFactory.onePound()),
+            OrderFactory.orderItem(price = PriceFactory.onePound()))
+        ))
+
+        val updatedOrder = ordersRepository.update(
+            OrderUpdateCommand.UpdateOrderItemsCurrency(
+                orderId = originalOrder.id,
+                currency = Currency.getInstance("EUR")
+            )
+        )
+
+        assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("EUR"))
+        assertThat(updatedOrder.items.map { it.price.currency.toString() }).allMatch { it == "EUR" }
     }
 }

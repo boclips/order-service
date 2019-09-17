@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import testsupport.OrderFactory
+import testsupport.PriceFactory
 import testsupport.TestFactories
 import testsupport.asBackofficeStaff
 import java.math.BigDecimal
@@ -40,17 +43,17 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get orders`() {
-        ordersRepository.add(
-            TestFactories.order(
+        ordersRepository.save(
+            OrderFactory.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 isbnOrProductNumber = "a beautiful isbnNumber",
                 legacyOrderId = "456",
-                authorisingUser = TestFactories.completeOrderUser(
+                authorisingUser = OrderFactory.completeOrderUser(
                     firstName = "vendor",
                     lastName = "hello",
                     email = "vendor@proper.order"
                 ),
-                requestingUser = TestFactories.completeOrderUser(
+                requestingUser = OrderFactory.completeOrderUser(
                     firstName = "Kata",
                     lastName = "Kovacs",
                     email = "creator@proper.order"
@@ -60,7 +63,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
-                    TestFactories.orderItem(
+                    OrderFactory.orderItem(
                         price = Price(
                             amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
@@ -77,11 +80,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 name = "bob is still here"
                             )
                         ),
-                        license = TestFactories.orderItemLicense(
+                        license = OrderFactory.orderItemLicense(
                             duration = Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                             territory = OrderItemLicense.SINGLE_REGION
                         )
-                    ), TestFactories.orderItem(
+                    ), OrderFactory.orderItem(
                         price = Price(
                             amount = BigDecimal.valueOf(10),
                             currency = Currency.getInstance("EUR")
@@ -117,6 +120,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
+            .andExpect(jsonPath("$._embedded.orders[0].currency", equalTo("EUR")))
             .andExpect(jsonPath("$._embedded.orders[0]._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("EUR 1.00")))
@@ -148,16 +152,16 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get an order`() {
-        ordersRepository.add(
-            TestFactories.order(
+        ordersRepository.save(
+            OrderFactory.order(
                 id = OrderId(value = "5ceeb99bd0e30a1a57ae9767"),
                 legacyOrderId = "456",
-                authorisingUser = TestFactories.completeOrderUser(
+                authorisingUser = OrderFactory.completeOrderUser(
                     email = "vendor@proper.order",
                     firstName = "hi",
                     lastName = "there"
                 ),
-                requestingUser = TestFactories.completeOrderUser(
+                requestingUser = OrderFactory.completeOrderUser(
                     firstName = "hello",
                     lastName = "you",
                     email = "creator@proper.order"
@@ -167,14 +171,14 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
-                    TestFactories.orderItem(
+                    OrderFactory.orderItem(
                         price = Price(
                             amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = true,
                         trim = TrimRequest.NoTrimming,
-                        license = TestFactories.orderItemLicense(
+                        license = OrderFactory.orderItemLicense(
                             duration = Duration.Time(10, ChronoUnit.YEARS),
                             territory = OrderItemLicense.WORLDWIDE
                         ),
@@ -188,7 +192,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 name = "eman"
                             )
                         )
-                    ), TestFactories.orderItem(
+                    ), OrderFactory.orderItem(
                         price = Price(
                             amount = BigDecimal.valueOf(10),
                             currency = Currency.getInstance("EUR")
@@ -211,6 +215,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.status", equalTo("CONFIRMED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
+            .andExpect(jsonPath("$.currency", equalTo("EUR")))
             .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("EUR 1.00")))
@@ -250,5 +255,24 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             multipart("/v1/orders")
                 .file("file", ordersCsv.file.readBytes())
         ).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `can update currency of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound()))
+            )
+        )
+
+        mockMvc.perform((patch("/v1/orders/{id}?currency=USD", order.id.value).asBackofficeStaff()))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.currency").value("USD"))
+    }
+
+    @Test
+    fun `incorrect currency returns 400`() {
+        mockMvc.perform((patch("/v1/orders/irrelevant?currency=nasty-currency").asBackofficeStaff()))
+            .andExpect(status().isBadRequest)
     }
 }

@@ -6,6 +6,7 @@ import com.boclips.terry.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.temporal.ChronoUnit
 
@@ -13,7 +14,7 @@ class OrderItemResourceTest {
 
     @Test
     fun `converts item with no trimming`() {
-        val orderItem = TestFactories.orderItem(
+        val orderItem = OrderFactory.orderItem(
             trim = TrimRequest.NoTrimming
         )
 
@@ -24,7 +25,7 @@ class OrderItemResourceTest {
 
     @Test
     fun `converts item with trimming`() {
-        val orderItem = TestFactories.orderItem(
+        val orderItem = OrderFactory.orderItem(
             trim = TrimRequest.WithTrimming("hello")
         )
 
@@ -37,8 +38,8 @@ class OrderItemResourceTest {
     inner class License {
         @Test
         fun `converts a valid license`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     duration = Duration.Time(
                         amount = 3,
                         unit = ChronoUnit.YEARS
@@ -55,8 +56,8 @@ class OrderItemResourceTest {
 
         @Test
         fun `converts a Multi Region license`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     territory = OrderItemLicense.MULTI_REGION
                 )
             )
@@ -68,8 +69,8 @@ class OrderItemResourceTest {
 
         @Test
         fun `converts a Worldwide license`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     territory = OrderItemLicense.WORLDWIDE
                 )
             )
@@ -80,8 +81,8 @@ class OrderItemResourceTest {
 
         @Test
         fun `converts a license with single duration`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     duration = Duration.Time(1, ChronoUnit.YEARS)
                 )
             )
@@ -92,8 +93,8 @@ class OrderItemResourceTest {
 
         @Test
         fun `converts a license with a description`() {
-            val orderItem = TestFactories.orderItem(
-                license = TestFactories.orderItemLicense(
+            val orderItem = OrderFactory.orderItem(
+                license = OrderFactory.orderItemLicense(
                     duration = Duration.Description("Life of work")
                 )
             )

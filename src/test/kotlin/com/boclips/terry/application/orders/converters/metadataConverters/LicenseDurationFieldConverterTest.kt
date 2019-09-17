@@ -1,11 +1,10 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.exceptions.InvalidLicenseException
+import com.boclips.terry.application.orders.exceptions.InvalidLicenseCsvException
 import com.boclips.terry.domain.model.orderItem.Duration
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
 import testsupport.TestFactories
 import java.time.temporal.ChronoUnit
 
@@ -33,7 +32,7 @@ class LicenseDurationFieldConverterTest {
     fun `throws when license is empty`() {
         val csvMetadataItem = TestFactories.csvOrderItemMetadata(licenseDuration = "")
 
-        org.junit.jupiter.api.assertThrows<InvalidLicenseException> {
+        org.junit.jupiter.api.assertThrows<InvalidLicenseCsvException> {
             LicenseDurationFieldConverter.convert(csvMetadataItem)
         }
 

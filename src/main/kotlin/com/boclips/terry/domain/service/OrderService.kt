@@ -10,7 +10,7 @@ class OrderService(val ordersRepository: OrdersRepository) {
         val doesNotExistByLegacyId = ordersRepository.findOneByLegacyId(order.legacyOrderId) == null
 
         if (doesNotExistByLegacyId) {
-            ordersRepository.add(order)
+            ordersRepository.save (order)
         }
     }
 }

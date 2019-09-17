@@ -1,7 +1,7 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
 import com.boclips.terry.application.orders.converters.TrimmingConverter
-import com.boclips.terry.application.orders.exceptions.InvalidVideoIdException
+import com.boclips.terry.application.orders.exceptions.InvalidVideoIdCsvException
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.VideoId
@@ -17,7 +17,7 @@ class OrderItemFieldConverter(val videoProvider: VideoProvider) {
             transcriptRequested = csvItem.captioning.toLowerCase() == "yes",
             trim = TrimmingConverter.toTrimRequest(csvItem.trim),
             video = videoProvider.get(VideoId(value = csvItem.videoId))
-                ?: throw InvalidVideoIdException("Can not provide video for id ${csvItem.videoId}"),
+                ?: throw InvalidVideoIdCsvException("Can not provide video for id ${csvItem.videoId}"),
             license = OrderItemLicense(
                 duration = LicenseDurationFieldConverter.convert(csvItem),
                 territory = csvItem.territory

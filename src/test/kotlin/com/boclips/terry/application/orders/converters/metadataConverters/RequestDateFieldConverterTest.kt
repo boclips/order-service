@@ -1,7 +1,6 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.converters.metadataConverters.RequestDateFieldConverter
-import com.boclips.terry.application.orders.exceptions.InvalidRequestDateException
+import com.boclips.terry.application.orders.exceptions.InvalidRequestDateCsvException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -18,7 +17,7 @@ class RequestDateFieldConverterTest {
             requestDate = null
         )
 
-        assertThrows<InvalidRequestDateException> {
+        assertThrows<InvalidRequestDateCsvException> {
             converter.convert(listOf(csvOrderItem))
         }
     }
