@@ -10,6 +10,7 @@ import com.boclips.terry.domain.model.OrderOrganisation
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
 
@@ -17,12 +18,15 @@ import org.springframework.stereotype.Component
 class CsvOrderConverter(
     val orderItemsFieldConverter: OrderItemsFieldConverter
 ) {
+    companion object : KLogging()
+
     fun toOrders(csvOrderItems: List<CsvOrderItemMetadata>): List<Order> {
         return csvOrderItems
             .groupBy {
                 it.legacyOrderId
             }.mapNotNull {
                 try {
+                    logger.info { "Attempting to parse order: ${it.key}" }
                     Order(
                         id = OrderId(ObjectId().toHexString()),
                         legacyOrderId = it.key,
@@ -36,6 +40,7 @@ class CsvOrderConverter(
                         organisation = OrderOrganisation(name = it.value.first().publisher)
                     )
                 } catch (ex: InvalidCsvException) {
+                    logger.info { "Ignoring order because: $ex" }
                     return@mapNotNull null
                 }
 
