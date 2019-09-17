@@ -115,4 +115,22 @@ class OrderItemFieldConverterTest {
             itemFieldConverter.convert(TestFactories.csvOrderItemMetadata(videoId = "1234"))
         }
     }
+
+    @Test
+    fun `sets notes if present`() {
+        val metadataItem = TestFactories.csvOrderItemMetadata(notes = "wow, what an order")
+
+        val orderItem = itemFieldConverter.convert(csvItem = metadataItem)
+
+        assertThat(orderItem.notes).isEqualTo("wow, what an order")
+    }
+
+    @Test
+    fun `sets notes to null if empty string`() {
+        val metadataItem = TestFactories.csvOrderItemMetadata(notes = "")
+
+        val orderItem = itemFieldConverter.convert(csvItem = metadataItem)
+
+        assertThat(orderItem.notes).isNull()
+    }
 }

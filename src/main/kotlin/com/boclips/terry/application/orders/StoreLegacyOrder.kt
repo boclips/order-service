@@ -98,7 +98,8 @@ class StoreLegacyOrder(
                 transcriptRequested = item.transcriptsRequired,
                 trim = TrimmingConverter.toTrimRequest(item.trimming),
                 video = it,
-                license = LicenseConverter.toOrderItemLicense(item.license)
+                license = LicenseConverter.toOrderItemLicense(item.license),
+                notes = null
             )
         } ?: throw IllegalStateException("Could not find video for: ${item.assetId}")
     }

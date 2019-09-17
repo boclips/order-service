@@ -206,14 +206,16 @@ class TestFactories {
             license: OrderItemLicense = OrderItemLicense(
                 Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
                 territory = OrderItemLicense.SINGLE_REGION
-            )
+            ),
+            notes: String? = "a note"
         ): OrderItem {
             return OrderItem(
                 price = price,
                 transcriptRequested = transcriptRequested,
                 video = video,
                 trim = trim,
-                license = license
+                license = license,
+                notes = notes
             )
         }
 
@@ -336,7 +338,8 @@ class TestFactories {
             source: SourceDocument = sourceDocument(),
             video: VideoDocument = videoDocument(),
             license: LicenseDocument = licenseDocument(),
-            trim: String? = "hello"
+            trim: String? = "hello",
+            notes: String? = "a notes"
         ): OrderItemDocument {
             return OrderItemDocument(
                 price = price,
@@ -345,7 +348,8 @@ class TestFactories {
                 video = video,
                 license = license,
                 trim = trim,
-                currency = currency
+                currency = currency,
+                notes = notes
             )
         }
 

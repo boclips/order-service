@@ -7,5 +7,6 @@ data class OrderItem(
     val transcriptRequested: Boolean,
     val trim: TrimRequest,
     val video: Video,
-    val license: OrderItemLicense
+    val license: OrderItemLicense,
+    val notes: String?
 )

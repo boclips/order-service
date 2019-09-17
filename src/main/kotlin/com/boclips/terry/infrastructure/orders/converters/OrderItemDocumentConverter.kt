@@ -47,7 +47,8 @@ object OrderItemDocumentConverter {
                     territory = it.license.territory,
                     description = it.license.duration.label
                 )
-            }
+            },
+            notes = it.notes
         )
     }
 
@@ -77,7 +78,8 @@ object OrderItemDocumentConverter {
                     else -> throw IllegalStateException("Invalid duration")
                 },
                 territory = document.license.territory
-            )
+            ),
+            notes = document.notes
         )
     }
 

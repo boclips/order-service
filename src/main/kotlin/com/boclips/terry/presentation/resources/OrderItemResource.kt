@@ -12,7 +12,8 @@ data class OrderItemResource(
     val video: VideoResource,
     val licenseDuration: String,
     val licenseTerritory: String,
-    val trim: String?
+    val trim: String?,
+    val notes: String?
 ) {
     companion object {
         fun fromOrderItem(item: OrderItem): OrderItemResource =
@@ -34,7 +35,8 @@ data class OrderItemResource(
                     videoReference = item.video.videoReference
                 ),
                 licenseDuration = getDurationLabel(item.license),
-                licenseTerritory = item.license.territory
+                licenseTerritory = item.license.territory,
+                notes = item.notes
             )
 
         private fun getDurationLabel(license: OrderItemLicense): String {

@@ -8,7 +8,6 @@ import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
 class OrderItemFieldConverter(val videoProvider: VideoProvider) {
@@ -22,7 +21,12 @@ class OrderItemFieldConverter(val videoProvider: VideoProvider) {
             license = OrderItemLicense(
                 duration = LicenseDurationFieldConverter.convert(csvItem),
                 territory = csvItem.territory
-            )
+            ),
+            notes = if (csvItem.notes.isBlank()) {
+                null
+            } else {
+                csvItem.notes
+            }
         )
     }
 }

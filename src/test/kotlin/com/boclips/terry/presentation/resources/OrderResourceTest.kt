@@ -60,7 +60,8 @@ class OrderResourceTest {
                         license = OrderItemLicense(
                             duration = Duration.Time(10, ChronoUnit.YEARS),
                             territory = OrderItemLicense.MULTI_REGION
-                        )
+                        ),
+                        notes = "hello, I'm a note"
                     )
                 )
             )
@@ -101,7 +102,8 @@ class OrderResourceTest {
                             videoReference = "TED_11"
                         ),
                         licenseDuration = "10 Years",
-                        licenseTerritory = "Multi Region"
+                        licenseTerritory = "Multi Region",
+                        notes = "hello, I'm a note"
                     )
                 )
             )

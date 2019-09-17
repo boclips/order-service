@@ -30,7 +30,7 @@ class OrderItemDocumentConverterTest {
         }
 
         @Test
-        fun `converts a with trimming request to a string`() {
+        fun `converts with trimming request to a string`() {
             val orderItem = TestFactories.orderItem(
                 trim = TrimRequest.WithTrimming("10 - 40")
             )
