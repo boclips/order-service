@@ -81,4 +81,11 @@ class PriceFieldConverterTest {
         assertThat(price.amount!!.toDouble()).isEqualTo(199.5)
         assertThat(price.currency).isEqualTo(Currency.getInstance("EUR"))
     }
+
+    @Test
+    fun `extracts price with no currency when the currency can not be determined`() {
+        val price = priceFieldConverter.convert("RTYHJ 111.23")
+        assertThat(price.amount!!.toDouble()).isEqualTo(111.23)
+        assertThat(price.currency).isNull()
+    }
 }

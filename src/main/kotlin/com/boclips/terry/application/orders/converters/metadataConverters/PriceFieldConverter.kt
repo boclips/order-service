@@ -15,19 +15,19 @@ object PriceFieldConverter {
         "€" to Currency.getInstance("EUR")
     ) // these are in priority order
 
-    private val doubleRegex: Regex = Regex.fromLiteral("/^[0-9]+(\\.[0-9]+)?$")
+    private val doubleRegex: Regex = """(-?[0-9]+(?:[,.][0-9]+)?)""".toRegex()
 
     fun convert(unparsedPrice: String): Price {
-        delimiterToCurrency.map { delimiterToCurrencyPair ->
-            unparsedPrice.contains(delimiterToCurrencyPair.key)
-                .takeIf { it }
-                ?.let { unparsedPrice.replace(delimiterToCurrencyPair.key, "") }
-                ?.let { it.toDoubleOrNull() }
-                ?.let { return Price(BigDecimal.valueOf(it), currency = delimiterToCurrencyPair.value) }
+        val amount = doubleRegex.find(unparsedPrice)?.value?.toDoubleOrNull()
+            ?.let { BigDecimal.valueOf(it) }
+
+        delimiterToCurrency.forEach { delimiterToCurrencyPair ->
+            if (unparsedPrice.contains(delimiterToCurrencyPair.key)) {
+                return Price(amount = amount, currency = delimiterToCurrencyPair.value)
+            }
         }
 
 
-        return unparsedPrice.toDoubleOrNull()?.let { Price(amount = BigDecimal.valueOf(it), currency = null) }
-            ?: Price(amount = null, currency = null)
+        return Price(amount = amount, currency = null)
     }
 }
