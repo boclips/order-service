@@ -13,6 +13,10 @@ class CreateOrderFromCsv(
     fun invoke(csvOrderItems: List<CsvOrderItemMetadata>) {
         val orders = orderConverter.toOrders(csvOrderItems)
 
-        orders.map { ordersRepository.add(it) }
+        orders.map {
+            if (ordersRepository.findOneByLegacyId(it.legacyOrderId) == null) {
+                ordersRepository.add(it)
+            }
+        }
     }
 }
