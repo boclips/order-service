@@ -110,8 +110,7 @@ class CsvOrderItemMetadata {
         const val CLIP_ID = "Clip ID"
         const val TITLE = "Title"
         const val SOURCE = "Source"
-        const val SOURCE_CODE = "Source Code\n" +
-            "(Split text with ' : ')"
+        const val SOURCE_CODE = "Source Code"
         const val LICENSE_DURATION = "License Duration"
         const val TERRITORY = "Territory"
         const val TYPE = "Type"
