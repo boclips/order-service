@@ -119,7 +119,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
         assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")
-        assertThat(order.status).isEqualTo(OrderStatus.CONFIRMED)
+        assertThat(order.status).isEqualTo(OrderStatus.INCOMPLETED)
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()

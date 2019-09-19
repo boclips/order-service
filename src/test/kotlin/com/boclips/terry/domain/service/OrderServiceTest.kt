@@ -25,7 +25,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `ignores orders with a clashing legacy id`() {
-        ordersRepository.save(OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.OPEN))
+        ordersRepository.save(OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.INCOMPLETED))
 
         val newOrder = OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.CANCELLED)
 
@@ -34,6 +34,6 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val retrievedOrders = ordersRepository.findAll()
 
         assertThat(retrievedOrders).hasSize(1)
-        assertThat(retrievedOrders.first().status).isEqualTo(OrderStatus.OPEN)
+        assertThat(retrievedOrders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
     }
 }

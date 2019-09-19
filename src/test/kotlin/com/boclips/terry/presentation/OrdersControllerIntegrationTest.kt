@@ -59,7 +59,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     email = "creator@proper.order"
                 ),
                 orderOrganisation = OrderOrganisation(name = "An Org"),
-                status = OrderStatus.CONFIRMED,
+                status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
@@ -117,7 +117,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     equalTo("vendor hello <vendor@proper.order>")
                 )
             )
-            .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("CONFIRMED")))
+            .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$._embedded.orders[0].currency", equalTo("EUR")))
@@ -167,7 +167,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     email = "creator@proper.order"
                 ),
                 orderOrganisation = OrderOrganisation(name = "An Org"),
-                status = OrderStatus.CONFIRMED,
+                status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
@@ -212,7 +212,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
             .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))
             .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("hi there <vendor@proper.order>")))
-            .andExpect(jsonPath("$.status", equalTo("CONFIRMED")))
+            .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$.currency", equalTo("EUR")))

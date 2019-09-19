@@ -59,11 +59,11 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `order defaults to completed`() {
+    fun `order defaults to processing`() {
         val csvOrder = TestFactories.csvOrderItemMetadata()
         val orders = orderConverter.toOrders(listOf(csvOrder))
 
-        assertThat(orders.first().status).isEqualTo(OrderStatus.COMPLETED)
+        assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
     }
 
     @Test

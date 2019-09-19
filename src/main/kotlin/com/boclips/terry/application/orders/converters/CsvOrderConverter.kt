@@ -30,7 +30,7 @@ class CsvOrderConverter(
                     Order(
                         id = OrderId(ObjectId().toHexString()),
                         legacyOrderId = it.key,
-                        status = OrderStatus.COMPLETED,
+                        status = OrderStatus.INCOMPLETED,
                         createdAt = RequestDateFieldConverter.convert(it.value),
                         updatedAt = FulfilmentDateFieldConverter.convert(it.value),
                         isbnOrProductNumber = it.value.first().isbnProductNumber,

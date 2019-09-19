@@ -8,13 +8,13 @@ object OrderStatusConverter {
             "COMPLETED" ->
                 OrderStatus.COMPLETED
             "CONFIRMED" ->
-                OrderStatus.CONFIRMED
+                OrderStatus.INCOMPLETED
+            "OPEN" ->
+                OrderStatus.INCOMPLETED
+            "PROCESSING" ->
+                OrderStatus.INCOMPLETED
             "CANCELLED" ->
                 OrderStatus.CANCELLED
-            "OPEN" ->
-                OrderStatus.OPEN
-            "PROCESSING" ->
-                OrderStatus.PROCESSING
             else ->
                 OrderStatus.INVALID
         }
