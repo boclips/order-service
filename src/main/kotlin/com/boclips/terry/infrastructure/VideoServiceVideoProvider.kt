@@ -6,10 +6,13 @@ import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
 import com.boclips.videos.service.client.VideoServiceClient
+import mu.KLogging
 import org.springframework.stereotype.Component
 
 @Component
 class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClient) : VideoProvider {
+    companion object: KLogging()
+
     override fun get(videoId: VideoId): Video? {
         try {
             val videoResource = videoServiceClient.rawIdToVideoId(videoId.value).let {
@@ -27,6 +30,7 @@ class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClie
                 )
             )
         } catch (e: Exception) {
+            logger.info { "Could not fetch video because: $e" }
             return null
         }
     }
