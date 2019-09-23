@@ -26,29 +26,30 @@ test {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    implementation('org.litote.kmongo:kmongo:3.9.2')
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'com.github.boclips:kaltura-client:0.58.0'
+    implementation 'com.github.boclips:event-bus:1.29.0'
+    implementation 'com.github.boclips:boclips-spring-security:0.93.0'
+    implementation 'com.github.boclips:videos:0.473.0'
+
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    implementation 'org.litote.kmongo:kmongo:3.9.2'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.8'
     implementation 'io.github.microutils:kotlin-logging:1.6.25'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
-    implementation "com.github.boclips:kaltura-client:0.58.0"
-    implementation "com.github.boclips:event-bus:1.29.0"
-    implementation('com.github.boclips:boclips-spring-security:0.93.0')
-    implementation('io.sentry:sentry-logback:1.7.23')
-    implementation 'com.github.boclips:videos:0.437.0'
+    implementation 'io.sentry:sentry-logback:1.7.23'
     implementation 'com.damnhandy:handy-uri-templates:2.1.8'
     implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.2'
 
-    compile 'org.springframework.boot:spring-boot-starter-security'
-    compile 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.8.8'
+    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE'
 
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'com.vaadin.external.google', module: 'android-json'
     }

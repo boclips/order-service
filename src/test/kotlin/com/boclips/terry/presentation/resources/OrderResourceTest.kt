@@ -55,7 +55,8 @@ class OrderResourceTest {
                             videoReference = "TED_11",
                             contentPartner = TestFactories.contentPartner(
                                 referenceId = "paper",
-                                name = "cup"
+                                name = "cup",
+                                currency = Currency.getInstance("GBP")
                             )
                         ),
                         license = OrderItemLicense(
@@ -94,7 +95,8 @@ class OrderResourceTest {
                         transcriptRequested = false,
                         contentPartner = ContentPartnerResource(
                             id = "paper",
-                            name = "cup"
+                            name = "cup",
+                            currency = "GBP"
                         ),
                         trim = "blah",
                         video = VideoResource(

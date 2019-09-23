@@ -14,6 +14,7 @@ import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
+import java.util.*
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
@@ -24,7 +25,8 @@ object OrderItemDocumentConverter {
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
                     videoServiceContentPartnerId = it.video.contentPartner.videoServiceId.value,
-                    name = it.video.contentPartner.name
+                    name = it.video.contentPartner.name,
+                    currency = it.video.contentPartner.currency.currencyCode
                 ),
                 videoReference = it.video.videoReference
             ),
@@ -65,7 +67,8 @@ object OrderItemDocumentConverter {
                 videoReference = document.source.videoReference,
                 contentPartner = ContentPartner(
                     videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
-                    name = document.source.contentPartner.name
+                    name = document.source.contentPartner.name,
+                    currency = Currency.getInstance(document.source.contentPartner.currency)
                 )
             ),
             license = OrderItemLicense(

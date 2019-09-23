@@ -77,7 +77,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoType = VideoType.STOCK,
                             contentPartner = TestFactories.contentPartner(
                                 referenceId = "123",
-                                name = "bob is still here"
+                                name = "bob is still here",
+                                currency = Currency.getInstance("GBP")
                             )
                         ),
                         license = OrderFactory.orderItemLicense(
@@ -135,6 +136,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.currency", equalTo("GBP")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("EUR 10.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
@@ -189,7 +191,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoReference = "AP-123",
                             contentPartner = TestFactories.contentPartner(
                                 referenceId = "cp-id",
-                                name = "eman"
+                                name = "eman",
+                                currency = Currency.getInstance("GBP")
                             )
                         )
                     ), OrderFactory.orderItem(
@@ -228,6 +231,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
             .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))
+            .andExpect(jsonPath("$.items[0].contentPartner.currency", equalTo("GBP")))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
     }

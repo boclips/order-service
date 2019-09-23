@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -46,8 +47,8 @@ class OrderItemsFieldConverterTest {
 
     @Test
     fun `ignores invalid items`() {
-        val validItem = TestFactories.csvOrderItemMetadata()
-        val inValidItem = TestFactories.csvOrderItemMetadata()
+        val validItem = TestFactories.csvOrderItemMetadata(videoId = ObjectId().toHexString())
+        val inValidItem = TestFactories.csvOrderItemMetadata(videoId = ObjectId().toHexString())
 
         val spy = spy(OrderItemFieldConverter(mockProvider))
 

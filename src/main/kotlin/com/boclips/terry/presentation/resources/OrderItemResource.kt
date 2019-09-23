@@ -22,7 +22,8 @@ data class OrderItemResource(
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
                     item.video.contentPartner.videoServiceId.value,
-                    item.video.contentPartner.name
+                    item.video.contentPartner.name,
+                    item.video.contentPartner.currency.currencyCode
                 ),
                 trim = when (item.trim) {
                     is TrimRequest.WithTrimming -> item.trim.label

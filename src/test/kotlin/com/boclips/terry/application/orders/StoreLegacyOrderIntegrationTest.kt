@@ -7,7 +7,8 @@ import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
-import com.boclips.videos.service.client.CreateContentPartnerRequest
+import com.boclips.videos.service.client.ContentPartner
+import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
@@ -19,6 +20,7 @@ import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
+import java.util.Currency
 import java.util.Date
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
@@ -48,13 +50,20 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             status = "CONFIRMED"
         )
 
-        val contentPartnerId =
-            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+        fakeVideoClient.createContentPartner(
+            ContentPartner.builder()
+                .contentPartnerId(ContentPartnerId("ted-id"))
+                .name("ted").currency(
+                    Currency
+                        .getInstance("GBP")
+                )
+                .build()
+        )
 
         val videoId = fakeVideoClient.createVideo(
             TestFactories.createVideoRequest(
                 title = "hippos are cool",
-                providerId = contentPartnerId.value,
+                providerId = "ted-id",
                 contentType = VideoType.NEWS
             )
         )
@@ -128,7 +137,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))
         assertThat(item.license.territory).isEqualTo(OrderItemLicense.SINGLE_REGION)
-        assertThat(item.video.contentPartner.videoServiceId.value).isEqualTo(contentPartnerId.value)
+        assertThat(item.video.contentPartner.videoServiceId.value).isEqualTo("ted-id")
         assertThat(item.video.contentPartner.name).isEqualTo("ted")
         assertThat(item.video.videoServiceId.value).isEqualTo(videoId.value)
         assertThat(item.video.title).isEqualTo("hippos are cool")
@@ -139,12 +148,19 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
     fun `dumps all legacy order data from an event`() {
         val legacyOrder = TestFactories.legacyOrder()
         val genericUser = TestFactories.legacyOrderUser()
-        val contentPartnerId =
-            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+        fakeVideoClient.createContentPartner(
+            ContentPartner.builder()
+                .contentPartnerId(ContentPartnerId("ted-id"))
+                .name("ted").currency(
+                    Currency
+                        .getInstance("GBP")
+                )
+                .build()
+        )
 
         val videoId = fakeVideoClient.createVideo(
             TestFactories.createVideoRequest(
-                providerId = contentPartnerId.value
+                providerId = "ted-id"
             )
         )
         val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
@@ -177,12 +193,19 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(order)
 
         val genericUser = TestFactories.legacyOrderUser()
-        val contentPartnerId =
-            fakeVideoClient.createContentPartner(CreateContentPartnerRequest.builder().name("ted").build())
+        fakeVideoClient.createContentPartner(
+            ContentPartner.builder()
+                .contentPartnerId(ContentPartnerId("ted-id"))
+                .name("ted").currency(
+                    Currency
+                        .getInstance("GBP")
+                )
+                .build()
+        )
 
         val videoId = fakeVideoClient.createVideo(
             TestFactories.createVideoRequest(
-                providerId = contentPartnerId.value
+                providerId = "ted-id"
             )
         )
         val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))

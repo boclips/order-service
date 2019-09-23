@@ -199,11 +199,13 @@ class TestFactories {
 
         fun contentPartner(
             name: String = "Flux",
-            referenceId: String = "video-service-id"
+            referenceId: String = "video-service-id",
+            currency: Currency = Currency.getInstance("USD")
         ): ContentPartner {
             return ContentPartner(
                 name = name,
-                videoServiceId = ContentPartnerId(value = referenceId)
+                videoServiceId = ContentPartnerId(value = referenceId),
+                currency = currency
             )
         }
 
@@ -317,10 +319,11 @@ class TestFactories {
             )
         }
 
-        fun contentPartnerDocument(name: String = "hello", referenceId: String = "id-yo"): ContentPartnerDocument {
+        fun contentPartnerDocument(name: String = "hello", referenceId: String = "id-yo", currency: String = "USD"): ContentPartnerDocument {
             return ContentPartnerDocument(
                 name = name,
-                videoServiceContentPartnerId = referenceId
+                videoServiceContentPartnerId = referenceId,
+                currency = currency
             )
         }
 
@@ -332,7 +335,7 @@ class TestFactories {
             quarter: String = "4",
             memberRequest: String = "Jon Douglas",
             memberAuthorise: String = "Douglas Authorise",
-            videoId: String = ObjectId().toHexString(),
+            videoId: String = "123456789012345678901234",
             title: String = "Wow, did you see that?",
             source: String = "That's numberwang",
             sourceCode: String = "0989890",
