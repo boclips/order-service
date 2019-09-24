@@ -68,12 +68,16 @@ abstract class AbstractSpringIntegrationTest {
         fakeVideoClient.clear()
     }
 
-    fun defaultVideoClientResponse(videoId: String = "123456789012345678901234") {
+    fun defaultVideoClientResponse(
+        videoId: String = "123456789012345678901234",
+        contentPartnerId: String = "content-partner-id",
+        contentPartnerName: String = "our-content-partner",
+        contentPartnerCurrency: Currency? = Currency.getInstance("GBP")) {
         val video = Video.builder()
             .videoId(VideoId(URI.create("https://fake-video-service.com/videos/$videoId")))
-            .contentPartnerId("content-partner-id")
+            .contentPartnerId(contentPartnerId)
             .contentPartnerVideoId("video-id")
-            .createdBy("our-content-partner")
+            .createdBy(contentPartnerName)
             .description("video description")
             .playback(
                 Playback.builder()
@@ -89,12 +93,12 @@ abstract class AbstractSpringIntegrationTest {
             .build()
 
         val contentPartner = ContentPartner.builder()
-            .contentPartnerId(ContentPartnerId("content-partner-id"))
-            .name("our-content-partner")
-            .currency(Currency.getInstance("GBP"))
+            .contentPartnerId(ContentPartnerId(contentPartnerId))
+            .name(contentPartnerName)
+            .currency(contentPartnerCurrency)
             .build()
 
-        fakeVideoClient.createVideo(video)
-        fakeVideoClient.createContentPartner(contentPartner)
+            fakeVideoClient.createVideo(video)
+            fakeVideoClient.createContentPartner(contentPartner)
     }
 }

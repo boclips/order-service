@@ -1,43 +1,59 @@
 package com.boclips.terry.infrastructure
 
 import com.boclips.terry.domain.model.orderItem.ContentPartner
+import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
+import com.boclips.terry.infrastructure.orders.exceptions.ContentPartnerNotFoundException
 import com.boclips.terry.infrastructure.orders.exceptions.MissingCurrencyForContentPartner
-import com.boclips.videos.service.client.ContentPartnerId
+import com.boclips.terry.infrastructure.orders.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
 import org.springframework.stereotype.Component
+import com.boclips.videos.service.client.ContentPartner as VideoClientContentPartner
+import com.boclips.videos.service.client.ContentPartnerId as VideoClientContentPartnerId
+import com.boclips.videos.service.client.Video as VideoClientVideo
 
 @Component
 class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClient) : VideoProvider {
     companion object : KLogging()
 
     override fun get(videoId: VideoId): Video? {
-        try {
-            val videoResource = videoServiceClient.rawIdToVideoId(videoId.value).let {
+        val videoResource = getVideoResource(videoId)
+        val contentPartner = getContentPartner(videoResource)
+
+        return Video(
+            videoServiceId = VideoId(value = videoResource.videoId.value),
+            title = videoResource.title,
+            type = videoResource.type.toString(),
+            videoReference = videoResource.contentPartnerVideoId,
+            contentPartner = ContentPartner(
+                videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
+                name = videoResource.createdBy,
+                currency = contentPartner.currency
+                    ?: throw MissingCurrencyForContentPartner(contentPartnerName = contentPartner.name)
+            )
+        )
+    }
+
+    private fun getContentPartner(videoResource: VideoClientVideo): VideoClientContentPartner {
+        val contentPartner = try {
+            videoServiceClient.findContentPartner(VideoClientContentPartnerId(videoResource.contentPartnerId))
+        } catch (e: Exception) {
+            throw ContentPartnerNotFoundException(ContentPartnerId(videoResource.contentPartnerId))
+        }
+        return contentPartner ?: throw ContentPartnerNotFoundException(ContentPartnerId(videoResource.contentPartnerId))
+    }
+
+    private fun getVideoResource(videoId: VideoId): com.boclips.videos.service.client.Video {
+        val videoResource = try {
+            videoServiceClient.rawIdToVideoId(videoId.value).let {
                 videoServiceClient.get(it)
             }
-
-            val contentPartner = videoServiceClient.findContentPartner(ContentPartnerId(videoResource.contentPartnerId))
-            return Video(
-                videoServiceId = VideoId(value = videoResource.videoId.value),
-                title = videoResource.title,
-                type = videoResource.type.toString(),
-                videoReference = videoResource.contentPartnerVideoId,
-                contentPartner = ContentPartner(
-                    videoServiceId = com.boclips.terry.domain.model.orderItem.ContentPartnerId(value = videoResource.contentPartnerId),
-                    name = videoResource.createdBy,
-                    currency = contentPartner.currency
-                        ?: throw MissingCurrencyForContentPartner(contentPartnerName = contentPartner.name)
-                )
-            )
-        } catch (e: MissingCurrencyForContentPartner) {
-            throw e
         } catch (e: Exception) {
-            logger.info("Could not fetch video because:", e)
-            return null
+            throw VideoNotFoundException(videoId)
         }
+        return videoResource ?: throw VideoNotFoundException(videoId)
     }
 }

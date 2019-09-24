@@ -7,6 +7,8 @@ import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
+import com.boclips.videos.service.client.ContentPartner
+import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.endsWith
@@ -244,13 +246,34 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can upload a csv of orders`() {
-        this.defaultVideoClientResponse()
+        this.defaultVideoClientResponse(videoId = "5c54d6d3d8eafeecae206b6e")
 
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", ordersCsv.file.readBytes())
                 .asBackofficeStaff()
         ).andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `gets error when CP has no currency`() {
+        this.defaultVideoClientResponse(
+            videoId = "5c54d6d3d8eafeecae206b6e" ,
+            contentPartnerId = "content-partner-without-currency",
+            contentPartnerName = "AP",
+            contentPartnerCurrency = null
+        )
+
+        mockMvc.perform(
+            multipart("/v1/orders")
+                .file("file", ordersCsv.file.readBytes())
+                .asBackofficeStaff()
+        ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.error", equalTo("Bad Request")))
+            .andExpect(jsonPath("$.message", equalTo("Content partner 'AP' has no currency defined")))
+            .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
+            .andExpect(jsonPath("$.status", equalTo(400)))
+            .andExpect(jsonPath("$.timestamp").exists())
     }
 
     @Test

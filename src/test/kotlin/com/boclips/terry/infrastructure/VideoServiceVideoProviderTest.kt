@@ -2,7 +2,9 @@ package com.boclips.terry.infrastructure
 
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
+import com.boclips.terry.infrastructure.orders.exceptions.ContentPartnerNotFoundException
 import com.boclips.terry.infrastructure.orders.exceptions.MissingCurrencyForContentPartner
+import com.boclips.terry.infrastructure.orders.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.ContentPartner
 import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.VideoType
@@ -32,7 +34,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 .name("our content partner")
                 .currency(Currency.getInstance("GBP"))
                 .build()
-            )
+        )
 
         val videoId = fakeVideoClient.createVideo(
             TestFactories.createVideoRequest(
@@ -49,9 +51,10 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `null if video cannot be found`() {
-        val video = videoProvider.get(videoId = VideoId(value = "hideandseek"))
-        assertThat(video).isNull()
+    fun `exception if video cannot be found`() {
+        assertThrows<VideoNotFoundException> {
+            videoProvider.get(videoId = VideoId(value = "hideandseek"))
+        }
     }
 
     @Test
