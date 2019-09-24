@@ -2,9 +2,8 @@ package com.boclips.terry.infrastructure
 
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
-import com.boclips.terry.infrastructure.orders.exceptions.ContentPartnerNotFoundException
-import com.boclips.terry.infrastructure.orders.exceptions.MissingCurrencyForContentPartner
-import com.boclips.terry.infrastructure.orders.exceptions.VideoNotFoundException
+import com.boclips.terry.domain.exceptions.MissingCurrencyForContentPartner
+import com.boclips.terry.domain.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.ContentPartner
 import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.VideoType

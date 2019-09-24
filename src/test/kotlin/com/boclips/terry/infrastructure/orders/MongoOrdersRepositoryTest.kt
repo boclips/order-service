@@ -3,7 +3,7 @@ package com.boclips.terry.infrastructure.orders
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUpdateCommand
-import com.boclips.terry.infrastructure.orders.exceptions.OrderNotFoundException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

@@ -1,6 +1,6 @@
-package com.boclips.terry.infrastructure.orders.exceptions
+package com.boclips.terry.domain.exceptions
 
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 
 class ContentPartnerNotFoundException(contentPartnerId: ContentPartnerId) :
-    UserFacingException("Could not find content partner: $contentPartnerId")
+    BoclipsException("Could not find content partner: $contentPartnerId")

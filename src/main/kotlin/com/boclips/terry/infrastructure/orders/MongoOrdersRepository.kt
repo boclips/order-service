@@ -6,7 +6,7 @@ import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
-import com.boclips.terry.infrastructure.orders.exceptions.OrderNotFoundException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
@@ -82,7 +82,9 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             set(OrderDocument::updatedAt, Instant.now())
         )
 
-        return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(orderUpdateCommand.orderId)
+        return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(
+            orderUpdateCommand.orderId
+        )
     }
 
     private fun collection(): MongoCollection<OrderDocument> =
