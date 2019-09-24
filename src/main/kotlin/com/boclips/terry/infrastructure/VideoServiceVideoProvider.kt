@@ -36,7 +36,7 @@ class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClie
         } catch (e: MissingCurrencyForContentPartner) {
             throw e
         } catch (e: Exception) {
-            logger.info { "Could not fetch video because: ${e.stackTrace}" }
+            logger.info("Could not fetch video because:", e)
             return null
         }
     }
