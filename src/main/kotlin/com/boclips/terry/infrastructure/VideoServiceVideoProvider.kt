@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClient) : VideoProvider {
-    companion object: KLogging()
+    companion object : KLogging()
 
     override fun get(videoId: VideoId): Video? {
         try {
@@ -29,13 +29,14 @@ class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClie
                 contentPartner = ContentPartner(
                     videoServiceId = com.boclips.terry.domain.model.orderItem.ContentPartnerId(value = videoResource.contentPartnerId),
                     name = videoResource.createdBy,
-                    currency = contentPartner.currency ?: throw MissingCurrencyForContentPartner( contentPartnerName = contentPartner.name)
+                    currency = contentPartner.currency
+                        ?: throw MissingCurrencyForContentPartner(contentPartnerName = contentPartner.name)
                 )
             )
         } catch (e: MissingCurrencyForContentPartner) {
             throw e
         } catch (e: Exception) {
-            logger.info { "Could not fetch video because: $e" }
+            logger.info { "Could not fetch video because: ${e.stackTrace}" }
             return null
         }
     }
