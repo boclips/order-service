@@ -35,6 +35,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:master-orders.csv")
     lateinit var ordersCsv: Resource
 
+    @Value("classpath:invalid-orders.csv")
+    lateinit var invalidCsv: Resource
+
     @Test
     fun `user without permission to view orders is forbidden from listing orders`() {
         mockMvc.perform(
@@ -271,6 +274,20 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Bad Request")))
             .andExpect(jsonPath("$.message", equalTo("Content partner 'AP' has no currency defined")))
+            .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
+            .andExpect(jsonPath("$.status", equalTo(400)))
+            .andExpect(jsonPath("$.timestamp").exists())
+    }
+
+    @Test
+    fun `400 on invalid csv`() {
+        mockMvc.perform(
+            multipart("/v1/orders")
+                .file("file", invalidCsv.file.readBytes())
+                .asBackofficeStaff()
+        ).andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.error", equalTo("Invalid CSV")))
+            .andExpect(jsonPath("$.message", equalTo("Order 5d6cda057f0dc0dd363841ed: Field Order request Date 'this is an invalid order request date' has an invalid format. Try DD/MM/YYYY instead.")))
             .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
             .andExpect(jsonPath("$.status", equalTo(400)))
             .andExpect(jsonPath("$.timestamp").exists())

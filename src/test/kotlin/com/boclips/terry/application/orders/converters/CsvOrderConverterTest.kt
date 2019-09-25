@@ -2,13 +2,17 @@ package com.boclips.terry.application.orders.converters
 
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
+import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.TestFactories
-import java.util.Date
+import java.time.LocalDate
+import java.time.Month
+import java.time.ZoneOffset.UTC
 
 class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -19,110 +23,224 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
         this.defaultVideoClientResponse()
     }
 
-    @Test
-    fun `groups orders by id`() {
-        val csvOrderItems = listOf(
-            TestFactories.csvOrderItemMetadata(legacyOrderId = "1"),
-            TestFactories.csvOrderItemMetadata(legacyOrderId = "1"),
-            TestFactories.csvOrderItemMetadata(legacyOrderId = "2")
-        )
+    @Nested
+    inner class `Successful csv order conversion` {
 
-        val orders = orderConverter.toOrders(csvOrderItems)
-        assertThat(orders).hasSize(2)
-        assertThat(orders.map { it.legacyOrderId }).containsExactlyInAnyOrder("1", "2")
-    }
-
-    @Test
-    fun `creates a list of order items for grouped order`() {
-        val csvOrderItems = listOf(
-            TestFactories.csvOrderItemMetadata(
-                legacyOrderId = "1"
-
-            ),
-            TestFactories.csvOrderItemMetadata(
-                legacyOrderId = "1"
+        @Test
+        fun `groups orders by id`() {
+            val csvOrderItems = listOf(
+                TestFactories.csvOrderItemMetadata(legacyOrderId = "1"),
+                TestFactories.csvOrderItemMetadata(legacyOrderId = "1"),
+                TestFactories.csvOrderItemMetadata(legacyOrderId = "2")
             )
-        )
 
-        val orders = orderConverter.toOrders(csvOrderItems)
-        assertThat(orders).hasSize(1)
-        assertThat(orders.first().items).hasSize(2)
+            val orders = toSuccessfulOrders(csvOrderItems)
+            assertThat(orders).hasSize(2)
+            assertThat(orders.map { it.legacyOrderId }).containsExactlyInAnyOrder("1", "2")
+        }
+
+        @Test
+        fun `creates a list of order items for grouped order`() {
+            val csvOrderItems = listOf(
+                TestFactories.csvOrderItemMetadata(
+                    legacyOrderId = "1"
+
+                ),
+                TestFactories.csvOrderItemMetadata(
+                    legacyOrderId = "1"
+                )
+            )
+
+            val orders = toSuccessfulOrders(csvOrderItems)
+            assertThat(orders).hasSize(1)
+            assertThat(orders.first().items).hasSize(2)
+        }
+
+        @Test
+        fun `order defaults to processing`() {
+            val csvOrder = TestFactories.csvOrderItemMetadata()
+            val orders = toSuccessfulOrders(csvOrder)
+
+            assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
+        }
+
+        @Test
+        fun `sets order request date if present`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(
+                requestDate = "01/01/2000"
+            )
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().createdAt.atZone(UTC).toLocalDate()).isEqualTo(
+                LocalDate.of(
+                    2000,
+                    Month.JANUARY,
+                    1
+                )
+            )
+        }
+
+        @Test
+        fun `sets order updated date if present`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(
+                fulfilmentDate = "01/01/2000"
+            )
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().updatedAt.atZone(UTC).toLocalDate()).isEqualTo(
+                LocalDate.of(
+                    2000,
+                    Month.JANUARY,
+                    1
+                )
+            )
+        }
+
+        @Test
+        fun `falls back to request date if fulfilment date is missing`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(
+                fulfilmentDate = null,
+                requestDate = "01/01/2000"
+            )
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().updatedAt.atZone(UTC).toLocalDate()).isEqualTo(
+                LocalDate.of(
+                    2000,
+                    Month.JANUARY,
+                    1
+                )
+            )
+        }
+
+        @Test
+        fun `sets isbn or product description`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(isbnProductNumber = "hello")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().isbnOrProductNumber).isEqualTo("hello")
+        }
+
+        @Test
+        fun `sets requesting member`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(memberRequest = "a great member")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().requestingUser).isEqualTo(OrderUser.BasicUser("a great member"))
+        }
+
+        @Test
+        fun `sets authorising member`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(memberAuthorise = "a great member")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().authorisingUser).isEqualTo(OrderUser.BasicUser("a great member"))
+        }
+
+        @Test
+        fun `sets authorising member to null if missing`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(memberAuthorise = null)
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().authorisingUser).isNull()
+        }
+
+        @Test
+        fun `sets organisation`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(publisher = "E Corp")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().organisation?.name).isEqualTo("E Corp")
+        }
+
+        private fun toSuccessfulOrders(csvOrderItems: List<CsvOrderItemMetadata>) =
+            (orderConverter.toOrders(csvOrderItems) as Orders).orders
+
+        private fun toSuccessfulOrders(csvOrderItem: CsvOrderItemMetadata) = toSuccessfulOrders(listOf(csvOrderItem))
     }
 
-    @Test
-    fun `ignores order if they are invalid`() {
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(requestDate = null)
+    @Nested
+    inner class `Unsuccessful csv order conversion` {
+        @Test
+        fun `valid order items conversion result contains no errors`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata()
 
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+            val result = orderConverter.toOrders(listOf(csvOrderItem))
 
-        assertThat(orders).isEmpty()
-    }
+            assertThat(result).isNotInstanceOf(Errors::class.java)
+        }
 
-    @Test
-    fun `order defaults to processing`() {
-        val csvOrder = TestFactories.csvOrderItemMetadata()
-        val orders = orderConverter.toOrders(listOf(csvOrder))
+        @Test
+        fun `returns conversion error if missing legacy order id`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(legacyOrderId = null)
 
-        assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
-    }
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
-    @Test
-    fun `sets order request date if present`() {
-        val now = Date()
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(
-            requestDate = now
-        )
+            assertThat(errors.errors).containsExactly(
+                OrderConversionError(
+                    message = "Field Order No must not be null",
+                    legacyOrderId = null
+                )
+            )
+        }
 
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+        @Test
+        fun `returns conversion error if invalid request date`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(requestDate = null)
 
-        assertThat(orders.first().createdAt).isEqualTo(now.toInstant())
-    }
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
-    @Test
-    fun `sets order updated date if present`() {
-        val now = Date()
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(
-            fulfilmentDate = now
-        )
+            assertThat(errors.errors).containsExactly(
+                OrderConversionError(
+                    message = "Field Order request Date 'null' has an invalid format. Try DD/MM/YYYY instead.",
+                    legacyOrderId = csvOrderItem.legacyOrderId
+                )
+            )
+        }
 
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+        @Test
+        fun `returns conversion error if invalid fulfilment date`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(fulfilmentDate = null, requestDate = null)
 
-        assertThat(orders.first().updatedAt).isEqualTo(now.toInstant())
-    }
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
-    @Test
-    fun `sets isbn or product description`() {
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(isbnProductNumber = "hello")
+            assertThat(errors.errors).contains(
+                OrderConversionError(
+                    message = "Field Order Fulfillment Date 'null' has an invalid format. Try DD/MM/YYYY instead.",
+                    legacyOrderId = csvOrderItem.legacyOrderId
+                )
+            )
+        }
 
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+        @Test
+        fun `returns conversion error if invalid member request`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(memberRequest = null)
 
-        assertThat(orders.first().isbnOrProductNumber).isEqualTo("hello")
-    }
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
-    @Test
-    fun `sets requesting member`() {
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(memberRequest = "a great member")
+            assertThat(errors.errors).contains(
+                OrderConversionError(
+                    message = "Field Member (request) must not be null",
+                    legacyOrderId = csvOrderItem.legacyOrderId
+                )
+            )
+        }
 
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
+        @Test
+        fun `returns multiple errors`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(fulfilmentDate = null, requestDate = null)
 
-        assertThat(orders.first().requestingUser).isEqualTo(OrderUser.BasicUser("a great member"))
-    }
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
-    @Test
-    fun `sets authorising member`() {
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(memberAuthorise = "a great member")
-
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
-
-        assertThat(orders.first().authorisingUser).isEqualTo(OrderUser.BasicUser("a great member"))
-    }
-
-    @Test
-    fun `sets organisation`() {
-        val csvOrderItem = TestFactories.csvOrderItemMetadata(publisher = "E Corp")
-
-        val orders = orderConverter.toOrders(listOf(csvOrderItem))
-
-        assertThat(orders.first().organisation.name).isEqualTo("E Corp")
+            assertThat(errors.errors).hasSize(2)
+        }
     }
 }

@@ -8,12 +8,12 @@ import java.time.temporal.ChronoUnit
 object LicenseDurationFieldConverter {
 
     fun convert(csvItem: CsvOrderItemMetadata): Duration {
-        if (csvItem.licenseDuration.isBlank()) {
+        if (csvItem.licenseDuration!!.isBlank()) {
             throw InvalidLicenseCsvException("License duration can not be empty")
         }
 
-        return csvItem.licenseDuration.toIntOrNull()?.let { duration ->
+        return csvItem.licenseDuration!!.toIntOrNull()?.let { duration ->
             Duration.Time(amount = duration, unit = ChronoUnit.YEARS)
-        } ?: Duration.Description(label = csvItem.licenseDuration)
+        } ?: Duration.Description(label = csvItem.licenseDuration!!)
     }
 }

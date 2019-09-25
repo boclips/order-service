@@ -13,14 +13,13 @@ object OrderDocumentConverter {
             id = ObjectId(order.id.value),
             legacyOrderId = order.legacyOrderId,
             status = order.status.toString(),
-            authorisingUser = OrderUserDocumentConverter.toOrderUserDocument(orderUser = order.authorisingUser),
+            authorisingUser = order.authorisingUser?.let { OrderUserDocumentConverter.toOrderUserDocument(orderUser = it) },
             requestingUser = OrderUserDocumentConverter.toOrderUserDocument(orderUser = order.requestingUser),
             updatedAt = order.updatedAt,
             createdAt = order.createdAt,
             isbnOrProductNumber = order.isbnOrProductNumber,
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
-            organisation = order.organisation.name
-
+            organisation = order.organisation?.name
         )
     }
 
@@ -29,13 +28,13 @@ object OrderDocumentConverter {
             id = OrderId(document.id.toHexString()),
             legacyOrderId = document.legacyOrderId,
             status = OrderStatus.valueOf(document.status),
-            authorisingUser = OrderUserDocumentConverter.toOrderUser(document.authorisingUser),
+            authorisingUser = document.authorisingUser?.let { OrderUserDocumentConverter.toOrderUser(it) },
             requestingUser = OrderUserDocumentConverter.toOrderUser(document.requestingUser),
             createdAt = document.createdAt,
             updatedAt = document.updatedAt,
             isbnOrProductNumber = document.isbnOrProductNumber,
             items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList(),
-            organisation = OrderOrganisation(name = document.organisation)
+            organisation = document.organisation?.let { OrderOrganisation(name = it) }
         )
     }
 }

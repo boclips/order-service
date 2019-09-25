@@ -13,16 +13,16 @@ import org.springframework.stereotype.Component
 class OrderItemFieldConverter(val videoProvider: VideoProvider) {
     fun convert(csvItem: CsvOrderItemMetadata): OrderItem {
         return OrderItem(
-            price = PriceFieldConverter.convert(csvItem.price),
-            transcriptRequested = csvItem.captioning.toLowerCase() == "yes",
+            price = PriceFieldConverter.convert(csvItem.price!!),
+            transcriptRequested = csvItem.captioning!!.toLowerCase() == "yes",
             trim = TrimmingConverter.toTrimRequest(csvItem.trim),
-            video = videoProvider.get(VideoId(value = csvItem.videoId))
+            video = videoProvider.get(VideoId(value = csvItem.videoId!!))
                 ?: throw InvalidVideoIdCsvException("Can not provide video for id ${csvItem.videoId}"),
             license = OrderItemLicense(
                 duration = LicenseDurationFieldConverter.convert(csvItem),
-                territory = csvItem.territory
+                territory = csvItem.territory!!
             ),
-            notes = if (csvItem.notes.isBlank()) {
+            notes = if (csvItem.notes!!.isBlank()) {
                 null
             } else {
                 csvItem.notes

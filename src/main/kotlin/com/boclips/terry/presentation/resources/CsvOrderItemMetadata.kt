@@ -31,73 +31,71 @@ import java.util.Date
 )
 
 class CsvOrderItemMetadata {
-    @JsonProperty(value = Companion.ORDER_NO)
-    var legacyOrderId: String = ""
+    @JsonProperty(value = ORDER_NO)
+    var legacyOrderId: String? = null
 
-    @JsonProperty(value = Companion.MONTH_DATE)
-    var month: String = ""
+    @JsonProperty(value = MONTH_DATE)
+    var month: String? = null
 
-    @JsonProperty(value = Companion.ORDER_REQUEST_DATE)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", locale = "en_GB")
-    var requestDate: Date? = null
+    @JsonProperty(value = ORDER_REQUEST_DATE)
+    var requestDate: String? = null
 
-    @JsonProperty(value = Companion.ORDER_FULFILLMENT_DATE)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", locale = "en_GB")
-    var fulfilmentDate: Date? = null
+    @JsonProperty(value = ORDER_FULFILLMENT_DATE)
+    var fulfilmentDate: String? = null
 
-    @JsonProperty(value = Companion.QUARTER)
-    var quarter: String = ""
+    @JsonProperty(value = QUARTER)
+    var quarter: String? = null
 
-    @JsonProperty(value = Companion.MEMBER_REQUEST)
-    var memberRequest: String = ""
+    @JsonProperty(value = MEMBER_REQUEST)
+    var memberRequest: String? = null
 
-    @JsonProperty(value = Companion.MEMBER_AUTHORISE)
-    var memberAuthorise: String = ""
+    @JsonProperty(value = MEMBER_AUTHORISE)
+    var memberAuthorise: String? = null
 
-    @JsonProperty(value = Companion.CLIP_ID)
-    var videoId: String = ""
+    @JsonProperty(value = CLIP_ID)
+    var videoId: String? = null
 
-    @JsonProperty(value = Companion.TITLE)
-    var title: String = ""
+    @JsonProperty(value = TITLE)
+    var title: String? = null
 
-    @JsonProperty(value = Companion.SOURCE)
-    var source: String = ""
+    @JsonProperty(value = SOURCE)
+    var source: String? = null
 
-    @JsonProperty(value = Companion.SOURCE_CODE)
-    var sourceCode: String = ""
+    @JsonProperty(value = SOURCE_CODE)
+    var sourceCode: String? = null
 
-    @JsonProperty(value = Companion.LICENSE_DURATION)
-    var licenseDuration: String = ""
+    @JsonProperty(value = LICENSE_DURATION)
+    var licenseDuration: String? = null
 
-    @JsonProperty(value = Companion.TERRITORY)
-    var territory: String = ""
+    @JsonProperty(value = TERRITORY)
+    var territory: String? = null
 
-    @JsonProperty(value = Companion.TYPE)
-    var type: String = ""
+    @JsonProperty(value = TYPE)
+    var type: String? = null
 
-    @JsonProperty(value = Companion.PRICE)
-    var price: String = ""
+    @JsonProperty(value = PRICE)
+    var price: String? = null
 
-    @JsonProperty(value = Companion.PUBLISHER)
-    var publisher: String = ""
+    @JsonProperty(value = PUBLISHER)
+    var publisher: String? = null
 
-    @JsonProperty(value = Companion.ISBN_PRODUCT_NUMBER)
-    var isbnProductNumber: String = ""
+    @JsonProperty(value = ISBN_PRODUCT_NUMBER)
+    var isbnProductNumber: String? = null
 
-    @JsonProperty(value = Companion.LANGUAGE)
-    var language: String = ""
+    @JsonProperty(value = LANGUAGE)
+    var language: String? = null
 
-    @JsonProperty(value = Companion.CAPTIONING)
-    var captioning: String = ""
+    @JsonProperty(value = CAPTIONING)
+    var captioning: String? = null
 
-    @JsonProperty(value = Companion.TRIM)
-    var trim: String = ""
+    @JsonProperty(value = TRIM)
+    var trim: String? = null
 
-    @JsonProperty(value = Companion.NOTES)
-    var notes: String = ""
+    @JsonProperty(value = NOTES)
+    var notes: String? = null
 
-    @JsonProperty(value = Companion.REMITTANCE_NOTES)
-    var remittanceNotes: String = ""
+    @JsonProperty(value = REMITTANCE_NOTES)
+    var remittanceNotes: String? = null
 
     companion object {
         const val ORDER_NO = "Order No"

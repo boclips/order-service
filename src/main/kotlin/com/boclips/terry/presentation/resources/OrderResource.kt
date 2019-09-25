@@ -11,7 +11,7 @@ data class OrderResource(
     val status: String,
     val createdAt: String,
     val updatedAt: String,
-    val isbnNumber: String,
+    val isbnNumber: String?,
     val items: List<OrderItemResource>,
     val currency: String
 ) {

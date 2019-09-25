@@ -1,8 +1,10 @@
 package com.boclips.terry.application.orders
 
+import com.boclips.terry.application.exceptions.InvalidCsvException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.OrderFactory
 import testsupport.TestFactories
@@ -10,20 +12,32 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
+
     @Autowired
     lateinit var createOrderFromCsv: CreateOrderFromCsv
 
     @Test
-    fun `can create an order`() {
+    fun `creates orders if they are new`() {
         val csvOrderMetadata = TestFactories.csvOrderItemMetadata()
-
-        this.defaultVideoClientResponse(csvOrderMetadata.videoId)
+        this.defaultVideoClientResponse(csvOrderMetadata.videoId!!)
 
         createOrderFromCsv.invoke(listOf(csvOrderMetadata))
 
-        val createdOrder = ordersRepository.findOneByLegacyId(csvOrderMetadata.legacyOrderId)
-
+        val createdOrder = ordersRepository.findOneByLegacyId(csvOrderMetadata.legacyOrderId!!)
         assertThat(createdOrder).isNotNull
+    }
+
+    @Test
+    fun `throws and ignores order if invalid`() {
+        val csvOrderMetadata = TestFactories.csvOrderItemMetadata(requestDate = "dubious date")
+        this.defaultVideoClientResponse(csvOrderMetadata.videoId!!)
+
+        assertThrows<InvalidCsvException> {
+            createOrderFromCsv.invoke(listOf(csvOrderMetadata))
+        }
+
+        val createdOrder = ordersRepository.findOneByLegacyId(csvOrderMetadata.legacyOrderId!!)
+        assertThat(createdOrder).isNull()
     }
 
     @Test
@@ -34,7 +48,6 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
             updatedAt = LocalDateTime.of(2011, 1, 1, 1, 1).toInstant(ZoneOffset.UTC)
         )
         ordersRepository.save(orderToBeCreated)
-
         val csvOrderMetadata =
             TestFactories.csvOrderItemMetadata(legacyOrderId = "1")
 

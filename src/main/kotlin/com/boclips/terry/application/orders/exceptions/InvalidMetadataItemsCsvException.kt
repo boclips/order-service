@@ -1,3 +1,3 @@
 package com.boclips.terry.application.orders.exceptions
 
-class InvalidMetadataItemsCsvException(message: String) : InvalidCsvException(message)
+class InvalidMetadataItemsCsvException(message: String) : InvalidCsvParsingException(message)

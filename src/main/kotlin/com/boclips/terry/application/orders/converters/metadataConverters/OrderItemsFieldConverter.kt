@@ -1,6 +1,6 @@
 package com.boclips.terry.application.orders.converters.metadataConverters
 
-import com.boclips.terry.application.orders.exceptions.InvalidCsvException
+import com.boclips.terry.application.orders.exceptions.InvalidCsvParsingException
 import com.boclips.terry.application.orders.exceptions.InvalidMetadataItemsCsvException
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
@@ -15,7 +15,7 @@ class OrderItemsFieldConverter(val orderItemFieldConverter: OrderItemFieldConver
         return items.mapNotNull {
             try {
                 orderItemFieldConverter.convert(it)
-            } catch (e: InvalidCsvException) {
+            } catch (e: InvalidCsvParsingException) {
                 logger.info {
                     "Ignoring order item because: $e"
                 }

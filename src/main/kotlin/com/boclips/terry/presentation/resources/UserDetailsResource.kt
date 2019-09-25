@@ -5,15 +5,15 @@ import com.boclips.terry.domain.model.OrderUser
 
 data class UserDetailsResource(
     val requestingUserLabel: String,
-    val authorisingUserLabel: String,
-    val organisationLabel: String
+    val authorisingUserLabel: String?,
+    val organisationLabel: String?
 ) {
     companion object {
         fun toResource(order: Order): UserDetailsResource {
             return UserDetailsResource(
                 requestingUserLabel = createUserLabel(order.requestingUser),
-                authorisingUserLabel = createUserLabel(order.authorisingUser),
-                organisationLabel = order.organisation.name
+                authorisingUserLabel = order.authorisingUser?.let { createUserLabel(it) },
+                organisationLabel = order.organisation?.name
             )
         }
 

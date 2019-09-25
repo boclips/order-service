@@ -16,7 +16,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `can create an order`() {
         val originalOrder = OrderFactory.order()
 
-        orderService.create(originalOrder)
+        orderService.createIfNonExistent(originalOrder)
 
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)
 
@@ -29,7 +29,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
         val newOrder = OrderFactory.order(legacyOrderId = "hi", status = OrderStatus.CANCELLED)
 
-        orderService.create(newOrder)
+        orderService.createIfNonExistent(newOrder)
 
         val retrievedOrders = ordersRepository.findAll()
 

@@ -6,11 +6,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class OrderService(val ordersRepository: OrdersRepository) {
-    fun create(order: Order) {
-        val doesNotExistByLegacyId = ordersRepository.findOneByLegacyId(order.legacyOrderId) == null
-
-        if (doesNotExistByLegacyId) {
-            ordersRepository.save (order)
-        }
+    fun createIfNonExistent(order: Order) {
+        ordersRepository.findOneByLegacyId(order.legacyOrderId) ?: ordersRepository.save(order)
     }
 }

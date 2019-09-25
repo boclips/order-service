@@ -8,11 +8,11 @@ data class OrderDocument(
     @BsonId val id: ObjectId,
     val legacyOrderId: String,
     val status: String,
-    val authorisingUser: OrderUserDocument,
+    val authorisingUser: OrderUserDocument? = null,
     val requestingUser: OrderUserDocument,
     val updatedAt: Instant,
     val createdAt: Instant,
-    val isbnOrProductNumber: String,
+    val isbnOrProductNumber: String?,
     val items: List<OrderItemDocument>?,
-    val organisation: String
+    val organisation: String? = null
 )

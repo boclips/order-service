@@ -2,6 +2,7 @@ package com.boclips.terry.domain.model
 
 import com.boclips.terry.domain.exceptions.IllegalCurrencyException
 import com.boclips.terry.domain.model.orderItem.OrderItem
+import org.bson.types.ObjectId
 import java.time.Instant
 import java.util.Currency
 
@@ -9,14 +10,18 @@ class Order(
     val id: OrderId,
     val legacyOrderId: String,
     val status: OrderStatus,
-    val authorisingUser: OrderUser,
+    val authorisingUser: OrderUser?,
     val requestingUser: OrderUser,
-    val organisation: OrderOrganisation,
+    val organisation: OrderOrganisation?,
     val updatedAt: Instant,
     val createdAt: Instant,
-    val isbnOrProductNumber: String,
+    val isbnOrProductNumber: String?,
     items: Iterable<OrderItem>
 ) {
+    companion object {
+        fun builder() = Builder()
+    }
+
     private val orderItems: MutableList<OrderItem> = mutableListOf()
 
     val items: List<OrderItem>
@@ -70,5 +75,76 @@ class Order(
         result = 31 * result + isbnOrProductNumber.hashCode()
         result = 31 * result + orderItems.hashCode()
         return result
+    }
+
+    class Builder {
+        private lateinit var legacyOrderId: String
+        private lateinit var status: OrderStatus
+        private lateinit var requestingUser: OrderUser
+        private lateinit var updatedAt: Instant
+        private lateinit var createdAt: Instant
+        private lateinit var items: List<OrderItem>
+
+        private var authorisingUser: OrderUser? = null
+        private var organisation: OrderOrganisation? = null
+        private var isbnOrProductNumber: String? = null
+
+        fun legacyOrderId(legacyOrderId: String): Builder {
+            this.legacyOrderId = legacyOrderId
+            return this
+        }
+
+        fun status(status: OrderStatus): Builder {
+            this.status = status
+            return this
+        }
+
+        fun authorisingUser(authorisingUser: OrderUser?): Builder {
+            this.authorisingUser = authorisingUser
+            return this
+        }
+
+        fun requestingUser(requestingUser: OrderUser): Builder {
+            this.requestingUser = requestingUser
+            return this
+        }
+
+        fun organisation(organisation: OrderOrganisation?): Builder {
+            this.organisation = organisation
+            return this
+        }
+
+        fun updatedAt(updatedAt: Instant): Builder {
+            this.updatedAt = updatedAt
+            return this
+        }
+
+        fun createdAt(createdAt: Instant): Builder {
+            this.createdAt = createdAt
+            return this
+        }
+
+        fun isbnOrProductNumber(isbnOrProductNumber: String?): Builder {
+            this.isbnOrProductNumber = isbnOrProductNumber
+            return this
+        }
+
+        fun items(items: List<OrderItem>): Builder {
+            this.items = items
+            return this
+        }
+
+        fun build(): Order = Order(
+            id = OrderId(ObjectId().toHexString()),
+            legacyOrderId = legacyOrderId,
+            status = status,
+            authorisingUser = authorisingUser,
+            requestingUser = requestingUser,
+            organisation = organisation,
+            updatedAt = updatedAt,
+            createdAt = createdAt,
+            isbnOrProductNumber = isbnOrProductNumber,
+            items = items
+        )
     }
 }
