@@ -1,6 +1,6 @@
 package com.boclips.terry.application.exceptions
 
-import com.boclips.terry.application.orders.converters.Errors
+import com.boclips.terry.application.orders.converters.csv.Errors
 import com.boclips.web.exceptions.BoclipsApiException
 import com.boclips.web.exceptions.ExceptionDetails
 import org.springframework.http.HttpStatus

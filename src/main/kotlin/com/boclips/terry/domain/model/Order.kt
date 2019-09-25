@@ -89,50 +89,15 @@ class Order(
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
 
-        fun legacyOrderId(legacyOrderId: String): Builder {
-            this.legacyOrderId = legacyOrderId
-            return this
-        }
-
-        fun status(status: OrderStatus): Builder {
-            this.status = status
-            return this
-        }
-
-        fun authorisingUser(authorisingUser: OrderUser?): Builder {
-            this.authorisingUser = authorisingUser
-            return this
-        }
-
-        fun requestingUser(requestingUser: OrderUser): Builder {
-            this.requestingUser = requestingUser
-            return this
-        }
-
-        fun organisation(organisation: OrderOrganisation?): Builder {
-            this.organisation = organisation
-            return this
-        }
-
-        fun updatedAt(updatedAt: Instant): Builder {
-            this.updatedAt = updatedAt
-            return this
-        }
-
-        fun createdAt(createdAt: Instant): Builder {
-            this.createdAt = createdAt
-            return this
-        }
-
-        fun isbnOrProductNumber(isbnOrProductNumber: String?): Builder {
-            this.isbnOrProductNumber = isbnOrProductNumber
-            return this
-        }
-
-        fun items(items: List<OrderItem>): Builder {
-            this.items = items
-            return this
-        }
+        fun legacyOrderId(legacyOrderId: String) = apply { this.legacyOrderId = legacyOrderId }
+        fun status(status: OrderStatus) = apply { this.status = status }
+        fun authorisingUser(authorisingUser: OrderUser?) = apply { this.authorisingUser = authorisingUser }
+        fun requestingUser(requestingUser: OrderUser) = apply { this.requestingUser = requestingUser }
+        fun organisation(organisation: OrderOrganisation?) = apply { this.organisation = organisation }
+        fun updatedAt(updatedAt: Instant) = apply { this.updatedAt = updatedAt }
+        fun createdAt(createdAt: Instant) = apply { this.createdAt = createdAt }
+        fun isbnOrProductNumber(isbnOrProductNumber: String?) = apply { this.isbnOrProductNumber = isbnOrProductNumber }
+        fun items(items: List<OrderItem>) = apply { this.items = items }
 
         fun build(): Order = Order(
             id = OrderId(ObjectId().toHexString()),

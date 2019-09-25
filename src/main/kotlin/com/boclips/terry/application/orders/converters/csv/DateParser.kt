@@ -1,4 +1,4 @@
-package com.boclips.terry.application.orders.converters.metadataConverters
+package com.boclips.terry.application.orders.converters.csv
 
 import java.time.Instant
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package com.boclips.terry.application.orders.converters.metadataConverters
+package com.boclips.terry.application.orders.converters.csv
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneOffset
 
-class DateParserTest {
+class DateParserKtTest {
 
     @Test
     fun `when valid date`() {

@@ -1,6 +1,7 @@
-package com.boclips.terry.application.orders.converters
+package com.boclips.terry.application.orders.converters.legacy
 
 import com.boclips.terry.application.exceptions.InvalidLegacyOrderItemLicense
+import com.boclips.terry.application.orders.converters.legacy.LicenseConverter
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import org.assertj.core.api.Assertions.assertThat

@@ -1,9 +1,9 @@
 package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidCsvException
-import com.boclips.terry.application.orders.converters.CsvOrderConverter
-import com.boclips.terry.application.orders.converters.Errors
-import com.boclips.terry.application.orders.converters.Orders
+import com.boclips.terry.application.orders.converters.csv.CsvOrderConverter
+import com.boclips.terry.application.orders.converters.csv.Errors
+import com.boclips.terry.application.orders.converters.csv.Orders
 import com.boclips.terry.common.Do
 import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata

@@ -1,13 +1,13 @@
 package com.boclips.terry.infrastructure
 
+import com.boclips.terry.domain.exceptions.ContentPartnerNotFoundException
+import com.boclips.terry.domain.exceptions.MissingCurrencyForContentPartner
+import com.boclips.terry.domain.exceptions.VideoNotFoundException
 import com.boclips.terry.domain.model.orderItem.ContentPartner
 import com.boclips.terry.domain.model.orderItem.ContentPartnerId
 import com.boclips.terry.domain.model.orderItem.Video
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
-import com.boclips.terry.domain.exceptions.ContentPartnerNotFoundException
-import com.boclips.terry.domain.exceptions.MissingCurrencyForContentPartner
-import com.boclips.terry.domain.exceptions.VideoNotFoundException
 import com.boclips.videos.service.client.VideoServiceClient
 import mu.KLogging
 import org.springframework.stereotype.Component
@@ -19,7 +19,7 @@ import com.boclips.videos.service.client.Video as VideoClientVideo
 class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClient) : VideoProvider {
     companion object : KLogging()
 
-    override fun get(videoId: VideoId): Video? {
+    override fun get(videoId: VideoId): Video {
         val videoResource = getVideoResource(videoId)
         val contentPartner = getContentPartner(videoResource)
 

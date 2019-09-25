@@ -1,4 +1,4 @@
-package com.boclips.terry.application.orders.converters
+package com.boclips.terry.application.orders.converters.csv
 
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
@@ -200,7 +200,7 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
 
             assertThat(errors.errors).containsExactly(
                 OrderConversionError(
-                    message = "Field Order request Date 'null' has an invalid format. Try DD/MM/YYYY instead.",
+                    message = "Field Order request Date 'null' has an invalid format, try DD/MM/YYYY instead",
                     legacyOrderId = csvOrderItem.legacyOrderId
                 )
             )
@@ -214,7 +214,7 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
 
             assertThat(errors.errors).contains(
                 OrderConversionError(
-                    message = "Field Order Fulfillment Date 'null' has an invalid format. Try DD/MM/YYYY instead.",
+                    message = "Field Order Fulfillment Date 'null' has an invalid format, try DD/MM/YYYY instead",
                     legacyOrderId = csvOrderItem.legacyOrderId
                 )
             )
@@ -241,6 +241,65 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
             val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
             assertThat(errors.errors).hasSize(2)
+        }
+
+        @Nested
+        inner class `Order Item conversion` {
+            @Test
+            fun `when video id is null`() {
+                val csvOrderItem = TestFactories.csvOrderItemMetadata(videoId = null)
+
+                val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+                assertThat(errors.errors).contains(
+                    OrderConversionError(
+                        message = "Field Clip ID must not be null",
+                        legacyOrderId = csvOrderItem.legacyOrderId
+                    )
+                )
+            }
+
+            @Test
+            fun `when video is not found`() {
+                val csvOrderItem = TestFactories.csvOrderItemMetadata(videoId = "123")
+
+                val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+                assertThat(errors.errors).contains(
+                    OrderConversionError(
+                        message = "Clip ID error: Could not find video with ID=123",
+                        legacyOrderId = csvOrderItem.legacyOrderId
+                    )
+                )
+            }
+
+            @Test
+            fun `when license duration is invalid`() {
+                val csvOrderItem = TestFactories.csvOrderItemMetadata(licenseDuration = "")
+
+                val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+                assertThat(errors.errors).contains(
+                    OrderConversionError(
+                        message = "Field License Duration '' has an invalid format, try a number or a textual description instead",
+                        legacyOrderId = csvOrderItem.legacyOrderId
+                    )
+                )
+            }
+
+            @Test
+            fun `when license territory is invalid`() {
+                val csvOrderItem = TestFactories.csvOrderItemMetadata(territory = null)
+
+                val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+                assertThat(errors.errors).contains(
+                    OrderConversionError(
+                        message = "Field Territory must not be null",
+                        legacyOrderId = csvOrderItem.legacyOrderId
+                    )
+                )
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.boclips.terry.application.orders.converters
+package com.boclips.terry.application.orders.converters.csv
 
 import com.boclips.terry.domain.model.Order
 

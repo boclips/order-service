@@ -1,27 +1,26 @@
 package com.boclips.terry.application.orders.converters
 
-import com.boclips.terry.application.orders.converters.TrimmingConverter
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class TrimmingConverterTest {
+class TrimRequestParserTest {
     @Test
     fun `converting null`() {
-        val trimRequest = TrimmingConverter.toTrimRequest(null)
+        val trimRequest = null.parseTrimRequest()
         assertThat(trimRequest).isEqualTo(TrimRequest.NoTrimming)
     }
 
     @Test
     fun `converting empty string`() {
-        val trimRequest = TrimmingConverter.toTrimRequest("")
+        val trimRequest = "".parseTrimRequest()
         assertThat(trimRequest).isEqualTo(TrimRequest.NoTrimming)
     }
 
     @Test
     fun `converting a valid trim request`() {
-        val trimRequest = TrimmingConverter.toTrimRequest("10 - 100")
+        val trimRequest = "10 - 100".parseTrimRequest()
         assertTrue(trimRequest is TrimRequest.WithTrimming)
         assertThat((trimRequest as TrimRequest.WithTrimming).label).isEqualTo("10 - 100")
     }
