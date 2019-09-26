@@ -36,4 +36,11 @@ class DateParserKtTest {
             LocalDate.of(1988, Month.JUNE, 30).atStartOfDay().toInstant(ZoneOffset.UTC)
         )
     }
+
+    @Test
+    fun `can handle two digit year`() {
+        assertThat("20/01/19".parseCsvDate()).isEqualTo(
+            LocalDate.of(2019, Month.JANUARY, 20).atStartOfDay().toInstant(ZoneOffset.UTC)
+        )
+    }
 }
