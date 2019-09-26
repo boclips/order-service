@@ -14,5 +14,6 @@ data class OrderDocument(
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
     val items: List<OrderItemDocument>?,
-    val organisation: String? = null
+    val organisation: String? = null,
+    val orderThroughPlatform: Boolean
 )

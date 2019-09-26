@@ -55,6 +55,12 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     "Field ${CsvOrderItemMetadata.MEMBER_REQUEST} must not be null"
                 )
 
+                validator.setNotNullOrError(
+                    firstOrderItem.orderThroughPlatform,
+                    { orderBuilder.isThroughPlatform(it.parseBoolean()) },
+                    "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"
+                )
+
                 orderBuilder.takeIf { errors.isEmpty() }?.run {
                     status(OrderStatus.INCOMPLETED)
                         .isbnOrProductNumber(firstOrderItem.isbnProductNumber)

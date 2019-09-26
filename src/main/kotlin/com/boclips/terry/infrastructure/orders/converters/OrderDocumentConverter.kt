@@ -19,7 +19,8 @@ object OrderDocumentConverter {
             createdAt = order.createdAt,
             isbnOrProductNumber = order.isbnOrProductNumber,
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
-            organisation = order.organisation?.name
+            organisation = order.organisation?.name,
+            orderThroughPlatform = order.isThroughPlatform
         )
     }
 
@@ -34,7 +35,8 @@ object OrderDocumentConverter {
             updatedAt = document.updatedAt,
             isbnOrProductNumber = document.isbnOrProductNumber,
             items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList(),
-            organisation = document.organisation?.let { OrderOrganisation(name = it) }
+            organisation = document.organisation?.let { OrderOrganisation(name = it) },
+            isThroughPlatform = document.orderThroughPlatform
         )
     }
 }

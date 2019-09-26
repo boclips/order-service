@@ -161,6 +161,15 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
             assertThat(orders.first().organisation?.name).isEqualTo("E Corp")
         }
 
+        @Test
+        fun `sets order through platform`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = "no")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().isThroughPlatform).isFalse()
+        }
+
         private fun toSuccessfulOrders(csvOrderItems: List<CsvOrderItemMetadata>) =
             (orderConverter.toOrders(csvOrderItems) as Orders).orders
 
@@ -241,6 +250,20 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
             val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
 
             assertThat(errors.errors).hasSize(2)
+        }
+
+        @Test
+        fun `when through platform is invalid`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = null)
+
+            val errors = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+            assertThat(errors.errors).contains(
+                OrderConversionError(
+                    message = "Field Order Through Platform 'null' has an invalid format, try yes or no instead",
+                    legacyOrderId = csvOrderItem.legacyOrderId
+                )
+            )
         }
 
         @Nested

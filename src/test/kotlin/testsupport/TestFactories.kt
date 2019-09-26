@@ -319,7 +319,11 @@ class TestFactories {
             )
         }
 
-        fun contentPartnerDocument(name: String = "hello", referenceId: String = "id-yo", currency: String = "USD"): ContentPartnerDocument {
+        fun contentPartnerDocument(
+            name: String = "hello",
+            referenceId: String = "id-yo",
+            currency: String = "USD"
+        ): ContentPartnerDocument {
             return ContentPartnerDocument(
                 name = name,
                 videoServiceContentPartnerId = referenceId,
@@ -349,7 +353,8 @@ class TestFactories {
             captioning: String? = "",
             trim: String? = "",
             notes: String? = "what an order, Geoff",
-            remittanceNotes: String? = ""
+            remittanceNotes: String? = "",
+            orderThroughPlatform: String? = "yes"
         ): CsvOrderItemMetadata {
             return CsvOrderItemMetadata().apply {
                 this.legacyOrderId = legacyOrderId
@@ -374,6 +379,7 @@ class TestFactories {
                 this.trim = trim
                 this.notes = notes
                 this.remittanceNotes = remittanceNotes
+                this.orderThroughPlatform = orderThroughPlatform
             }
         }
     }
@@ -403,7 +409,8 @@ object OrderFactory {
         updatedAt: Instant = Instant.now(),
         items: List<OrderItem> = emptyList(),
         isbnOrProductNumber: String = "some-isbn",
-        orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp")
+        orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
+        isThroughPlatform: Boolean = true
     ): Order {
         return Order(
             id = id,
@@ -415,13 +422,18 @@ object OrderFactory {
             isbnOrProductNumber = isbnOrProductNumber,
             status = status,
             items = items,
-            organisation = orderOrganisation
+            organisation = orderOrganisation,
+            isThroughPlatform = isThroughPlatform
         )
     }
 
     fun orderInPounds() = order(
-        items = listOf(orderItem(
-            price = PriceFactory.onePound())))
+        items = listOf(
+            orderItem(
+                price = PriceFactory.onePound()
+            )
+        )
+    )
 
     fun orderItem(
         price: Price = Price(
@@ -460,7 +472,6 @@ object OrderFactory {
         )
     }
 
-
     fun completeOrderUser(
         firstName: String = "OrderingBob",
         lastName: String = "Smith",
@@ -478,5 +489,4 @@ object OrderFactory {
     fun basicOrderUser(
         label: String = "Matt <hello@boclips.tom>"
     ): OrderUser = OrderUser.BasicUser(label = label)
-
 }

@@ -1,9 +1,7 @@
 package com.boclips.terry.presentation.resources
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import java.util.Date
 
 @JsonPropertyOrder(
     CsvOrderItemMetadata.ORDER_NO,
@@ -27,7 +25,8 @@ import java.util.Date
     CsvOrderItemMetadata.CAPTIONING,
     CsvOrderItemMetadata.TRIM,
     CsvOrderItemMetadata.NOTES,
-    CsvOrderItemMetadata.REMITTANCE_NOTES
+    CsvOrderItemMetadata.REMITTANCE_NOTES,
+    CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM
 )
 
 class CsvOrderItemMetadata {
@@ -97,6 +96,9 @@ class CsvOrderItemMetadata {
     @JsonProperty(value = REMITTANCE_NOTES)
     var remittanceNotes: String? = null
 
+    @JsonProperty(value = ORDER_THROUGH_PLATFORM)
+    var orderThroughPlatform: String? = null
+
     companion object {
         const val ORDER_NO = "Order No"
         const val MONTH_DATE = "Month Date"
@@ -120,5 +122,6 @@ class CsvOrderItemMetadata {
         const val TRIM = "Trim"
         const val NOTES = "Notes"
         const val REMITTANCE_NOTES = "Remittance Notes"
+        const val ORDER_THROUGH_PLATFORM = "Order Through Platform"
     }
 }

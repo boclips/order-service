@@ -13,7 +13,8 @@ data class OrderResource(
     val updatedAt: String,
     val isbnNumber: String?,
     val items: List<OrderItemResource>,
-    val currency: String
+    val currency: String,
+    val isThroughPlatform: Boolean
 ) {
     companion object {
         fun fromOrder(order: Order): OrderResource =
@@ -27,7 +28,8 @@ data class OrderResource(
                 status = order.status.toString(),
                 items = order.items
                     .map(OrderItemResource.Companion::fromOrderItem),
-                currency = order.currency.toString()
+                currency = order.currency.toString(),
+                isThroughPlatform = order.isThroughPlatform
             )
     }
 }

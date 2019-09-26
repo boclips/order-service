@@ -44,5 +44,6 @@ class OrderCsvUploadConverterTest {
         assertThat(orderItem.trim).isEqualTo("")
         assertThat(orderItem.notes).isEqualTo("")
         assertThat(orderItem.remittanceNotes).isEqualTo("")
+        assertThat(orderItem.orderThroughPlatform).isEqualTo("yes")
     }
 }

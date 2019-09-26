@@ -16,6 +16,7 @@ class Order(
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
+    val isThroughPlatform: Boolean,
     items: Iterable<OrderItem>
 ) {
     companion object {
@@ -85,6 +86,8 @@ class Order(
         private lateinit var createdAt: Instant
         private lateinit var items: List<OrderItem>
 
+        private var isThroughPlatform: Boolean = true
+
         private var authorisingUser: OrderUser? = null
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
@@ -98,6 +101,8 @@ class Order(
         fun createdAt(createdAt: Instant) = apply { this.createdAt = createdAt }
         fun isbnOrProductNumber(isbnOrProductNumber: String?) = apply { this.isbnOrProductNumber = isbnOrProductNumber }
         fun items(items: List<OrderItem>) = apply { this.items = items }
+        fun isThroughPlatform(orderThroughPlatform: Boolean) =
+            apply { this.isThroughPlatform = orderThroughPlatform }
 
         fun build(): Order = Order(
             id = OrderId(ObjectId().toHexString()),
@@ -109,6 +114,7 @@ class Order(
             updatedAt = updatedAt,
             createdAt = createdAt,
             isbnOrProductNumber = isbnOrProductNumber,
+            isThroughPlatform = isThroughPlatform,
             items = items
         )
     }

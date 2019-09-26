@@ -33,7 +33,8 @@ class OrderDocumentConverterTest {
                 createdAt = Instant.EPOCH,
                 isbnOrProductNumber = "anisbn",
                 items = null,
-                organisation = ""
+                organisation = "",
+                orderThroughPlatform = true
             ).let(OrderDocumentConverter::toOrder).items
         ).isEmpty()
     }

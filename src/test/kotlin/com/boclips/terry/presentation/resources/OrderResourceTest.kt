@@ -65,7 +65,8 @@ class OrderResourceTest {
                         ),
                         notes = "hello, I'm a note"
                     )
-                )
+                ),
+                isThroughPlatform = false
             )
         )
 
@@ -109,7 +110,8 @@ class OrderResourceTest {
                         licenseTerritory = "Multi Region",
                         notes = "hello, I'm a note"
                     )
-                )
+                ),
+                isThroughPlatform = false
             )
         )
     }

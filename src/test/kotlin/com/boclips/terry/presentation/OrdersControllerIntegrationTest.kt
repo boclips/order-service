@@ -208,7 +208,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         transcriptRequested = false,
                         video = TestFactories.video()
                     )
-                )
+                ),
+                isThroughPlatform = false
             )
         )
 
@@ -224,6 +225,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$.currency", equalTo("EUR")))
+            .andExpect(jsonPath("$.throughPlatform", equalTo(false)))
             .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
             .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("EUR 1.00")))
