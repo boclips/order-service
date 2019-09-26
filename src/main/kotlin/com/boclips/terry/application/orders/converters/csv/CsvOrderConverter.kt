@@ -13,6 +13,7 @@ import com.boclips.terry.domain.service.VideoProvider
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
 import mu.KLogging
 import org.springframework.stereotype.Component
+import java.util.UUID
 import kotlin.reflect.KClass
 
 @Component
@@ -66,7 +67,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                         .isbnOrProductNumber(firstOrderItem.isbnProductNumber)
                         .authorisingUser(firstOrderItem.memberAuthorise?.let { OrderUser.BasicUser(it) })
                         .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })
-                        .items(orderItems.mapNotNull { toOrderItem(it, validator) })
+                        .items(orderItems.mapNotNull { toOrderItem(it, validator) }) //TODO this should be moved outside the errors check
                         .build()
                 }
             }.let { orders ->
@@ -104,6 +105,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                 .trim(csvItem.trim.parseTrimRequest())
                 .license(orderItemLicenseBuilder.build())
                 .notes(csvItem.notes?.takeIf { it.isNotBlank() })
+                .id(UUID.randomUUID().toString())
                 .build()
         }
     }

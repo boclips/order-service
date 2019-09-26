@@ -14,7 +14,7 @@ import com.boclips.terry.infrastructure.orders.LicenseDocument
 import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
-import java.util.*
+import java.util.Currency
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
@@ -50,12 +50,14 @@ object OrderItemDocumentConverter {
                     description = it.license.duration.label
                 )
             },
-            notes = it.notes
+            notes = it.notes,
+            id = it.id
         )
     }
 
     fun toOrderItem(document: OrderItemDocument): OrderItem {
         return OrderItem(
+            id = document.id,
             price = Price(document.price, document.currency),
             transcriptRequested = document.transcriptRequested,
 

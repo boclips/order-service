@@ -7,8 +7,6 @@ import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
-import com.boclips.videos.service.client.ContentPartner
-import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.Matchers.endsWith
@@ -20,6 +18,7 @@ import org.springframework.core.io.Resource
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.OrderFactory
@@ -179,6 +178,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 items = listOf(
                     OrderFactory.orderItem(
+                        id = "1234",
                         price = Price(
                             amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
@@ -200,13 +200,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 currency = Currency.getInstance("GBP")
                             )
                         )
-                    ), OrderFactory.orderItem(
-                        price = Price(
-                            amount = BigDecimal.valueOf(10),
-                            currency = Currency.getInstance("EUR")
-                        ),
-                        transcriptRequested = false,
-                        video = TestFactories.video()
                     )
                 ),
                 isThroughPlatform = false
@@ -235,6 +228,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
             .andExpect(jsonPath("$.items[0].video.videoReference", equalTo("AP-123")))
+            .andExpect(
+                jsonPath(
+                    "$.items[0]._links.updatePrice.href",
+                    endsWith("/orders/5ceeb99bd0e30a1a57ae9767/items/1234?price={price}")
+                )
+            )
 
             .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
             .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))
@@ -263,7 +262,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `gets error when CP has no currency`() {
         this.defaultVideoClientResponse(
-            videoId = "5c54d6d3d8eafeecae206b6e" ,
+            videoId = "5c54d6d3d8eafeecae206b6e",
             contentPartnerId = "content-partner-without-currency",
             contentPartnerName = "AP",
             contentPartnerCurrency = null
@@ -275,7 +274,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .asBackofficeStaff()
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid CSV")))
-            .andExpect(jsonPath("$.message", equalTo("Order 5d6cda057f0dc0dd363841ed: Clip ID error: Content partner 'AP' has no currency defined")))
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    equalTo("Order 5d6cda057f0dc0dd363841ed: Clip ID error: Content partner 'AP' has no currency defined")
+                )
+            )
             .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
             .andExpect(jsonPath("$.status", equalTo(400)))
             .andExpect(jsonPath("$.timestamp").exists())
@@ -289,7 +293,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .asBackofficeStaff()
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid CSV")))
-            .andExpect(jsonPath("$.message", equalTo("Order 5d6cda057f0dc0dd363841ed: Field Order request Date 'this is an invalid order request date' has an invalid format, try DD/MM/YYYY instead")))
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    equalTo("Order 5d6cda057f0dc0dd363841ed: Field Order request Date 'this is an invalid order request date' has an invalid format, try DD/MM/YYYY instead")
+                )
+            )
             .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
             .andExpect(jsonPath("$.status", equalTo(400)))
             .andExpect(jsonPath("$.timestamp").exists())
@@ -317,8 +326,57 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can update price of an order item`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "hello"))
+            )
+        )
+
+        mockMvc.perform(
+            (patch(
+                "/v1/orders/{id}/items/{itemId}?price=200",
+                order.id.value,
+                "hello"
+            ).asBackofficeStaff())
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.items[0].price.value").value("200"))
+    }
+
+    @Test
+    fun `incorrect order item returns 404`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "hello"))
+            )
+        )
+
+        mockMvc.perform((patch("/v1/orders/{id}/items/{itemId}?price=200", order.id.value, "blah").asBackofficeStaff()))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+    }
+
+    @Test
     fun `incorrect currency returns 400`() {
         mockMvc.perform((patch("/v1/orders/irrelevant?currency=nasty-currency").asBackofficeStaff()))
             .andExpect(status().isBadRequest)
+    }
+
+
+    @Test
+    fun `cannot patch missing price of order item`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "hello"))
+            )
+        )
+
+        mockMvc.perform(
+            (patch(
+                "/v1/orders/{id}/items/{itemId}?price=",
+                order.id.value,
+                "hello"
+            ).asBackofficeStaff())
+        ).andExpect(status().isBadRequest)
     }
 }

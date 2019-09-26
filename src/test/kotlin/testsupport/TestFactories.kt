@@ -40,6 +40,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.Currency
 import java.util.Date
+import java.util.UUID
 
 class TestFactories {
     companion object {
@@ -266,6 +267,7 @@ class TestFactories {
         }
 
         fun orderItemDocument(
+            id: String = UUID.randomUUID().toString(),
             price: BigDecimal? = BigDecimal.ONE,
             currency: Currency? = Currency.getInstance("USD"),
             transcriptRequested: Boolean = true,
@@ -276,6 +278,7 @@ class TestFactories {
             notes: String? = "a notes"
         ): OrderItemDocument {
             return OrderItemDocument(
+                id = id,
                 price = price,
                 transcriptRequested = transcriptRequested,
                 source = source,
@@ -436,6 +439,7 @@ object OrderFactory {
     )
 
     fun orderItem(
+        id: String = UUID.randomUUID().toString(),
         price: Price = Price(
             amount = BigDecimal.valueOf(100),
             currency = Currency.getInstance("GBP")
@@ -450,6 +454,7 @@ object OrderFactory {
         notes: String? = "a note"
     ): OrderItem {
         return OrderItem(
+            id = id,
             price = price,
             transcriptRequested = transcriptRequested,
             video = video,

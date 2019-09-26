@@ -1,7 +1,7 @@
 package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidOrderRequest
-import com.boclips.terry.application.exceptions.OrderNotFoundException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.presentation.resources.OrderResource

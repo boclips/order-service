@@ -23,6 +23,7 @@ import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class StoreLegacyOrder(
@@ -86,6 +87,7 @@ class StoreLegacyOrder(
 
     fun convertLegacyItem(item: LegacyOrderItem) =
         OrderItem(
+            id = item.uuid,
             price = Price(amount = item.price, currency = null),
             transcriptRequested = item.transcriptsRequired,
             trim = item.trimming.parseTrimRequest(),

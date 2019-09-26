@@ -1,6 +1,8 @@
 package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.presentation.OrdersController
+import org.springframework.hateoas.Resource
 import org.springframework.hateoas.core.Relation
 
 @Relation(collectionRelation = "orders")
@@ -12,7 +14,7 @@ data class OrderResource(
     val createdAt: String,
     val updatedAt: String,
     val isbnNumber: String?,
-    val items: List<OrderItemResource>,
+    val items: List<Resource<OrderItemResource>>,
     val currency: String,
     val isThroughPlatform: Boolean
 ) {
@@ -27,7 +29,12 @@ data class OrderResource(
                 updatedAt = order.updatedAt.toString(),
                 status = order.status.toString(),
                 items = order.items
-                    .map(OrderItemResource.Companion::fromOrderItem),
+                    .map {
+                        Resource(
+                            OrderItemResource.fromOrderItem(it),
+                            OrdersController.getUpdateOrderItemLink(order.id.value, it.id)
+                        )
+                    },
                 currency = order.currency.toString(),
                 isThroughPlatform = order.isThroughPlatform
             )

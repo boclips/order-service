@@ -1,9 +1,10 @@
 package com.boclips.terry.infrastructure.orders
 
+import com.boclips.terry.domain.exceptions.OrderItemNotFoundException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUpdateCommand
-import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import testsupport.OrderFactory
 import testsupport.PriceFactory
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.Currency
 
@@ -116,10 +118,14 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can update the currency for order items`() {
-        val originalOrder = ordersRepository.save(OrderFactory.order(items = listOf(
-            OrderFactory.orderItem(price = PriceFactory.onePound()),
-            OrderFactory.orderItem(price = PriceFactory.onePound()))
-        ))
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(price = PriceFactory.onePound()),
+                    OrderFactory.orderItem(price = PriceFactory.onePound())
+                )
+            )
+        )
 
         val updatedOrder = ordersRepository.update(
             OrderUpdateCommand.UpdateOrderItemsCurrency(
@@ -130,5 +136,48 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("EUR"))
         assertThat(updatedOrder.items.map { it.price.currency.toString() }).allMatch { it == "EUR" }
+    }
+
+    @Test
+    fun `can update the price for an order item`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(id = "1", price = PriceFactory.onePound()),
+                    OrderFactory.orderItem(id = "2", price = PriceFactory.onePound())
+                )
+            )
+        )
+
+        val updatedOrder = ordersRepository.update(
+            OrderUpdateCommand.UpdateOrderItemPrice(
+                orderId = originalOrder.id,
+                orderItemsId = "2",
+                amount = BigDecimal.valueOf(10)
+            )
+        )
+
+        assertThat(updatedOrder.items.first { it.id == "2" }.price.amount).isEqualTo(BigDecimal.valueOf(10))
+    }
+
+    @Test
+    fun `it throws when updating an non-existent order-item`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(id = "2", price = PriceFactory.onePound())
+                )
+            )
+        )
+
+        assertThrows<OrderItemNotFoundException> {
+            ordersRepository.update(
+                OrderUpdateCommand.UpdateOrderItemPrice(
+                    orderId = originalOrder.id,
+                    orderItemsId = "non-existent",
+                    amount = BigDecimal.valueOf(10)
+                )
+            )
+        }
     }
 }

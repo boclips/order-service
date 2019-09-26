@@ -1,7 +1,7 @@
 package com.boclips.terry.application.orders
 
-import com.boclips.terry.application.exceptions.OrderNotFoundException
 import com.boclips.terry.application.orders.exceptions.InvalidCurrencyFormatException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId

@@ -1,12 +1,15 @@
 package com.boclips.terry.infrastructure.orders
 
 import com.boclips.terry.common.Do
+import com.boclips.terry.domain.exceptions.OrderItemNotFoundException
+import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.domain.model.Price
 import com.boclips.terry.infrastructure.orders.converters.OrderDocumentConverter
-import com.boclips.terry.domain.exceptions.OrderNotFoundException
+import com.boclips.terry.infrastructure.orders.converters.OrderItemDocumentConverter
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
@@ -36,7 +39,6 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             .insertOne(
                 OrderDocumentConverter.toOrderDocument(order)
             ).let { this.findOne(order.id) }!!
-
 
     override fun deleteAll() {
         collection().deleteMany()
@@ -75,6 +77,9 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
                 "{\$set:{'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
             )
+            is OrderUpdateCommand.UpdateOrderItemPrice -> findOne(orderUpdateCommand.orderId)?.let {
+                updateOrderItemPrice(orderUpdateCommand = orderUpdateCommand, retrievedOrder = it)
+            }
         }
 
         collection().updateOne(
@@ -84,6 +89,32 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
 
         return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(
             orderUpdateCommand.orderId
+        )
+    }
+
+    private fun updateOrderItemPrice(
+        orderUpdateCommand: OrderUpdateCommand.UpdateOrderItemPrice,
+        retrievedOrder: Order
+    ) {
+        if (retrievedOrder.items.firstOrNull { it.id == orderUpdateCommand.orderItemsId } == null) {
+            throw OrderItemNotFoundException(orderId = retrievedOrder.id, orderItemId = orderUpdateCommand.orderItemsId)
+        }
+
+        val updatedItems = retrievedOrder.items.map { orderItem ->
+            if (orderItem.id == orderUpdateCommand.orderItemsId) {
+                orderItem.copy(
+                    price = Price(
+                        amount = orderUpdateCommand.amount,
+                        currency = orderItem.price.currency
+                    )
+                )
+            } else {
+                orderItem
+            }
+        }
+        collection().updateOne(
+            OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
+            set(OrderDocument::items, updatedItems.map { OrderItemDocumentConverter.toOrderItemDocument(it) })
         )
     }
 
