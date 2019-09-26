@@ -33,7 +33,7 @@ data class OrderItemResource(
                     id = item.video.videoServiceId.value,
                     title = item.video.title,
                     type = item.video.type,
-                    videoReference = item.video.videoReference
+                    videoReference = item.video.contentPartnerVideoId
                 ),
                 licenseDuration = getDurationLabel(item.license),
                 licenseTerritory = item.license.territory,

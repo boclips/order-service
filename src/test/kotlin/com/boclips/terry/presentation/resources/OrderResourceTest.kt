@@ -58,7 +58,7 @@ class OrderResourceTest {
                             title = "video title",
                             videoReference = "TED_11",
                             contentPartner = TestFactories.contentPartner(
-                                referenceId = "paper",
+                                contentPartnerId = "paper",
                                 name = "cup",
                                 currency = Currency.getInstance("GBP")
                             )

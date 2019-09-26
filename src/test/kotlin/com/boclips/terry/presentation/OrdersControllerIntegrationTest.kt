@@ -9,6 +9,8 @@ import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.videos.service.client.VideoType
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import org.assertj.core.api.Assertions
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyOrNullString
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.OrderFactory
@@ -80,7 +83,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             title = "A Video",
                             videoType = VideoType.STOCK,
                             contentPartner = TestFactories.contentPartner(
-                                referenceId = "123",
+                                contentPartnerId = "123",
                                 name = "bob is still here",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -195,7 +198,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoType = VideoType.STOCK,
                             videoReference = "AP-123",
                             contentPartner = TestFactories.contentPartner(
-                                referenceId = "cp-id",
+                                contentPartnerId = "cp-id",
                                 name = "eman",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -257,6 +260,49 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .file("file", ordersCsv.file.readBytes())
                 .asBackofficeStaff()
         ).andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `can export a csv with orders`() {
+        ordersRepository.save(
+            OrderFactory.order(
+                status = OrderStatus.COMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
+                            currency = Currency.getInstance("EUR")
+                        ),
+                        license = OrderFactory.orderItemLicense(
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
+                            territory = "WW"
+                        ),
+                        video = TestFactories.video(
+                            videoServiceId = "video-id",
+                            title = "A Video title",
+                            contentPartner = TestFactories.contentPartner(
+                                name = "a content partner"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        val csv = mockMvc.perform(get("/v1/orders").accept("text/csv").asBackofficeStaff())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", containsString("text/csv")))
+            .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
+            .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
+            .andReturn().response.contentAsString
+
+        Assertions.assertThat(csv).apply {
+            containsSubsequence("a content partner")
+            containsSubsequence("video-id")
+            containsSubsequence("A Video title")
+            containsSubsequence("EUR 1")
+            containsSubsequence("10,WW")
+        }
     }
 
     @Test

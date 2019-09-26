@@ -200,12 +200,12 @@ class TestFactories {
 
         fun contentPartner(
             name: String = "Flux",
-            referenceId: String = "video-service-id",
+            contentPartnerId: String = "video-service-id",
             currency: Currency = Currency.getInstance("USD")
         ): ContentPartner {
             return ContentPartner(
                 name = name,
-                videoServiceId = ContentPartnerId(value = referenceId),
+                videoServiceId = ContentPartnerId(value = contentPartnerId),
                 currency = currency
             )
         }
@@ -221,7 +221,7 @@ class TestFactories {
                 videoServiceId = VideoId(value = videoServiceId),
                 title = title,
                 type = videoType.toString(),
-                videoReference = videoReference,
+                contentPartnerVideoId = videoReference,
                 contentPartner = contentPartner
             )
         }

@@ -1,6 +1,7 @@
 package com.boclips.terry.presentation
 
 import com.boclips.terry.application.orders.CreateOrderFromCsv
+import com.boclips.terry.application.orders.ExportAllOrdersToCsv
 import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.application.orders.UpdateOrderCurrency
@@ -12,6 +13,7 @@ import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
 import org.springframework.hateoas.mvc.ControllerLinkBuilder
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -30,6 +33,7 @@ class OrdersController(
     private val getOrders: GetOrders,
     private val getOrder: GetOrder,
     private val createOrderFromCsv: CreateOrderFromCsv,
+    private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
     private val updateOrderCurrency: UpdateOrderCurrency,
     private val updateOrderItemPrice: UpdateOrderItemPrice
 ) {
@@ -56,11 +60,28 @@ class OrdersController(
         ).withRel("updatePrice")
     }
 
-    @GetMapping
+    @GetMapping(produces = ["!text/csv"])
     fun getOrderList() = getOrders()
         .map { wrapOrder(it) }
         .let(HateoasEmptyCollection::fixIfEmptyCollection)
         .let { Resources(it, getSelfOrdersLink()) }
+
+    @GetMapping(produces = ["text/csv"])
+    fun getOrderCsv() : ResponseEntity<Any> =
+        ResponseEntity(
+            exportAllOrdersToCsv(),
+            HttpHeaders().apply {
+                put(
+                    "Content-Disposition",
+                    listOf("attachment; filename=\"orders-${LocalDateTime.now()}.csv\"")
+                )
+                put(
+                    "Content-Type",
+                    listOf("text/csv")
+                )
+            },
+            HttpStatus.OK
+        )
 
     @GetMapping("/{id}")
     fun getOrderResource(@PathVariable("id") id: String?) = wrapOrder(getOrder(id))

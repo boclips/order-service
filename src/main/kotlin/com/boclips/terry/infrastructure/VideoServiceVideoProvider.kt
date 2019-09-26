@@ -27,7 +27,7 @@ class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClie
             videoServiceId = VideoId(value = videoResource.videoId.value),
             title = videoResource.title,
             type = videoResource.type.toString(),
-            videoReference = videoResource.contentPartnerVideoId,
+            contentPartnerVideoId = videoResource.contentPartnerVideoId,
             contentPartner = ContentPartner(
                 videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId),
                 name = videoResource.createdBy,

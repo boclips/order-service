@@ -6,4 +6,6 @@ import java.util.Currency
 data class Price(
     val amount: BigDecimal?,
     val currency: Currency?
-)
+) {
+    fun toReadableString(): String = "${currency?.currencyCode} $amount"
+}

@@ -28,7 +28,7 @@ object OrderItemDocumentConverter {
                     name = it.video.contentPartner.name,
                     currency = it.video.contentPartner.currency.currencyCode
                 ),
-                videoReference = it.video.videoReference
+                videoReference = it.video.contentPartnerVideoId
             ),
             trim = toTrimmingString(it.trim),
             video = VideoDocument(
@@ -66,7 +66,7 @@ object OrderItemDocumentConverter {
                 videoServiceId = VideoId(value = document.video.videoServiceId),
                 title = document.video.title,
                 type = document.video.type,
-                videoReference = document.source.videoReference,
+                contentPartnerVideoId = document.source.videoReference,
                 contentPartner = ContentPartner(
                     videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
                     name = document.source.contentPartner.name,
