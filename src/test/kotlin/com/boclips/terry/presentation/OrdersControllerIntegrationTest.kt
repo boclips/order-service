@@ -306,6 +306,47 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `gets an error when exporting incomplete orders to csv`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
+                            currency = Currency.getInstance("EUR")
+                        ),
+                        license = OrderFactory.orderItemLicense(
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
+                            territory = "WW"
+                        ),
+                        video = TestFactories.video(
+                            videoServiceId = "video-id",
+                            title = "A Video title",
+                            contentPartner = TestFactories.contentPartner(
+                                name = "a content partner"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        mockMvc.perform(get("/v1/orders").accept("text/csv").asBackofficeStaff())
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.error", equalTo("Invalid Order State")))
+            .andExpect(
+                jsonPath(
+                    "$.message",
+                    equalTo("Order ${order.id.value}: The order isn't complete and cannot be exported")
+                )
+            )
+            .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
+            .andExpect(jsonPath("$.status", equalTo(400)))
+            .andExpect(jsonPath("$.timestamp").exists())
+    }
+
+    @Test
     fun `gets error when CP has no currency`() {
         this.defaultVideoClientResponse(
             videoId = "5c54d6d3d8eafeecae206b6e",

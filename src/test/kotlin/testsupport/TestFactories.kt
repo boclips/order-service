@@ -8,6 +8,8 @@ import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderOrganisation
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
+import com.boclips.terry.domain.model.Manifest
+import com.boclips.terry.domain.model.ManifestItem
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderOrganisation
@@ -30,6 +32,7 @@ import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import com.boclips.terry.presentation.resources.OrderItemResourceTest
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -37,6 +40,7 @@ import org.bson.types.ObjectId
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
+import java.time.Month
 import java.time.temporal.ChronoUnit
 import java.util.Currency
 import java.util.Date
@@ -395,8 +399,18 @@ object PriceFactory {
         Currency.getInstance("USD")
     )
 
+    fun zeroEuros() = Price(
+        BigDecimal.ZERO,
+        Currency.getInstance("EUR")
+    )
+
     fun onePound() = Price(
         BigDecimal.ONE,
+        Currency.getInstance("GBP")
+    )
+
+    fun tenPounds() = Price(
+        BigDecimal.TEN,
         Currency.getInstance("GBP")
     )
 }
@@ -494,4 +508,25 @@ object OrderFactory {
     fun basicOrderUser(
         label: String = "Matt <hello@boclips.tom>"
     ): OrderUser = OrderUser.BasicUser(label = label)
+}
+
+object ManifestFactory {
+
+    fun manifest(
+        items: List<ManifestItem> = listOf(item())
+    ) = Manifest(
+        items = items
+    )
+
+    fun item(
+        video: Video = TestFactories.video(),
+        license: OrderItemLicense = OrderFactory.orderItemLicense(),
+        orderDate: LocalDate = LocalDate.of(2019, Month.APRIL, 3),
+        salePrice: Price = PriceFactory.onePound()
+    ) = ManifestItem(
+        video = video,
+        license = license,
+        orderDate = orderDate,
+        salePrice = salePrice
+    )
 }

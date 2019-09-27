@@ -1,6 +1,6 @@
 package com.boclips.terry.application.orders
 
-import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.ManifestItem
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
@@ -20,8 +20,7 @@ data class ManifestCsvMetadata(
     @get:JsonProperty(CONTENT_PARTNER)
     val contentPartner: String,
     @get:JsonProperty(ORDER_DATE)
-    @get:JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    val orderDate: Date,
+    val orderDate: String,
     @get:JsonProperty(BOCLIPS_ID)
     val boclipsId: String,
     @get:JsonProperty(SOURCE_ID)
@@ -45,16 +44,16 @@ data class ManifestCsvMetadata(
         const val TERRITORY = "Territory"
         const val SALES_AMOUNT = "Sales Amount (Original Currency)"
 
-        fun from(order: Order) : List<ManifestCsvMetadata> = order.items.map { orderItem ->
+        fun from(manifestItem: ManifestItem) : ManifestCsvMetadata = manifestItem.let {
             ManifestCsvMetadata(
-                contentPartner = orderItem.video.contentPartner.name,
-                orderDate = Date.from(order.createdAt),
-                boclipsId = orderItem.video.videoServiceId.value,
-                sourceId = orderItem.video.contentPartnerVideoId,
-                title = orderItem.video.title,
-                licenseDuration = orderItem.license.duration.toReadableString(),
-                territory = orderItem.license.territory,
-                salesAmount = orderItem.price.toReadableString()
+                contentPartner = it.video.contentPartner.name,
+                orderDate = manifestItem.orderDate.toString(),
+                boclipsId = it.video.videoServiceId.value,
+                sourceId = it.video.contentPartnerVideoId,
+                title = it.video.title,
+                licenseDuration = it.license.duration.toReadableString(),
+                territory = it.license.territory,
+                salesAmount = it.salePrice.toReadableString()
             )
         }
     }
