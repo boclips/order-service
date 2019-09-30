@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import testsupport.OrderFactory
 import testsupport.PriceFactory
-import testsupport.TestFactories
+import java.math.BigDecimal
 import java.util.Currency
 
 class OrderTest {
@@ -50,6 +50,32 @@ class OrderTest {
                 )
             }
         }
+    }
 
+    @Test
+    fun `can calculate total cost of an order`() {
+        val order = OrderFactory.order(
+            items = listOf(
+                OrderFactory.orderItem(price = PriceFactory.tenDollars()),
+                OrderFactory.orderItem(price = PriceFactory.tenDollars()),
+                OrderFactory.orderItem(price = PriceFactory.tenDollars())
+            )
+        )
+
+        assertThat(order.totalPrice).isEqualTo(BigDecimal.valueOf(30))
+    }
+
+    @Test
+    fun `defaults missing price to 0`() {
+        val order = OrderFactory.order(
+            items = listOf(
+                OrderFactory.orderItem(price = PriceFactory.tenDollars()),
+                OrderFactory.orderItem(
+                    price = Price(amount = null, currency = Currency.getInstance("USD"))
+                )
+            )
+        )
+
+        assertThat(order.totalPrice).isEqualTo(BigDecimal.valueOf(10))
     }
 }

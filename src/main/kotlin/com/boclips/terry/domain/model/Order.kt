@@ -1,8 +1,10 @@
 package com.boclips.terry.domain.model
 
+import com.boclips.terry.common.sumByBigDecimal
 import com.boclips.terry.domain.exceptions.IllegalCurrencyException
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import org.bson.types.ObjectId
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.Currency
 
@@ -30,6 +32,9 @@ class Order(
 
     val currency: Currency?
         get() = this.orderItems.firstOrNull()?.price?.currency
+
+    val totalPrice: BigDecimal
+        get() = this.orderItems.sumByBigDecimal { it.price.amount ?: BigDecimal.ZERO}
 
     init {
         items.forEach { this.addItem(it) }

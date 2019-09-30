@@ -129,7 +129,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
-            .andExpect(jsonPath("$._embedded.orders[0].currency", equalTo("EUR")))
+            .andExpect(jsonPath("$._embedded.orders[0].totalPrice.currency", equalTo("EUR")))
             .andExpect(jsonPath("$._embedded.orders[0]._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("EUR 1.00")))
@@ -221,7 +221,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
-            .andExpect(jsonPath("$.currency", equalTo("EUR")))
+            .andExpect(jsonPath("$.totalPrice.currency", equalTo("EUR")))
             .andExpect(jsonPath("$.throughPlatform", equalTo(false)))
             .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
@@ -412,7 +412,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform((patch("/v1/orders/{id}?currency=USD", order.id.value).asBackofficeStaff()))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.currency").value("USD"))
+            .andExpect(jsonPath("$.totalPrice.currency").value("USD"))
     }
 
     @Test
@@ -468,5 +468,21 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "hello"
             ).asBackofficeStaff())
         ).andExpect(status().isBadRequest)
+    }
+
+
+    @Test
+    fun `can calculate price of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"),
+                    OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"),
+                    OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"))
+            )
+        )
+
+        mockMvc.perform(get("/v1/orders/{id}", order.id.value).asBackofficeStaff())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.totalPrice.value", equalTo(3)))
     }
 }

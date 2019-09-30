@@ -11,7 +11,6 @@ import com.boclips.terry.presentation.OrdersController
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.litote.kmongo.MongoOperator
 import org.springframework.hateoas.Resource
 import testsupport.OrderFactory
 import testsupport.TestFactories
@@ -88,15 +87,13 @@ class OrderResourceTest {
                 status = "COMPLETED",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
-                currency = "EUR",
+                totalPrice = PriceResource(value = BigDecimal.valueOf(1), currency = Currency.getInstance("EUR")),
                 items = listOf(
                     Resource(
                         OrderItemResource(
-                            price = PriceResource.fromPrice(
-                                Price(
-                                    amount = BigDecimal.valueOf(1),
-                                    currency = Currency.getInstance("EUR")
-                                )
+                            price = PriceResource(
+                                value = BigDecimal.valueOf(1),
+                                currency = Currency.getInstance("EUR")
                             ),
                             transcriptRequested = false,
                             contentPartner = ContentPartnerResource(

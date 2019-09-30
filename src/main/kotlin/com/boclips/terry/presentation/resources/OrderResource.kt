@@ -15,7 +15,7 @@ data class OrderResource(
     val updatedAt: String,
     val isbnNumber: String?,
     val items: List<Resource<OrderItemResource>>,
-    val currency: String,
+    val totalPrice: PriceResource,
     val isThroughPlatform: Boolean
 ) {
     companion object {
@@ -35,7 +35,11 @@ data class OrderResource(
                             OrdersController.getUpdateOrderItemLink(order.id.value, it.id)
                         )
                     },
-                currency = order.currency.toString(),
+                totalPrice = PriceResource(
+                    value = order.totalPrice,
+                    currency = order.currency
+
+                ),
                 isThroughPlatform = order.isThroughPlatform
             )
     }
