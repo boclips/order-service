@@ -62,12 +62,13 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"
                 )
 
+                orderBuilder.items(orderItems.mapNotNull { toOrderItem(it, validator) })
+
                 orderBuilder.takeIf { errors.isEmpty() }?.run {
                     status(OrderStatus.INCOMPLETED)
                         .isbnOrProductNumber(firstOrderItem.isbnProductNumber)
                         .authorisingUser(firstOrderItem.memberAuthorise?.let { OrderUser.BasicUser(it) })
                         .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })
-                        .items(orderItems.mapNotNull { toOrderItem(it, validator) }) //TODO this should be moved outside the errors check
                         .build()
                 }
             }.let { orders ->

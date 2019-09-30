@@ -14,6 +14,7 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyOrNullString
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
@@ -374,6 +375,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `400 on invalid csv`() {
+        this.defaultVideoClientResponse(videoId = "5c54d6d3d8eafeecae206b6e")
+
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", invalidCsv.file.readBytes())

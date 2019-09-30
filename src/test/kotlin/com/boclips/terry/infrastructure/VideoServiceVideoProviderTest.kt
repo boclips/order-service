@@ -43,7 +43,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val video = videoProvider.get(videoId = VideoId(value = videoId.value))!!
+        val video = videoProvider.get(videoId = VideoId(value = videoId.value))
 
         assertThat(video.title).isEqualTo("hello")
         assertThat(video.contentPartner.name).isEqualTo("our content partner")

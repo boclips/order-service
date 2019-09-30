@@ -323,6 +323,15 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
                     )
                 )
             }
+
+            @Test
+            fun `when order both and order item have errors`() {
+                val csvOrderItem = TestFactories.csvOrderItemMetadata(territory = null, requestDate = null)
+
+                val conversionResult = (orderConverter.toOrders(listOf(csvOrderItem)) as Errors)
+
+                assertThat(conversionResult.errors).hasSize(2)
+            }
         }
     }
 }
