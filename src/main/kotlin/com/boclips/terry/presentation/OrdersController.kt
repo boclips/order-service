@@ -67,7 +67,6 @@ class OrdersController(
         .let(HateoasEmptyCollection::fixIfEmptyCollection)
         .let { Resources(it, getSelfOrdersLink()) }
 
-    @CrossOrigin(exposedHeaders = ["Content-Disposition"])
     @GetMapping(produces = ["text/csv"])
     fun getOrderCsv() : ResponseEntity<Any> =
         ResponseEntity(
