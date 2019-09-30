@@ -32,12 +32,12 @@ import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
 import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
-import com.boclips.terry.presentation.resources.OrderItemResourceTest
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
 import org.bson.types.ObjectId
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
@@ -395,22 +395,22 @@ class TestFactories {
 object PriceFactory {
 
     fun tenDollars() = Price(
-        BigDecimal.TEN,
+        BigDecimalWith2DP.TEN,
         Currency.getInstance("USD")
     )
 
     fun zeroEuros() = Price(
-        BigDecimal.ZERO,
+        BigDecimalWith2DP.ZERO,
         Currency.getInstance("EUR")
     )
 
     fun onePound() = Price(
-        BigDecimal.ONE,
+        BigDecimalWith2DP.ONE,
         Currency.getInstance("GBP")
     )
 
     fun tenPounds() = Price(
-        BigDecimal.TEN,
+        BigDecimalWith2DP.TEN,
         Currency.getInstance("GBP")
     )
 }
@@ -529,4 +529,13 @@ object ManifestFactory {
         orderDate = orderDate,
         salePrice = salePrice
     )
+}
+
+object BigDecimalWith2DP {
+    fun valueOf(double: Double) = BigDecimal.valueOf(double).setScale(2, RoundingMode.HALF_UP)
+    fun valueOf(long: Long) = BigDecimal.valueOf(long).setScale(2, RoundingMode.HALF_UP)
+
+    val ZERO = valueOf(0.0)
+    val ONE = valueOf(1.0)
+    val TEN = valueOf(10.0)
 }

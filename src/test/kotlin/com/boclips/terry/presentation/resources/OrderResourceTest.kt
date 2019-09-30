@@ -12,6 +12,7 @@ import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.Resource
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -87,12 +88,12 @@ class OrderResourceTest {
                 status = "COMPLETED",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
-                totalPrice = PriceResource(value = BigDecimal.valueOf(1), currency = Currency.getInstance("EUR")),
+                totalPrice = PriceResource(value = BigDecimalWith2DP.ONE, currency = Currency.getInstance("EUR")),
                 items = listOf(
                     Resource(
                         OrderItemResource(
                             price = PriceResource(
-                                value = BigDecimal.valueOf(1),
+                                value = BigDecimalWith2DP.ONE,
                                 currency = Currency.getInstance("EUR")
                             ),
                             transcriptRequested = false,

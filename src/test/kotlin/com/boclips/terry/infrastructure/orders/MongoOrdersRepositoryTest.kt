@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import java.math.BigDecimal
@@ -157,7 +158,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(updatedOrder.items.first { it.id == "2" }.price.amount).isEqualTo(BigDecimal.valueOf(10))
+        assertThat(updatedOrder.items.first { it.id == "2" }.price.amount).isEqualTo(BigDecimalWith2DP.valueOf(10))
     }
 
     @Test

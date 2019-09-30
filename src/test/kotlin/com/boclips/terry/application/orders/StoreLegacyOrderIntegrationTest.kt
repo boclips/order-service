@@ -16,6 +16,7 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -132,7 +133,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()
-        assertThat(item.price.amount).isEqualTo(BigDecimal.ONE)
+        assertThat(item.price.amount).isEqualTo(BigDecimalWith2DP.ONE)
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))

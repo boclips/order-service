@@ -4,6 +4,7 @@ import com.boclips.terry.domain.exceptions.IllegalCurrencyException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import java.math.BigDecimal
@@ -62,7 +63,7 @@ class OrderTest {
             )
         )
 
-        assertThat(order.totalPrice).isEqualTo(BigDecimal.valueOf(30))
+        assertThat(order.totalPrice).isEqualTo(BigDecimalWith2DP.valueOf(30))
     }
 
     @Test
@@ -76,6 +77,6 @@ class OrderTest {
             )
         )
 
-        assertThat(order.totalPrice).isEqualTo(BigDecimal.valueOf(10))
+        assertThat(order.totalPrice).isEqualTo(BigDecimalWith2DP.valueOf(10))
     }
 }

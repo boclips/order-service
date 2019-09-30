@@ -44,7 +44,7 @@ class PriceResourceTest {
         val price = Price(amount = BigDecimal.valueOf(1.1212321321), currency = Currency.getInstance("USD"))
         val priceResource = PriceResource.fromPrice(price)!!
 
-        assertThat(priceResource.value).isEqualTo(BigDecimal.valueOf(1.1212321321))
+        assertThat(priceResource.value).isEqualTo(BigDecimal.valueOf(1.12))
         assertThat(priceResource.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(priceResource.displayValue).isEqualTo("USD 1.12")
     }

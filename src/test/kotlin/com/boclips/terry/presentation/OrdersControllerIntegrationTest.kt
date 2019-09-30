@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
@@ -431,7 +432,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ).asBackofficeStaff())
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(jsonPath("$.items[0].price.value").value("200"))
+            .andExpect(jsonPath("$.items[0].price.value").value("200.0"))
     }
 
     @Test
@@ -483,6 +484,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(get("/v1/orders/{id}", order.id.value).asBackofficeStaff())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.totalPrice.value", equalTo(3)))
+            .andExpect(jsonPath("$.totalPrice.value", equalTo(3.0)))
     }
 }

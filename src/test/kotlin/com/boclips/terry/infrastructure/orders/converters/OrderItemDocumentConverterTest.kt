@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -66,13 +67,13 @@ class OrderItemDocumentConverterTest {
         fun `converts price with currency`() {
             val orderItem = OrderFactory.orderItem(
                 price = Price(
-                    amount = BigDecimal.TEN,
+                    amount = BigDecimal.valueOf(10.00),
                     currency = Currency.getInstance("USD")
                 )
             )
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
-            assertThat(convertedItem.price).isEqualTo("10")
+            assertThat(convertedItem.price).isEqualTo("10.00")
             assertThat(convertedItem.currency).isEqualTo(Currency.getInstance("USD"))
         }
 
@@ -161,7 +162,7 @@ class OrderItemDocumentConverterTest {
 
             val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
 
-            assertThat(convertedPrice.amount).isEqualTo(BigDecimal.ONE)
+            assertThat(convertedPrice.amount).isEqualTo(BigDecimalWith2DP.ONE)
             assertThat(convertedPrice.currency).isEqualTo(Currency.getInstance("GBP"))
         }
 
