@@ -64,6 +64,7 @@ class Order(
         if (updatedAt != other.updatedAt) return false
         if (createdAt != other.createdAt) return false
         if (isbnOrProductNumber != other.isbnOrProductNumber) return false
+        if (isThroughPlatform != other.isThroughPlatform) return false
         if (orderItems != other.orderItems) return false
 
         return true
@@ -73,12 +74,13 @@ class Order(
         var result = id.hashCode()
         result = 31 * result + legacyOrderId.hashCode()
         result = 31 * result + status.hashCode()
-        result = 31 * result + authorisingUser.hashCode()
+        result = 31 * result + (authorisingUser?.hashCode() ?: 0)
         result = 31 * result + requestingUser.hashCode()
-        result = 31 * result + organisation.hashCode()
+        result = 31 * result + (organisation?.hashCode() ?: 0)
         result = 31 * result + updatedAt.hashCode()
         result = 31 * result + createdAt.hashCode()
-        result = 31 * result + isbnOrProductNumber.hashCode()
+        result = 31 * result + (isbnOrProductNumber?.hashCode() ?: 0)
+        result = 31 * result + isThroughPlatform.hashCode()
         result = 31 * result + orderItems.hashCode()
         return result
     }

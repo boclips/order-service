@@ -18,16 +18,17 @@ import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.VideoId
+import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.domain.service.VideoProvider
 import com.boclips.terry.infrastructure.orders.LegacyOrderDocument
 import mu.KLogging
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class StoreLegacyOrder(
     private val repo: OrdersRepository,
+    private val orderService: OrderService,
     private val legacyOrdersRepository: LegacyOrdersRepository,
     private val videoProvider: VideoProvider
 ) {
@@ -41,7 +42,7 @@ class StoreLegacyOrder(
             // Ideally update and create would be two different events so we wouldn't have to distinguish them here
             val foundOrder = repo.findOneByLegacyId(order.legacyOrderId)
             if (foundOrder != null) {
-                repo.update(
+                orderService.update(
                     OrderUpdateCommand.ReplaceStatus(orderId = foundOrder.id, orderStatus = order.status)
                 )
             } else {

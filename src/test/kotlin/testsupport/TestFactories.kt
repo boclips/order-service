@@ -421,7 +421,7 @@ object OrderFactory {
         legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
         requestingUser: OrderUser = completeOrderUser(),
         authorisingUser: OrderUser = completeOrderUser(),
-        status: OrderStatus = OrderStatus.COMPLETED,
+        status: OrderStatus = OrderStatus.INCOMPLETED,
         createdAt: Instant = Instant.now(),
         updatedAt: Instant = Instant.now(),
         items: List<OrderItem> = emptyList(),
