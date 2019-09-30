@@ -154,4 +154,31 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
     }
+
+    @Test
+    fun `Orders are converted to their CP's currency`() {
+        val order = OrderFactory.order(
+            items = listOf(
+                OrderFactory.orderItem(
+                    price = Price(
+                        amount = 100,
+                        currency = Currency.getInstance("USD")
+                    )
+                )
+            ),
+            status = OrderStatus.INCOMPLETED
+        )
+
+        orderService.createIfNonExistent(order)
+
+        val updatedOrder = orderService.update(
+            OrderUpdateCommand.UpdateOrderItemPrice(
+                order.id,
+                order.items.first().id,
+                BigDecimal.valueOf(100)
+            )
+        )
+
+        assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+    }
 }

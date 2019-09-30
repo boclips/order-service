@@ -33,6 +33,10 @@ class OrderService(val ordersRepository: OrdersRepository) {
         return updateStatus(orderId = order.id)
     }
 
+    fun convertCurrency(order: Order): Order {
+
+    }
+
     private fun updateStatus(orderId: OrderId): Order {
         val order = ordersRepository.findOne(orderId) ?: throw IllegalStateException("Cannot find order to update")
 

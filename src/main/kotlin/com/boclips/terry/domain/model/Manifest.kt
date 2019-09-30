@@ -26,5 +26,7 @@ data class ManifestItem(
     val video: Video,
     val orderDate: LocalDate,
     val license: OrderItemLicense,
-    val salePrice: Price
+    val salePrice: Price,
+    val fxRate: Double,
+    val licenseSalesAmount: Price
 )

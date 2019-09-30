@@ -67,10 +67,16 @@ class OrdersController(
         .let(HateoasEmptyCollection::fixIfEmptyCollection)
         .let { Resources(it, getSelfOrdersLink()) }
 
+    data class PoundExchange(
+        val eur: Double,
+        val usd: Double,
+        val aud: Double,
+        val sgd: Double
+    )
     @GetMapping(produces = ["text/csv"])
-    fun getOrderCsv() : ResponseEntity<Any> =
+    fun getOrderCsv(poundExchange: PoundExchange) =
         ResponseEntity(
-            exportAllOrdersToCsv(),
+            exportAllOrdersToCsv(poundExchange),
             HttpHeaders().apply {
                 put(
                     "Content-Disposition",
