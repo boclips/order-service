@@ -57,7 +57,7 @@ abstract class VideoServiceTests {
     val expectedKalturaThumbnailUrl =
         "https://cdnapisec.kaltura.com/p/1776261/thumbnail/entry_id/1_y0g6ftvy/width/500/vid_slices/3/vid_slice/1"
     val expectedKalturaStreamUrl =
-        "https://cdnapisec.kaltura.com/p/1776261/sp/177626100/playManifest/entryId/1_y0g6ftvy/format/applehttp/protocol/https/video.mp4"
+        "https://cdnapisec.kaltura.com/p/1776261/sp/177626100/playManifest/entryId/1_y0g6ftvy/format/applehttp/flavorParamIds/487051%2C487061%2C487071%2C487081%2C487091/protocol/https/video.mp4"
 
     @Test
     fun `retrieves a Kaltura video that exists`() {
