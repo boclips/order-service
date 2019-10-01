@@ -46,7 +46,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
 
         val firstRow = csvResource.parseCsv().first()
         assertThat(firstRow[ManifestCsvMetadata.FX_RATE]).isEqualTo("2.31")
-        assertThat(firstRow[ManifestCsvMetadata.LICENSE_SALES_AMOUNT]).isEqualTo("AUD 23.13")
+        assertThat(firstRow[ManifestCsvMetadata.LICENSE_SALES_AMOUNT]).isEqualTo("23.13")
     }
 
     @Test

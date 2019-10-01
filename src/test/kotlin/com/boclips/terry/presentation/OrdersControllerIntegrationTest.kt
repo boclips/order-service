@@ -301,7 +301,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             containsSubsequence("a content partner")
             containsSubsequence("video-id")
             containsSubsequence("A Video title")
-            containsSubsequence("USD 22")
+            containsSubsequence("22")
+            containsSubsequence("USD")
             containsSubsequence("10,WW")
         }
     }

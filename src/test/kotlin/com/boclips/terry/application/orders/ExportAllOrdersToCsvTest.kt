@@ -78,10 +78,10 @@ class ExportAllOrdersToCsvTest {
             )
         )
         val expectedCSV =
-            """ |Content Partner,Order date,boclips ID,Source ID,Title,License Duration,Territory,Sales Amount (Original Currency),FX Rate,License Sales Amount
-                |1 Minute in a Museum,2019-06-20,5c54d5e8d8eafeecae1ff471,INT_LUMPTL_333_006,Carbon Dioxide and Climate Change,5,WW,USD 10.00,1.11,GBP 11.10
-                |1 Minute in a Museum,2019-06-20,5c54d5f4d8eafeecae1ffba5,INT_UN_28K_004,"Dispersal of the Tribes, The",100,UK,USD 1.00,2.12,GBP 2.12
-                |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00,0.50,SGD 0.00""".trimMargin()
+            """ |Content Partner,Order date,boclips ID,Source ID,Title,License Duration,Territory,Sales Amount (Original Currency),FX Rate,License Currency,License Sales Amount
+                |1 Minute in a Museum,2019-06-20,5c54d5e8d8eafeecae1ff471,INT_LUMPTL_333_006,Carbon Dioxide and Climate Change,5,WW,USD 10.00,1.11,GBP,11.10
+                |1 Minute in a Museum,2019-06-20,5c54d5f4d8eafeecae1ffba5,INT_UN_28K_004,"Dispersal of the Tribes, The",100,UK,USD 1.00,2.12,GBP,2.12
+                |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00,0.50,SGD,0.00""".trimMargin()
 
         val csvResource: Resource = ExportAllOrdersToCsv(orderService)(
                 eur = BigDecimal.ONE,

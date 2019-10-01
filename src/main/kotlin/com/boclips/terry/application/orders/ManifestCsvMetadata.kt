@@ -15,6 +15,7 @@ import java.math.RoundingMode
     ManifestCsvMetadata.TERRITORY,
     ManifestCsvMetadata.SALES_AMOUNT,
     ManifestCsvMetadata.FX_RATE,
+    ManifestCsvMetadata.LICENSE_CURRENCY,
     ManifestCsvMetadata.LICENSE_SALES_AMOUNT
 )
 data class ManifestCsvMetadata(
@@ -36,6 +37,8 @@ data class ManifestCsvMetadata(
     val salesAmount: String,
     @get:JsonProperty(FX_RATE)
     val fxRate: String,
+    @get:JsonProperty(LICENSE_CURRENCY)
+    val currency: String,
     @get:JsonProperty(LICENSE_SALES_AMOUNT)
     val licenseSalesAmount: String
 
@@ -50,6 +53,7 @@ data class ManifestCsvMetadata(
         const val TERRITORY = "Territory"
         const val SALES_AMOUNT = "Sales Amount (Original Currency)"
         const val FX_RATE = "FX Rate"
+        const val LICENSE_CURRENCY = "License Currency"
         const val LICENSE_SALES_AMOUNT = "License Sales Amount"
 
         fun from(manifestItem: ManifestItem): ManifestCsvMetadata = manifestItem.let {
@@ -63,7 +67,9 @@ data class ManifestCsvMetadata(
                 territory = it.license.territory,
                 salesAmount = it.salePrice.toReadableString(),
                 fxRate = it.fxRate.setScale(2, RoundingMode.HALF_UP).toString(),
-                licenseSalesAmount = it.convertedSalesAmount.toReadableString()
+                currency = it.convertedSalesAmount.currency?.currencyCode
+                    ?: throw IllegalStateException("Currency cannot be null"),
+                licenseSalesAmount = it.convertedSalesAmount.amount.toString()
             )
         }
     }
