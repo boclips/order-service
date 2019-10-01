@@ -1,4 +1,4 @@
-package com.boclips.terry.presentation.resources
+package com.boclips.terry.presentation.orders
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderUser
@@ -11,8 +11,14 @@ data class UserDetailsResource(
     companion object {
         fun toResource(order: Order): UserDetailsResource {
             return UserDetailsResource(
-                requestingUserLabel = createUserLabel(order.requestingUser),
-                authorisingUserLabel = order.authorisingUser?.let { createUserLabel(it) },
+                requestingUserLabel = createUserLabel(
+                    order.requestingUser
+                ),
+                authorisingUserLabel = order.authorisingUser?.let {
+                    createUserLabel(
+                        it
+                    )
+                },
                 organisationLabel = order.organisation?.name
             )
         }

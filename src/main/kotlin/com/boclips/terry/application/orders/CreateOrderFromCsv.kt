@@ -6,7 +6,7 @@ import com.boclips.terry.application.orders.converters.csv.Errors
 import com.boclips.terry.application.orders.converters.csv.Orders
 import com.boclips.terry.common.Do
 import com.boclips.terry.domain.service.OrderService
-import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import com.boclips.terry.presentation.orders.CsvOrderItemMetadata
 import org.springframework.stereotype.Component
 
 @Component

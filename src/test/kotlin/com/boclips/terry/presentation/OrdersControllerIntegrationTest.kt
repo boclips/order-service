@@ -272,7 +272,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 items = listOf(
                     OrderFactory.orderItem(
                         price = Price(
-                            amount = BigDecimal.valueOf(1),
+                            amount = BigDecimal.valueOf(10),
                             currency = Currency.getInstance("EUR")
                         ),
                         license = OrderFactory.orderItemLicense(
@@ -283,7 +283,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoServiceId = "video-id",
                             title = "A Video title",
                             contentPartner = TestFactories.contentPartner(
-                                name = "a content partner"
+                                name = "a content partner",
+                                currency = Currency.getInstance("USD")
                             )
                         )
                     )
@@ -291,7 +292,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val csv = mockMvc.perform(get("/v1/orders").accept("text/csv").asBackofficeStaff())
+        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3").accept("text/csv").asBackofficeStaff())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", containsString("text/csv")))
             .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
@@ -302,7 +303,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             containsSubsequence("a content partner")
             containsSubsequence("video-id")
             containsSubsequence("A Video title")
-            containsSubsequence("EUR 1")
+            containsSubsequence("USD 22")
             containsSubsequence("10,WW")
         }
     }
@@ -334,7 +335,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/orders").accept("text/csv").asBackofficeStaff())
+        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3").accept("text/csv").asBackofficeStaff())
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid Order State")))
             .andExpect(

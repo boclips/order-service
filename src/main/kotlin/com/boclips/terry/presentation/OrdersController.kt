@@ -7,8 +7,9 @@ import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.application.orders.UpdateOrderCurrency
 import com.boclips.terry.application.orders.UpdateOrderItemPrice
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
-import com.boclips.terry.presentation.resources.OrderCsvUploadConverter
-import com.boclips.terry.presentation.resources.OrderResource
+import com.boclips.terry.presentation.orders.PoundFxRateRequest
+import com.boclips.terry.presentation.orders.OrderCsvUploadConverter
+import com.boclips.terry.presentation.orders.OrderResource
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.Resources
@@ -16,7 +17,6 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -68,9 +68,9 @@ class OrdersController(
         .let { Resources(it, getSelfOrdersLink()) }
 
     @GetMapping(produces = ["text/csv"])
-    fun getOrderCsv() : ResponseEntity<Any> =
+    fun getOrderCsv(poundExchange: PoundFxRateRequest) =
         ResponseEntity(
-            exportAllOrdersToCsv(),
+            exportAllOrdersToCsv(poundExchange),
             HttpHeaders().apply {
                 put(
                     "Content-Disposition",

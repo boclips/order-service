@@ -1,4 +1,4 @@
-package com.boclips.terry.presentation.resources
+package com.boclips.terry.presentation.orders
 
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.presentation.OrdersController

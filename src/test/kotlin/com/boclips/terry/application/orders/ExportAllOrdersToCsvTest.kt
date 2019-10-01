@@ -4,7 +4,9 @@ import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.service.OrderService
+import com.boclips.terry.presentation.orders.PoundFxRateRequest
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +26,7 @@ class ExportAllOrdersToCsvTest {
     @Test
     fun `when all orders are COMPLETED`() {
         val orderService = mock<OrderService>()
-        whenever(orderService.exportManifest()).thenReturn(
+        whenever(orderService.exportManifest(any())).thenReturn(
             ManifestFactory.manifest(
                 items = listOf(
                     ManifestFactory.item(
@@ -36,9 +38,11 @@ class ExportAllOrdersToCsvTest {
                             videoServiceId = "5c54d5e8d8eafeecae1ff471",
                             videoReference = "INT_LUMPTL_333_006",
                             contentPartner = TestFactories.contentPartner(
-                                name = "1 Minute in a Museum"
+                                name = "1 Minute in a Museum",
+                                currency = Currency.getInstance("GBP")
                             )
-                        )
+                        ),
+                        fxRate = BigDecimal.valueOf(1.11)
                     ),
                     ManifestFactory.item(
                         orderDate = LocalDate.of(2019, Month.JUNE, 20),
@@ -49,9 +53,11 @@ class ExportAllOrdersToCsvTest {
                             videoServiceId = "5c54d5f4d8eafeecae1ffba5",
                             videoReference = "INT_UN_28K_004",
                             contentPartner = TestFactories.contentPartner(
-                                name = "1 Minute in a Museum"
+                                name = "1 Minute in a Museum",
+                                currency = Currency.getInstance("GBP")
                             )
-                        )
+                        ),
+                        fxRate = BigDecimal.valueOf(2.12)
                     ),
                     ManifestFactory.item(
                         orderDate = LocalDate.of(2019, Month.APRIL, 1),
@@ -62,28 +68,37 @@ class ExportAllOrdersToCsvTest {
                             videoServiceId = "5c54d5efd8eafeecae1ff874",
                             videoReference = "INT_IO_08K_011",
                             contentPartner = TestFactories.contentPartner(
-                                name = "A content partner"
+                                name = "A content partner",
+                                currency = Currency.getInstance("SGD")
                             )
-                        )
+                        ),
+                        fxRate = BigDecimal.valueOf(0.5)
                     )
                 )
             )
         )
         val expectedCSV =
-            """ |Content Partner,Order date,boclips ID,Source ID,Title,License Duration,Territory,"Sales Amount (Original Currency)"
-                |1 Minute in a Museum,2019-06-20,5c54d5e8d8eafeecae1ff471,INT_LUMPTL_333_006,Carbon Dioxide and Climate Change,5,WW,USD 10.00
-                |1 Minute in a Museum,2019-06-20,5c54d5f4d8eafeecae1ffba5,INT_UN_28K_004,"Dispersal of the Tribes, The",100,UK,USD 1.00
-                |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00""".trimMargin()
+            """ |Content Partner,Order date,boclips ID,Source ID,Title,License Duration,Territory,Sales Amount (Original Currency),FX Rate,License Sales Amount
+                |1 Minute in a Museum,2019-06-20,5c54d5e8d8eafeecae1ff471,INT_LUMPTL_333_006,Carbon Dioxide and Climate Change,5,WW,USD 10.00,1.11,GBP 11.10
+                |1 Minute in a Museum,2019-06-20,5c54d5f4d8eafeecae1ffba5,INT_UN_28K_004,"Dispersal of the Tribes, The",100,UK,USD 1.00,2.12,GBP 2.12
+                |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00,0.50,SGD 0.00""".trimMargin()
 
-        val csvResource: Resource = ExportAllOrdersToCsv(orderService)()
+        val csvResource: Resource = ExportAllOrdersToCsv(orderService)(
+            poundExchange = PoundFxRateRequest(
+                eur = BigDecimal.ONE,
+                usd = BigDecimal.TEN,
+                aud = BigDecimal.TEN,
+                sgd = BigDecimal.valueOf(2.5)
+            )
+        )
 
         assertThat(csvResource.parseCsv()).isEqualTo(expectedCSV.parseCsv())
     }
 }
 
-private fun Resource.parseCsv() = inputStream.readBytes().toString(Charset.defaultCharset()).parseCsv()
+fun Resource.parseCsv() = inputStream.readBytes().toString(Charset.defaultCharset()).parseCsv()
 
-private fun String.parseCsv(): Iterable<Map<String, Any>> = CsvMapper().let { mapper ->
+fun String.parseCsv(): Iterable<Map<String, Any>> = CsvMapper().let { mapper ->
     mapper.schema().withHeader().let { schema ->
         mapper.readerFor(Map::class.java)
             .with(schema)

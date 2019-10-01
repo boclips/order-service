@@ -3,11 +3,11 @@ package com.boclips.terry.presentation.resources
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
+import com.boclips.terry.presentation.orders.OrderItemResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testsupport.OrderFactory
-import testsupport.TestFactories
 import java.time.temporal.ChronoUnit
 
 class OrderItemResourceTest {

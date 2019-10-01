@@ -8,6 +8,12 @@ import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.TrimRequest
 import com.boclips.terry.presentation.OrdersController
+import com.boclips.terry.presentation.orders.ContentPartnerResource
+import com.boclips.terry.presentation.orders.OrderItemResource
+import com.boclips.terry.presentation.orders.OrderResource
+import com.boclips.terry.presentation.orders.PriceResource
+import com.boclips.terry.presentation.orders.UserDetailsResource
+import com.boclips.terry.presentation.orders.VideoResource
 import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -88,7 +94,10 @@ class OrderResourceTest {
                 status = "COMPLETED",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
-                totalPrice = PriceResource(value = BigDecimalWith2DP.ONE, currency = Currency.getInstance("EUR")),
+                totalPrice = PriceResource(
+                    value = BigDecimalWith2DP.ONE,
+                    currency = Currency.getInstance("EUR")
+                ),
                 items = listOf(
                     Resource(
                         OrderItemResource(

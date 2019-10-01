@@ -1,4 +1,4 @@
-package com.boclips.terry.presentation.resources
+package com.boclips.terry.presentation.orders
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser

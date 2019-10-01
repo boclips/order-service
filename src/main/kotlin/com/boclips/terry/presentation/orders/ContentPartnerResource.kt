@@ -1,4 +1,4 @@
-package com.boclips.terry.presentation.resources
+package com.boclips.terry.presentation.orders
 
 data class ContentPartnerResource(
     val id: String,

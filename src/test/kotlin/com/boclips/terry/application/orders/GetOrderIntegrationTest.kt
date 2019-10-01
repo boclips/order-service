@@ -4,7 +4,7 @@ import com.boclips.terry.application.exceptions.InvalidOrderRequest
 import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.presentation.resources.OrderResource
+import com.boclips.terry.presentation.orders.OrderResource
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

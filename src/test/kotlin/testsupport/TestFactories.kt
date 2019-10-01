@@ -31,7 +31,7 @@ import com.boclips.terry.infrastructure.orders.OrderItemDocument
 import com.boclips.terry.infrastructure.orders.OrderUserDocument
 import com.boclips.terry.infrastructure.orders.SourceDocument
 import com.boclips.terry.infrastructure.orders.VideoDocument
-import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import com.boclips.terry.presentation.orders.CsvOrderItemMetadata
 import com.boclips.videos.service.client.CreateVideoRequest
 import com.boclips.videos.service.client.PlaybackProvider
 import com.boclips.videos.service.client.VideoType
@@ -522,12 +522,14 @@ object ManifestFactory {
         video: Video = TestFactories.video(),
         license: OrderItemLicense = OrderFactory.orderItemLicense(),
         orderDate: LocalDate = LocalDate.of(2019, Month.APRIL, 3),
-        salePrice: Price = PriceFactory.onePound()
+        salePrice: Price = PriceFactory.onePound(),
+        fxRate: BigDecimal = BigDecimal.TEN
     ) = ManifestItem(
         video = video,
         license = license,
         orderDate = orderDate,
-        salePrice = salePrice
+        salePrice = salePrice,
+        fxRate = fxRate
     )
 }
 

@@ -9,8 +9,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
+import testsupport.TestFactories
 import java.math.BigDecimal
 import java.util.Currency
 
@@ -103,7 +105,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         ).forEach { ordersRepository.save(it) }
 
         assertThrows<IllegalOrderStateExport> {
-            orderService.exportManifest()
+            orderService.exportManifest(emptyMap())
         }
     }
 
@@ -124,8 +126,47 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
             )
         ).forEach { ordersRepository.save(it) }
 
-        val manifest = orderService.exportManifest()
+        val manifest = orderService.exportManifest(
+            mapOf(
+                Currency.getInstance("USD") to BigDecimal.TEN,
+                Currency.getInstance("GBP") to BigDecimal.ONE
+            )
+        )
         assertThat(manifest.items).hasSize(2)
+    }
+
+    @Test
+    fun `exports manifest with correct fx rates`() {
+        val order =
+            OrderFactory.order(
+                status = OrderStatus.COMPLETED, items = listOf(
+                    OrderFactory.orderItem(
+                        price = PriceFactory.tenDollars(),
+                        video = TestFactories.video(
+                            contentPartner = TestFactories.contentPartner(
+                                currency = Currency.getInstance(
+                                    "SGD"
+                                )
+                            )
+                        )
+                    )
+
+                )
+            )
+
+        orderService.createIfNonExistent(order)
+
+        val manifest = orderService.exportManifest(
+            fxRatesAgainstPound = mapOf(
+                Currency.getInstance("USD") to BigDecimal.valueOf(4),
+                Currency.getInstance("SGD") to BigDecimal.valueOf(2)
+            )
+        )
+
+        assertThat(manifest.items).hasSize(1)
+        assertThat(manifest.items.first().fxRate).isEqualTo(BigDecimal.valueOf(0.50000).setScale(5))
+        assertThat(manifest.items.first().convertedSalesAmount.amount).isEqualTo(BigDecimalWith2DP.valueOf(5))
+        assertThat(manifest.items.first().convertedSalesAmount.currency).isEqualTo(Currency.getInstance("SGD"))
     }
 
     @Test
@@ -135,6 +176,33 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                 OrderFactory.orderItem(
                     price = Price(
                         amount = null,
+                        currency = Currency.getInstance("USD")
+                    )
+                )
+            ),
+            status = OrderStatus.INCOMPLETED
+        )
+
+        orderService.createIfNonExistent(order)
+
+        val updatedOrder = orderService.update(
+            OrderUpdateCommand.UpdateOrderItemPrice(
+                order.id,
+                order.items.first().id,
+                BigDecimal.valueOf(100)
+            )
+        )
+
+        assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+    }
+
+    @Test
+    fun `Orders are converted to their CP's currency`() {
+        val order = OrderFactory.order(
+            items = listOf(
+                OrderFactory.orderItem(
+                    price = Price(
+                        amount = BigDecimal.valueOf(100),
                         currency = Currency.getInstance("USD")
                     )
                 )

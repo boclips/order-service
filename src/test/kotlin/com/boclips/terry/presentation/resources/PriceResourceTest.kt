@@ -1,6 +1,7 @@
 package com.boclips.terry.presentation.resources
 
 import com.boclips.terry.domain.model.Price
+import com.boclips.terry.presentation.orders.PriceResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

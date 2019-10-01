@@ -1,4 +1,4 @@
-package com.boclips.terry.presentation.resources
+package com.boclips.terry.presentation.orders
 
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItem
@@ -35,7 +35,9 @@ data class OrderItemResource(
                     type = item.video.type,
                     videoReference = item.video.contentPartnerVideoId
                 ),
-                licenseDuration = getDurationLabel(item.license),
+                licenseDuration = getDurationLabel(
+                    item.license
+                ),
                 licenseTerritory = item.license.territory,
                 notes = item.notes
             )

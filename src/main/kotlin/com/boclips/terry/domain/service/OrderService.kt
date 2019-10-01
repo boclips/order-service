@@ -8,9 +8,11 @@ import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
+import java.util.Currency
 
 @Component
-class OrderService(val ordersRepository: OrdersRepository) {
+class OrderService(val ordersRepository: OrdersRepository, val manifestConverter: ManifestConverter) {
 
     fun createIfNonExistent(order: Order) {
         val retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId) ?: ordersRepository.save(order)
@@ -18,14 +20,14 @@ class OrderService(val ordersRepository: OrdersRepository) {
         updateStatus(orderId = retrievedOrder.id)
     }
 
-    fun exportManifest(): Manifest = ordersRepository.findAll()
+    fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
         .filter { it.status != OrderStatus.CANCELLED }
         .onEach {
             if (it.status == OrderStatus.INCOMPLETED || it.status == OrderStatus.INVALID) {
                 throw IllegalOrderStateExport(it)
             }
         }
-        .let { Manifest.from(*it.toTypedArray()) }
+        .let { manifestConverter.toManifest(fxRatesAgainstPound, *it.toTypedArray()) }
 
     fun update(orderUpdateCommand: OrderUpdateCommand): Order {
         val order = ordersRepository.update(orderUpdateCommand)

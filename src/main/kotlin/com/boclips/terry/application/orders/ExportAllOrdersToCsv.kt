@@ -1,9 +1,9 @@
 package com.boclips.terry.application.orders
 
-import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.domain.model.OrdersRepository
+import com.boclips.terry.application.orders.converters.FxRateRequestConverter
 import com.boclips.terry.domain.service.OrderService
 import com.boclips.terry.presentation.exceptions.FailedExportException
+import com.boclips.terry.presentation.orders.PoundFxRateRequest
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.stereotype.Component
@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component
 @Component
 class ExportAllOrdersToCsv(val orderService: OrderService) {
 
-    operator fun invoke() =
+    operator fun invoke(poundExchange: PoundFxRateRequest) =
         try {
-            orderService.exportManifest()
+            val fxRatesAgainstPound = FxRateRequestConverter.convert(poundExchange)
+
+            orderService.exportManifest(fxRatesAgainstPound)
                 .let { it.items }
                 .map { ManifestCsvMetadata.from(it) }
                 .toCsv()

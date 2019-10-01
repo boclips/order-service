@@ -2,7 +2,7 @@ package com.boclips.terry.application.orders.converters.csv
 
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUser
-import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import com.boclips.terry.presentation.orders.CsvOrderItemMetadata
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach

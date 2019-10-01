@@ -10,7 +10,7 @@ import com.boclips.terry.domain.model.orderItem.OrderItem
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.model.orderItem.VideoId
 import com.boclips.terry.domain.service.VideoProvider
-import com.boclips.terry.presentation.resources.CsvOrderItemMetadata
+import com.boclips.terry.presentation.orders.CsvOrderItemMetadata
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.util.UUID

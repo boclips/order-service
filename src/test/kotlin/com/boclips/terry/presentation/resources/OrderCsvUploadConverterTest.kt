@@ -1,7 +1,7 @@
 package com.boclips.terry.presentation.resources
 
+import com.boclips.terry.presentation.orders.OrderCsvUploadConverter
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.util.DateUtil
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -9,7 +9,8 @@ import java.io.File
 class OrderCsvUploadConverterTest {
     lateinit var ordersCsv: File
 
-    private val orderUploadConverter: OrderCsvUploadConverter = OrderCsvUploadConverter
+    private val orderUploadConverter: OrderCsvUploadConverter =
+        OrderCsvUploadConverter
 
     @BeforeEach
     fun setup() {

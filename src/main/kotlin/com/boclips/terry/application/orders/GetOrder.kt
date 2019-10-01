@@ -5,7 +5,7 @@ import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.Order
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrdersRepository
-import com.boclips.terry.presentation.resources.OrderResource
+import com.boclips.terry.presentation.orders.OrderResource
 import org.springframework.stereotype.Component
 
 @Component
