@@ -7,7 +7,6 @@ import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.application.orders.UpdateOrderCurrency
 import com.boclips.terry.application.orders.UpdateOrderItemPrice
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
-import com.boclips.terry.presentation.orders.PoundFxRateRequest
 import com.boclips.terry.presentation.orders.OrderCsvUploadConverter
 import com.boclips.terry.presentation.orders.OrderResource
 import org.springframework.hateoas.Link
@@ -43,6 +42,12 @@ class OrdersController(
             ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
         ).withRel("orders")
 
+        fun getExportOrdersLink(): Link = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderCsv(
+                null, null, null, null
+            )
+        ).withRel("exportOrders")
+
         fun getSelfOrdersLink(): Link =
             ControllerLinkBuilder.linkTo(
                 ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
@@ -68,9 +73,19 @@ class OrdersController(
         .let { Resources(it, getSelfOrdersLink()) }
 
     @GetMapping(produces = ["text/csv"])
-    fun getOrderCsv(poundExchange: PoundFxRateRequest) =
+    fun getOrderCsv(
+        @RequestParam(name = "usd") usd: BigDecimal?,
+        @RequestParam(name = "eur") eur: BigDecimal?,
+        @RequestParam(name = "sgd") sgd: BigDecimal?,
+        @RequestParam(name = "aud") aud: BigDecimal?
+    ) =
         ResponseEntity(
-            exportAllOrdersToCsv(poundExchange),
+            exportAllOrdersToCsv(
+                usd = usd,
+                eur = eur,
+                sgd = sgd,
+                aud = aud
+            ),
             HttpHeaders().apply {
                 put(
                     "Content-Disposition",

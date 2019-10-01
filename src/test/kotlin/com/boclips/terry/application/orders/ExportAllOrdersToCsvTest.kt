@@ -84,12 +84,10 @@ class ExportAllOrdersToCsvTest {
                 |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00,0.50,SGD 0.00""".trimMargin()
 
         val csvResource: Resource = ExportAllOrdersToCsv(orderService)(
-            poundExchange = PoundFxRateRequest(
                 eur = BigDecimal.ONE,
                 usd = BigDecimal.TEN,
                 aud = BigDecimal.TEN,
                 sgd = BigDecimal.valueOf(2.5)
-            )
         )
 
         assertThat(csvResource.parseCsv()).isEqualTo(expectedCSV.parseCsv())

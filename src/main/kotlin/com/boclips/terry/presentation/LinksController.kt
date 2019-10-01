@@ -17,7 +17,8 @@ class LinksController {
             Resource(
                 "",
                 OrdersController.getOrdersLink(),
-                OrdersController.getOrderLink()
+                OrdersController.getOrderLink(),
+                OrdersController.getExportOrdersLink()
             )
         } else {
             Resource(

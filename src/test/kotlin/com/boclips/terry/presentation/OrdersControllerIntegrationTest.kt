@@ -14,7 +14,6 @@ import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyOrNullString
-import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
@@ -309,6 +307,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `exporting orders gives 400 when missing currencies`() {
+        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2").accept("text/csv").asBackofficeStaff())
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `gets an error when exporting incomplete orders to csv`() {
         val order = ordersRepository.save(
             OrderFactory.order(
@@ -454,7 +458,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isBadRequest)
     }
 
-
     @Test
     fun `cannot patch missing price of order item`() {
         val order = ordersRepository.save(
@@ -472,14 +475,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         ).andExpect(status().isBadRequest)
     }
 
-
     @Test
     fun `can calculate price of an order`() {
         val order = ordersRepository.save(
             OrderFactory.order(
-                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"),
+                items = listOf(
                     OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"),
-                    OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"))
+                    OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1"),
+                    OrderFactory.orderItem(price = PriceFactory.onePound(), id = "1")
+                )
             )
         )
 

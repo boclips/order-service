@@ -14,5 +14,4 @@ object FxRateRequestConverter {
             Currency.getInstance("GBP") to BigDecimal.ONE
         )
     }
-
 }
