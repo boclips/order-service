@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
     ManifestCsvMetadata.TERRITORY,
     ManifestCsvMetadata.SALES_AMOUNT,
     ManifestCsvMetadata.FX_RATE,
-    ManifestCsvMetadata.LICENSE_SALES_AMOUNT
+    ManifestCsvMetadata.CONVERTED_SALES_AMOUNT
 )
 data class ManifestCsvMetadata(
     @get:JsonProperty(CONTENT_PARTNER)
@@ -35,7 +35,7 @@ data class ManifestCsvMetadata(
     val salesAmount: String,
     @get:JsonProperty(FX_RATE)
     val fxRate: String,
-    @get:JsonProperty(LICENSE_SALES_AMOUNT)
+    @get:JsonProperty(CONVERTED_SALES_AMOUNT)
     val licenseSalesAmount: String
 
 ) {
@@ -49,7 +49,7 @@ data class ManifestCsvMetadata(
         const val TERRITORY = "Territory"
         const val SALES_AMOUNT = "Sales Amount (Original Currency)"
         const val FX_RATE = "FX Rate"
-        const val LICENSE_SALES_AMOUNT = "License Sales Amount"
+        const val CONVERTED_SALES_AMOUNT = "License Sales Amount"
 
         fun from(manifestItem: ManifestItem): ManifestCsvMetadata = manifestItem.let {
             ManifestCsvMetadata(
