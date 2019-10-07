@@ -6,5 +6,6 @@ data class PoundFxRateRequest(
     val eur: BigDecimal,
     val usd: BigDecimal,
     val aud: BigDecimal,
-    val sgd: BigDecimal
+    val sgd: BigDecimal,
+    val cad: BigDecimal
 )

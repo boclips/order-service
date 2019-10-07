@@ -11,6 +11,7 @@ object FxRateRequestConverter {
             Currency.getInstance("USD") to request.usd,
             Currency.getInstance("SGD") to request.sgd,
             Currency.getInstance("AUD") to request.aud,
+            Currency.getInstance("CAD") to request.cad,
             Currency.getInstance("GBP") to BigDecimal.ONE
         )
     }

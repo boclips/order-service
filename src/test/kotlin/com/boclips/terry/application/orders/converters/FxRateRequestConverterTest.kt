@@ -13,7 +13,8 @@ class FxRateRequestConverterTest {
             eur = BigDecimal.valueOf(1.12),
             usd = BigDecimal.valueOf(0.76),
             sgd = BigDecimal.valueOf(0.88),
-            aud = BigDecimal.valueOf(1.433)
+            aud = BigDecimal.valueOf(1.433),
+            cad = BigDecimal.valueOf(2.11)
         )
 
         val fxRatesAgainstGBP = FxRateRequestConverter.convert(request)
@@ -24,6 +25,7 @@ class FxRateRequestConverterTest {
                 Currency.getInstance("USD") to BigDecimal.valueOf(0.76),
                 Currency.getInstance("SGD") to BigDecimal.valueOf(0.88),
                 Currency.getInstance("AUD") to BigDecimal.valueOf(1.433),
+                Currency.getInstance("CAD") to BigDecimal.valueOf(2.11),
                 Currency.getInstance("GBP") to BigDecimal.ONE
             )
         )

@@ -2,7 +2,6 @@ package com.boclips.terry.application.orders
 
 import com.boclips.terry.application.exceptions.InvalidExportRequest
 import com.boclips.terry.domain.model.OrderStatus
-import com.boclips.terry.presentation.orders.PoundFxRateRequest
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
@@ -38,10 +37,11 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(order)
 
         val csvResource = exportAllOrdersToCsv(
-                aud = BigDecimal.valueOf(2.313),
-                usd = BigDecimal.ONE,
-                eur = BigDecimal.ONE,
-                sgd = BigDecimal.ONE
+            aud = BigDecimal.valueOf(2.313),
+            usd = BigDecimal.ONE,
+            eur = BigDecimal.ONE,
+            sgd = BigDecimal.ONE,
+            cad = BigDecimal.ONE
         )
 
         val firstRow = csvResource.parseCsv().first()
@@ -53,10 +53,11 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
     fun `throws if request is invalid`() {
         assertThrows<InvalidExportRequest> {
             exportAllOrdersToCsv(
-                    aud = null,
-                    usd = BigDecimal.ONE,
-                    eur = BigDecimal.ONE,
-                    sgd = BigDecimal.ONE
+                aud = null,
+                usd = BigDecimal.ONE,
+                eur = BigDecimal.ONE,
+                sgd = BigDecimal.ONE,
+                cad = BigDecimal.ONE
             )
         }
     }

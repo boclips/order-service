@@ -13,19 +13,19 @@ import java.math.BigDecimal
 @Component
 class ExportAllOrdersToCsv(val orderService: OrderService) {
 
-    operator fun invoke(eur: BigDecimal?, usd: BigDecimal?, aud: BigDecimal?, sgd: BigDecimal?) =
+    operator fun invoke(eur: BigDecimal?, usd: BigDecimal?, aud: BigDecimal?, sgd: BigDecimal?, cad: BigDecimal?) =
         try {
             val fxRatesAgainstPound = FxRateRequestConverter.convert(
                 PoundFxRateRequest(
                     eur = getOrThrow(eur, "eur"),
                     usd = getOrThrow(usd, "usd"),
                     aud = getOrThrow(aud, "aud"),
-                    sgd = getOrThrow(sgd, "sgd")
+                    sgd = getOrThrow(sgd, "sgd"),
+                    cad = getOrThrow(cad, "cad")
                 )
             )
 
-            orderService.exportManifest(fxRatesAgainstPound)
-                .let { it.items }
+            orderService.exportManifest(fxRatesAgainstPound).items
                 .map { ManifestCsvMetadata.from(it) }
                 .toCsv()
                 .let { ByteArrayResource(it) }

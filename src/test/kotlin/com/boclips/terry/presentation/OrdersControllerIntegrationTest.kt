@@ -290,7 +290,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3").accept("text/csv").asBackofficeStaff())
+        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", containsString("text/csv")))
             .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
@@ -340,7 +340,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3").accept("text/csv").asBackofficeStaff())
+        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid Order State")))
             .andExpect(

@@ -28,7 +28,7 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.exportOrders.href",
-                    endsWith("/orders?usd={usd}&eur={eur}&sgd={sgd}&aud={aud}")
+                    endsWith("/orders?usd={usd}&eur={eur}&sgd={sgd}&aud={aud}&cad={cad}")
                 )
             )
     }

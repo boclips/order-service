@@ -4,7 +4,6 @@ import com.boclips.terry.domain.model.Price
 import com.boclips.terry.domain.model.orderItem.Duration
 import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.terry.domain.service.OrderService
-import com.boclips.terry.presentation.orders.PoundFxRateRequest
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -84,10 +83,11 @@ class ExportAllOrdersToCsvTest {
                 |A content partner,2019-04-01,5c54d5efd8eafeecae1ff874,INT_IO_08K_011,Connecting Despite the Loss of Sight or Hearing,10,WW,GBP 0.00,0.50,SGD,0.00""".trimMargin()
 
         val csvResource: Resource = ExportAllOrdersToCsv(orderService)(
-                eur = BigDecimal.ONE,
-                usd = BigDecimal.TEN,
-                aud = BigDecimal.TEN,
-                sgd = BigDecimal.valueOf(2.5)
+            eur = BigDecimal.ONE,
+            usd = BigDecimal.TEN,
+            aud = BigDecimal.TEN,
+            sgd = BigDecimal.valueOf(2.5),
+            cad = BigDecimal.ONE
         )
 
         assertThat(csvResource.parseCsv()).isEqualTo(expectedCSV.parseCsv())

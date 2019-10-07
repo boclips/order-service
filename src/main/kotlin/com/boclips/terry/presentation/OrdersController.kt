@@ -44,7 +44,7 @@ class OrdersController(
 
         fun getExportOrdersLink(): Link = ControllerLinkBuilder.linkTo(
             ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderCsv(
-                null, null, null, null
+                null, null, null, null, null
             )
         ).withRel("exportOrders")
 
@@ -77,14 +77,16 @@ class OrdersController(
         @RequestParam(name = "usd") usd: BigDecimal?,
         @RequestParam(name = "eur") eur: BigDecimal?,
         @RequestParam(name = "sgd") sgd: BigDecimal?,
-        @RequestParam(name = "aud") aud: BigDecimal?
+        @RequestParam(name = "aud") aud: BigDecimal?,
+        @RequestParam(name = "cad") cad: BigDecimal?
     ) =
         ResponseEntity(
             exportAllOrdersToCsv(
                 usd = usd,
                 eur = eur,
                 sgd = sgd,
-                aud = aud
+                aud = aud,
+                cad = cad
             ),
             HttpHeaders().apply {
                 put(
