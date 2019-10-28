@@ -61,6 +61,22 @@ internal class LicenseConverterTest {
     }
 
     @Test
+    fun `converts a worldwide license with a single W`() {
+        val license = TestFactories.legacyOrderItemLicense(
+            code = "10YR_W"
+        )
+
+        val convertedLicense = LicenseConverter.toOrderItemLicense(license)
+
+        assertThat(convertedLicense).isEqualTo(
+            OrderItemLicense(
+                Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
+                territory = OrderItemLicense.WORLDWIDE
+            )
+        )
+    }
+
+    @Test
     fun `throws for invalid territory`() {
         assertThrows<InvalidLegacyOrderItemLicense> {
             val license = TestFactories.legacyOrderItemLicense(

@@ -26,7 +26,7 @@ object LicenseConverter {
         return when (license.code.substringAfter("_")) {
             "SR" -> OrderItemLicense.SINGLE_REGION
             "MR" -> OrderItemLicense.MULTI_REGION
-            "WW" -> OrderItemLicense.WORLDWIDE
+            "WW", "W" -> OrderItemLicense.WORLDWIDE
             else -> throw InvalidLegacyOrderItemLicense("Invalid territory: ${license.code} ")
         }
     }
