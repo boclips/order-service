@@ -10,8 +10,8 @@ data class OrderItemResource(
     val transcriptRequested: Boolean,
     val contentPartner: ContentPartnerResource,
     val video: VideoResource,
-    val licenseDuration: String,
-    val licenseTerritory: String,
+    val licenseDuration: String?,
+    val licenseTerritory: String?,
     val trim: String?,
     val notes: String?
 ) {
@@ -35,10 +35,8 @@ data class OrderItemResource(
                     type = item.video.type,
                     videoReference = item.video.contentPartnerVideoId
                 ),
-                licenseDuration = getDurationLabel(
-                    item.license
-                ),
-                licenseTerritory = item.license.territory,
+                licenseDuration = item.license?.let(this::getDurationLabel),
+                licenseTerritory = item.license?.territory,
                 notes = item.notes
             )
 

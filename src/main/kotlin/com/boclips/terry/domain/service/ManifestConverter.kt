@@ -17,7 +17,7 @@ class ManifestConverter(private val fxRateService: FxRateService) {
                 video = orderItem.video,
                 salePrice = orderItem.price,
                 orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),
-                license = orderItem.license,
+                license = orderItem.license!!,
                 fxRate = fxRateService.resolve(
                     fxRates,
                     orderItem.price.currency!!,

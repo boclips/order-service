@@ -56,21 +56,21 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
             items = listOf(
                 ManifestFactory.item(
                     video = orderItem1.video,
-                    license = orderItem1.license,
+                    license = orderItem1.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
                     salePrice = PriceFactory.onePound(),
                     fxRate = BigDecimal.ONE.setScale(5)
                 ),
                 ManifestFactory.item(
                     video = orderItem2.video,
-                    license = orderItem2.license,
+                    license = orderItem2.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
                     salePrice = PriceFactory.tenPounds(),
                     fxRate = BigDecimal.ONE.setScale(5)
                 ),
                 ManifestFactory.item(
                     video = orderItem3.video,
-                    license = orderItem3.license,
+                    license = orderItem3.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 13),
                     salePrice = PriceFactory.zeroEuros(),
                     fxRate = BigDecimal.ONE.setScale(5)

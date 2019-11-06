@@ -3,7 +3,6 @@ package testsupport
 import com.boclips.eventbus.events.order.LegacyOrder
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.eventbus.events.order.LegacyOrderItem
-import com.boclips.eventbus.events.order.LegacyOrderItemLicense
 import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderOrganisation
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
@@ -76,21 +75,6 @@ class TestFactories {
             .status(status)
             .build()
 
-        fun legacyOrderItemLicense(
-            code: String = "10YR_MR",
-            dateCreated: Date = Date.from(Instant.now()),
-            dateUpdated: Date = Date.from(Instant.now()),
-            id: String = "id123",
-            uuid: String = "uuid123",
-            description: String = "adescription"
-        ): LegacyOrderItemLicense = LegacyOrderItemLicense.builder()
-            .code(code)
-            .dateCreated(dateCreated)
-            .dateUpdated(dateUpdated)
-            .id(id)
-            .uuid(uuid)
-            .description(description)
-            .build()
 
         fun legacyOrderItem(
             id: String = "123",
@@ -98,10 +82,8 @@ class TestFactories {
             assetId: String = "assetId123",
             dateCreated: Date = Date.from(Instant.now()),
             dateUpdated: Date = Date.from(Instant.now()),
-            price: BigDecimal = BigDecimal.TEN,
             status: String = "status",
             transcriptsRequired: Boolean = false,
-            license: LegacyOrderItemLicense = legacyOrderItemLicense(),
             trimming: String = "10 - 15"
         ): LegacyOrderItem = LegacyOrderItem
             .builder()
@@ -112,10 +94,8 @@ class TestFactories {
             .dateUpdated(
                 dateUpdated
             )
-            .price(price)
             .status(status)
             .transcriptsRequired(transcriptsRequired)
-            .license(license)
             .trimming(trimming)
             .build()
 
@@ -461,7 +441,7 @@ object OrderFactory {
         transcriptRequested: Boolean = true,
         video: Video = TestFactories.video(),
         trim: TrimRequest = TrimRequest.NoTrimming,
-        license: OrderItemLicense = OrderItemLicense(
+        license: OrderItemLicense? = OrderItemLicense(
             Duration.Time(amount = 10, unit = ChronoUnit.YEARS),
             territory = OrderItemLicense.SINGLE_REGION
         ),

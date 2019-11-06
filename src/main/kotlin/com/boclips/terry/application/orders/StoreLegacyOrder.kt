@@ -5,7 +5,6 @@ import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.terry.application.exceptions.LegacyOrderProcessingException
-import com.boclips.terry.application.orders.converters.legacy.LicenseConverter
 import com.boclips.terry.application.orders.converters.legacy.OrderStatusConverter
 import com.boclips.terry.application.orders.converters.parseTrimRequest
 import com.boclips.terry.domain.model.LegacyOrdersRepository
@@ -89,11 +88,11 @@ class StoreLegacyOrder(
     fun convertLegacyItem(item: LegacyOrderItem) =
         OrderItem(
             id = item.uuid,
-            price = Price(amount = item.price, currency = null),
+            price = Price(amount = null, currency = null),
             transcriptRequested = item.transcriptsRequired,
             trim = item.trimming.parseTrimRequest(),
             video = videoProvider.get(VideoId(value = item.assetId)),
-            license = LicenseConverter.toOrderItemLicense(item.license),
+            license = null,
             notes = null
         )
 }

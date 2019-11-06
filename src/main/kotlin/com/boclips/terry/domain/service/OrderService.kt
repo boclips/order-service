@@ -60,5 +60,5 @@ class OrderService(val ordersRepository: OrdersRepository, val manifestConverter
     }
 
     private fun orderIsComplete(order: Order) =
-        order.currency != null && order.items.all { it.price.amount != null }
+        order.currency != null && order.items.all { it.price.amount != null && it.license != null }
 }

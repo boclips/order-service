@@ -4,6 +4,8 @@ import com.boclips.terry.application.orders.IllegalOrderStateExport
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.Price
+import com.boclips.terry.domain.model.orderItem.Duration
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -32,10 +34,10 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order is complete if it has a currency and all items have a price`() {
+    fun `a created order is complete if it has a currency and all items have a price and license`() {
         val originalOrder = OrderFactory.order(
             status = OrderStatus.INCOMPLETED,
-            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars()))
+            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")))
         )
 
         orderService.createIfNonExistent(originalOrder)
@@ -43,6 +45,20 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
 
         assertThat(retrievedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+    }
+
+    @Test
+    fun `an order with missing item license is not complete`() {
+        val originalOrder = OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
     }
 
     @Test

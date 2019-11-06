@@ -75,10 +75,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 dateUpdated = date,
                 uuid = "item-1-uuid",
                 assetId = videoId.value,
-                price = BigDecimal.ONE,
                 transcriptsRequired = true,
-                trimming = "40 - 100",
-                license = TestFactories.legacyOrderItemLicense(code = "10YR_SR")
+                trimming = "40 - 100"
             )
         )
 
@@ -133,11 +131,11 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()
-        assertThat(item.price.amount).isEqualTo(BigDecimalWith2DP.ONE)
+        assertThat(item.price.amount).isNull()
         assertThat(item.transcriptRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
-        assertThat(item.license.duration).isEqualTo(Duration.Time(amount = 10, unit = ChronoUnit.YEARS))
-        assertThat(item.license.territory).isEqualTo(OrderItemLicense.SINGLE_REGION)
+        assertThat(item.license?.duration).isNull()
+        assertThat(item.license?.territory).isNull()
         assertThat(item.video.contentPartner.videoServiceId.value).isEqualTo("ted-id")
         assertThat(item.video.contentPartner.name).isEqualTo("ted")
         assertThat(item.video.videoServiceId.value).isEqualTo(videoId.value)

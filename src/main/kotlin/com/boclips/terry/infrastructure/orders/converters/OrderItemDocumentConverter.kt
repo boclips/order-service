@@ -36,19 +36,21 @@ object OrderItemDocumentConverter {
                 title = it.video.title,
                 type = it.video.type
             ),
-            license = when (it.license.duration) {
-                is Duration.Time -> LicenseDocument(
-                    amount = it.license.duration.amount,
-                    unit = it.license.duration.unit,
-                    territory = it.license.territory,
-                    description = null
-                )
-                is Duration.Description -> LicenseDocument(
-                    amount = null,
-                    unit = null,
-                    territory = it.license.territory,
-                    description = it.license.duration.label
-                )
+            license = it.license?.duration?.let { duration ->
+                when(duration) {
+                    is Duration.Time -> LicenseDocument(
+                        amount = duration.amount,
+                        unit = duration.unit,
+                        territory = it.license.territory,
+                        description = null
+                    )
+                    is Duration.Description -> LicenseDocument(
+                        amount = null,
+                        unit = null,
+                        territory = it.license.territory,
+                        description = duration.label
+                    )
+                }
             },
             notes = it.notes,
             id = it.id
@@ -73,17 +75,19 @@ object OrderItemDocumentConverter {
                     currency = Currency.getInstance(document.source.contentPartner.currency)
                 )
             ),
-            license = OrderItemLicense(
-                duration = when {
-                    document.license.isValidTime() -> Duration.Time(
-                        amount = document.license.amount!!,
-                        unit = document.license.unit!!
-                    )
-                    document.license.isValidDescription() -> Duration.Description(label = document.license.description!!)
-                    else -> throw IllegalStateException("Invalid duration")
-                },
-                territory = document.license.territory
-            ),
+            license = document.license?.let { license ->
+                OrderItemLicense(
+                        duration = when {
+                            license.isValidTime() -> Duration.Time(
+                                    amount = license.amount!!,
+                                    unit = license.unit!!
+                            )
+                            license.isValidDescription() -> Duration.Description(label = license.description!!)
+                            else -> throw IllegalStateException("Invalid duration")
+                        },
+                        territory = license.territory
+                )
+            },
             notes = document.notes
         )
     }

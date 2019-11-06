@@ -11,6 +11,6 @@ data class OrderItemDocument(
     val trim: String?,
     val video: VideoDocument,
     val source: SourceDocument,
-    val license: LicenseDocument,
+    val license: LicenseDocument?,
     val notes: String?
 )

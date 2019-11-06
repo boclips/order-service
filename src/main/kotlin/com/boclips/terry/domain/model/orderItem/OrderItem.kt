@@ -8,7 +8,7 @@ data class OrderItem(
     val transcriptRequested: Boolean,
     val trim: TrimRequest,
     val video: Video,
-    val license: OrderItemLicense,
+    val license: OrderItemLicense?,
     val notes: String?
 ) {
     companion object {
@@ -21,7 +21,7 @@ data class OrderItem(
         private var transcriptRequested: Boolean = false
         private lateinit var trim: TrimRequest
         private lateinit var video: Video
-        private lateinit var license: OrderItemLicense
+        private var license: OrderItemLicense? = null
         private var notes: String? = null
 
 
