@@ -32,6 +32,7 @@ data class OrderResource(
                     .map {
                         Resource(
                             OrderItemResource.fromOrderItem(it),
+                            OrdersController.getUpdateOrderItemPriceLink(order.id.value, it.id),
                             OrdersController.getUpdateOrderItemLink(order.id.value, it.id)
                         )
                     },

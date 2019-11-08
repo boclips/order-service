@@ -35,6 +35,10 @@ class OrderService(val ordersRepository: OrdersRepository, val manifestConverter
         return updateStatus(orderId = order.id)
     }
 
+    fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
+        return commands.map { update(it) }
+    }
+
     private fun updateStatus(orderId: OrderId): Order {
         val order = ordersRepository.findOne(orderId) ?: throw IllegalStateException("Cannot find order to update")
 

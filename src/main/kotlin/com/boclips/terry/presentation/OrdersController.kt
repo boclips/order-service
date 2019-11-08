@@ -5,7 +5,7 @@ import com.boclips.terry.application.orders.ExportAllOrdersToCsv
 import com.boclips.terry.application.orders.GetOrder
 import com.boclips.terry.application.orders.GetOrders
 import com.boclips.terry.application.orders.UpdateOrderCurrency
-import com.boclips.terry.application.orders.UpdateOrderItemPrice
+import com.boclips.terry.application.orders.UpdateOrderItem
 import com.boclips.terry.presentation.hateos.HateoasEmptyCollection
 import com.boclips.terry.presentation.orders.OrderCsvUploadConverter
 import com.boclips.terry.presentation.orders.OrderResource
@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -35,7 +37,7 @@ class OrdersController(
     private val createOrderFromCsv: CreateOrderFromCsv,
     private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
     private val updateOrderCurrency: UpdateOrderCurrency,
-    private val updateOrderItemPrice: UpdateOrderItemPrice
+    private val updateOrderItem: UpdateOrderItem
 ) {
     companion object {
         fun getOrdersLink(): Link = ControllerLinkBuilder.linkTo(
@@ -61,9 +63,21 @@ class OrdersController(
             ControllerLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(null)
         ).withRel("order")
 
-        fun getUpdateOrderItemLink(orderId: String, orderItemId: String) = ControllerLinkBuilder.linkTo(
-            ControllerLinkBuilder.methodOn(OrdersController::class.java).patchOrderItemPrice(orderId, orderItemId, null)
+        fun getUpdateOrderItemPriceLink(orderId: String, orderItemId: String) = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(OrdersController::class.java).patchOrderItemPrice(
+                orderId,
+                orderItemId,
+                null
+            )
         ).withRel("updatePrice")
+
+        fun getUpdateOrderItemLink(orderId: String, orderItemId: String) = ControllerLinkBuilder.linkTo(
+            ControllerLinkBuilder.methodOn(OrdersController::class.java).patchOrderItem(
+                orderId,
+                orderItemId,
+                null
+            )
+        ).withRel("update")
     }
 
     @GetMapping(produces = ["!text/csv"])
@@ -109,17 +123,27 @@ class OrdersController(
         updateOrderCurrency(orderId = id, currency = currency)
             .run { getOrderResource(id) }
 
-    @PatchMapping(value = ["/{id}/items/{itemId}"])
+    @PatchMapping(value = ["/{id}/items/{itemId}"], params = ["price"])
     fun patchOrderItemPrice(
         @PathVariable id: String,
         @PathVariable itemId: String,
         @RequestParam(name = "price", required = true) price: BigDecimal?
     ) =
         price?.let {
-            updateOrderItemPrice(orderId = id, orderItemId = itemId, amount = it).run {
+            updateOrderItem(id = id, orderItemId = itemId, updateRequest = UpdateOrderItemRequest(price = it)).run {
                 ResponseEntity(getOrderResource(id), HttpStatus.OK)
             }
         } ?: ResponseEntity(HttpStatus.BAD_REQUEST)
+
+    @PatchMapping(value = ["/{id}/items/{itemId}"], params = ["!price"])
+    fun patchOrderItem(
+        @PathVariable id: String,
+        @PathVariable itemId: String,
+        @Valid @RequestBody updateOrderItem: UpdateOrderItemRequest?
+    ) =
+        updateOrderItem(id = id, orderItemId = itemId, updateRequest = updateOrderItem).run {
+            getOrderResource(id)
+        }
 
     @PostMapping(consumes = ["multipart/form-data"])
     fun createOrders(@RequestParam("file") file: MultipartFile): ResponseEntity<Any> =

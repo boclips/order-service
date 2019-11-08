@@ -37,7 +37,12 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `a created order is complete if it has a currency and all items have a price and license`() {
         val originalOrder = OrderFactory.order(
             status = OrderStatus.INCOMPLETED,
-            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")))
+            items = listOf(
+                OrderFactory.orderItem(
+                    price = PriceFactory.tenDollars(),
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                )
+            )
         )
 
         orderService.createIfNonExistent(originalOrder)
@@ -202,7 +207,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         orderService.createIfNonExistent(order)
 
         val updatedOrder = orderService.update(
-            OrderUpdateCommand.UpdateOrderItemPrice(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
                 order.id,
                 order.items.first().id,
                 BigDecimal.valueOf(100)
@@ -210,6 +215,29 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+    }
+
+    @Test
+    fun `can bulk update an order`() {
+        val order =
+            OrderFactory.order(items = listOf(OrderFactory.orderItem(id = "1", price = PriceFactory.zeroEuros())))
+
+        orderService.createIfNonExistent(order)
+
+        orderService.bulkUpdate(
+            listOf(
+                OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
+                    orderId = order.id,
+                    orderItemsId = "1",
+                    amount = BigDecimal.ONE
+                ),
+                OrderUpdateCommand.UpdateOrderItemsCurrency(orderId = order.id, currency = Currency.getInstance("USD"))
+            )
+        )
+
+        val updatedOrder = ordersRepository.findOne(order.id)!!
+        assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("USD"))
+        assertThat(updatedOrder.items[0].price.amount).isEqualTo(BigDecimalWith2DP.ONE)
     }
 
     @Test
@@ -229,7 +257,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         orderService.createIfNonExistent(order)
 
         val updatedOrder = orderService.update(
-            OrderUpdateCommand.UpdateOrderItemPrice(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
                 order.id,
                 order.items.first().id,
                 BigDecimal.valueOf(100)

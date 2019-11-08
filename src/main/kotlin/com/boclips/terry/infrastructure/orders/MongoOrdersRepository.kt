@@ -77,8 +77,8 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
                 "{\$set:{'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
             )
-            is OrderUpdateCommand.UpdateOrderItemPrice -> findOne(orderUpdateCommand.orderId)?.let {
-                updateOrderItemPrice(orderUpdateCommand = orderUpdateCommand, retrievedOrder = it)
+            is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
+                updateOrderItems(retrievedOrder = it, updateCommand = orderUpdateCommand)
             }
         }
 
@@ -92,28 +92,29 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
         )
     }
 
-    private fun updateOrderItemPrice(
-        orderUpdateCommand: OrderUpdateCommand.UpdateOrderItemPrice,
-        retrievedOrder: Order
-    ) {
-        if (retrievedOrder.items.firstOrNull { it.id == orderUpdateCommand.orderItemsId } == null) {
-            throw OrderItemNotFoundException(orderId = retrievedOrder.id, orderItemId = orderUpdateCommand.orderItemsId)
+    private fun updateOrderItems(retrievedOrder: Order, updateCommand: OrderUpdateCommand.OrderItemUpdateCommand) {
+        if (retrievedOrder.items.firstOrNull { it.id == updateCommand.orderItemsId } == null) {
+            throw OrderItemNotFoundException(orderId = retrievedOrder.id, orderItemId = updateCommand.orderItemsId)
         }
 
         val updatedItems = retrievedOrder.items.map { orderItem ->
-            if (orderItem.id == orderUpdateCommand.orderItemsId) {
-                orderItem.copy(
-                    price = Price(
-                        amount = orderUpdateCommand.amount,
-                        currency = orderItem.price.currency
+            if (orderItem.id == updateCommand.orderItemsId) {
+                when (updateCommand) {
+                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice -> orderItem.copy(
+                        price = Price(
+                            amount = updateCommand.amount,
+                            currency = orderItem.price.currency
+                        )
                     )
-                )
+                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense -> orderItem.copy(license = updateCommand.orderItemLicense)
+                }
             } else {
                 orderItem
             }
         }
+
         collection().updateOne(
-            OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
+            OrderDocument::id eq ObjectId(updateCommand.orderId.value),
             set(OrderDocument::items, updatedItems.map { OrderItemDocumentConverter.toOrderItemDocument(it) })
         )
     }

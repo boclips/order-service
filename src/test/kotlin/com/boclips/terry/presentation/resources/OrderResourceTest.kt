@@ -122,6 +122,7 @@ class OrderResourceTest {
                             licenseTerritory = "Multi Region",
                             notes = "hello, I'm a note"
                         ),
+                        OrdersController.getUpdateOrderItemPriceLink("123", "item-id"),
                         OrdersController.getUpdateOrderItemLink("123", "item-id")
                     )
                 ),

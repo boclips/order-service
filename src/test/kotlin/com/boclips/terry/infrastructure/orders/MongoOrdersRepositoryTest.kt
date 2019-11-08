@@ -5,6 +5,8 @@ import com.boclips.terry.domain.exceptions.OrderNotFoundException
 import com.boclips.terry.domain.model.OrderId
 import com.boclips.terry.domain.model.OrderStatus
 import com.boclips.terry.domain.model.OrderUpdateCommand
+import com.boclips.terry.domain.model.orderItem.Duration
+import com.boclips.terry.domain.model.orderItem.OrderItemLicense
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -151,7 +153,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         )
 
         val updatedOrder = ordersRepository.update(
-            OrderUpdateCommand.UpdateOrderItemPrice(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
                 orderId = originalOrder.id,
                 orderItemsId = "2",
                 amount = BigDecimal.valueOf(10)
@@ -159,6 +161,29 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedOrder.items.first { it.id == "2" }.price.amount).isEqualTo(BigDecimalWith2DP.valueOf(10))
+    }
+
+    @Test
+    fun `can update the territory order item`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(id = "1"),
+                    OrderFactory.orderItem(id = "2", license = OrderFactory.orderItemLicense(territory = "1 Year"))
+                )
+            )
+        )
+
+        val updatedOrder = ordersRepository.update(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense(
+                orderId = originalOrder.id,
+                orderItemsId = "2",
+                orderItemLicense = OrderItemLicense(duration = Duration.Description("5 Years"), territory = "A park")
+            )
+        )
+
+        assertThat(updatedOrder.items.first { it.id == "2" }.license!!.duration).isEqualTo(Duration.Description("5 Years"))
+        assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
     }
 
     @Test
@@ -173,7 +198,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThrows<OrderItemNotFoundException> {
             ordersRepository.update(
-                OrderUpdateCommand.UpdateOrderItemPrice(
+                OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
                     orderId = originalOrder.id,
                     orderItemsId = "non-existent",
                     amount = BigDecimal.valueOf(10)

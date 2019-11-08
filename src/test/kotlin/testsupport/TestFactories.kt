@@ -75,7 +75,6 @@ class TestFactories {
             .status(status)
             .build()
 
-
         fun legacyOrderItem(
             id: String = "123",
             uuid: String = "123",

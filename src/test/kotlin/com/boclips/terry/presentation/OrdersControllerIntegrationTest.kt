@@ -17,6 +17,7 @@ import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -236,6 +237,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "$.items[0]._links.updatePrice.href",
                     endsWith("/orders/5ceeb99bd0e30a1a57ae9767/items/1234?price={price}")
                 )
+            ).andExpect(
+                jsonPath(
+                    "$.items[0]._links.update.href",
+                    endsWith("/orders/5ceeb99bd0e30a1a57ae9767/items/1234")
+                )
             )
 
             .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
@@ -290,12 +296,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
-            .andExpect(status().isOk)
-            .andExpect(header().string("Content-Type", containsString("text/csv")))
-            .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
-            .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
-            .andReturn().response.contentAsString
+        val csv =
+            mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", containsString("text/csv")))
+                .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
+                .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
+                .andReturn().response.contentAsString
 
         Assertions.assertThat(csv).apply {
             containsSubsequence("a content partner")
@@ -423,7 +430,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update price of an order item`() {
+    fun `can update price of an order item with query params (for legacy support)`() {
         val order = ordersRepository.save(
             OrderFactory.order(
                 items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "hello"))
@@ -436,6 +443,32 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 order.id.value,
                 "hello"
             ).asBackofficeStaff())
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(jsonPath("$.items[0].price.value").value("200.0"))
+    }
+
+    @Test
+    fun `can update price of an order item with content`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound(), id = "hello"))
+            )
+        )
+
+        mockMvc.perform(
+            (patch(
+                "/v1/orders/{id}/items/{itemId}",
+                order.id.value,
+                "hello"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {"price": "200"}
+                """.trimIndent()
+                ).asBackofficeStaff()
+                )
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.items[0].price.value").value("200.0"))
@@ -491,5 +524,58 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(get("/v1/orders/{id}", order.id.value).asBackofficeStaff())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalPrice.value", equalTo(3.0)))
+    }
+
+    @Test
+    fun `can update the license of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(
+                        license = OrderFactory.orderItemLicense(territory = "England"), id = "1"
+                    )
+                )
+            )
+        )
+
+        mockMvc.perform(
+            patch(
+                "/v1/orders/{id}/items/{itemId}?territory=2Years",
+                order.id.value,
+                "1"
+            ).contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    { 
+                        "license": {
+                            "territory": "Wales", 
+                            "duration": "456"
+                        } 
+                    }
+                    """.trimIndent()
+                ).asBackofficeStaff()
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Wales")))
+            .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("456")))
+    }
+
+    @Test
+    fun `returns bad request when license is invalid`() {
+        mockMvc.perform(
+            patch(
+                "/v1/orders/{id}/items/{itemId}",
+                "order-id",
+                "1"
+            ).contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                    "license": {}
+                    }
+                    """.trimIndent()
+                ).asBackofficeStaff()
+        )
+            .andExpect(status().isBadRequest)
     }
 }
