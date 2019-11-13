@@ -61,17 +61,13 @@ abstract class VideoServiceTests {
 
     @Test
     fun `retrieves a Kaltura video that exists`() {
-        assertThat(videoServiceForKaltura!!.get("2584078"))
-            .isEqualTo(
-                FoundKalturaVideo(
-                    videoId = "5c54d8cad8eafeecae2179af",
-                    title = "Tesco opens new discount supermarket 'Jack's'",
-                    description = expectedKalturaDescription,
-                    thumbnailUrl = expectedKalturaThumbnailUrl,
-                    streamUrl = expectedKalturaStreamUrl,
-                    playbackId = "1_y0g6ftvy"
-                )
-            )
+        val foundVideo = videoServiceForKaltura!!.get("2584078") as FoundKalturaVideo
+        assertThat(foundVideo.videoId).isEqualTo("5c54d8cad8eafeecae2179af")
+        assertThat(foundVideo.title).isEqualTo("Tesco opens new discount supermarket 'Jack's'")
+        assertThat(foundVideo.description).isEqualTo(expectedKalturaDescription)
+        assertThat(foundVideo.thumbnailUrl).isEqualTo(expectedKalturaThumbnailUrl)
+        assertThat(foundVideo.streamUrl).startsWith("https://cdnapisec.kaltura.com/p/1776261/sp/177626100/playManifest/entryId/1_y0g6ftvy/format/applehttp")
+        assertThat(foundVideo.playbackId).isEqualTo("1_y0g6ftvy")
     }
 
     @Test

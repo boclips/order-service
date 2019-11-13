@@ -13,11 +13,13 @@ data class OrderItemResource(
     val licenseDuration: String?,
     val licenseTerritory: String?,
     val trim: String?,
-    val notes: String?
+    val notes: String?,
+    val id: String
 ) {
     companion object {
         fun fromOrderItem(item: OrderItem): OrderItemResource =
             OrderItemResource(
+                id = item.id,
                 price = PriceResource.fromPrice(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(

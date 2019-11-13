@@ -101,6 +101,7 @@ class OrderResourceTest {
                 items = listOf(
                     Resource(
                         OrderItemResource(
+                            id = "item-id",
                             price = PriceResource(
                                 value = BigDecimalWith2DP.ONE,
                                 currency = Currency.getInstance("EUR")
