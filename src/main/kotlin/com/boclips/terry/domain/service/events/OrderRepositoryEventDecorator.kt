@@ -2,7 +2,9 @@ package com.boclips.terry.domain.service.events
 
 import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.events.order.OrderCreated
+import com.boclips.eventbus.events.order.OrderUpdated
 import com.boclips.terry.domain.model.Order
+import com.boclips.terry.domain.model.OrderUpdateCommand
 import com.boclips.terry.domain.model.OrdersRepository
 
 class OrderRepositoryEventDecorator(
@@ -15,6 +17,15 @@ class OrderRepositoryEventDecorator(
         return orderRepository.save(order).also { createdOrder ->
             eventBus.publish(OrderCreated.builder()
                 .order(eventConverter.convertOrder(createdOrder))
+                .build()
+            )
+        }
+    }
+
+    override fun update(orderUpdateCommand: OrderUpdateCommand): Order {
+        return orderRepository.update(orderUpdateCommand).also { updatedOrder ->
+            eventBus.publish(OrderUpdated.builder()
+                .order(eventConverter.convertOrder(updatedOrder))
                 .build()
             )
         }
