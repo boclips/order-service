@@ -1,5 +1,6 @@
 package com.boclips.videos.service.testsupport
 
+import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.terry.domain.model.LegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
 import com.boclips.terry.infrastructure.orders.TestMongoProcess
@@ -57,6 +58,9 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var legacyOrdersRepository: LegacyOrdersRepository
 
+    @Autowired
+    lateinit var eventBus: SynchronousFakeEventBus
+
     @BeforeEach
     fun setup() {
         ordersRepository.deleteAll()
@@ -66,6 +70,7 @@ abstract class AbstractSpringIntegrationTest {
     @AfterEach
     fun tearDown() {
         fakeVideoClient.clear()
+        eventBus.clearState()
     }
 
     fun defaultVideoClientResponse(

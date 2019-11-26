@@ -1,19 +1,17 @@
-package com.boclips.terry.config
+package com.boclips.terry.config.application
 
 import com.boclips.terry.domain.model.LegacyOrdersRepository
-import com.boclips.terry.domain.model.OrdersRepository
 import com.boclips.terry.infrastructure.orders.MongoLegacyOrdersRepository
 import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
 import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
-import org.springframework.scheduling.annotation.EnableAsync
 
 @Configuration
-class MongoConfig(val mongoProperties: MongoProperties) {
+class InfrastructureConfiguration(val mongoProperties: MongoProperties) {
+
     @Bean
-    fun ordersRepository(): OrdersRepository =
+    fun mongoOrdersRepository(): MongoOrdersRepository =
         MongoOrdersRepository(mongoProperties.determineUri())
 
     @Bean

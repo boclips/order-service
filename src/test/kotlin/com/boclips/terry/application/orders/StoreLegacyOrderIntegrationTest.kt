@@ -26,9 +26,6 @@ import java.util.Date
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
-    @Autowired
-    lateinit var eventBus: SynchronousFakeEventBus
-
     @BeforeEach
     fun setUp() {
         ordersRepository.deleteAll()
