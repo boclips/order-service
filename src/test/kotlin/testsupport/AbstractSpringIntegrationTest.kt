@@ -1,9 +1,9 @@
 package com.boclips.videos.service.testsupport
 
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
-import com.boclips.terry.domain.model.LegacyOrdersRepository
-import com.boclips.terry.infrastructure.orders.MongoOrdersRepository
-import com.boclips.terry.infrastructure.orders.TestMongoProcess
+import com.boclips.orders.domain.model.LegacyOrdersRepository
+import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
+import com.boclips.orders.infrastructure.orders.TestMongoProcess
 import com.boclips.videos.service.client.ContentPartner
 import com.boclips.videos.service.client.ContentPartnerId
 import com.boclips.videos.service.client.Playback

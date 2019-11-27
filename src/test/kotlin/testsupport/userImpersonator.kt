@@ -1,6 +1,6 @@
 package testsupport
 
-import com.boclips.terry.config.security.UserRoles
+import com.boclips.orders.config.security.UserRoles
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
