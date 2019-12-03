@@ -41,6 +41,8 @@ import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.Currency
 import java.util.Date
@@ -53,8 +55,8 @@ object TestFactories {
     fun legacyOrder(
         id: String = aValidId(),
         uuid: String = "uuid-123",
-        dateCreated: Date = Date(),
-        dateUpdated: Date = Date(),
+        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
+        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
         legacyOrderNextStatus: LegacyOrderNextStatus = LegacyOrderNextStatus.builder()
             .nextStates(emptyList())
             .roles(emptyList())
@@ -82,8 +84,8 @@ object TestFactories {
         id: String = "123",
         uuid: String = "123",
         assetId: String = "assetId123",
-        dateCreated: Date = Date.from(Instant.now()),
-        dateUpdated: Date = Date.from(Instant.now()),
+        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
+        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
         status: String = "status",
         transcriptsRequired: Boolean = false,
         trimming: String = "10 - 15"
@@ -105,8 +107,8 @@ object TestFactories {
         legacyOrder: LegacyOrder = legacyOrder(
             id = "1234",
             uuid = "some-uuid",
-            dateCreated = Date(),
-            dateUpdated = Date(),
+            dateCreated = ZonedDateTime.now(ZoneOffset.UTC),
+            dateUpdated = ZonedDateTime.now(ZoneOffset.UTC),
             legacyOrderNextStatus = LegacyOrderNextStatus
                 .builder()
                 .roles(listOf("JAM", "BREAD"))

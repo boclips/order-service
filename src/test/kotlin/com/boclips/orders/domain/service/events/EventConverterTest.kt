@@ -24,8 +24,8 @@ class EventConverterTest {
         val eventOrder = EventConverter().convertOrder(order)
 
         assertThat(eventOrder.id).isEqualTo("the-id")
-        assertThat(eventOrder.dateCreated).isEqualTo("2018-10-05T12:13:14Z")
-        assertThat(eventOrder.dateUpdated).isEqualTo("2019-10-05T12:13:14Z")
+        assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
+        assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
         assertThat(eventOrder.videoIds).containsExactly(VideoId("the-video-id"))
     }
 }

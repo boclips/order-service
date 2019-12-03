@@ -14,8 +14,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testsupport.OrderFactory
 import testsupport.TestFactories
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.Currency
-import java.util.Date
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -28,7 +29,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `persists legacy-orders when they arrive`() {
-        val date = Date()
+        val date = ZonedDateTime.now(ZoneOffset.UTC)
         val orderId = ObjectId().toHexString()
         val legacyOrder = TestFactories.legacyOrder(
             id = orderId,
