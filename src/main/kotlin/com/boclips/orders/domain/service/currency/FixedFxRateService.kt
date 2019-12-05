@@ -1,14 +1,18 @@
-package com.boclips.orders.domain.service
+package com.boclips.orders.domain.service.currency
 
 import com.boclips.orders.domain.exceptions.IllegalCurrencyException
-import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
 import java.util.Currency
 
-@Component
-class FxRateService {
-    fun resolve(fxRates: Map<Currency, BigDecimal>, from: Currency, to: Currency): BigDecimal {
+class FixedFxRateService(private val fxRates: Map<Currency, BigDecimal>) :
+    FxRateService {
+    override fun resolve(from: Currency, to: Currency, on: LocalDate): BigDecimal {
+        return resolve(from, to)
+    }
+
+    fun resolve(from: Currency, to: Currency): BigDecimal {
         val toFxRate = fxRates[to]
             ?: throw IllegalCurrencyException("Currency fx rate missing: ${to.currencyCode}. Cannot determine the fx rate")
         val fromFxRate = fxRates[from]
