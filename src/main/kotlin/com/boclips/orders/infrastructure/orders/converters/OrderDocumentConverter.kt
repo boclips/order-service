@@ -20,7 +20,8 @@ object OrderDocumentConverter {
             isbnOrProductNumber = order.isbnOrProductNumber,
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
             organisation = order.organisation?.name,
-            orderThroughPlatform = order.isThroughPlatform
+            orderThroughPlatform = order.isThroughPlatform,
+            currency = order.currency
         )
     }
 

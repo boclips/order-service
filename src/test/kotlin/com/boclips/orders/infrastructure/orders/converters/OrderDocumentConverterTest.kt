@@ -34,7 +34,8 @@ class OrderDocumentConverterTest {
                 isbnOrProductNumber = "anisbn",
                 items = null,
                 organisation = "",
-                orderThroughPlatform = true
+                orderThroughPlatform = true,
+                currency = null
             ).let(OrderDocumentConverter::toOrder).items
         ).isEmpty()
     }

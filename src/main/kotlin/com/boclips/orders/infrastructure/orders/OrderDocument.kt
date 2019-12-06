@@ -3,6 +3,7 @@ package com.boclips.orders.infrastructure.orders
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.time.Instant
+import java.util.Currency
 
 data class OrderDocument(
     @BsonId val id: ObjectId,
@@ -15,5 +16,6 @@ data class OrderDocument(
     val isbnOrProductNumber: String?,
     val items: List<OrderItemDocument>?,
     val organisation: String? = null,
+    val currency: Currency?,
     val orderThroughPlatform: Boolean
 )
