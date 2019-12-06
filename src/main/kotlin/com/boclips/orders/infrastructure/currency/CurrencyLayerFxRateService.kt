@@ -13,6 +13,10 @@ open class CurrencyLayerFxRateService(private val accessKey: String) : FxRateSer
 
     @Cacheable
     override fun getRate(from: Currency, to: Currency, on: LocalDate): BigDecimal {
+        if (from == to) {
+            return BigDecimal.ONE
+        }
+
         val endpoint =
             "http://apilayer.net/api/historical?access_key={accessKey}&date={date}&source={from}&currencies={to}"
 

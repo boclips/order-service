@@ -1,6 +1,5 @@
 package com.boclips.orders.infrastructure.currency
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.data.Offset
@@ -33,5 +32,16 @@ class CurrencyLayerFxRateServiceIntegrationTest {
                 on = LocalDate.parse("2099-12-01")
             )
         }.hasMessageContaining("invalid date")
+    }
+
+    @Test
+    fun `returns 1 when source and target currencies are the same`() {
+        val rate = service.getRate(
+            from = Currency.getInstance("PLN"),
+            to = Currency.getInstance("PLN"),
+            on = LocalDate.now().plusDays(10)
+        )
+
+        assertThat(rate).isEqualTo("1")
     }
 }
