@@ -11,10 +11,8 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.infrastructure.orders.converters.OrderDocumentConverter
 import com.boclips.orders.infrastructure.orders.converters.OrderItemDocumentConverter
 import com.mongodb.MongoClient
-import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import org.bson.types.ObjectId
-import org.litote.kmongo.KMongo
 import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -26,9 +24,7 @@ import java.time.Instant
 
 const val databaseName = "order-service-db"
 
-class MongoOrdersRepository(uri: String) : OrdersRepository {
-
-    private val mongoClient: MongoClient = KMongo.createClient(MongoClientURI(uri))
+class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersRepository {
 
     companion object {
         const val collectionName = "orders"
@@ -75,7 +71,7 @@ class MongoOrdersRepository(uri: String) : OrdersRepository {
             )
             is OrderUpdateCommand.UpdateOrderItemsCurrency -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
-                "{\$set:{'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
+                "{\$set:{currency: '${orderUpdateCommand.currency}', 'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
             )
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 updateOrderItems(retrievedOrder = it, updateCommand = orderUpdateCommand)

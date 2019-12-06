@@ -8,10 +8,13 @@ import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.mongodb.MongoClient
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.litote.kmongo.findOne
+import org.springframework.beans.factory.annotation.Autowired
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
@@ -20,6 +23,9 @@ import java.time.Instant
 import java.util.Currency
 
 class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
+
+    @Autowired
+    lateinit var mongoClient: MongoClient
 
     @Test
     fun `creates an order`() {
@@ -139,6 +145,31 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("EUR"))
         assertThat(updatedOrder.items.map { it.price.currency.toString() }).allMatch { it == "EUR" }
+    }
+
+    @Test
+    fun `updates the currency on the order`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(price = PriceFactory.onePound()),
+                    OrderFactory.orderItem(price = PriceFactory.onePound())
+                )
+            )
+        )
+
+        ordersRepository.update(
+            OrderUpdateCommand.UpdateOrderItemsCurrency(
+                orderId = originalOrder.id,
+                currency = Currency.getInstance("EUR")
+            )
+        )
+
+        val collection = mongoClient.getDatabase(databaseName).getCollection(MongoOrdersRepository.collectionName)
+
+        val orderDocument = collection.findOne()
+
+        assertThat(orderDocument?.getString("currency")).isEqualTo("EUR")
     }
 
     @Test
