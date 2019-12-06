@@ -19,7 +19,7 @@ class FixedFxRateServiceTest {
             )
         )
 
-        val resolvedFxRate = fxRateService.resolve(Currency.getInstance("USD"), Currency.getInstance("AUD"))
+        val resolvedFxRate = fxRateService.getRate(Currency.getInstance("USD"), Currency.getInstance("AUD"))
         assertThat(resolvedFxRate).isEqualTo(BigDecimal.valueOf(1.50000).setScale(5, RoundingMode.HALF_UP))
     }
 
@@ -27,7 +27,7 @@ class FixedFxRateServiceTest {
     fun `throws illegal currency exception when converting unknown currency`() {
         val fxRateService = FixedFxRateService(emptyMap())
         assertThrows<IllegalCurrencyException> {
-            fxRateService.resolve(Currency.getInstance("USD"), Currency.getInstance("AUD"))
+            fxRateService.getRate(Currency.getInstance("USD"), Currency.getInstance("AUD"))
         }
     }
 }

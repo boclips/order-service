@@ -20,7 +20,7 @@ class ManifestConverter() {
                     salePrice = orderItem.price,
                     orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),
                     license = orderItem.license!!,
-                    fxRate = fxRateService.resolve(
+                    fxRate = fxRateService.getRate(
                         orderItem.price.currency!!,
                         orderItem.video.contentPartner.currency
                     )

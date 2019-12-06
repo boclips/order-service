@@ -5,5 +5,5 @@ import java.time.LocalDate
 import java.util.Currency
 
 interface FxRateService {
-    fun resolve(from: Currency, to: Currency, on: LocalDate): BigDecimal
+    fun getRate(from: Currency, to: Currency, on: LocalDate): BigDecimal
 }

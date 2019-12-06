@@ -8,11 +8,11 @@ import java.util.Currency
 
 class FixedFxRateService(private val fxRates: Map<Currency, BigDecimal>) :
     FxRateService {
-    override fun resolve(from: Currency, to: Currency, on: LocalDate): BigDecimal {
-        return resolve(from, to)
+    override fun getRate(from: Currency, to: Currency, on: LocalDate): BigDecimal {
+        return getRate(from, to)
     }
 
-    fun resolve(from: Currency, to: Currency): BigDecimal {
+    fun getRate(from: Currency, to: Currency): BigDecimal {
         val toFxRate = fxRates[to]
             ?: throw IllegalCurrencyException("Currency fx rate missing: ${to.currencyCode}. Cannot determine the fx rate")
         val fromFxRate = fxRates[from]
