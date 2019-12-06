@@ -45,7 +45,6 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.util.Currency
-import java.util.Date
 import java.util.UUID
 
 object TestFactories {
@@ -410,7 +409,8 @@ object OrderFactory {
         items: List<OrderItem> = emptyList(),
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
-        isThroughPlatform: Boolean = true
+        isThroughPlatform: Boolean = true,
+        currency: Currency? = null
     ): Order {
         return Order(
             id = id,
@@ -423,7 +423,8 @@ object OrderFactory {
             status = status,
             items = items,
             organisation = orderOrganisation,
-            isThroughPlatform = isThroughPlatform
+            isThroughPlatform = isThroughPlatform,
+            currency = currency ?: items.firstOrNull()?.price?.currency
         )
     }
 

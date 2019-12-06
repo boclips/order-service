@@ -24,12 +24,12 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
         val errors = mutableListOf<OrderConversionError>()
         return csvOrderItems
             .groupBy { it.legacyOrderId }
-            .mapNotNull { (legacyOrderId, orderItems) ->
+            .mapNotNull { (legacyOrderId, csvOrderItems) ->
                 logger.info { "Attempting to parse order: $legacyOrderId" }
 
                 val validator =
                     OrderValidator(legacyOrderId, errors)
-                val firstOrderItem = orderItems.first()
+                val firstOrderItem = csvOrderItems.first()
                 val orderBuilder = Order.builder()
 
                 validator.setNotNullOrError(
@@ -62,7 +62,9 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"
                 )
 
-                orderBuilder.items(orderItems.mapNotNull { toOrderItem(it, validator) })
+                val orderItems = csvOrderItems.mapNotNull { toOrderItem(it, validator) }
+                orderBuilder.items(orderItems)
+                orderItems.firstOrNull()?.let { orderBuilder.currency(it.price.currency) }
 
                 orderBuilder.takeIf { errors.isEmpty() }?.run {
                     status(OrderStatus.INCOMPLETED)

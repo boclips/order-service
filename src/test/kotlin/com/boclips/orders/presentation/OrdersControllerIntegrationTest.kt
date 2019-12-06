@@ -70,6 +70,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
+                currency = Currency.getInstance("EUR"),
                 items = listOf(
                     OrderFactory.orderItem(
                         price = Price(
@@ -180,6 +181,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
+                currency = Currency.getInstance("EUR"),
                 items = listOf(
                     OrderFactory.orderItem(
                         id = "1234",

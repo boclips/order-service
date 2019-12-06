@@ -37,7 +37,8 @@ object OrderDocumentConverter {
             isbnOrProductNumber = document.isbnOrProductNumber,
             items = document.items?.map(OrderItemDocumentConverter::toOrderItem) ?: emptyList(),
             organisation = document.organisation?.let { OrderOrganisation(name = it) },
-            isThroughPlatform = document.orderThroughPlatform
+            isThroughPlatform = document.orderThroughPlatform,
+            currency = document.currency
         )
     }
 }

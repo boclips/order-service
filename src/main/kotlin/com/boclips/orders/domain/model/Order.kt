@@ -19,6 +19,7 @@ class Order(
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
     val isThroughPlatform: Boolean,
+    val currency: Currency?,
     items: Iterable<OrderItem>
 ) {
     companion object {
@@ -30,22 +31,18 @@ class Order(
     val items: List<OrderItem>
         get() = this.orderItems
 
-    val currency: Currency?
-        get() = this.orderItems.firstOrNull()?.price?.currency
-
     val totalPrice: BigDecimal
-        get() = this.orderItems.sumByBigDecimal { it.price.amount ?: BigDecimal.ZERO}
+        get() = this.orderItems.sumByBigDecimal { it.price.amount ?: BigDecimal.ZERO }
 
     init {
         items.forEach { this.addItem(it) }
     }
 
     fun addItem(item: OrderItem) {
-        val firstItem = orderItems.firstOrNull()
-        if (firstItem == null || firstItem.price.currency == item.price.currency) {
+        if (currency == item.price.currency) {
             orderItems += item
         } else {
-            throw IllegalCurrencyException("Currency: ${item.price.currency} is not the same as the current currency ${orderItems.first().price.currency} for order: $id")
+            throw IllegalCurrencyException("Currency: ${item.price.currency} is not the same as the current currency $currency for order: $id")
         }
     }
 
@@ -65,6 +62,7 @@ class Order(
         if (createdAt != other.createdAt) return false
         if (isbnOrProductNumber != other.isbnOrProductNumber) return false
         if (isThroughPlatform != other.isThroughPlatform) return false
+        if (currency != other.currency) return false
         if (orderItems != other.orderItems) return false
 
         return true
@@ -81,6 +79,7 @@ class Order(
         result = 31 * result + createdAt.hashCode()
         result = 31 * result + (isbnOrProductNumber?.hashCode() ?: 0)
         result = 31 * result + isThroughPlatform.hashCode()
+        result = 31 * result + (currency?.hashCode() ?: 0)
         result = 31 * result + orderItems.hashCode()
         return result
     }
@@ -98,6 +97,7 @@ class Order(
         private var authorisingUser: OrderUser? = null
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
+        private var currency: Currency? = null
 
         fun legacyOrderId(legacyOrderId: String) = apply { this.legacyOrderId = legacyOrderId }
         fun status(status: OrderStatus) = apply { this.status = status }
@@ -111,6 +111,8 @@ class Order(
         fun isThroughPlatform(orderThroughPlatform: Boolean) =
             apply { this.isThroughPlatform = orderThroughPlatform }
 
+        fun currency(currency: Currency?) = apply { this.currency = currency }
+
         fun build(): Order = Order(
             id = OrderId(ObjectId().toHexString()),
             legacyOrderId = legacyOrderId,
@@ -122,7 +124,8 @@ class Order(
             createdAt = createdAt,
             isbnOrProductNumber = isbnOrProductNumber,
             isThroughPlatform = isThroughPlatform,
-            items = items
+            items = items,
+            currency = currency
         )
     }
 }

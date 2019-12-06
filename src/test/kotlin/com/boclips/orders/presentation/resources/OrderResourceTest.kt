@@ -49,6 +49,7 @@ class OrderResourceTest {
                 status = OrderStatus.COMPLETED,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
+                currency = Currency.getInstance("EUR"),
                 items = listOf(
                     OrderFactory.orderItem(
                         id = "item-id",
