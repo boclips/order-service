@@ -37,7 +37,6 @@ class EventConverterTest {
         assertThat(eventOrder.id).isEqualTo("the-id")
         assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
         assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
-        assertThat(eventOrder.videoIds).containsExactly(VideoId("the-video-id"))
         assertThat(eventOrder.items).contains(
             OrderItem.builder()
                 .priceGbp(BigDecimal("20.00"))

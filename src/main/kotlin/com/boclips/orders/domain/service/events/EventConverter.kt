@@ -16,7 +16,6 @@ class EventConverter {
             .createdAt(order.createdAt.atZone(ZoneOffset.UTC))
             .updatedAt(order.updatedAt.atZone(ZoneOffset.UTC))
             .customerOrganisationName(order.organisation?.name ?: "UNKNOWN")
-            .videoIds(order.items.map { VideoId(it.video.videoServiceId.value) })
             .items(order.items.map { item ->
                 OrderItem.builder()
                     .videoId(VideoId(item.video.videoServiceId.value))
