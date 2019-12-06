@@ -1,18 +1,26 @@
 package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
+import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.Manifest
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
+import com.boclips.orders.domain.service.currency.FxRateService
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Currency
 
 @Component
-class OrderService(val ordersRepository: OrdersRepository, val manifestConverter: ManifestConverter) {
+class OrderService(
+    val ordersRepository: OrdersRepository,
+    val manifestConverter: ManifestConverter,
+    val fxRateService: FxRateService
+) {
 
     fun createIfNonExistent(order: Order) {
         val retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId) ?: ordersRepository.save(order)
@@ -33,6 +41,22 @@ class OrderService(val ordersRepository: OrdersRepository, val manifestConverter
         val order = ordersRepository.update(orderUpdateCommand)
 
         return updateStatus(orderId = order.id)
+    }
+
+    fun updateCurrency(orderId: OrderId, currency: Currency): Order {
+        val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
+
+        return update(
+            OrderUpdateCommand.UpdateOrderCurrency(
+                orderId,
+                currency,
+                fxRateService.getRate(
+                    from = currency,
+                    to = Currency.getInstance("GBP"),
+                    on = ZonedDateTime.ofInstant(order.createdAt, ZoneId.of("UTC")).toLocalDate()
+                )
+            )
+        )
     }
 
     fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {

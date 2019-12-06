@@ -4,6 +4,8 @@ import com.boclips.eventbus.EventBus
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.kalturaclient.KalturaClient
 import com.boclips.kalturaclient.TestKalturaClient
+import com.boclips.orders.domain.service.currency.FixedFxRateService
+import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.orders.infrastructure.Clock
 import com.boclips.orders.infrastructure.FakeClock
 import com.boclips.orders.infrastructure.outgoing.slack.FakeSlackPoster
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
+import java.math.BigDecimal
+import java.util.Currency
 
 @Configuration
 @Profile("test")
@@ -35,5 +39,16 @@ class TestContext {
 
     @Bean
     fun eventBus(): EventBus = SynchronousFakeEventBus()
+
+    @Bean
+    fun testFxRateService(): FxRateService {
+        return FixedFxRateService(
+            mapOf(
+                Currency.getInstance("EUR") to BigDecimal("1.25"),
+                Currency.getInstance("USD") to BigDecimal("1.5"),
+                Currency.getInstance("GBP") to BigDecimal("1.0")
+            )
+        )
+    }
 }
 

@@ -3,20 +3,17 @@ package com.boclips.orders.application.orders
 import com.boclips.orders.application.orders.exceptions.InvalidCurrencyFormatException
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.service.OrderService
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 import java.util.Currency
 
 @Component
-class UpdateOrderCurrency(private val orderService: OrderService) {
+class UpdateOrderCurrency(
+    private val orderService: OrderService
+) {
     operator fun invoke(orderId: String, currency: String): Order {
         validateCurrency(currency)
-
-        return orderService.update(
-            OrderUpdateCommand.UpdateOrderCurrency(OrderId(value = orderId), Currency.getInstance(currency), BigDecimal.ZERO)
-        )
+        return orderService.updateCurrency(OrderId(orderId), Currency.getInstance(currency))
     }
 
     private fun validateCurrency(currency: String) {

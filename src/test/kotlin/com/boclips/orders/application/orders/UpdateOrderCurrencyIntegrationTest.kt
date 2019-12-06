@@ -22,7 +22,7 @@ class UpdateOrderCurrencyIntegrationTest : AbstractSpringIntegrationTest() {
         val updatedOrder = updateOrderCurrency(orderId = order.id.value, currency = "EUR")
 
         assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("EUR"))
-        assertThat(updatedOrder.fxRateToGbp).isEqualTo("0")
+        assertThat(updatedOrder.fxRateToGbp).isEqualTo("0.80000")
         assertThat(updatedOrder).isEqualToIgnoringGivenFields(order, "currency", "fxRateToGbp", "orderItems", "updatedAt", "status")
     }
 
