@@ -2,6 +2,7 @@ package com.boclips.orders.infrastructure.orders
 
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.Currency
 
@@ -17,5 +18,6 @@ data class OrderDocument(
     val items: List<OrderItemDocument>?,
     val organisation: String? = null,
     val currency: Currency?,
-    val orderThroughPlatform: Boolean
+    val orderThroughPlatform: Boolean,
+    val fxRateToGbp: BigDecimal?
 )

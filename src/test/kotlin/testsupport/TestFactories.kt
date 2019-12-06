@@ -26,6 +26,7 @@ import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.infrastructure.orders.ContentPartnerDocument
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
 import com.boclips.orders.infrastructure.orders.LicenseDocument
+import com.boclips.orders.infrastructure.orders.OrderDocument
 import com.boclips.orders.infrastructure.orders.OrderItemDocument
 import com.boclips.orders.infrastructure.orders.OrderUserDocument
 import com.boclips.orders.infrastructure.orders.SourceDocument
@@ -256,7 +257,6 @@ object TestFactories {
     fun orderItemDocument(
         id: String = UUID.randomUUID().toString(),
         price: BigDecimal? = BigDecimal.ONE,
-        currency: Currency? = Currency.getInstance("USD"),
         transcriptRequested: Boolean = true,
         source: SourceDocument = sourceDocument(),
         video: VideoDocument = videoDocument(),
@@ -272,7 +272,6 @@ object TestFactories {
             video = video,
             license = license,
             trim = trim,
-            currency = currency,
             notes = notes
         )
     }
@@ -410,7 +409,8 @@ object OrderFactory {
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         isThroughPlatform: Boolean = true,
-        currency: Currency? = null
+        currency: Currency? = null,
+        fxRateToGbp: BigDecimal? = null
     ): Order {
         return Order(
             id = id,
@@ -424,7 +424,40 @@ object OrderFactory {
             items = items,
             organisation = orderOrganisation,
             isThroughPlatform = isThroughPlatform,
-            currency = currency ?: items.firstOrNull()?.price?.currency
+            currency = currency ?: items.firstOrNull()?.price?.currency,
+            fxRateToGbp = fxRateToGbp
+        )
+    }
+
+    fun orderDocument(
+        id: ObjectId = ObjectId(),
+        legacyOrderId: String = "legacyOrderId",
+        status: String = "COMPLETED",
+        authorisingUser: OrderUserDocument? = null,
+        requestingUser: OrderUserDocument = TestFactories.orderUserDocument(),
+        updatedAt: Instant = Instant.now(),
+        createdAt: Instant = Instant.now(),
+        isbnOrProductNumber: String? = null,
+        items: List<OrderItemDocument>? = null,
+        organisation: String? = null,
+        currency: Currency? = null,
+        orderThroughPlatform: Boolean = true,
+        fxRateToGbp: BigDecimal? = null
+    ): OrderDocument {
+        return OrderDocument(
+            id = id,
+            legacyOrderId = legacyOrderId,
+            status = status,
+            authorisingUser = authorisingUser,
+            requestingUser = requestingUser,
+            updatedAt = updatedAt,
+            createdAt = createdAt,
+            isbnOrProductNumber = isbnOrProductNumber,
+            items = items,
+            organisation = organisation,
+            currency = currency,
+            orderThroughPlatform = orderThroughPlatform,
+            fxRateToGbp = fxRateToGbp
         )
     }
 

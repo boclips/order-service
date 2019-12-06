@@ -11,6 +11,7 @@ import com.boclips.orders.domain.model.orderItem.Video
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.infrastructure.orders.ContentPartnerDocument
 import com.boclips.orders.infrastructure.orders.LicenseDocument
+import com.boclips.orders.infrastructure.orders.OrderDocument
 import com.boclips.orders.infrastructure.orders.OrderItemDocument
 import com.boclips.orders.infrastructure.orders.SourceDocument
 import com.boclips.orders.infrastructure.orders.VideoDocument
@@ -20,7 +21,6 @@ object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
         return OrderItemDocument(
             price = it.price.amount,
-            currency = it.price.currency,
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
                 contentPartner = ContentPartnerDocument(
@@ -57,10 +57,10 @@ object OrderItemDocumentConverter {
         )
     }
 
-    fun toOrderItem(document: OrderItemDocument): OrderItem {
+    fun toOrderItem(document: OrderItemDocument, orderDocument: OrderDocument): OrderItem {
         return OrderItem(
             id = document.id,
-            price = Price(document.price, document.currency),
+            price = Price(document.price, orderDocument.currency),
             transcriptRequested = document.transcriptRequested,
 
             trim = document.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,

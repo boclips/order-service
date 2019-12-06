@@ -75,7 +75,8 @@ class StoreLegacyOrder(
             items = event.orderItems.map { convertLegacyItem(it) },
             organisation = OrderOrganisation(name = event.authorisingUser.organisation.name),
             isThroughPlatform = true,
-            currency = null
+            currency = null,
+            fxRateToGbp = null
         )
 
     private fun convertLegacyUser(user: LegacyOrderUser) =

@@ -74,7 +74,6 @@ class OrderItemDocumentConverterTest {
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
             assertThat(convertedItem.price).isEqualTo("10.00")
-            assertThat(convertedItem.currency).isEqualTo(Currency.getInstance("USD"))
         }
 
         @Test
@@ -85,7 +84,6 @@ class OrderItemDocumentConverterTest {
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
             assertThat(convertedItem.price).isNull()
-            assertThat(convertedItem.currency).isNull()
         }
     }
 
@@ -97,7 +95,7 @@ class OrderItemDocumentConverterTest {
                 trim = null
             )
 
-            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument)
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
 
             assertThat(convertedItem.trim).isEqualTo(TrimRequest.NoTrimming)
         }
@@ -108,7 +106,7 @@ class OrderItemDocumentConverterTest {
                 trim = "20 - 345"
             )
 
-            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument)
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
 
             assertTrue(convertedItem.trim is TrimRequest.WithTrimming)
             assertThat((convertedItem.trim as TrimRequest.WithTrimming).label).isEqualTo("20 - 345")
@@ -124,7 +122,7 @@ class OrderItemDocumentConverterTest {
                 )
             )
 
-            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument)
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
 
             assertThat(convertedItem.license).isEqualTo(
                 OrderItemLicense(
@@ -145,7 +143,7 @@ class OrderItemDocumentConverterTest {
                 )
             )
 
-            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument)
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
 
             assertThat(convertedItem.license).isEqualTo(
                 OrderItemLicense(
@@ -157,10 +155,10 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts price with currency`() {
-            val orderItemDocument =
-                TestFactories.orderItemDocument(price = BigDecimal.ONE, currency = Currency.getInstance("GBP"))
+            val orderDocument = OrderFactory.orderDocument(currency = Currency.getInstance("GBP"))
+            val orderItemDocument = TestFactories.orderItemDocument(price = BigDecimal.ONE)
 
-            val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
+            val convertedPrice = OrderItemDocumentConverter.toOrderItem(orderItemDocument, orderDocument).price
 
             assertThat(convertedPrice.amount).isEqualTo(BigDecimalWith2DP.ONE)
             assertThat(convertedPrice.currency).isEqualTo(Currency.getInstance("GBP"))
@@ -168,11 +166,12 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts an invalid price`() {
+            val orderDocument = OrderFactory.orderDocument(currency = null)
             val orderItemDocument =
-                TestFactories.orderItemDocument(price = null, currency = null)
+                TestFactories.orderItemDocument(price = null)
 
             val convertedPrice =
-                OrderItemDocumentConverter.toOrderItem(orderItemDocument).price
+                OrderItemDocumentConverter.toOrderItem(orderItemDocument, orderDocument).price
 
             assertThat(convertedPrice).isEqualTo(Price(amount = null, currency = null))
         }

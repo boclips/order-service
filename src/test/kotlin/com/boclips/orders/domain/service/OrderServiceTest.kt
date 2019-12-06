@@ -231,12 +231,13 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                     orderItemsId = "1",
                     amount = BigDecimal.ONE
                 ),
-                OrderUpdateCommand.UpdateOrderItemsCurrency(orderId = order.id, currency = Currency.getInstance("USD"))
+                OrderUpdateCommand.UpdateOrderCurrency(orderId = order.id, currency = Currency.getInstance("USD"), fxRateToGbp = BigDecimal("1.5"))
             )
         )
 
         val updatedOrder = ordersRepository.findOne(order.id)!!
         assertThat(updatedOrder.currency).isEqualTo(Currency.getInstance("USD"))
+        assertThat(updatedOrder.fxRateToGbp).isEqualTo("1.5")
         assertThat(updatedOrder.items[0].price.amount).isEqualTo(BigDecimalWith2DP.ONE)
     }
 

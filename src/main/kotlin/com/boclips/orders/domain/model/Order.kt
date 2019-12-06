@@ -20,6 +20,7 @@ class Order(
     val isbnOrProductNumber: String?,
     val isThroughPlatform: Boolean,
     val currency: Currency?,
+    val fxRateToGbp: BigDecimal?,
     items: Iterable<OrderItem>
 ) {
     companion object {
@@ -63,6 +64,7 @@ class Order(
         if (isbnOrProductNumber != other.isbnOrProductNumber) return false
         if (isThroughPlatform != other.isThroughPlatform) return false
         if (currency != other.currency) return false
+        if (fxRateToGbp != other.fxRateToGbp) return false
         if (orderItems != other.orderItems) return false
 
         return true
@@ -80,6 +82,7 @@ class Order(
         result = 31 * result + (isbnOrProductNumber?.hashCode() ?: 0)
         result = 31 * result + isThroughPlatform.hashCode()
         result = 31 * result + (currency?.hashCode() ?: 0)
+        result = 31 * result + (fxRateToGbp?.hashCode() ?: 0)
         result = 31 * result + orderItems.hashCode()
         return result
     }
@@ -98,6 +101,7 @@ class Order(
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
         private var currency: Currency? = null
+        private var fxRateToGbp: BigDecimal? = null
 
         fun legacyOrderId(legacyOrderId: String) = apply { this.legacyOrderId = legacyOrderId }
         fun status(status: OrderStatus) = apply { this.status = status }
@@ -112,6 +116,7 @@ class Order(
             apply { this.isThroughPlatform = orderThroughPlatform }
 
         fun currency(currency: Currency?) = apply { this.currency = currency }
+        fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
 
         fun build(): Order = Order(
             id = OrderId(ObjectId().toHexString()),
@@ -125,7 +130,8 @@ class Order(
             isbnOrProductNumber = isbnOrProductNumber,
             isThroughPlatform = isThroughPlatform,
             items = items,
-            currency = currency
+            currency = currency,
+            fxRateToGbp = fxRateToGbp
         )
     }
 }

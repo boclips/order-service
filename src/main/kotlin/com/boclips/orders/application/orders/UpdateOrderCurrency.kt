@@ -6,6 +6,7 @@ import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.service.OrderService
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 import java.util.Currency
 
 @Component
@@ -14,7 +15,7 @@ class UpdateOrderCurrency(private val orderService: OrderService) {
         validateCurrency(currency)
 
         return orderService.update(
-            OrderUpdateCommand.UpdateOrderItemsCurrency(OrderId(value = orderId), Currency.getInstance(currency))
+            OrderUpdateCommand.UpdateOrderCurrency(OrderId(value = orderId), Currency.getInstance(currency), BigDecimal.ZERO)
         )
     }
 

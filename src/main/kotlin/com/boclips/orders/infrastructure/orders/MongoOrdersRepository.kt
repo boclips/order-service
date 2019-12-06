@@ -13,6 +13,7 @@ import com.boclips.orders.infrastructure.orders.converters.OrderItemDocumentConv
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import org.bson.types.ObjectId
+import org.litote.kmongo.SetTo
 import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -69,9 +70,12 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
                 set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())
             )
-            is OrderUpdateCommand.UpdateOrderItemsCurrency -> collection().updateOne(
+            is OrderUpdateCommand.UpdateOrderCurrency -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
-                "{\$set:{currency: '${orderUpdateCommand.currency}', 'items.\$[].currency': '${orderUpdateCommand.currency}'}}"
+                set(
+                    SetTo(OrderDocument::currency, orderUpdateCommand.currency),
+                    SetTo(OrderDocument::fxRateToGbp, orderUpdateCommand.fxRateToGbp)
+                )
             )
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 updateOrderItems(retrievedOrder = it, updateCommand = orderUpdateCommand)

@@ -6,12 +6,13 @@ import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import testsupport.OrderFactory
 import testsupport.TestFactories
+import java.math.BigDecimal
 import java.time.Instant
 
 class OrderDocumentConverterTest {
     @Test
     fun `converts an order to document to order`() {
-        val originalOrder = OrderFactory.order()
+        val originalOrder = OrderFactory.order(fxRateToGbp = BigDecimal.ONE)
 
         val document = OrderDocumentConverter.toOrderDocument(originalOrder)
         val reconvertedOrder = OrderDocumentConverter.toOrder(document)
@@ -35,7 +36,8 @@ class OrderDocumentConverterTest {
                 items = null,
                 organisation = "",
                 orderThroughPlatform = true,
-                currency = null
+                currency = null,
+                fxRateToGbp = null
             ).let(OrderDocumentConverter::toOrder).items
         ).isEmpty()
     }
