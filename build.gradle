@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     implementation 'com.github.boclips:kaltura-client:0.58.0'
-    implementation 'com.github.boclips:event-bus:2.6.0'
+    implementation 'com.github.boclips:event-bus:2.8.0'
     implementation 'com.github.boclips:boclips-spring-security:0.93.0'
     implementation 'com.github.boclips:boclips-spring-web:0.128.0'
     implementation 'com.github.boclips:videos:0.479.0'
