@@ -2,7 +2,6 @@ package com.boclips.orders.domain.service.events
 
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.events.order.OrderItem
-import com.boclips.orders.common.Do.exhaustive
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
