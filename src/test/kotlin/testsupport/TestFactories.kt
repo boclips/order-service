@@ -201,7 +201,7 @@ object TestFactories {
     fun video(
         videoServiceId: String = "video-service-id",
         title: String = "joshua tree",
-        videoType: VideoType = VideoType.OTHER,
+        videoType: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
         videoReference: String = "ted_1234",
         contentPartner: ContentPartner = contentPartner()
     ): Video {
