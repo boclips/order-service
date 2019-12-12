@@ -54,7 +54,7 @@ class VideoServiceVideoProvider(private val videoServiceClient: VideoServiceClie
                 videoServiceClient.get(it)
             }
         } catch (e: Exception) {
-            throw VideoNotFoundException(videoId)
+            throw VideoNotFoundException(videoId, e)
         }
         return videoResource ?: throw VideoNotFoundException(videoId)
     }
