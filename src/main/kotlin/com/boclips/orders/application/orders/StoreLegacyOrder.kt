@@ -57,7 +57,7 @@ class StoreLegacyOrder(
                 )
             )
         } catch (e: Exception) {
-            logger.error { "Couldn't process legacy order: $e" }
+            logger.error { "Couldn't process legacy order: ${event.order.id} due to : $e" }
             throw LegacyOrderProcessingException(e)
         }
     }
