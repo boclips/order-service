@@ -4,14 +4,14 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
-import com.boclips.videos.service.client.ContentPartner
-import com.boclips.videos.service.client.ContentPartnerId
-import com.boclips.videos.service.client.VideoType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoTypeResource
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.ZoneOffset
@@ -24,7 +24,6 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
     fun setUp() {
         ordersRepository.deleteAll()
         legacyOrdersRepository.clear()
-        fakeVideoClient.setUseInternalProjection(true)
     }
 
     @Test
@@ -42,21 +41,25 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             status = "CONFIRMED"
         )
 
-        fakeVideoClient.createContentPartner(
-            ContentPartner.builder()
-                .contentPartnerId(ContentPartnerId("ted-id"))
-                .name("ted").currency(
-                    Currency
-                        .getInstance("GBP")
-                )
-                .build()
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "ted-id",
+                name = "ted",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
+            )
         )
 
-        val videoId = fakeVideoClient.createVideo(
-            TestFactories.createVideoRequest(
+        val videoResource = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
                 title = "hippos are cool",
-                providerId = "ted-id",
-                contentType = VideoType.NEWS
+                createdBy = "ted",
+                contentPartnerId = "ted-id",
+                contentPartnerVideoId = "",
+                type = VideoTypeResource(id = 1, name = "NEWS"),
+                _links = null
             )
         )
 
@@ -65,7 +68,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 dateCreated = date,
                 dateUpdated = date,
                 uuid = "item-1-uuid",
-                assetId = videoId.value,
+                assetId = videoResource.id!!,
                 transcriptsRequired = true,
                 trimming = "40 - 100"
             )
@@ -129,31 +132,38 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.license?.territory).isNull()
         assertThat(item.video.contentPartner.videoServiceId.value).isEqualTo("ted-id")
         assertThat(item.video.contentPartner.name).isEqualTo("ted")
-        assertThat(item.video.videoServiceId.value).isEqualTo(videoId.value)
+        assertThat(item.video.videoServiceId.value).isEqualTo("video-id")
         assertThat(item.video.title).isEqualTo("hippos are cool")
-        assertThat(item.video.type).isEqualTo(VideoType.NEWS.name)
+        assertThat(item.video.type).isEqualTo("NEWS")
     }
 
     @Test
     fun `dumps all legacy order data from an event`() {
         val legacyOrder = TestFactories.legacyOrder()
         val genericUser = TestFactories.legacyOrderUser()
-        fakeVideoClient.createContentPartner(
-            ContentPartner.builder()
-                .contentPartnerId(ContentPartnerId("ted-id"))
-                .name("ted").currency(
-                    Currency
-                        .getInstance("GBP")
-                )
-                .build()
-        )
 
-        val videoId = fakeVideoClient.createVideo(
-            TestFactories.createVideoRequest(
-                providerId = "ted-id"
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "ted-id",
+                name = "ted",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
             )
         )
-        val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
+
+        val videoResource = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partne",
+                contentPartnerId = "ted-id",
+                contentPartnerVideoId = "",
+                _links = null
+            )
+        )
+
+        val items = listOf(TestFactories.legacyOrderItem(assetId = videoResource.id!!))
 
         eventBus.publish(
             TestFactories.legacyOrderSubmitted(
@@ -183,22 +193,28 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(order)
 
         val genericUser = TestFactories.legacyOrderUser()
-        fakeVideoClient.createContentPartner(
-            ContentPartner.builder()
-                .contentPartnerId(ContentPartnerId("ted-id"))
-                .name("ted").currency(
-                    Currency
-                        .getInstance("GBP")
-                )
-                .build()
-        )
 
-        val videoId = fakeVideoClient.createVideo(
-            TestFactories.createVideoRequest(
-                providerId = "ted-id"
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "ted-id",
+                name = "ted",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
             )
         )
-        val items = listOf(TestFactories.legacyOrderItem(assetId = videoId.value))
+
+        val videoResource = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partne",
+                contentPartnerId = "ted-id",
+                contentPartnerVideoId = "",
+                _links = null
+            )
+        )
+        val items = listOf(TestFactories.legacyOrderItem(assetId = videoResource.id!!))
 
         eventBus.publish(
             TestFactories.legacyOrderSubmitted(

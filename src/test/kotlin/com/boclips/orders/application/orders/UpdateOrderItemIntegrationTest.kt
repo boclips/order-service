@@ -4,7 +4,7 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.presentation.LicenseRequest
 import com.boclips.orders.presentation.UpdateOrderItemRequest
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

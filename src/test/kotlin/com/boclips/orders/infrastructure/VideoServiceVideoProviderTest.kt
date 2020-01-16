@@ -1,49 +1,46 @@
 package com.boclips.orders.infrastructure
 
-import com.boclips.orders.domain.model.orderItem.VideoId
-import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.domain.exceptions.MissingCurrencyForContentPartner
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
-import com.boclips.videos.service.client.ContentPartner
-import com.boclips.videos.service.client.ContentPartnerId
-import com.boclips.videos.service.client.VideoType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.service.VideoProvider
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.video.VideoResource
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import testsupport.TestFactories
+import testsupport.AbstractSpringIntegrationTest
 import java.util.Currency
 
 internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var videoProvider: VideoProvider
 
-    @BeforeEach
-    fun setUp() {
-        fakeVideoClient.setUseInternalProjection(true)
-    }
-
     @Test
     fun `can get a video`() {
-        fakeVideoClient.createContentPartner(
-            ContentPartner.builder()
-                .contentPartnerId(ContentPartnerId("cp-id"))
-                .name("our content partner")
-                .currency(Currency.getInstance("GBP"))
-                .build()
-        )
-
-        val videoId = fakeVideoClient.createVideo(
-            TestFactories.createVideoRequest(
-                title = "hello",
-                providerId = "cp-id",
-                contentType = VideoType.NEWS
+        val contentPartner = fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "cp-id",
+                name = "our content partner",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
             )
         )
 
-        val video = videoProvider.get(videoId = VideoId(value = videoId.value))
+        val videoId = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partner",
+                contentPartnerId = contentPartner.id,
+                contentPartnerVideoId = "",
+                _links = null
+            )
+        )
+
+        val video = videoProvider.get(videoId = VideoId(value = videoId.id!!))
 
         assertThat(video.title).isEqualTo("hello")
         assertThat(video.contentPartner.name).isEqualTo("our content partner")
@@ -58,24 +55,29 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `exception if content partner has no currency defined`() {
-        fakeVideoClient.createContentPartner(
-            ContentPartner.builder()
-                .contentPartnerId(ContentPartnerId("cp-id"))
-                .name("our content partner")
-                .currency(null)
-                .build()
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "cp-id",
+                name = "our content partner",
+                currency = null,
+                distributionMethods = emptySet(),
+                official = true
+            )
         )
 
-        val videoId = fakeVideoClient.createVideo(
-            TestFactories.createVideoRequest(
+        val videoResource = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
                 title = "hello",
-                providerId = "cp-id",
-                contentType = VideoType.NEWS
+                createdBy = "creator",
+                contentPartnerId = "cp-id",
+                contentPartnerVideoId = "x",
+                _links = null
             )
         )
 
         assertThrows<MissingCurrencyForContentPartner> {
-            videoProvider.get(videoId = VideoId(value = videoId.value))
+            videoProvider.get(videoId = VideoId(value = videoResource.id!!))
         }
     }
 }

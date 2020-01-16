@@ -1,6 +1,6 @@
 package com.boclips.orders.presentation
 
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.core.StringEndsWith.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get

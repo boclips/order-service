@@ -6,7 +6,7 @@ import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

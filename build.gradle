@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.github.boclips:event-bus:2.8.0'
     implementation 'com.github.boclips:boclips-spring-security:0.296.0'
     implementation 'com.github.boclips:boclips-spring-web:0.128.0'
-    implementation 'com.github.boclips:videos:0.688.0'
+    implementation 'com.github.boclips:videos:0.825.0'
 
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'

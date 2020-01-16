@@ -27,8 +27,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
             .mapNotNull { (legacyOrderId, csvOrderItems) ->
                 logger.info { "Attempting to parse order: $legacyOrderId" }
 
-                val validator =
-                    OrderValidator(legacyOrderId, errors)
+                val validator = OrderValidator(legacyOrderId, errors)
                 val firstOrderItem = csvOrderItems.first()
                 val orderBuilder = Order.builder()
 

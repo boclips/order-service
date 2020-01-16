@@ -1,17 +1,14 @@
-package com.boclips.videos.service.testsupport
+package testsupport
 
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
-import com.boclips.videos.service.client.ContentPartner
-import com.boclips.videos.service.client.ContentPartnerId
-import com.boclips.videos.service.client.Playback
-import com.boclips.videos.service.client.Video
-import com.boclips.videos.service.client.VideoId
-import com.boclips.videos.service.client.VideoType
-import com.boclips.videos.service.client.internal.FakeClient
-import com.boclips.videos.service.client.spring.MockVideoServiceClient
+import com.boclips.videos.api.httpclient.test.fakes.ContentPartnersClientFake
+import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
+import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.video.VideoResource
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -23,8 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
-import java.net.URI
-import java.time.Duration
 import java.time.LocalDate
 import java.util.Currency
 
@@ -32,7 +27,6 @@ import java.util.Currency
 @ExtendWith(SpringExtension::class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "fake-security")
-@MockVideoServiceClient
 abstract class AbstractSpringIntegrationTest {
     companion object Setup {
         var mongoProcess: MongodProcess? = null
@@ -46,6 +40,7 @@ abstract class AbstractSpringIntegrationTest {
             }
         }
     }
+
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -53,7 +48,10 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var ordersRepository: MongoOrdersRepository
 
     @Autowired
-    lateinit var fakeVideoClient: FakeClient
+    lateinit var fakeVideoClient: VideosClientFake
+
+    @Autowired
+    lateinit var fakeContentPartnersClient: ContentPartnersClientFake
 
     @Autowired
     lateinit var legacyOrdersRepository: LegacyOrdersRepository
@@ -70,6 +68,7 @@ abstract class AbstractSpringIntegrationTest {
     @AfterEach
     fun tearDown() {
         fakeVideoClient.clear()
+        fakeContentPartnersClient.clear()
         eventBus.clearState()
     }
 
@@ -77,33 +76,29 @@ abstract class AbstractSpringIntegrationTest {
         videoId: String = "123456789012345678901234",
         contentPartnerId: String = "content-partner-id",
         contentPartnerName: String = "our-content-partner",
-        contentPartnerCurrency: Currency? = Currency.getInstance("GBP")) {
-        val video = Video.builder()
-            .videoId(VideoId(URI.create("https://fake-video-service.com/videos/$videoId")))
-            .contentPartnerId(contentPartnerId)
-            .contentPartnerVideoId("video-id")
-            .createdBy(contentPartnerName)
-            .description("video description")
-            .playback(
-                Playback.builder()
-                    .duration(Duration.ofSeconds(10))
-                    .playbackId("playback-id")
-                    .thumbnailUrl("thumbnail/url")
-                    .build()
+        contentPartnerCurrency: Currency? = Currency.getInstance("GBP")
+    ) {
+        fakeVideoClient.add(
+            VideoResource(
+                id = videoId,
+                title = "hippos are cool",
+                contentPartnerVideoId = "abc-123",
+                contentPartnerId = contentPartnerId,
+                playback = StreamPlaybackResource(id = "playback-id", referenceId = "ref-id"),
+                releasedOn = LocalDate.now(),
+                createdBy = "creat0r",
+                _links = null
             )
-            .releasedOn(LocalDate.now())
-            .subjects(emptySet())
-            .title("video title")
-            .type(VideoType.NEWS)
-            .build()
+        )
 
-        val contentPartner = ContentPartner.builder()
-            .contentPartnerId(ContentPartnerId(contentPartnerId))
-            .name(contentPartnerName)
-            .currency(contentPartnerCurrency)
-            .build()
-
-            fakeVideoClient.createVideo(video)
-            fakeVideoClient.createContentPartner(contentPartner)
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = contentPartnerId,
+                name = contentPartnerName,
+                currency = contentPartnerCurrency?.currencyCode,
+                distributionMethods = emptySet(),
+                official = true
+            )
+        )
     }
 }

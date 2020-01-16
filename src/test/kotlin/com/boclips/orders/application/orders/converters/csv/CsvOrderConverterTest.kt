@@ -3,7 +3,7 @@ package com.boclips.orders.application.orders.converters.csv
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested

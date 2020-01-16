@@ -32,9 +32,6 @@ import com.boclips.orders.infrastructure.orders.OrderUserDocument
 import com.boclips.orders.infrastructure.orders.SourceDocument
 import com.boclips.orders.infrastructure.orders.VideoDocument
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
-import com.boclips.videos.service.client.CreateVideoRequest
-import com.boclips.videos.service.client.PlaybackProvider
-import com.boclips.videos.service.client.VideoType
 import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
@@ -158,34 +155,6 @@ object TestFactories {
             .build()
     }
 
-    fun createVideoRequest(
-        providerId: String = "providerId",
-        providerVideoId: String = "providerId video id",
-        title: String = "title",
-        description: String = "description",
-        releasedOn: LocalDate = LocalDate.now(),
-        legalRestrictions: String? = "legal restrictions",
-        keywords: List<String> = emptyList(),
-        contentType: VideoType = VideoType.NEWS,
-        playbackId: String = "playback id",
-        playbackProvider: PlaybackProvider = PlaybackProvider.KALTURA,
-        subjects: Set<String> = emptySet()
-    ): CreateVideoRequest {
-        return CreateVideoRequest.builder()
-            .providerId(providerId)
-            .providerVideoId(providerVideoId)
-            .title(title)
-            .description(description)
-            .releasedOn(releasedOn)
-            .legalRestrictions(legalRestrictions)
-            .keywords(keywords)
-            .videoType(contentType)
-            .playbackId(playbackId)
-            .playbackProvider(playbackProvider)
-            .subjects(subjects)
-            .build()
-    }
-
     fun contentPartner(
         name: String = "Flux",
         contentPartnerId: String = "video-service-id",
@@ -201,7 +170,7 @@ object TestFactories {
     fun video(
         videoServiceId: String = "video-service-id",
         title: String = "joshua tree",
-        videoType: VideoType = VideoType.INSTRUCTIONAL_CLIPS,
+        videoType: String = "INSTRUCTIONAL_CLIPS",
         videoReference: String = "ted_1234",
         contentPartner: ContentPartner = contentPartner()
     ): Video {

@@ -14,7 +14,6 @@ import com.boclips.orders.presentation.orders.OrderResource
 import com.boclips.orders.presentation.orders.PriceResource
 import com.boclips.orders.presentation.orders.UserDetailsResource
 import com.boclips.orders.presentation.orders.VideoResource
-import com.boclips.videos.service.client.VideoType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.Resource
@@ -61,7 +60,7 @@ class OrderResourceTest {
                         trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
                             videoServiceId = "video-id",
-                            videoType = VideoType.STOCK,
+                            videoType = "STOCK",
                             title = "video title",
                             videoReference = "TED_11",
                             contentPartner = TestFactories.contentPartner(

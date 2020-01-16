@@ -2,7 +2,7 @@ package com.boclips.orders.application.orders
 
 import com.boclips.orders.application.orders.exceptions.InvalidCurrencyFormatException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test

@@ -7,8 +7,7 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.videos.service.client.VideoType
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
@@ -83,7 +82,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoServiceId = "1234",
                             videoReference = "AP-123",
                             title = "A Video",
-                            videoType = VideoType.STOCK,
+                            videoType = "STOCK",
                             contentPartner = TestFactories.contentPartner(
                                 contentPartnerId = "123",
                                 name = "bob is still here",
@@ -198,7 +197,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video",
-                            videoType = VideoType.STOCK,
+                            videoType = "STOCK",
                             videoReference = "AP-123",
                             contentPartner = TestFactories.contentPartner(
                                 contentPartnerId = "cp-id",

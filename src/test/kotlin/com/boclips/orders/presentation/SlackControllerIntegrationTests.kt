@@ -10,7 +10,7 @@ import com.boclips.orders.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.orders.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
 import com.boclips.orders.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.orders.infrastructure.outgoing.videos.FoundKalturaVideo
-import com.boclips.videos.service.testsupport.AbstractSpringIntegrationTest
+import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
