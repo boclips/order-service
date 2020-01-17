@@ -16,7 +16,7 @@ data class OrderResource(
     val isbnNumber: String?,
     val items: List<Resource<OrderItemResource>>,
     val totalPrice: PriceResource,
-    val isThroughPlatform: Boolean
+    val throughPlatform: Boolean
 ) {
     companion object {
         fun fromOrder(order: Order): OrderResource =
@@ -41,7 +41,7 @@ data class OrderResource(
                     currency = order.currency
 
                 ),
-                isThroughPlatform = order.isThroughPlatform
+                throughPlatform = order.isThroughPlatform
             )
     }
 }

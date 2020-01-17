@@ -1,61 +1,44 @@
 package com.boclips.orders.infrastructure.outgoing.videos
 
-import com.boclips.orders.config.VideoServiceProperties
+import com.boclips.videos.api.httpclient.VideosClient
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForObject
+import feign.FeignException
 
 @Component
-class HTTPVideoService(private val videoServiceProperties: VideoServiceProperties) : VideoService {
-    override fun get(videoId: String): VideoServiceResponse = try {
-        val response: HTTPVideoServiceGetResponse? = RestTemplate().getForObject(
-            "${videoServiceProperties.uri}/$videoId",
-            HTTPVideoServiceGetResponse::class
-        )
-        when (response?.playback?.type) {
-            "STREAM" ->
-                FoundKalturaVideo(
-                    videoId = response.id,
-                    title = response.title,
-                    description = response.description,
-                    thumbnailUrl = response.playback.thumbnailUrl,
-                    playbackId = extractKalturaPlaybackId(response.playback.streamUrl),
-                    streamUrl = response.playback.streamUrl
-                )
-            "YOUTUBE" ->
-                FoundYouTubeVideo(
-                    videoId = response.id,
-                    title = response.title,
-                    description = response.description,
-                    thumbnailUrl = response.playback.thumbnailUrl,
-                    playbackId = response.playback.id
-                )
-            else ->
-                MissingVideo(videoId = videoId)
+class HTTPVideoService(private val videosClient: VideosClient) : VideoService {
+    override fun get(videoId: String): VideoServiceResponse {
+        return try {
+            val video = videosClient.getVideo(videoId = videoId)
+            when (video.playback?.type) {
+                "STREAM" ->
+                    FoundKalturaVideo(
+                        videoId = video.id!!,
+                        title = video.title!!,
+                        description = video.description!!,
+                        thumbnailUrl = video.playback?._links!!["thumbnail"]?.href ?: "",
+                        playbackId = video.playback?.id!!,
+                        streamUrl = video.playback?._links!!["hlsStream"]?.href
+                    )
+                "YOUTUBE" ->
+                    FoundYouTubeVideo(
+                        videoId = video.id!!,
+                        title = video.title!!,
+                        description = video.description!!,
+                        thumbnailUrl = video.playback?._links!!["thumbnail"]?.href ?: "",
+                        playbackId = video.playback?.id!!
+                    )
+                else ->
+                    MissingVideo(videoId = videoId)
+            }
+        } catch (ex: FeignException) {
+            if (ex.status() == 404) {
+                MissingVideo(videoId)
+            } else {
+                Error("Something went wrong fetching video with id $videoId")
+            }
+        } catch (ex: HttpServerErrorException) {
+            Error(message = "Server bad: $ex")
         }
-    } catch (e: HttpClientErrorException) {
-        if (e.statusCode.value() == 404) {
-            MissingVideo(videoId)
-        } else {
-            Error(message = "Client bad: $e")
-        }
-    } catch (e: HttpServerErrorException) {
-        Error(message = "Server bad: $e")
     }
 }
-
-data class HTTPVideoServiceGetResponse(
-    val id: String,
-    val title: String,
-    val playback: HTTPVideoServicePlayback,
-    val description: String
-)
-
-data class HTTPVideoServicePlayback(
-    val id: String,
-    val thumbnailUrl: String,
-    val streamUrl: String?,
-    val type: String
-)

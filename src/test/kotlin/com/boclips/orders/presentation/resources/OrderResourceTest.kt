@@ -127,7 +127,7 @@ class OrderResourceTest {
                         OrdersController.getUpdateOrderItemLink("123", "item-id")
                     )
                 ),
-                isThroughPlatform = false
+                throughPlatform = false
             )
         )
     }
