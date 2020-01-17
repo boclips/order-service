@@ -4,4 +4,5 @@ out/
 .idea/
 dependency-check-cache
 .kotlintest
+order-service.iml
 terry.iml

@@ -1,5 +1,5 @@
 ---
-app: terry
+app: order-service
 port: 8080
 scale: Large
 bootTime: Slow

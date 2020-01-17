@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cwd="$(cd "$(dirname "$0")" && pwd)"
-dir=$(mktemp -d -t fly-build-terry.XXXXX)
+dir=$(mktemp -d -t fly-build-order-service.XXXXX)
 
 tidy () {
     rm -rf "$dir"
