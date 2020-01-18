@@ -4,3 +4,8 @@ server:
   use-forward-headers: true
 pubsub:
   consumerGroup: order-service
+video-service:
+  base-url:
+  access-token-uri:
+  client-id:
+  client-secret:
