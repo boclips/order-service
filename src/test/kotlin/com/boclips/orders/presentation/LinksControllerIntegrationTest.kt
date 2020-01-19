@@ -1,11 +1,11 @@
 package com.boclips.orders.presentation
 
-import testsupport.AbstractSpringIntegrationTest
 import org.hamcrest.core.StringEndsWith.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.asBackofficeStaff
 import testsupport.asNonBackOfficeStaff
 
@@ -28,7 +28,7 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$._links.exportOrders.href",
-                    endsWith("/orders?usd={usd}&eur={eur}&sgd={sgd}&aud={aud}&cad={cad}")
+                    endsWith("/orders{?usd,eur,sgd,aud,cad}")
                 )
             )
     }

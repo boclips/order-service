@@ -2,8 +2,8 @@ package com.boclips.orders.presentation.orders
 
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.presentation.OrdersController
-import org.springframework.hateoas.Resource
-import org.springframework.hateoas.core.Relation
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.server.core.Relation
 
 @Relation(collectionRelation = "orders")
 data class OrderResource(
@@ -14,7 +14,7 @@ data class OrderResource(
     val createdAt: String,
     val updatedAt: String,
     val isbnNumber: String?,
-    val items: List<Resource<OrderItemResource>>,
+    val items: List<EntityModel<OrderItemResource>>,
     val totalPrice: PriceResource,
     val throughPlatform: Boolean
 ) {
@@ -30,7 +30,7 @@ data class OrderResource(
                 status = order.status.toString(),
                 items = order.items
                     .map {
-                        Resource(
+                        EntityModel(
                             OrderItemResource.fromOrderItem(it),
                             OrdersController.getUpdateOrderItemPriceLink(order.id.value, it.id),
                             OrdersController.getUpdateOrderItemLink(order.id.value, it.id)

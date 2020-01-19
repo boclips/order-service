@@ -16,7 +16,7 @@ import com.boclips.orders.presentation.orders.UserDetailsResource
 import com.boclips.orders.presentation.orders.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.hateoas.Resource
+import org.springframework.hateoas.EntityModel
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
@@ -99,7 +99,7 @@ class OrderResourceTest {
                     currency = Currency.getInstance("EUR")
                 ),
                 items = listOf(
-                    Resource(
+                    EntityModel(
                         OrderItemResource(
                             id = "item-id",
                             price = PriceResource(

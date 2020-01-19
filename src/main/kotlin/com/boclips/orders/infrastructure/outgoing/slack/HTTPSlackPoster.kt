@@ -33,13 +33,13 @@ class HTTPSlackPoster(
 }
 
 data class HTTPSlackPostResponse(
-    val ok: Boolean,
-    val error: String?,
+    var ok: Boolean,
+    var error: String?,
     @JsonProperty("response_metadata")
-    val metadata: HTTPSlackPostResponseMetadata?,
+    var metadata: HTTPSlackPostResponseMetadata?,
     var ts: BigDecimal?
 )
 
 data class HTTPSlackPostResponseMetadata(
-    val messages: List<String>
+    var messages: List<String>? = null
 )

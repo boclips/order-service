@@ -7,7 +7,6 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
