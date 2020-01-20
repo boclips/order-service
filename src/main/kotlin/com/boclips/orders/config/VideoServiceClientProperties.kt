@@ -12,9 +12,6 @@ import javax.validation.constraints.NotBlank
 @ConfigurationProperties(prefix = "video-service")
 class VideoServiceClientProperties {
     @NotBlank
-    var accessTokenUri: String = ""
-
-    @NotBlank
     var baseUrl: String = ""
 
     @NotBlank
