@@ -24,7 +24,6 @@ data class OrderItem(
         private var license: OrderItemLicense? = null
         private var notes: String? = null
 
-
         fun price(price: Price) = apply { this.price = price }
         fun transcriptRequested(transcriptRequested: Boolean) = apply { this.transcriptRequested = transcriptRequested }
         fun trim(trim: TrimRequest) = apply { this.trim = trim }

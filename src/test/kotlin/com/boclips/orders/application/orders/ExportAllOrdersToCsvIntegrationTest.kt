@@ -2,11 +2,11 @@ package com.boclips.orders.application.orders
 
 import com.boclips.orders.application.exceptions.InvalidExportRequest
 import com.boclips.orders.domain.model.OrderStatus
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories

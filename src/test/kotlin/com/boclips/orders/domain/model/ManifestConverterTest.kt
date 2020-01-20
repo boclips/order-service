@@ -1,10 +1,10 @@
 package com.boclips.orders.domain.model
 
 import com.boclips.orders.domain.service.ManifestConverter
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.ManifestFactory
 import testsupport.OrderFactory
 import testsupport.PriceFactory

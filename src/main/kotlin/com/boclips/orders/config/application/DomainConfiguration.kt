@@ -25,5 +25,4 @@ class DomainConfiguration(
     fun ordersRepository(): OrdersRepository {
         return OrderRepositoryEventDecorator(mongoOrdersRepository, eventBus, eventConverter())
     }
-
 }

@@ -36,7 +36,7 @@ object OrderDocumentConverter {
             createdAt = document.createdAt,
             updatedAt = document.updatedAt,
             isbnOrProductNumber = document.isbnOrProductNumber,
-            items = document.items?.map{OrderItemDocumentConverter.toOrderItem(it, document)} ?: emptyList(),
+            items = document.items?.map { OrderItemDocumentConverter.toOrderItem(it, document) } ?: emptyList(),
             organisation = document.organisation?.let { OrderOrganisation(name = it) },
             isThroughPlatform = document.orderThroughPlatform,
             currency = document.currency,

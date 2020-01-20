@@ -37,7 +37,7 @@ object OrderItemDocumentConverter {
                 type = it.video.type
             ),
             license = it.license?.duration?.let { duration ->
-                when(duration) {
+                when (duration) {
                     is Duration.Time -> LicenseDocument(
                         amount = duration.amount,
                         unit = duration.unit,
@@ -77,15 +77,15 @@ object OrderItemDocumentConverter {
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(
-                        duration = when {
-                            license.isValidTime() -> Duration.Time(
-                                    amount = license.amount!!,
-                                    unit = license.unit!!
-                            )
-                            license.isValidDescription() -> Duration.Description(label = license.description!!)
-                            else -> throw IllegalStateException("Invalid duration")
-                        },
-                        territory = license.territory
+                    duration = when {
+                        license.isValidTime() -> Duration.Time(
+                            amount = license.amount!!,
+                            unit = license.unit!!
+                        )
+                        license.isValidDescription() -> Duration.Description(label = license.description!!)
+                        else -> throw IllegalStateException("Invalid duration")
+                    },
+                    territory = license.territory
                 )
             },
             notes = document.notes

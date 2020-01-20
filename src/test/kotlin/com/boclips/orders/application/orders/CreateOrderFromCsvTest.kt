@@ -1,11 +1,11 @@
 package com.boclips.orders.application.orders
 
 import com.boclips.orders.application.exceptions.InvalidCsvException
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.LocalDateTime

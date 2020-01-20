@@ -4,10 +4,10 @@ import com.boclips.eventbus.events.order.OrderCreated
 import com.boclips.eventbus.events.order.OrderUpdated
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 
 class OrderRepositoryEventDecoratorIntegrationTest : AbstractSpringIntegrationTest() {

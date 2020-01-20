@@ -15,20 +15,21 @@ class OrderRepositoryEventDecorator(
 
     override fun save(order: Order): Order {
         return orderRepository.save(order).also { createdOrder ->
-            eventBus.publish(OrderCreated.builder()
-                .order(eventConverter.convertOrder(createdOrder))
-                .build()
+            eventBus.publish(
+                OrderCreated.builder()
+                    .order(eventConverter.convertOrder(createdOrder))
+                    .build()
             )
         }
     }
 
     override fun update(orderUpdateCommand: OrderUpdateCommand): Order {
         return orderRepository.update(orderUpdateCommand).also { updatedOrder ->
-            eventBus.publish(OrderUpdated.builder()
-                .order(eventConverter.convertOrder(updatedOrder))
-                .build()
+            eventBus.publish(
+                OrderUpdated.builder()
+                    .order(eventConverter.convertOrder(updatedOrder))
+                    .build()
             )
         }
     }
-
 }

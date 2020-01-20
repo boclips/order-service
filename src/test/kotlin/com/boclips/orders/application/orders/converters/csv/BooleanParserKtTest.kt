@@ -29,5 +29,4 @@ class BooleanParserKtTest {
     fun `converts transcript requests to false when null`() {
         assertThat(null.parseBoolean()).isEqualTo(false)
     }
-
 }

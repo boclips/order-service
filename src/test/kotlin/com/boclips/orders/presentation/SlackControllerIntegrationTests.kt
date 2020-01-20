@@ -10,7 +10,6 @@ import com.boclips.orders.infrastructure.outgoing.slack.SlackMessageVideo
 import com.boclips.orders.infrastructure.outgoing.slack.SlackMessageVideo.SlackMessageVideoType.KALTURA
 import com.boclips.orders.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.orders.infrastructure.outgoing.videos.FoundKalturaVideo
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.equalTo
@@ -27,11 +26,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath
+import testsupport.AbstractSpringIntegrationTest
 import java.math.BigDecimal
 
 // This is a rotated secret, used because we hard-code an example signed by Slack with this secret
 @TestPropertySource(properties = ["slack.signingSecret=f873d35529ed55a0ab71ac068488684d"])
-class SlackControllerIntegrationTests: AbstractSpringIntegrationTest() {
+class SlackControllerIntegrationTests : AbstractSpringIntegrationTest() {
     @Autowired
     lateinit var slackPoster: FakeSlackPoster
 

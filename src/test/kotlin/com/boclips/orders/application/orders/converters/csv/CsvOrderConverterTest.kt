@@ -3,12 +3,12 @@ package com.boclips.orders.application.orders.converters.csv
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.TestFactories
 import java.time.LocalDate
 import java.time.Month

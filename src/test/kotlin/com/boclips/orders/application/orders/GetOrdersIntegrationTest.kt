@@ -1,9 +1,9 @@
 package com.boclips.orders.application.orders
 
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 
 class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {

@@ -6,11 +6,11 @@ import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.PriceFactory
@@ -55,8 +55,8 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `an order with missing item license is not complete`() {
         val originalOrder = OrderFactory.order(
-                status = OrderStatus.INCOMPLETED,
-                items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
+            status = OrderStatus.INCOMPLETED,
+            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
         )
 
         orderService.createIfNonExistent(originalOrder)
@@ -231,7 +231,11 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                     orderItemsId = "1",
                     amount = BigDecimal.ONE
                 ),
-                OrderUpdateCommand.UpdateOrderCurrency(orderId = order.id, currency = Currency.getInstance("USD"), fxRateToGbp = BigDecimal("1.5"))
+                OrderUpdateCommand.UpdateOrderCurrency(
+                    orderId = order.id,
+                    currency = Currency.getInstance("USD"),
+                    fxRateToGbp = BigDecimal("1.5")
+                )
             )
         )
 

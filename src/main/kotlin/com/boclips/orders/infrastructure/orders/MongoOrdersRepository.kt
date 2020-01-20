@@ -20,7 +20,6 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.orderBy
 import org.litote.kmongo.set
-import org.litote.kmongo.updateOne
 import java.time.Instant
 
 const val databaseName = "order-service-db"

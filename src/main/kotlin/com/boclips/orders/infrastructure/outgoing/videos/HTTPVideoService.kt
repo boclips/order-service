@@ -1,9 +1,9 @@
 package com.boclips.orders.infrastructure.outgoing.videos
 
 import com.boclips.videos.api.httpclient.VideosClient
+import feign.FeignException
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpServerErrorException
-import feign.FeignException
 
 @Component
 class HTTPVideoService(private val videosClient: VideosClient) : VideoService {

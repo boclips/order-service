@@ -1,12 +1,12 @@
 package com.boclips.orders.infrastructure.orders
 
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.TestFactories
 
-class LegacyOrdersRepositoryTests: AbstractSpringIntegrationTest() {
+class LegacyOrdersRepositoryTests : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create a legacy order`() {

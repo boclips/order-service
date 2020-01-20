@@ -7,6 +7,7 @@ sealed class Duration {
     data class Time(val amount: Int, val unit: ChronoUnit) : Duration() {
         override fun toReadableString() = "$amount"
     }
+
     data class Description(val label: String) : Duration() {
         override fun toReadableString() = label
     }

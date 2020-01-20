@@ -2,7 +2,7 @@ package com.boclips.orders.infrastructure
 
 import com.boclips.orders.Fake
 
-class FakeClock: Fake, Clock {
+class FakeClock : Fake, Clock {
     var nextTime: Long? = null
 
     init {

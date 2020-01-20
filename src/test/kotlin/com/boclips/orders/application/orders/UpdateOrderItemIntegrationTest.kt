@@ -4,10 +4,10 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.presentation.LicenseRequest
 import com.boclips.orders.presentation.UpdateOrderItemRequest
-import testsupport.AbstractSpringIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import testsupport.AbstractSpringIntegrationTest
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import java.math.BigDecimal
