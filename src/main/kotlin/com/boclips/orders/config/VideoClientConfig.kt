@@ -14,28 +14,28 @@ class VideoClientConfig {
     @Bean
     fun contentPartnersClient(properties: VideoServiceClientProperties): ContentPartnersClient {
         return ContentPartnersClient.create(
-                apiUrl = properties.baseUrl,
-                tokenFactory = ServiceAccountTokenFactory(
-                        ServiceAccountCredentials(
-                                authEndpoint = properties.accessTokenUri,
-                                clientId = properties.clientId,
-                                clientSecret = properties.clientSecret
-                        )
+            apiUrl = properties.baseUrl,
+            tokenFactory = ServiceAccountTokenFactory(
+                ServiceAccountCredentials(
+                    authEndpoint = properties.baseUrl,
+                    clientId = properties.clientId,
+                    clientSecret = properties.clientSecret
                 )
+            )
         )
     }
 
     @Bean
     fun videosClient(properties: VideoServiceClientProperties): VideosClient {
         return VideosClient.create(
-                apiUrl = properties.baseUrl,
-                tokenFactory = ServiceAccountTokenFactory(
-                        ServiceAccountCredentials(
-                                authEndpoint = properties.accessTokenUri,
-                                clientId = properties.clientId,
-                                clientSecret = properties.clientSecret
-                        )
+            apiUrl = properties.baseUrl,
+            tokenFactory = ServiceAccountTokenFactory(
+                ServiceAccountCredentials(
+                    authEndpoint = properties.baseUrl,
+                    clientId = properties.clientId,
+                    clientSecret = properties.clientSecret
                 )
+            )
         )
     }
 }
