@@ -5,6 +5,7 @@ import com.boclips.orders.domain.model.ManifestItem
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.service.currency.FixedFxRateService
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 import java.math.BigDecimal
 import java.time.ZoneOffset
 import java.util.Currency
@@ -19,9 +20,11 @@ class ManifestConverter() {
                     video = orderItem.video,
                     salePrice = orderItem.price,
                     orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),
-                    license = orderItem.license!!,
+                    license = orderItem.license
+                        ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid state exception. Order item is $orderItem"),
                     fxRate = fxRateService.getRate(
-                        orderItem.price.currency!!,
+                        orderItem.price.currency
+                            ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid currency. Order item is $orderItem"),
                         orderItem.video.contentPartner.currency
                     )
                 )
