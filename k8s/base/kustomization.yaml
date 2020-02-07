@@ -12,8 +12,6 @@ images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/order-service
   newTag: "2"
-- name: eu.gcr.io/boclips-prod/boclips/order-service
-  newTag: "1"
 patches:
 - path: spread-across-zones.yaml
   target:

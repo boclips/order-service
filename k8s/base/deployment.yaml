@@ -12,7 +12,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: order-service
-        image: eu.gcr.io/boclips-prod/boclips/order-service:1
+        image: app:0
         env:
         - name: SENTRY_RELEASE
           value: order-service-$(VERSION)
