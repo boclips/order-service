@@ -7,11 +7,11 @@ resources:
 commonLabels:
   app: order-service
 commonAnnotations:
-  boclips-version: "19"
+  boclips-version: "20"
 images:
 - name: app
   newName: eu.gcr.io/boclips-prod/boclips/order-service
-  newTag: "19"
+  newTag: "20"
 patches:
 - path: spread-across-zones.yaml
   target:
