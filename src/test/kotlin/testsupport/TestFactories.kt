@@ -36,6 +36,7 @@ import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.URL
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
@@ -172,14 +173,16 @@ object TestFactories {
         title: String = "joshua tree",
         videoType: String = "INSTRUCTIONAL_CLIPS",
         videoReference: String = "ted_1234",
-        contentPartner: ContentPartner = contentPartner()
+        contentPartner: ContentPartner = contentPartner(),
+        fullProjectionLink: String = "https://great-vids.com"
     ): Video {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
             title = title,
             type = videoType.toString(),
             contentPartnerVideoId = videoReference,
-            contentPartner = contentPartner
+            contentPartner = contentPartner,
+            fullProjectionLink = URL(fullProjectionLink)
         )
     }
 

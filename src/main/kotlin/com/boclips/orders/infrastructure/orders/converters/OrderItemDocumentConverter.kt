@@ -73,7 +73,8 @@ object OrderItemDocumentConverter {
                     videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
                     name = document.source.contentPartner.name,
                     currency = Currency.getInstance(document.source.contentPartner.currency)
-                )
+                ),
+                fullProjectionLink = TODO()
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(
