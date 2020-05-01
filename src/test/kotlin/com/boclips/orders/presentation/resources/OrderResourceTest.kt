@@ -17,6 +17,7 @@ import com.boclips.orders.presentation.orders.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.Link
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
@@ -67,7 +68,8 @@ class OrderResourceTest {
                                 contentPartnerId = "paper",
                                 name = "cup",
                                 currency = Currency.getInstance("GBP")
-                            )
+                            ),
+                            fullProjectionLink = "http://super-vid.com"
                         ),
                         license = OrderItemLicense(
                             duration = Duration.Time(10, ChronoUnit.YEARS),
@@ -117,7 +119,8 @@ class OrderResourceTest {
                                 id = "video-id",
                                 type = "STOCK",
                                 title = "video title",
-                                videoReference = "TED_11"
+                                videoReference = "TED_11",
+                                _links = mapOf("fullProjection" to Link("http://super-vid.com", "fullProjection"))
                             ),
                             licenseDuration = "10 Years",
                             licenseTerritory = "Multi Region",

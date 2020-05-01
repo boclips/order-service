@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.hateoas.Link
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.TestFactories
@@ -59,7 +60,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
                 type = VideoTypeResource(id = 1, name = "NEWS"),
-                _links = null
+                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
             )
         )
 
@@ -159,7 +160,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
-                _links = null
+                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
             )
         )
 
@@ -211,7 +212,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
-                _links = null
+                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
             )
         )
         val items = listOf(TestFactories.legacyOrderItem(assetId = videoResource.id!!))

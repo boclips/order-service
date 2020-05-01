@@ -1,21 +1,10 @@
 package com.boclips.orders.infrastructure.orders.converters
 
 import com.boclips.orders.domain.model.Price
-import com.boclips.orders.domain.model.orderItem.ContentPartner
-import com.boclips.orders.domain.model.orderItem.ContentPartnerId
-import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.domain.model.orderItem.Video
-import com.boclips.orders.domain.model.orderItem.VideoId
-import com.boclips.orders.infrastructure.orders.ContentPartnerDocument
-import com.boclips.orders.infrastructure.orders.LicenseDocument
-import com.boclips.orders.infrastructure.orders.OrderDocument
-import com.boclips.orders.infrastructure.orders.OrderItemDocument
-import com.boclips.orders.infrastructure.orders.SourceDocument
-import com.boclips.orders.infrastructure.orders.VideoDocument
-import java.util.Currency
+import com.boclips.orders.domain.model.orderItem.*
+import com.boclips.orders.infrastructure.orders.*
+import java.net.URL
+import java.util.*
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
@@ -34,7 +23,8 @@ object OrderItemDocumentConverter {
             video = VideoDocument(
                 videoServiceId = it.video.videoServiceId.value,
                 title = it.video.title,
-                type = it.video.type
+                type = it.video.type,
+                fullProjectionLink = it.video.fullProjectionLink.toString()
             ),
             license = it.license?.duration?.let { duration ->
                 when (duration) {
@@ -73,7 +63,8 @@ object OrderItemDocumentConverter {
                     videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
                     name = document.source.contentPartner.name,
                     currency = Currency.getInstance(document.source.contentPartner.currency)
-                )
+                ),
+                fullProjectionLink = URL(document.video.fullProjectionLink)
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(

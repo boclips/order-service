@@ -1,6 +1,7 @@
 package com.boclips.orders.infrastructure
 
 import com.boclips.orders.domain.exceptions.MissingCurrencyForContentPartner
+import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
@@ -10,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.Link
 import testsupport.AbstractSpringIntegrationTest
 import java.util.Currency
 
@@ -36,7 +38,9 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partner",
                 contentPartnerId = contentPartner.id,
                 contentPartnerVideoId = "",
-                _links = null
+                _links = mapOf(
+                    "fullProjection" to Link("https://great-vids.com")
+                )
             )
         )
 
@@ -44,6 +48,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
         assertThat(video.title).isEqualTo("hello")
         assertThat(video.contentPartner.name).isEqualTo("our content partner")
+        assertThat(video.fullProjectionLink).describedAs("https://great-vids.com")
+
     }
 
     @Test
@@ -77,6 +83,34 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
         )
 
         assertThrows<MissingCurrencyForContentPartner> {
+            videoProvider.get(videoId = VideoId(value = videoResource.id!!))
+        }
+    }
+
+    @Test
+    fun `exception if full projection link is missing`() {
+        fakeContentPartnersClient.add(
+            ContentPartnerResource(
+                id = "cp-id",
+                name = "our content partner",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
+            )
+        )
+
+        val videoResource = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "creator",
+                contentPartnerId = "cp-id",
+                contentPartnerVideoId = "x",
+                _links = null
+            )
+        )
+
+        assertThrows<MissingVideoFullProjectionLink> {
             videoProvider.get(videoId = VideoId(value = videoResource.id!!))
         }
     }

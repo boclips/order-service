@@ -4,6 +4,7 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import org.springframework.hateoas.Link
 
 data class OrderItemResource(
     val price: PriceResource?,
@@ -35,7 +36,8 @@ data class OrderItemResource(
                     id = item.video.videoServiceId.value,
                     title = item.video.title,
                     type = item.video.type,
-                    videoReference = item.video.contentPartnerVideoId
+                    videoReference = item.video.contentPartnerVideoId,
+                    _links = mapOf( "fullProjection" to Link(item.video.fullProjectionLink.toString(), "fullProjection"))
                 ),
                 licenseDuration = item.license?.let(this::getDurationLabel),
                 licenseTerritory = item.license?.territory,
