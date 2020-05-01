@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.hateoas.Link
-import org.springframework.hateoas.server.LinkBuilder
 import testsupport.AbstractSpringIntegrationTest
 import java.util.Currency
 

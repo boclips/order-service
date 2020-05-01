@@ -8,30 +8,19 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions
-import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.isEmptyOrNullString
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import testsupport.AbstractSpringIntegrationTest
-import testsupport.OrderFactory
-import testsupport.PriceFactory
-import testsupport.TestFactories
-import testsupport.asBackofficeStaff
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import testsupport.*
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Currency
+import java.util.*
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:master-orders.csv")
@@ -83,6 +72,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoReference = "AP-123",
                             title = "A Video",
                             videoType = "STOCK",
+                            fullProjectionLink = "https://videosrus.com",
                             contentPartner = TestFactories.contentPartner(
                                 contentPartnerId = "123",
                                 name = "bob is still here",
@@ -94,15 +84,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), OrderFactory.orderItem(
-                        price = Price(
-                            amount = BigDecimal.valueOf(10),
-                            currency = Currency.getInstance("EUR")
-                        ),
-                        transcriptRequested = false,
-                        video = TestFactories.video(
-                            contentPartner = TestFactories.contentPartner()
-                        )
+                    price = Price(
+                        amount = BigDecimal.valueOf(10),
+                        currency = Currency.getInstance("EUR")
+                    ),
+                    transcriptRequested = false,
+                    video = TestFactories.video(
+                        contentPartner = TestFactories.contentPartner()
                     )
+                )
                 )
             )
         )
@@ -140,6 +130,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video._links.fullProjection.href", equalTo("https://videosrus.com")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.videoReference", equalTo("AP-123")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
@@ -199,6 +190,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             title = "A Video",
                             videoType = "STOCK",
                             videoReference = "AP-123",
+                            fullProjectionLink = "https://videosrus.com",
                             contentPartner = TestFactories.contentPartner(
                                 contentPartnerId = "cp-id",
                                 name = "eman",
@@ -233,6 +225,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://videosrus.com")))
             .andExpect(jsonPath("$.items[0].video.videoReference", equalTo("AP-123")))
             .andExpect(
                 jsonPath(

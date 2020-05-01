@@ -5,18 +5,31 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LicenseDocument
+import com.boclips.orders.infrastructure.orders.OrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
+import testsupport.PriceFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
-import java.util.Currency
+import java.util.*
 
 class OrderItemDocumentConverterTest {
+    @Test
+    fun `two way conversion`() {
+        val orderItem = OrderFactory.orderItem(price = PriceFactory.onePound())
+        val orderDocument = OrderFactory.orderDocument(currency = Currency.getInstance("GBP"))
+
+        val document = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
+        val convertedItem = OrderItemDocumentConverter.toOrderItem(document, orderDocument)
+
+        assertThat(orderItem).isEqualTo(convertedItem)
+    }
+
     @Nested
     inner class ToDocument {
 
@@ -84,6 +97,14 @@ class OrderItemDocumentConverterTest {
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
             assertThat(convertedItem.price).isNull()
+        }
+
+        @Test
+        fun `converts full projection link to document`() {
+            val orderItem = OrderFactory.orderItem(video = TestFactories.video(fullProjectionLink = "https://ohhai.com"))
+
+            val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
+            assertThat(convertedItem.video.fullProjectionLink).describedAs("https://ohhai.com")
         }
     }
 

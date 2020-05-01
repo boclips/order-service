@@ -4,6 +4,7 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import org.springframework.hateoas.Link
 
 data class OrderItemResource(
     val price: PriceResource?,
@@ -14,7 +15,8 @@ data class OrderItemResource(
     val licenseTerritory: String?,
     val trim: String?,
     val notes: String?,
-    val id: String
+    val id: String,
+    val _links: Map<String, Link>?
 ) {
     companion object {
         fun fromOrderItem(item: OrderItem): OrderItemResource =
@@ -39,7 +41,8 @@ data class OrderItemResource(
                 ),
                 licenseDuration = item.license?.let(this::getDurationLabel),
                 licenseTerritory = item.license?.territory,
-                notes = item.notes
+                notes = item.notes,
+                _links = TODO()
             )
 
         private fun getDurationLabel(license: OrderItemLicense): String {
