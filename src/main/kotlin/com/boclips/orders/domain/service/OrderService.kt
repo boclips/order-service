@@ -9,6 +9,8 @@ import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.domain.service.currency.FxRateService
+import com.boclips.videos.api.httpclient.VideosClient
+import mu.KLogging
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.time.ZoneId
@@ -19,13 +21,23 @@ import java.util.Currency
 class OrderService(
     val ordersRepository: OrdersRepository,
     val manifestConverter: ManifestConverter,
-    val fxRateService: FxRateService
+    val fxRateService: FxRateService,
+    val videosClient: VideosClient
 ) {
+    companion object : KLogging()
 
-    fun createIfNonExistent(order: Order) {
-        val retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId) ?: ordersRepository.save(order)
+    fun createIfNonExistent(order: Order): Order {
+        var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId)
+            if (retrievedOrder == null) {
+                try {
+                    order.items.forEach{ videosClient.requestVideoCaptions(it.video.videoServiceId.value) }
+                } catch (e: Exception) {
+                    logger.warn { "Could not request transcripts because ${e.message}. The order will be processed as usual." }
+                }
+                retrievedOrder = ordersRepository.save(order)
+            }
 
-        updateStatus(orderId = retrievedOrder.id)
+        return updateStatus(orderId = retrievedOrder.id)
     }
 
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()

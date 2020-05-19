@@ -5,6 +5,7 @@ import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.video.VideoResource
 import org.assertj.core.api.Assertions.assertThat
@@ -39,7 +40,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 contentPartnerId = contentPartner.id,
                 contentPartnerVideoId = "",
                 _links = mapOf(
-                    "fullProjection" to Link("https://great-vids.com")
+                    "fullProjection" to HateoasLink("https://great-vids.com")
                 )
             )
         )

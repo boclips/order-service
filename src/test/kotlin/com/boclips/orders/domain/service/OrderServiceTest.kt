@@ -6,6 +6,8 @@ import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
+import com.boclips.videos.api.request.VideoServiceApiFactory
+import com.boclips.videos.api.response.video.CaptionStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -50,6 +52,34 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
 
         assertThat(retrievedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+    }
+
+    @Test
+    fun `a created order requests captions`() {
+        val video1 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
+        val video2 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
+        val originalOrder = OrderFactory.order(
+            status = OrderStatus.INCOMPLETED,
+            items = listOf(
+                OrderFactory.orderItem(
+                    video = TestFactories.video(videoServiceId = video1.id!!),
+                    price = PriceFactory.tenDollars(),
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                ),
+                OrderFactory.orderItem(
+                    video = TestFactories.video(videoServiceId = video2.id!!),
+                    price = PriceFactory.tenDollars(),
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                )
+            )
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        assertThat(fakeVideoClient.getVideo(video1.id!!).captionStatus)
+            .isEqualTo(CaptionStatus.REQUESTED)
+        assertThat(fakeVideoClient.getVideo(video2.id!!).captionStatus)
+            .isEqualTo(CaptionStatus.REQUESTED)
     }
 
     @Test

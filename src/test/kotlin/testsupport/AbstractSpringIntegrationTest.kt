@@ -7,6 +7,7 @@ import com.boclips.orders.infrastructure.orders.TestMongoProcess
 import com.boclips.videos.api.httpclient.test.fakes.ContentPartnersClientFake
 import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.video.VideoResource
 import de.flapdoodle.embed.mongo.MongodProcess
@@ -88,7 +89,7 @@ abstract class AbstractSpringIntegrationTest {
                 playback = StreamPlaybackResource(id = "playback-id", referenceId = "ref-id"),
                 releasedOn = LocalDate.now(),
                 createdBy = "creat0r",
-                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
+                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
 

@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
+import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
@@ -60,7 +61,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
                 type = VideoTypeResource(id = 1, name = "NEWS"),
-                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
+                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
 
@@ -160,7 +161,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
-                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
+                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
 
@@ -212,7 +213,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 contentPartnerId = "ted-id",
                 contentPartnerVideoId = "",
-                _links = mapOf("fullProjection" to Link("https://great-vids.com"))
+                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
         val items = listOf(TestFactories.legacyOrderItem(assetId = videoResource.id!!))
