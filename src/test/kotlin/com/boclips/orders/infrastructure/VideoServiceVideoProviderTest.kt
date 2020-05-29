@@ -6,15 +6,14 @@ import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.hateoas.Link
 import testsupport.AbstractSpringIntegrationTest
-import java.util.Currency
+import java.util.*
 
 internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -22,8 +21,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get a video`() {
-        val contentPartner = fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        val contentPartner = fakeChannelsClient.add(
+            ChannelResource(
                 id = "cp-id",
                 name = "our content partner",
                 currency = Currency.getInstance("GBP").currencyCode,
@@ -62,8 +61,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `exception if content partner has no currency defined`() {
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = "cp-id",
                 name = "our content partner",
                 currency = null,
@@ -90,8 +89,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `exception if full projection link is missing`() {
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = "cp-id",
                 name = "our content partner",
                 currency = Currency.getInstance("GBP").currencyCode,

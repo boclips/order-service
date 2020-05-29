@@ -1,6 +1,6 @@
 package com.boclips.orders.config
 
-import com.boclips.videos.api.httpclient.ContentPartnersClient
+import com.boclips.videos.api.httpclient.ChannelsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.ServiceAccountCredentials
 import com.boclips.videos.api.httpclient.helper.ServiceAccountTokenFactory
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class VideoClientConfig {
     @Bean
-    fun contentPartnersClient(properties: VideoServiceClientProperties): ContentPartnersClient {
-        return ContentPartnersClient.create(
+    fun channelsClient(properties: VideoServiceClientProperties): ChannelsClient {
+        return ChannelsClient.create(
             apiUrl = properties.baseUrl,
             tokenFactory = ServiceAccountTokenFactory(
                 ServiceAccountCredentials(

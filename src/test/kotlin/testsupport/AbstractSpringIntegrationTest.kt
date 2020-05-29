@@ -4,11 +4,11 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
-import com.boclips.videos.api.httpclient.test.fakes.ContentPartnersClientFake
+import com.boclips.videos.api.httpclient.test.fakes.ChannelsClientFake
 import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.VideoResource
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.hateoas.Link
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -53,7 +52,7 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var fakeVideoClient: VideosClientFake
 
     @Autowired
-    lateinit var fakeContentPartnersClient: ContentPartnersClientFake
+    lateinit var fakeChannelsClient: ChannelsClientFake
 
     @Autowired
     lateinit var legacyOrdersRepository: LegacyOrdersRepository
@@ -70,7 +69,7 @@ abstract class AbstractSpringIntegrationTest {
     @AfterEach
     fun tearDown() {
         fakeVideoClient.clear()
-        fakeContentPartnersClient.clear()
+        fakeChannelsClient.clear()
         eventBus.clearState()
     }
 
@@ -93,8 +92,8 @@ abstract class AbstractSpringIntegrationTest {
             )
         )
 
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = contentPartnerId,
                 name = contentPartnerName,
                 currency = contentPartnerCurrency?.currencyCode,

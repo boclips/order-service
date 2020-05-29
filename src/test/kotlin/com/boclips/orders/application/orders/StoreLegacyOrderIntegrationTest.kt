@@ -5,20 +5,19 @@ import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.api.response.HateoasLink
-import com.boclips.videos.api.response.contentpartner.ContentPartnerResource
+import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.hateoas.Link
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.Currency
+import java.util.*
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
@@ -43,8 +42,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             status = "CONFIRMED"
         )
 
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = "ted-id",
                 name = "ted",
                 currency = Currency.getInstance("GBP").currencyCode,
@@ -144,8 +143,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         val legacyOrder = TestFactories.legacyOrder()
         val genericUser = TestFactories.legacyOrderUser()
 
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = "ted-id",
                 name = "ted",
                 currency = Currency.getInstance("GBP").currencyCode,
@@ -196,8 +195,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val genericUser = TestFactories.legacyOrderUser()
 
-        fakeContentPartnersClient.add(
-            ContentPartnerResource(
+        fakeChannelsClient.add(
+            ChannelResource(
                 id = "ted-id",
                 name = "ted",
                 currency = Currency.getInstance("GBP").currencyCode,
