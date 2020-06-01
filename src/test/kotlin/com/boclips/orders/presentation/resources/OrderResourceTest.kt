@@ -64,8 +64,8 @@ class OrderResourceTest {
                             videoType = "STOCK",
                             title = "video title",
                             videoReference = "TED_11",
-                            contentPartner = TestFactories.contentPartner(
-                                contentPartnerId = "paper",
+                            channel = TestFactories.channel(
+                                channelId = "paper",
                                 name = "cup",
                                 currency = Currency.getInstance("GBP")
                             ),

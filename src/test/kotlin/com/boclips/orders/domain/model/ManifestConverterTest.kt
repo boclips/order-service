@@ -23,16 +23,16 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
     fun `Convert orders into a manifest`() {
         val orderItem1 = OrderFactory.orderItem(
             price = PriceFactory.onePound(),
-            video = TestFactories.video(contentPartner = TestFactories.contentPartner(currency = Currency.getInstance("USD")))
+            video = TestFactories.video(channel = TestFactories.channel(currency = Currency.getInstance("USD")))
         )
         val orderItem2 = OrderFactory.orderItem(
             price = PriceFactory.tenPounds(), video = TestFactories.video(
-                contentPartner = TestFactories.contentPartner(currency = Currency.getInstance("USD"))
+                channel = TestFactories.channel(currency = Currency.getInstance("USD"))
             )
         )
         val orderItem3 = OrderFactory.orderItem(
             price = PriceFactory.zeroEuros(),
-            video = TestFactories.video(contentPartner = TestFactories.contentPartner(currency = Currency.getInstance("USD")))
+            video = TestFactories.video(channel = TestFactories.channel(currency = Currency.getInstance("USD")))
         )
         val orders = arrayOf(
             OrderFactory.order(

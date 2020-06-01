@@ -73,8 +73,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             title = "A Video",
                             videoType = "STOCK",
                             fullProjectionLink = "https://videosrus.com",
-                            contentPartner = TestFactories.contentPartner(
-                                contentPartnerId = "123",
+                            channel = TestFactories.channel(
+                                channelId = "123",
                                 name = "bob is still here",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -90,7 +90,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     ),
                     transcriptRequested = false,
                     video = TestFactories.video(
-                        contentPartner = TestFactories.contentPartner()
+                        channel = TestFactories.channel()
                     )
                 )
                 )
@@ -191,8 +191,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoType = "STOCK",
                             videoReference = "AP-123",
                             fullProjectionLink = "https://videosrus.com",
-                            contentPartner = TestFactories.contentPartner(
-                                contentPartnerId = "cp-id",
+                            channel = TestFactories.channel(
+                                channelId = "cp-id",
                                 name = "eman",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -281,7 +281,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video title",
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 name = "a content partner",
                                 currency = Currency.getInstance("USD")
                             )
@@ -333,7 +333,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video title",
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 name = "a content partner"
                             )
                         )
@@ -360,9 +360,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `gets error when CP has no currency`() {
         this.defaultVideoClientResponse(
             videoId = "5c54d6d3d8eafeecae206b6e",
-            contentPartnerId = "content-partner-without-currency",
-            contentPartnerName = "AP",
-            contentPartnerCurrency = null
+            channelId = "content-partner-without-currency",
+            channelName = "AP",
+            channelCurrency = null
         )
 
         mockMvc.perform(
@@ -374,7 +374,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath(
                     "$.message",
-                    equalTo("Order 5d6cda057f0dc0dd363841ed: Clip ID error: Content partner 'AP' has no currency defined")
+                    equalTo("Order 5d6cda057f0dc0dd363841ed: Clip ID error: Channel 'AP' has no currency defined")
                 )
             )
             .andExpect(jsonPath("$.path", equalTo("/v1/orders")))

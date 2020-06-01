@@ -2,8 +2,8 @@ package com.boclips.orders.domain.model.orderItem
 
 import java.util.Currency
 
-data class ContentPartner(
-    val videoServiceId: ContentPartnerId,
+data class Channel(
+    val videoServiceId: ChannelId,
     val name: String,
     val currency: Currency
 )

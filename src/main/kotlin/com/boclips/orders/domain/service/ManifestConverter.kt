@@ -25,7 +25,7 @@ class ManifestConverter() {
                     fxRate = fxRateService.getRate(
                         orderItem.price.currency
                             ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid currency. Order item is $orderItem"),
-                        orderItem.video.contentPartner.currency
+                        orderItem.video.channel.currency
                     )
                 )
             }

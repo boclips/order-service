@@ -12,12 +12,12 @@ object OrderItemDocumentConverter {
             price = it.price.amount,
             transcriptRequested = it.transcriptRequested,
             source = SourceDocument(
-                contentPartner = ContentPartnerDocument(
-                    videoServiceContentPartnerId = it.video.contentPartner.videoServiceId.value,
-                    name = it.video.contentPartner.name,
-                    currency = it.video.contentPartner.currency.currencyCode
+                channel = ChannelDocument(
+                    videoServiceChannelId = it.video.channel.videoServiceId.value,
+                    name = it.video.channel.name,
+                    currency = it.video.channel.currency.currencyCode
                 ),
-                videoReference = it.video.contentPartnerVideoId
+                videoReference = it.video.channelVideoId
             ),
             trim = toTrimmingString(it.trim),
             video = VideoDocument(
@@ -58,11 +58,11 @@ object OrderItemDocumentConverter {
                 videoServiceId = VideoId(value = document.video.videoServiceId),
                 title = document.video.title,
                 type = document.video.type,
-                contentPartnerVideoId = document.source.videoReference,
-                contentPartner = ContentPartner(
-                    videoServiceId = ContentPartnerId(value = document.source.contentPartner.videoServiceContentPartnerId),
-                    name = document.source.contentPartner.name,
-                    currency = Currency.getInstance(document.source.contentPartner.currency)
+                channelVideoId = document.source.videoReference,
+                channel = Channel(
+                    videoServiceId = ChannelId(value = document.source.channel.videoServiceChannelId),
+                    name = document.source.channel.name,
+                    currency = Currency.getInstance(document.source.channel.currency)
                 ),
                 fullProjectionLink = URL(document.video.fullProjectionLink)
             ),

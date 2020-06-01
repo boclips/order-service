@@ -36,7 +36,7 @@ class ExportAllOrdersToCsvTest {
                             title = "Carbon Dioxide and Climate Change",
                             videoServiceId = "5c54d5e8d8eafeecae1ff471",
                             videoReference = "INT_LUMPTL_333_006",
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 name = "1 Minute in a Museum",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -51,7 +51,7 @@ class ExportAllOrdersToCsvTest {
                             title = "Dispersal of the Tribes, The",
                             videoServiceId = "5c54d5f4d8eafeecae1ffba5",
                             videoReference = "INT_UN_28K_004",
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 name = "1 Minute in a Museum",
                                 currency = Currency.getInstance("GBP")
                             )
@@ -66,7 +66,7 @@ class ExportAllOrdersToCsvTest {
                             title = "Connecting Despite the Loss of Sight or Hearing",
                             videoServiceId = "5c54d5efd8eafeecae1ff874",
                             videoReference = "INT_IO_08K_011",
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 name = "A content partner",
                                 currency = Currency.getInstance("SGD")
                             )

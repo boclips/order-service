@@ -194,7 +194,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                     OrderFactory.orderItem(
                         price = PriceFactory.tenDollars(),
                         video = TestFactories.video(
-                            contentPartner = TestFactories.contentPartner(
+                            channel = TestFactories.channel(
                                 currency = Currency.getInstance(
                                     "SGD"
                                 )

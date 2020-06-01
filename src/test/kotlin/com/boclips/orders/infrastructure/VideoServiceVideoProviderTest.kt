@@ -1,6 +1,6 @@
 package com.boclips.orders.infrastructure
 
-import com.boclips.orders.domain.exceptions.MissingCurrencyForContentPartner
+import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
 import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.orderItem.VideoId
@@ -21,7 +21,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can get a video`() {
-        val contentPartner = fakeChannelsClient.add(
+        val channel = fakeChannelsClient.add(
             ChannelResource(
                 id = "cp-id",
                 name = "our content partner",
@@ -36,7 +36,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partner",
-                contentPartnerId = contentPartner.id,
+                contentPartnerId = channel.id,
                 contentPartnerVideoId = "",
                 _links = mapOf(
                     "fullProjection" to HateoasLink("https://great-vids.com")
@@ -47,7 +47,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
         val video = videoProvider.get(videoId = VideoId(value = videoId.id!!))
 
         assertThat(video.title).isEqualTo("hello")
-        assertThat(video.contentPartner.name).isEqualTo("our content partner")
+        assertThat(video.channel.name).isEqualTo("our content partner")
         assertThat(video.fullProjectionLink).describedAs("https://great-vids.com")
 
     }
@@ -82,7 +82,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThrows<MissingCurrencyForContentPartner> {
+        assertThrows<MissingCurrencyForChannel> {
             videoProvider.get(videoId = VideoId(value = videoResource.id!!))
         }
     }

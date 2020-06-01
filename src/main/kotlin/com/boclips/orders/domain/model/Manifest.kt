@@ -17,6 +17,6 @@ data class ManifestItem(
     val fxRate: BigDecimal
 ) {
     val convertedSalesAmount: Price
-        get() = Price(salePrice.amount?.times(fxRate), video.contentPartner.currency)
+        get() = Price(salePrice.amount?.times(fxRate), video.channel.currency)
 }
 

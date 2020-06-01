@@ -1,11 +1,11 @@
 package com.boclips.orders.infrastructure
 
-import com.boclips.orders.domain.exceptions.ContentPartnerNotFoundException
-import com.boclips.orders.domain.exceptions.MissingCurrencyForContentPartner
+import com.boclips.orders.domain.exceptions.ChannelNotFoundException
+import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
 import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
-import com.boclips.orders.domain.model.orderItem.ContentPartner
-import com.boclips.orders.domain.model.orderItem.ContentPartnerId
+import com.boclips.orders.domain.model.orderItem.Channel
+import com.boclips.orders.domain.model.orderItem.ChannelId
 import com.boclips.orders.domain.model.orderItem.Video
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
@@ -33,15 +33,15 @@ class VideoServiceVideoProvider(
             videoServiceId = VideoId(value = videoResource.id ?: throw IllegalStateException("Missing video for id $videoId")),
             title = videoResource.title ?: throw IllegalStateException("Missing title for video $videoId"),
             type = videoResource.type?.name.toString(),
-            contentPartnerVideoId = videoResource.contentPartnerVideoId ?: throw IllegalStateException("Missing content partner video id for video $videoId"),
-            contentPartner = ContentPartner(
-                videoServiceId = ContentPartnerId(value = videoResource.contentPartnerId
+            channelVideoId = videoResource.contentPartnerVideoId ?: throw IllegalStateException("Missing content partner video id for video $videoId"),
+            channel = Channel(
+                videoServiceId = ChannelId(value = videoResource.contentPartnerId
                     ?: throw IllegalStateException("Missing content partner id for video $videoId")
                 ),
                 name = videoResource.createdBy ?: throw IllegalStateException("Missing 'created by' for video $videoId"),
                 currency = channel.currency
                     ?.let { Currency.getInstance(channel.currency) }
-                    ?: throw MissingCurrencyForContentPartner(contentPartnerName = channel.name)
+                    ?: throw MissingCurrencyForChannel(channel = channel.name)
 
             ),
             fullProjectionLink = URL(videoResource._links?.get("fullProjection")?.href ?: throw MissingVideoFullProjectionLink(videoId))
@@ -52,7 +52,7 @@ class VideoServiceVideoProvider(
         return try {
             channelsClient.getChannel(videoResource.contentPartnerId!!)
         } catch (e: Exception) {
-            throw ContentPartnerNotFoundException(ContentPartnerId(videoResource.contentPartnerId ?: ""))
+            throw ChannelNotFoundException(ChannelId(videoResource.contentPartnerId ?: ""))
         }
     }
 

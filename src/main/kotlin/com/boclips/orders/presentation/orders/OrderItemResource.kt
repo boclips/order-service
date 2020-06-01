@@ -24,9 +24,9 @@ data class OrderItemResource(
                 price = PriceResource.fromPrice(item.price),
                 transcriptRequested = item.transcriptRequested,
                 contentPartner = ContentPartnerResource(
-                    item.video.contentPartner.videoServiceId.value,
-                    item.video.contentPartner.name,
-                    item.video.contentPartner.currency.currencyCode
+                    item.video.channel.videoServiceId.value,
+                    item.video.channel.name,
+                    item.video.channel.currency.currencyCode
                 ),
                 trim = when (item.trim) {
                     is TrimRequest.WithTrimming -> item.trim.label
@@ -36,7 +36,7 @@ data class OrderItemResource(
                     id = item.video.videoServiceId.value,
                     title = item.video.title,
                     type = item.video.type,
-                    videoReference = item.video.contentPartnerVideoId,
+                    videoReference = item.video.channelVideoId,
                     _links = mapOf( "fullProjection" to Link(item.video.fullProjectionLink.toString(), "fullProjection"))
                 ),
                 licenseDuration = item.license?.let(this::getDurationLabel),

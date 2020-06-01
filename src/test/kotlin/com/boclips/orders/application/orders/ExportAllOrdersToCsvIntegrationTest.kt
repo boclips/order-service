@@ -26,7 +26,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
                 OrderFactory.orderItem(
                     price = PriceFactory.tenPounds(),
                     video = TestFactories.video(
-                        contentPartner = TestFactories.contentPartner(
+                        channel = TestFactories.channel(
                             currency = Currency.getInstance(
                                 "AUD"
                             )

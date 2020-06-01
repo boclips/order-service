@@ -128,14 +128,14 @@ object TestFactories {
             .build()
     }
 
-    fun contentPartner(
+    fun channel(
         name: String = "Flux",
-        contentPartnerId: String = "video-service-id",
+        channelId: String = "video-service-id",
         currency: Currency = Currency.getInstance("USD")
-    ): ContentPartner {
-        return ContentPartner(
+    ): Channel {
+        return Channel(
             name = name,
-            videoServiceId = ContentPartnerId(value = contentPartnerId),
+            videoServiceId = ChannelId(value = channelId),
             currency = currency
         )
     }
@@ -145,15 +145,15 @@ object TestFactories {
         title: String = "joshua tree",
         videoType: String = "INSTRUCTIONAL_CLIPS",
         videoReference: String = "ted_1234",
-        contentPartner: ContentPartner = contentPartner(),
+        channel: Channel = channel(),
         fullProjectionLink: String = "https://great-vids.com"
     ): Video {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
             title = title,
             type = videoType.toString(),
-            contentPartnerVideoId = videoReference,
-            contentPartner = contentPartner,
+            channelVideoId = videoReference,
+            channel = channel,
             fullProjectionLink = URL(fullProjectionLink)
         )
     }
@@ -249,23 +249,23 @@ object TestFactories {
     }
 
     fun sourceDocument(
-        contentPartner: ContentPartnerDocument = contentPartnerDocument(),
+        channel: ChannelDocument = channelDocument(),
         videoReference: String = "12345"
     ): SourceDocument {
         return SourceDocument(
-            contentPartner = contentPartner,
+            channel = channel,
             videoReference = videoReference
         )
     }
 
-    fun contentPartnerDocument(
+    fun channelDocument(
         name: String = "hello",
         referenceId: String = "id-yo",
         currency: String = "USD"
-    ): ContentPartnerDocument {
-        return ContentPartnerDocument(
+    ): ChannelDocument {
+        return ChannelDocument(
             name = name,
-            videoServiceContentPartnerId = referenceId,
+            videoServiceChannelId = referenceId,
             currency = currency
         )
     }

@@ -75,16 +75,16 @@ abstract class AbstractSpringIntegrationTest {
 
     fun defaultVideoClientResponse(
         videoId: String = "123456789012345678901234",
-        contentPartnerId: String = "content-partner-id",
-        contentPartnerName: String = "our-content-partner",
-        contentPartnerCurrency: Currency? = Currency.getInstance("GBP")
+        channelId: String = "content-partner-id",
+        channelName: String = "our-content-partner",
+        channelCurrency: Currency? = Currency.getInstance("GBP")
     ) {
         fakeVideoClient.add(
             VideoResource(
                 id = videoId,
                 title = "hippos are cool",
                 contentPartnerVideoId = "abc-123",
-                contentPartnerId = contentPartnerId,
+                contentPartnerId = channelId,
                 playback = StreamPlaybackResource(id = "playback-id", referenceId = "ref-id"),
                 releasedOn = LocalDate.now(),
                 createdBy = "creat0r",
@@ -94,9 +94,9 @@ abstract class AbstractSpringIntegrationTest {
 
         fakeChannelsClient.add(
             ChannelResource(
-                id = contentPartnerId,
-                name = contentPartnerName,
-                currency = contentPartnerCurrency?.currencyCode,
+                id = channelId,
+                name = channelName,
+                currency = channelCurrency?.currencyCode,
                 distributionMethods = emptySet(),
                 official = true
             )
