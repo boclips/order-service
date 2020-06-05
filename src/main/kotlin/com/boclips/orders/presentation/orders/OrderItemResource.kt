@@ -9,7 +9,7 @@ import org.springframework.hateoas.Link
 data class OrderItemResource(
     val price: PriceResource?,
     val transcriptRequested: Boolean,
-    val contentPartner: ContentPartnerResource,
+    val channel: ChannelResource,
     val video: VideoResource,
     val licenseDuration: String?,
     val licenseTerritory: String?,
@@ -23,7 +23,7 @@ data class OrderItemResource(
                 id = item.id,
                 price = PriceResource.fromPrice(item.price),
                 transcriptRequested = item.transcriptRequested,
-                contentPartner = ContentPartnerResource(
+                channel = ChannelResource(
                     item.video.channel.videoServiceId.value,
                     item.video.channel.name,
                     item.video.channel.currency.currencyCode

@@ -8,7 +8,7 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.presentation.OrdersController
-import com.boclips.orders.presentation.orders.ContentPartnerResource
+import com.boclips.orders.presentation.orders.ChannelResource
 import com.boclips.orders.presentation.orders.OrderItemResource
 import com.boclips.orders.presentation.orders.OrderResource
 import com.boclips.orders.presentation.orders.PriceResource
@@ -109,7 +109,7 @@ class OrderResourceTest {
                                 currency = Currency.getInstance("EUR")
                             ),
                             transcriptRequested = false,
-                            contentPartner = ContentPartnerResource(
+                            channel = ChannelResource(
                                 id = "paper",
                                 name = "cup",
                                 currency = "GBP"

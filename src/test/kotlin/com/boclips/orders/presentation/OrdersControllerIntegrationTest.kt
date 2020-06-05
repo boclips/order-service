@@ -133,9 +133,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video._links.fullProjection.href", equalTo("https://videosrus.com")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.videoReference", equalTo("AP-123")))
 
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.id", equalTo("123")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.name", equalTo("bob is still here")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].contentPartner.currency", equalTo("GBP")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].channel.id", equalTo("123")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].channel.name", equalTo("bob is still here")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].channel.currency", equalTo("GBP")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("EUR 10.00")))
             .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
@@ -239,9 +239,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
             )
 
-            .andExpect(jsonPath("$.items[0].contentPartner.id", equalTo("cp-id")))
-            .andExpect(jsonPath("$.items[0].contentPartner.name", equalTo("eman")))
-            .andExpect(jsonPath("$.items[0].contentPartner.currency", equalTo("GBP")))
+            .andExpect(jsonPath("$.items[0].channel.id", equalTo("cp-id")))
+            .andExpect(jsonPath("$.items[0].channel.name", equalTo("eman")))
+            .andExpect(jsonPath("$.items[0].channel.currency", equalTo("GBP")))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
     }

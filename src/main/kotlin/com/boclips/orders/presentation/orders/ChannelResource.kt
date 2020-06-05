@@ -1,6 +1,6 @@
 package com.boclips.orders.presentation.orders
 
-data class ContentPartnerResource(
+data class ChannelResource(
     val id: String,
     val name: String,
     val currency: String
