@@ -24,7 +24,6 @@ class EventConverterTest {
     fun `convert order`() {
         val order = OrderFactory.order(
             id = OrderId("the-id"),
-            status = OrderStatus.COMPLETED,
             createdAt = ZonedDateTime.parse("2018-10-05T12:13:14Z").toInstant(),
             updatedAt = ZonedDateTime.parse("2019-10-05T12:13:14Z").toInstant(),
             orderOrganisation = OrderOrganisation(name = "Pearson"),

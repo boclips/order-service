@@ -57,14 +57,6 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `order defaults to processing`() {
-            val csvOrder = TestFactories.csvOrderItemMetadata()
-            val orders = toSuccessfulOrders(csvOrder)
-
-            assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
-        }
-
-        @Test
         fun `sets order request date if present`() {
             val csvOrderItem = TestFactories.csvOrderItemMetadata(
                 requestDate = "01/01/2000"

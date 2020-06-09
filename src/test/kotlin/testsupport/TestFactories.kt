@@ -1,22 +1,49 @@
 package testsupport
 
-import com.boclips.eventbus.events.order.*
-import com.boclips.orders.domain.model.*
+import com.boclips.eventbus.events.order.LegacyOrder
+import com.boclips.eventbus.events.order.LegacyOrderExtraFields
+import com.boclips.eventbus.events.order.LegacyOrderItem
+import com.boclips.eventbus.events.order.LegacyOrderNextStatus
+import com.boclips.eventbus.events.order.LegacyOrderOrganisation
+import com.boclips.eventbus.events.order.LegacyOrderSubmitted
+import com.boclips.eventbus.events.order.LegacyOrderUser
+import com.boclips.orders.domain.model.Manifest
+import com.boclips.orders.domain.model.ManifestItem
 import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.orderItem.*
+import com.boclips.orders.domain.model.OrderId
+import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderUser
+import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.Channel
+import com.boclips.orders.domain.model.orderItem.ChannelId
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.infrastructure.orders.*
+import com.boclips.orders.domain.model.orderItem.OrderItemLicense
+import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.domain.model.orderItem.Video
+import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.infrastructure.orders.ChannelDocument
+import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
+import com.boclips.orders.infrastructure.orders.LicenseDocument
+import com.boclips.orders.infrastructure.orders.OrderDocument
+import com.boclips.orders.infrastructure.orders.OrderItemDocument
+import com.boclips.orders.infrastructure.orders.OrderUserDocument
+import com.boclips.orders.infrastructure.orders.SourceDocument
+import com.boclips.orders.infrastructure.orders.VideoDocument
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
 import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URL
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.Month
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Currency
+import java.util.UUID
 
 object TestFactories {
 
@@ -347,19 +374,26 @@ object PriceFactory {
 }
 
 object OrderFactory {
+
+    fun completeOrder(items: List<OrderItem> = listOf(orderItem())) = order(items = items)
+    fun incompleteOrder(items: List<OrderItem> = listOf(orderItem(license = null))) = order(
+        items = items
+    )
+
+    fun cancelledOrder() = order(cancelled = true)
     fun order(
         id: OrderId = OrderId(value = aValidId()),
         legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
         requestingUser: OrderUser = completeOrderUser(),
         authorisingUser: OrderUser = completeOrderUser(),
-        status: OrderStatus = OrderStatus.INCOMPLETED,
+        cancelled: Boolean = false,
         createdAt: Instant = Instant.now(),
         updatedAt: Instant = Instant.now(),
         items: List<OrderItem> = emptyList(),
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         isThroughPlatform: Boolean = true,
-        currency: Currency? = null,
+        currency: Currency? = items.firstOrNull()?.price?.currency,
         fxRateToGbp: BigDecimal? = null
     ): Order {
         return Order(
@@ -370,11 +404,11 @@ object OrderFactory {
             requestingUser = requestingUser,
             authorisingUser = authorisingUser,
             isbnOrProductNumber = isbnOrProductNumber,
-            status = status,
+            cancelled = cancelled,
             items = items,
             organisation = orderOrganisation,
             isThroughPlatform = isThroughPlatform,
-            currency = currency ?: items.firstOrNull()?.price?.currency,
+            currency = currency,
             fxRateToGbp = fxRateToGbp
         )
     }
@@ -382,7 +416,7 @@ object OrderFactory {
     fun orderDocument(
         id: ObjectId = ObjectId(),
         legacyOrderId: String = "legacyOrderId",
-        status: String = "COMPLETED",
+        cancelled: Boolean = false,
         authorisingUser: OrderUserDocument? = null,
         requestingUser: OrderUserDocument = TestFactories.orderUserDocument(),
         updatedAt: Instant = Instant.now(),
@@ -397,7 +431,7 @@ object OrderFactory {
         return OrderDocument(
             id = id,
             legacyOrderId = legacyOrderId,
-            status = status,
+            cancelled = cancelled,
             authorisingUser = authorisingUser,
             requestingUser = requestingUser,
             updatedAt = updatedAt,

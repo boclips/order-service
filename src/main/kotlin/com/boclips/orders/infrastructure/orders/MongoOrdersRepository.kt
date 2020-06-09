@@ -65,9 +65,9 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
         }
 
         Do exhaustive when (orderUpdateCommand) {
-            is OrderUpdateCommand.ReplaceStatus -> collection().updateOne(
+            is OrderUpdateCommand.SetOrderCancellation -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),
-                set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())
+                set(OrderDocument::cancelled, orderUpdateCommand.cancelled)
             )
             is OrderUpdateCommand.UpdateOrderCurrency -> collection().updateOne(
                 OrderDocument::id eq ObjectId(orderUpdateCommand.orderId.value),

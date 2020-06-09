@@ -11,7 +11,7 @@ import java.util.Currency
 class Order(
     val id: OrderId,
     val legacyOrderId: String,
-    val status: OrderStatus,
+    val cancelled: Boolean,
     val authorisingUser: OrderUser?,
     val requestingUser: OrderUser,
     val organisation: OrderOrganisation?,
@@ -35,6 +35,16 @@ class Order(
     val totalPrice: BigDecimal
         get() = this.orderItems.sumByBigDecimal { it.price.amount ?: BigDecimal.ZERO }
 
+    val status: OrderStatus
+        get() = when {
+            cancelled -> OrderStatus.CANCELLED
+            isComplete() -> OrderStatus.COMPLETED
+            else -> OrderStatus.INCOMPLETED
+        }
+
+    private fun isComplete() =
+        this.currency != null
+            && this.items.all { it.price.amount != null && it.license != null }
     init {
         items.forEach { this.addItem(it) }
     }
@@ -89,12 +99,12 @@ class Order(
 
     class Builder {
         private lateinit var legacyOrderId: String
-        private lateinit var status: OrderStatus
         private lateinit var requestingUser: OrderUser
         private lateinit var updatedAt: Instant
         private lateinit var createdAt: Instant
         private lateinit var items: List<OrderItem>
 
+        private var cancelled: Boolean = false
         private var isThroughPlatform: Boolean = true
 
         private var authorisingUser: OrderUser? = null
@@ -104,7 +114,7 @@ class Order(
         private var fxRateToGbp: BigDecimal? = null
 
         fun legacyOrderId(legacyOrderId: String) = apply { this.legacyOrderId = legacyOrderId }
-        fun status(status: OrderStatus) = apply { this.status = status }
+        fun cancelled(cancelled: Boolean) = apply { this.cancelled = cancelled }
         fun authorisingUser(authorisingUser: OrderUser?) = apply { this.authorisingUser = authorisingUser }
         fun requestingUser(requestingUser: OrderUser) = apply { this.requestingUser = requestingUser }
         fun organisation(organisation: OrderOrganisation?) = apply { this.organisation = organisation }
@@ -121,7 +131,7 @@ class Order(
         fun build(): Order = Order(
             id = OrderId(ObjectId().toHexString()),
             legacyOrderId = legacyOrderId,
-            status = status,
+            cancelled = cancelled,
             authorisingUser = authorisingUser,
             requestingUser = requestingUser,
             organisation = organisation,

@@ -9,7 +9,7 @@ import java.util.Currency
 data class OrderDocument(
     @BsonId val id: ObjectId,
     val legacyOrderId: String,
-    val status: String,
+    val cancelled: Boolean,
     val authorisingUser: OrderUserDocument? = null,
     val requestingUser: OrderUserDocument,
     val updatedAt: Instant,

@@ -46,7 +46,6 @@ class OrderResourceTest {
                     email = "creator@email.com"
                 ),
                 orderOrganisation = OrderOrganisation(name = "Auth Test Org"),
-                status = OrderStatus.COMPLETED,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),

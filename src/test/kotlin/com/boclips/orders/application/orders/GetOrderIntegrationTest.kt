@@ -26,7 +26,6 @@ class GetOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val order = OrderFactory.order(
             id = OrderId(legacyOrder.id),
-            status = OrderStatus.INCOMPLETED,
             createdAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             updatedAt = Instant.from(LocalDate.of(1995, 1, 1).atStartOfDay(ZoneOffset.UTC)),
             items = listOf(OrderFactory.orderItem())

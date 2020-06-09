@@ -74,13 +74,13 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update an order status`() {
+    fun `can cancel an order`() {
         val order = OrderFactory.order(legacyOrderId = "legacy-id")
         ordersRepository.save(order = order)
 
-        ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
+        ordersRepository.update(OrderUpdateCommand.SetOrderCancellation(orderId = order.id, cancelled = true))
 
-        assertThat(ordersRepository.findOne(order.id)!!.status).isEqualTo(OrderStatus.INVALID)
+        assertThat(ordersRepository.findOne(order.id)!!.cancelled).isEqualTo(true)
     }
 
     @Test
@@ -88,7 +88,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val startOfTest = Instant.now().minusMillis(100)
         val order = OrderFactory.order(legacyOrderId = "legacy-id", updatedAt = startOfTest)
         ordersRepository.save(order = order)
-        ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
+        ordersRepository.update(OrderUpdateCommand.SetOrderCancellation(orderId = order.id, cancelled = true))
 
         assertThat(ordersRepository.findOne(order.id)!!.updatedAt).isAfter(startOfTest)
     }
@@ -97,9 +97,9 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     fun `throws when updating a non existent order`() {
         assertThrows<OrderNotFoundException> {
             ordersRepository.update(
-                OrderUpdateCommand.ReplaceStatus(
+                OrderUpdateCommand.SetOrderCancellation(
                     orderId = OrderId(ObjectId().toHexString()),
-                    orderStatus = OrderStatus.INVALID
+                    cancelled = true
                 )
             )
 
@@ -110,9 +110,9 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     fun `throws when updating an order with a invalid ID`() {
         assertThrows<OrderNotFoundException> {
             ordersRepository.update(
-                OrderUpdateCommand.ReplaceStatus(
+                OrderUpdateCommand.SetOrderCancellation(
                     orderId = OrderId("you cheeky programmer"),
-                    orderStatus = OrderStatus.INVALID
+                    cancelled = true
                 )
             )
 
