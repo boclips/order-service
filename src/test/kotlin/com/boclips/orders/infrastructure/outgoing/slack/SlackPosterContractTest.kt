@@ -72,7 +72,7 @@ abstract class SlackPosterTests {
             is PostSuccess ->
                 fail<String>("Expected post to Slack to fail, but it was successful: $response")
             is PostFailure ->
-                assertThat(response.message).contains("401 UNAUTHORIZED")
+                assertThat(response.message).contains("401")
         }
     }
 }
