@@ -57,8 +57,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hippos are cool",
                 createdBy = "ted",
-                contentPartnerId = "ted-id",
-                contentPartnerVideoId = "",
+                channelId = "ted-id",
+                channelVideoId = "",
                 type = VideoTypeResource(id = 1, name = "NEWS"),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
@@ -158,8 +158,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partne",
-                contentPartnerId = "ted-id",
-                contentPartnerVideoId = "",
+                channelId = "ted-id",
+                channelVideoId = "",
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
@@ -210,8 +210,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partne",
-                contentPartnerId = "ted-id",
-                contentPartnerVideoId = "",
+                channelId = "ted-id",
+                channelVideoId = "",
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )

@@ -39,14 +39,14 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partner",
-                contentPartnerId = channel.id,
-                contentPartnerVideoId = "",
                 captionStatus = CaptionStatus.AVAILABLE,
                 playback = StreamPlaybackResource(
                     id = "playback-id",
                     referenceId = "reference-id",
                     maxResolutionAvailable = true
                 ),
+                channelId = channel.id,
+                channelVideoId = "",
                 _links = mapOf(
                     "fullProjection" to HateoasLink("https://great-vids.com")
                 )
@@ -90,8 +90,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "creator",
-                contentPartnerId = "cp-id",
-                contentPartnerVideoId = "x",
+                channelId = "cp-id",
+                channelVideoId = "x",
                 _links = null
             )
         )
@@ -118,8 +118,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "creator",
-                contentPartnerId = "cp-id",
-                contentPartnerVideoId = "x",
+                channelId = "cp-id",
+                channelVideoId = "x",
                 _links = null
             )
         )
