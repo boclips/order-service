@@ -33,9 +33,9 @@ class VideoServiceVideoProvider(
             videoServiceId = VideoId(value = videoResource.id ?: throw IllegalStateException("Missing video for id $videoId")),
             title = videoResource.title ?: throw IllegalStateException("Missing title for video $videoId"),
             type = videoResource.type?.name.toString(),
-            channelVideoId = videoResource.contentPartnerVideoId ?: throw IllegalStateException("Missing content partner video id for video $videoId"),
+            channelVideoId = videoResource.channelVideoId ?: throw IllegalStateException("Missing content partner video id for video $videoId"),
             channel = Channel(
-                videoServiceId = ChannelId(value = videoResource.contentPartnerId
+                videoServiceId = ChannelId(value = videoResource.channelId
                     ?: throw IllegalStateException("Missing content partner id for video $videoId")
                 ),
                 name = videoResource.createdBy ?: throw IllegalStateException("Missing 'created by' for video $videoId"),
@@ -50,9 +50,9 @@ class VideoServiceVideoProvider(
 
     private fun getChannel(videoResource: VideoResource): ChannelResource {
         return try {
-            channelsClient.getChannel(videoResource.contentPartnerId!!)
+            channelsClient.getChannel(videoResource.channelId!!)
         } catch (e: Exception) {
-            throw ChannelNotFoundException(ChannelId(videoResource.contentPartnerId ?: ""))
+            throw ChannelNotFoundException(ChannelId(videoResource.channelId ?: ""))
         }
     }
 

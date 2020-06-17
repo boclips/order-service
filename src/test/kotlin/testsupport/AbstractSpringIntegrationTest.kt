@@ -83,8 +83,8 @@ abstract class AbstractSpringIntegrationTest {
             VideoResource(
                 id = videoId,
                 title = "hippos are cool",
-                contentPartnerVideoId = "abc-123",
-                contentPartnerId = channelId,
+                channelVideoId = "abc-123",
+                channelId = channelId,
                 playback = StreamPlaybackResource(id = "playback-id", referenceId = "ref-id"),
                 releasedOn = LocalDate.now(),
                 createdBy = "creat0r",
