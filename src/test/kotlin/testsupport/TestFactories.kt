@@ -14,6 +14,7 @@ import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Channel
 import com.boclips.orders.domain.model.orderItem.ChannelId
 import com.boclips.orders.domain.model.orderItem.Duration
@@ -173,7 +174,12 @@ object TestFactories {
         videoType: String = "INSTRUCTIONAL_CLIPS",
         videoReference: String = "ted_1234",
         channel: Channel = channel(),
-        fullProjectionLink: String = "https://great-vids.com"
+        fullProjectionLink: String = "https://great-vids.com",
+        playbackId: String = "playback-id",
+        captionStatus: AssetStatus = AssetStatus.AVAILABLE,
+        downloadableVideoStatus: AssetStatus = AssetStatus.AVAILABLE,
+        captionAdminLink: URL = URL("https://great-vids.com"),
+        videoUploadLink: URL = URL("https://great-vids.com")
     ): Video {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
@@ -181,7 +187,12 @@ object TestFactories {
             type = videoType.toString(),
             channelVideoId = videoReference,
             channel = channel,
-            fullProjectionLink = URL(fullProjectionLink)
+            fullProjectionLink = URL(fullProjectionLink),
+            playbackId = playbackId,
+            captionStatus = captionStatus,
+            downloadableVideoStatus = downloadableVideoStatus,
+            captionAdminLink = captionAdminLink,
+            videoUploadLink = videoUploadLink
         )
     }
 
@@ -265,13 +276,19 @@ object TestFactories {
         referenceId: String = "12345679",
         title: String = "A great vide",
         type: String = "NEWS",
-        fullProjectionLink: String = "https://bestvids4u.com"
+        fullProjectionLink: String = "https://bestvids4u.com",
+        playbackId: String = "playback-id",
+        captionStatus: String = "AVAILABLE",
+        hasHDVideo: Boolean = true
     ): VideoDocument {
         return VideoDocument(
             videoServiceId = referenceId,
             title = title,
             type = type,
-            fullProjectionLink = fullProjectionLink
+            fullProjectionLink = fullProjectionLink,
+            playbackId = playbackId,
+            captionStatus = captionStatus,
+            hasHDVideo = hasHDVideo
         )
     }
 

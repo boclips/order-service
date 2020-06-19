@@ -1,10 +1,23 @@
 package com.boclips.orders.infrastructure.orders.converters
 
 import com.boclips.orders.domain.model.Price
-import com.boclips.orders.domain.model.orderItem.*
-import com.boclips.orders.infrastructure.orders.*
+import com.boclips.orders.domain.model.orderItem.AssetStatus
+import com.boclips.orders.domain.model.orderItem.Channel
+import com.boclips.orders.domain.model.orderItem.ChannelId
+import com.boclips.orders.domain.model.orderItem.Duration
+import com.boclips.orders.domain.model.orderItem.OrderItem
+import com.boclips.orders.domain.model.orderItem.OrderItemLicense
+import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.domain.model.orderItem.Video
+import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.infrastructure.orders.ChannelDocument
+import com.boclips.orders.infrastructure.orders.LicenseDocument
+import com.boclips.orders.infrastructure.orders.OrderDocument
+import com.boclips.orders.infrastructure.orders.OrderItemDocument
+import com.boclips.orders.infrastructure.orders.SourceDocument
+import com.boclips.orders.infrastructure.orders.VideoDocument
 import java.net.URL
-import java.util.*
+import java.util.Currency
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
@@ -24,7 +37,14 @@ object OrderItemDocumentConverter {
                 videoServiceId = it.video.videoServiceId.value,
                 title = it.video.title,
                 type = it.video.type,
-                fullProjectionLink = it.video.fullProjectionLink.toString()
+                fullProjectionLink = it.video.fullProjectionLink.toString(),
+                captionStatus = it.video.captionStatus.toString(),
+                hasHDVideo = when (it.video.downloadableVideoStatus) {
+                    AssetStatus.AVAILABLE -> true
+                    AssetStatus.UNAVAILABLE -> false
+                    else -> null
+                },
+                playbackId = it.video.playbackId
             ),
             license = it.license?.duration?.let { duration ->
                 when (duration) {
@@ -64,7 +84,14 @@ object OrderItemDocumentConverter {
                     name = document.source.channel.name,
                     currency = Currency.getInstance(document.source.channel.currency)
                 ),
-                fullProjectionLink = URL(document.video.fullProjectionLink)
+                fullProjectionLink = URL(document.video.fullProjectionLink),
+                videoUploadLink = URL("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/${document.video.playbackId}/metadata"),
+                captionAdminLink = URL("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/${document.video.playbackId}/metadata"),
+                captionStatus = document.video.captionStatus?.let { AssetStatus.valueOf(it) } ?: AssetStatus.UNKNOWN,
+                downloadableVideoStatus = document.video.hasHDVideo
+                    ?.let { hd -> if (hd) AssetStatus.AVAILABLE else AssetStatus.UNAVAILABLE }
+                    ?: AssetStatus.UNKNOWN,
+                playbackId = document.video.playbackId ?: "" //TODO: to be addressed after migration
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(
