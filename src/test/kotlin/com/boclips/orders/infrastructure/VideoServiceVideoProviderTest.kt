@@ -3,10 +3,13 @@ package com.boclips.orders.infrastructure
 import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
 import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
+import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -36,6 +39,12 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partner",
+                captionStatus = CaptionStatus.AVAILABLE,
+                playback = StreamPlaybackResource(
+                    id = "playback-id",
+                    referenceId = "reference-id",
+                    maxResolutionAvailable = true
+                ),
                 channelId = channel.id,
                 channelVideoId = "",
                 _links = mapOf(
@@ -49,7 +58,10 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
         assertThat(video.title).isEqualTo("hello")
         assertThat(video.channel.name).isEqualTo("our content partner")
         assertThat(video.fullProjectionLink).describedAs("https://great-vids.com")
-
+        assertThat(video.captionStatus).isEqualTo(AssetStatus.AVAILABLE)
+        assertThat(video.downloadableVideoStatus).isEqualTo(AssetStatus.AVAILABLE)
+        assertThat(video.captionAdminLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/metadata")
+        assertThat(video.videoUploadLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/flavours")
     }
 
     @Test

@@ -1,49 +1,22 @@
 package testsupport
 
-import com.boclips.eventbus.events.order.LegacyOrder
-import com.boclips.eventbus.events.order.LegacyOrderExtraFields
-import com.boclips.eventbus.events.order.LegacyOrderItem
-import com.boclips.eventbus.events.order.LegacyOrderNextStatus
-import com.boclips.eventbus.events.order.LegacyOrderOrganisation
-import com.boclips.eventbus.events.order.LegacyOrderSubmitted
-import com.boclips.eventbus.events.order.LegacyOrderUser
-import com.boclips.orders.domain.model.Manifest
-import com.boclips.orders.domain.model.ManifestItem
+import com.boclips.eventbus.events.order.*
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderUser
-import com.boclips.orders.domain.model.Price
-import com.boclips.orders.domain.model.orderItem.Channel
-import com.boclips.orders.domain.model.orderItem.ChannelId
+import com.boclips.orders.domain.model.orderItem.*
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.domain.model.orderItem.Video
-import com.boclips.orders.domain.model.orderItem.VideoId
-import com.boclips.orders.infrastructure.orders.ChannelDocument
-import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
-import com.boclips.orders.infrastructure.orders.LicenseDocument
-import com.boclips.orders.infrastructure.orders.OrderDocument
-import com.boclips.orders.infrastructure.orders.OrderItemDocument
-import com.boclips.orders.infrastructure.orders.OrderUserDocument
-import com.boclips.orders.infrastructure.orders.SourceDocument
-import com.boclips.orders.infrastructure.orders.VideoDocument
+import com.boclips.orders.infrastructure.orders.*
+import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
 import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.URL
-import java.time.Instant
-import java.time.LocalDate
-import java.time.Month
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.temporal.ChronoUnit
-import java.util.Currency
-import java.util.UUID
+import java.util.*
 
 object TestFactories {
 
@@ -173,15 +146,25 @@ object TestFactories {
         videoType: String = "INSTRUCTIONAL_CLIPS",
         videoReference: String = "ted_1234",
         channel: Channel = channel(),
-        fullProjectionLink: String = "https://great-vids.com"
+        fullProjectionLink: String = "https://great-vids.com",
+        playbackId: String = "playback-id",
+        captionStatus: AssetStatus = AssetStatus.AVAILABLE,
+        downloadableVideoStatus: AssetStatus = AssetStatus.AVAILABLE,
+        captionAdminLink: URL? = null,
+        videoUploadLink: URL? = null
     ): Video {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
             title = title,
-            type = videoType.toString(),
+            type = videoType,
             channelVideoId = videoReference,
             channel = channel,
-            fullProjectionLink = URL(fullProjectionLink)
+            fullProjectionLink = URL(fullProjectionLink),
+            playbackId = playbackId,
+            captionStatus = captionStatus,
+            downloadableVideoStatus = downloadableVideoStatus,
+            captionAdminLink = captionAdminLink ?: KalturaLinkConverter.getCaptionAdminLink(playbackId),
+            videoUploadLink = videoUploadLink ?: KalturaLinkConverter.getVideoUploadLink(playbackId)
         )
     }
 
@@ -265,13 +248,19 @@ object TestFactories {
         referenceId: String = "12345679",
         title: String = "A great vide",
         type: String = "NEWS",
-        fullProjectionLink: String = "https://bestvids4u.com"
+        fullProjectionLink: String = "https://bestvids4u.com",
+        playbackId: String = "playback-id",
+        captionStatus: String = "AVAILABLE",
+        hasHDVideo: Boolean = true
     ): VideoDocument {
         return VideoDocument(
             videoServiceId = referenceId,
             title = title,
             type = type,
-            fullProjectionLink = fullProjectionLink
+            fullProjectionLink = fullProjectionLink,
+            playbackId = playbackId,
+            captionStatus = captionStatus,
+            hasHDVideo = hasHDVideo
         )
     }
 

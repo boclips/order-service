@@ -4,6 +4,8 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
+import com.boclips.videos.api.request.video.PlaybackResource
+import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.VideoResource
@@ -60,7 +62,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 channelId = "ted-id",
                 channelVideoId = "",
                 type = VideoTypeResource(id = 1, name = "NEWS"),
-                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
+                _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com")),
+                playback = StreamPlaybackResource(id = "123", referenceId = "123")
             )
         )
 
@@ -160,6 +163,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 channelId = "ted-id",
                 channelVideoId = "",
+                playback = StreamPlaybackResource(id = "123", referenceId = "123"),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
@@ -228,6 +232,6 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val orders = ordersRepository.findAll()
         assertThat(orders).hasSize(1)
-        assertThat(orders.first().status).isEqualTo(OrderStatus.CANCELLED)
+        assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
     }
 }
