@@ -60,10 +60,8 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
         assertThat(video.fullProjectionLink).describedAs("https://great-vids.com")
         assertThat(video.captionStatus).isEqualTo(AssetStatus.AVAILABLE)
         assertThat(video.downloadableVideoStatus).isEqualTo(AssetStatus.AVAILABLE)
-        assertThat(video.captionAdminLink).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/metadata")
-        assertThat(video.videoUploadLink).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/flavours")
-
-
+        assertThat(video.captionAdminLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/metadata")
+        assertThat(video.videoUploadLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/flavours")
     }
 
     @Test
