@@ -7,4 +7,6 @@ interface OrdersRepository {
     fun findOne(id: OrderId): Order?
     fun findOneByLegacyId(legacyOrderId: String): Order?
     fun update(orderUpdateCommand: OrderUpdateCommand): Order
+    fun bulkUpdate(orderUpdateCommands: List<OrderUpdateCommand>)
+    fun streamAll(consumer: (orders: Sequence<Order>) -> Unit)
 }

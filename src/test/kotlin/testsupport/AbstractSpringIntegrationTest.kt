@@ -2,6 +2,7 @@ package testsupport
 
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
+import com.boclips.orders.domain.model.Order
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
 import com.boclips.videos.api.httpclient.test.fakes.ChannelsClientFake
@@ -101,5 +102,9 @@ abstract class AbstractSpringIntegrationTest {
                 official = true
             )
         )
+    }
+
+    fun saveOrder(order: Order): Order {
+        return ordersRepository.save(order)
     }
 }

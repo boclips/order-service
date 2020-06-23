@@ -1,8 +1,9 @@
 package com.boclips.orders.domain.model
 
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
+import com.boclips.orders.domain.model.orderItem.Video
 import java.math.BigDecimal
-import java.util.Currency
+import java.util.*
 
 sealed class OrderUpdateCommand(val orderId: OrderId) {
     class SetOrderCancellation(orderId: OrderId, val cancelled: Boolean) : OrderUpdateCommand(orderId)
@@ -18,6 +19,9 @@ sealed class OrderUpdateCommand(val orderId: OrderId) {
             orderItemsId: String,
             val orderItemLicense: OrderItemLicense
         ) :
+            OrderItemUpdateCommand(orderId, orderItemsId)
+
+        class ReplaceVideo(orderId: OrderId, orderItemsId: String, val video: Video) :
             OrderItemUpdateCommand(orderId, orderItemsId)
     }
 }

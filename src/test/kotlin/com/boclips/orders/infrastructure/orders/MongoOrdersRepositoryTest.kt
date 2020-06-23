@@ -3,7 +3,6 @@ package com.boclips.orders.infrastructure.orders
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
@@ -11,13 +10,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import testsupport.AbstractSpringIntegrationTest
-import testsupport.BigDecimalWith2DP
-import testsupport.OrderFactory
-import testsupport.PriceFactory
+import testsupport.*
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.Currency
+import java.util.*
 
 class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
@@ -186,6 +182,41 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.duration).isEqualTo(Duration.Description("5 Years"))
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
+    }
+
+    @Test
+    fun `can bulk update many orders`() {
+        val originalOrder1 = ordersRepository.save(OrderFactory.order(currency = Currency.getInstance("GBP")))
+        val originalOrder2 = ordersRepository.save(OrderFactory.order(currency = Currency.getInstance("USD")))
+
+        ordersRepository.bulkUpdate(
+            listOf(
+                OrderUpdateCommand.UpdateOrderCurrency(orderId = originalOrder1.id, currency = Currency.getInstance("EUR"), fxRateToGbp = BigDecimal.ONE),
+                OrderUpdateCommand.UpdateOrderCurrency(orderId = originalOrder2.id, currency = Currency.getInstance("EUR"), fxRateToGbp = BigDecimal.ZERO)
+            )
+        )
+
+        val update1 = ordersRepository.findOne(originalOrder1.id)!!
+        val update2 = ordersRepository.findOne(originalOrder2.id)!!
+
+        assertThat(update1.currency).isEqualTo(Currency.getInstance("EUR"))
+        assertThat(update2.currency).isEqualTo(Currency.getInstance("EUR"))
+    }
+
+    @Test
+    fun `can update a video`() {
+        val orderItem = OrderFactory.orderItem(video = TestFactories.video(title = "HI"))
+        val order = ordersRepository.save(OrderFactory.order(items = listOf(orderItem)))
+
+        val newOrder = ordersRepository.update(
+            OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
+                orderId = order.id,
+                orderItemsId = orderItem.id,
+                video = TestFactories.video(title = "Blue Monday")
+            )
+        )
+
+        assertThat(newOrder.items.first().video.title).isEqualTo("Blue Monday")
     }
 
     @Test
