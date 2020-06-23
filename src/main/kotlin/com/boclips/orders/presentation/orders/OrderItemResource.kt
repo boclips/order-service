@@ -40,7 +40,7 @@ data class OrderItemResource(
                     },
                     captionStatus = when (item.video.captionStatus) {
                         AssetStatus.AVAILABLE -> CaptionStatusResource.AVAILABLE
-                        AssetStatus.REQUESTED -> CaptionStatusResource.PROCESSING
+                        AssetStatus.REQUESTED -> CaptionStatusResource.REQUESTED
                         AssetStatus.PROCESSING -> CaptionStatusResource.PROCESSING
                         AssetStatus.UNAVAILABLE -> CaptionStatusResource.UNAVAILABLE
                         AssetStatus.UNKNOWN -> CaptionStatusResource.UNAVAILABLE
