@@ -1,13 +1,10 @@
 package com.boclips.orders.application.orders
 
-import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.infrastructure.VideoServiceVideoProvider
 import mu.KLogging
 import org.springframework.stereotype.Component
-import java.lang.Exception
-import javax.annotation.PostConstruct
 
 @Component
 class SyncVideos(
@@ -26,7 +23,7 @@ class SyncVideos(
                             val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
                             OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(orderId = order.id, orderItemsId = item.id, video = newVideo)
                         } catch (e: Exception) {
-                            logger.warn("Could not find video ${item.video.videoServiceId}", e.message)
+                            logger.warn("Error syncing video for order: ${order.id.value}", e)
                             null
                         }
                     }
