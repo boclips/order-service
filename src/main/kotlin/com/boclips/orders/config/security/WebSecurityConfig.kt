@@ -19,6 +19,7 @@ class OrderServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
         http
             .authorizeRequests()
             .antMatchers(HttpMethod.GET, "/").permitAll()
+            .antMatchers(HttpMethod.GET, "/actuator/prometheus").permitAll()
             .antMatchers(HttpMethod.POST, "/slack").permitAll()
             .antMatchers(HttpMethod.POST, "/slack-interaction").permitAll()
 
