@@ -1,9 +1,6 @@
 package com.boclips.orders.presentation.orders
 
-import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.domain.model.orderItem.*
 import org.springframework.hateoas.Link
 
 data class OrderItemResource(
@@ -37,7 +34,22 @@ data class OrderItemResource(
                     title = item.video.title,
                     type = item.video.type,
                     videoReference = item.video.channelVideoId,
-                    _links = mapOf( "fullProjection" to Link(item.video.fullProjectionLink.toString(), "fullProjection"))
+                    maxResolutionAvailable = when (item.video.downloadableVideoStatus) {
+                        AssetStatus.AVAILABLE -> true
+                        else -> false
+                    },
+                    captionStatus = when (item.video.captionStatus) {
+                        AssetStatus.AVAILABLE -> CaptionStatusResource.AVAILABLE
+                        AssetStatus.REQUESTED -> CaptionStatusResource.PROCESSING
+                        AssetStatus.PROCESSING -> CaptionStatusResource.PROCESSING
+                        AssetStatus.UNAVAILABLE -> CaptionStatusResource.UNAVAILABLE
+                        AssetStatus.UNKNOWN -> CaptionStatusResource.UNAVAILABLE
+                    },
+                    _links = mapOf(
+                        "fullProjection" to Link(item.video.fullProjectionLink.toString(), "fullProjection"),
+                        "videoUpload" to Link(item.video.videoUploadLink.toString(), "videoUpload"),
+                        "captionAdmin" to Link(item.video.captionAdminLink.toString(), "captionAdmin")
+                    )
                 ),
                 licenseDuration = item.license?.let(this::getDurationLabel),
                 licenseTerritory = item.license?.territory,

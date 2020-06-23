@@ -2,18 +2,13 @@ package com.boclips.orders.presentation.resources
 
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.presentation.OrdersController
-import com.boclips.orders.presentation.orders.ChannelResource
-import com.boclips.orders.presentation.orders.OrderItemResource
-import com.boclips.orders.presentation.orders.OrderResource
-import com.boclips.orders.presentation.orders.PriceResource
-import com.boclips.orders.presentation.orders.UserDetailsResource
-import com.boclips.orders.presentation.orders.VideoResource
+import com.boclips.orders.presentation.orders.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.EntityModel
@@ -22,9 +17,10 @@ import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
+import java.net.URL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Currency
+import java.util.*
 
 class OrderResourceTest {
     @Test
@@ -68,7 +64,11 @@ class OrderResourceTest {
                                 name = "cup",
                                 currency = Currency.getInstance("GBP")
                             ),
-                            fullProjectionLink = "http://super-vid.com"
+                            fullProjectionLink = "http://super-vid.com",
+                            videoUploadLink = URL("https://great-vides.com"),
+                            captionAdminLink = URL("https://great-vides.com"),
+                            captionStatus = AssetStatus.PROCESSING,
+                            downloadableVideoStatus = AssetStatus.AVAILABLE
                         ),
                         license = OrderItemLicense(
                             duration = Duration.Time(10, ChronoUnit.YEARS),
@@ -119,7 +119,13 @@ class OrderResourceTest {
                                 type = "STOCK",
                                 title = "video title",
                                 videoReference = "TED_11",
-                                _links = mapOf("fullProjection" to Link("http://super-vid.com", "fullProjection"))
+                                maxResolutionAvailable = true,
+                                captionStatus = CaptionStatusResource.PROCESSING,
+                                _links = mapOf(
+                                    "fullProjection" to Link("http://super-vid.com", "fullProjection"),
+                                    "videoUpload" to Link("https://great-vides.com", "videoUpload"),
+                                    "captionAdmin" to Link("https://great-vides.com", "captionAdmin")
+                                )
                             ),
                             licenseDuration = "10 Years",
                             licenseTerritory = "Multi Region",

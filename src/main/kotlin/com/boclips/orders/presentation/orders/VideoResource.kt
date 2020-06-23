@@ -7,5 +7,7 @@ data class VideoResource(
     val type: String,
     val title: String,
     val videoReference: String,
+    val maxResolutionAvailable: Boolean,
+    val captionStatus: CaptionStatusResource,
     val _links: Map<String, Link>?
 )
