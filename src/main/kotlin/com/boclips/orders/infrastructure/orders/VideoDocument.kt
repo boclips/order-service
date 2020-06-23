@@ -5,7 +5,7 @@ class VideoDocument(
     val title: String,
     val type: String,
     val fullProjectionLink: String,
-    val playbackId: String?,
-    val captionStatus: String?,
-    val hasHDVideo: Boolean?
+    val playbackId: String,
+    val captionStatus: String,
+    val hasHDVideo: Boolean
 )

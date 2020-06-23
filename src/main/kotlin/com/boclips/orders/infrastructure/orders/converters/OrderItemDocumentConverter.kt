@@ -1,23 +1,10 @@
 package com.boclips.orders.infrastructure.orders.converters
 
 import com.boclips.orders.domain.model.Price
-import com.boclips.orders.domain.model.orderItem.AssetStatus
-import com.boclips.orders.domain.model.orderItem.Channel
-import com.boclips.orders.domain.model.orderItem.ChannelId
-import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.domain.model.orderItem.Video
-import com.boclips.orders.domain.model.orderItem.VideoId
-import com.boclips.orders.infrastructure.orders.ChannelDocument
-import com.boclips.orders.infrastructure.orders.LicenseDocument
-import com.boclips.orders.infrastructure.orders.OrderDocument
-import com.boclips.orders.infrastructure.orders.OrderItemDocument
-import com.boclips.orders.infrastructure.orders.SourceDocument
-import com.boclips.orders.infrastructure.orders.VideoDocument
+import com.boclips.orders.domain.model.orderItem.*
+import com.boclips.orders.infrastructure.orders.*
 import java.net.URL
-import java.util.Currency
+import java.util.*
 
 object OrderItemDocumentConverter {
     fun toOrderItemDocument(it: OrderItem): OrderItemDocument {
@@ -42,7 +29,7 @@ object OrderItemDocumentConverter {
                 hasHDVideo = when (it.video.downloadableVideoStatus) {
                     AssetStatus.AVAILABLE -> true
                     AssetStatus.UNAVAILABLE -> false
-                    else -> null
+                    else -> false
                 },
                 playbackId = it.video.playbackId
             ),
@@ -87,11 +74,9 @@ object OrderItemDocumentConverter {
                 fullProjectionLink = URL(document.video.fullProjectionLink),
                 videoUploadLink = KalturaLinkConverter.getVideoUploadLink(document.video.playbackId),
                 captionAdminLink = KalturaLinkConverter.getCaptionAdminLink(document.video.playbackId),
-                captionStatus = document.video.captionStatus?.let { AssetStatus.valueOf(it) } ?: AssetStatus.UNKNOWN,
-                downloadableVideoStatus = document.video.hasHDVideo
-                    ?.let { hd -> if (hd) AssetStatus.AVAILABLE else AssetStatus.UNAVAILABLE }
-                    ?: AssetStatus.UNKNOWN,
-                playbackId = document.video.playbackId ?: "" //TODO: to be addressed after migration
+                captionStatus = document.video.captionStatus.let { AssetStatus.valueOf(it) },
+                downloadableVideoStatus = if(document.video.hasHDVideo) AssetStatus.AVAILABLE else AssetStatus.UNAVAILABLE,
+                playbackId = document.video.playbackId
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(
