@@ -20,7 +20,7 @@ class AppKeycloakConfigResolver(private val keycloakProperties: KeycloakProperti
                 sslRequired = "external"
                 confidentialPort = 0
                 isUseResourceRoleMappings = true
-                resource = "video-service"
+                resource = "order-service"
                 realm = keycloakProperties.realm
                 authServerUrl = keycloakProperties.url
             }
