@@ -2,11 +2,7 @@ package com.boclips.orders.infrastructure.orders
 
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderUpdateCommand
-import com.boclips.orders.domain.model.OrdersRepository
-import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.infrastructure.orders.converters.OrderDocumentConverter
 import com.boclips.orders.infrastructure.orders.converters.OrderItemDocumentConverter
 import com.mongodb.MongoClient
@@ -100,8 +96,18 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
         logger.info("Updated videos: modified: ${result.modifiedCount}, deleted: ${result.deletedCount}, inserted: ${result.insertedCount}")
     }
 
-    override fun streamAll(consumer: (Sequence<Order>) -> Unit) {
-        val sequence = Sequence { collection().find().iterator() }
+    override fun streamAll(filter: OrderFilter, consumer: (orders: Sequence<Order>) -> Unit) {
+        val filterBson = when (filter) {
+            is OrderFilter.HasStatus -> OrderDocument::status eq filter.status.name
+        }
+
+
+        val sequence = Sequence {
+            collection()
+                .find(filterBson)
+                .noCursorTimeout(true)
+                .iterator()
+        }
             .mapNotNull(OrderDocumentConverter::toOrder)
 
         consumer(sequence)

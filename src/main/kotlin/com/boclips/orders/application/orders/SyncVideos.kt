@@ -1,5 +1,7 @@
 package com.boclips.orders.application.orders
 
+import com.boclips.orders.domain.model.OrderFilter
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.infrastructure.VideoServiceVideoProvider
@@ -14,7 +16,7 @@ class SyncVideos(
     companion object : KLogging()
 
     operator fun invoke() {
-        ordersRepository.streamAll {
+        ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED)) {
             it.windowed(100, 100, true).forEachIndexed { index, orders ->
                 logger.info { "Starting batch ${index + 1} of syncing videos" }
                 val commands = orders.flatMap { order ->
