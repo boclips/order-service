@@ -55,6 +55,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     email = "creator@proper.order"
                 ),
                 orderOrganisation = OrderOrganisation(name = "An Org"),
+                status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 currency = Currency.getInstance("EUR"),
@@ -115,7 +116,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     equalTo("vendor hello <vendor@proper.order>")
                 )
             )
-            .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("COMPLETED")))
+            .andExpect(jsonPath("$._embedded.orders[0].status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$._embedded.orders[0].createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$._embedded.orders[0].updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$._embedded.orders[0].totalPrice.currency", equalTo("EUR")))
@@ -167,6 +168,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     email = "creator@proper.order"
                 ),
                 orderOrganisation = OrderOrganisation(name = "An Org"),
+                status = OrderStatus.INCOMPLETED,
                 createdAt = Instant.EPOCH,
                 updatedAt = Instant.EPOCH.plusMillis(1),
                 currency = Currency.getInstance("EUR"),
@@ -209,7 +211,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
             .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))
             .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("hi there <vendor@proper.order>")))
-            .andExpect(jsonPath("$.status", equalTo("COMPLETED")))
+            .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
             .andExpect(jsonPath("$.createdAt", equalTo("1970-01-01T00:00:00Z")))
             .andExpect(jsonPath("$.updatedAt", equalTo("1970-01-01T00:00:00.001Z")))
             .andExpect(jsonPath("$.totalPrice.currency", equalTo("EUR")))
@@ -265,6 +267,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can export a csv with orders`() {
         ordersRepository.save(
             OrderFactory.order(
+                status = OrderStatus.COMPLETED,
                 items = listOf(
                     OrderFactory.orderItem(
                         price = Price(
@@ -315,7 +318,28 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `gets an error when exporting incomplete orders to csv`() {
         val order = ordersRepository.save(
-            OrderFactory.incompleteOrder()
+            OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = BigDecimal.valueOf(1),
+                            currency = Currency.getInstance("EUR")
+                        ),
+                        license = OrderFactory.orderItemLicense(
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
+                            territory = "WW"
+                        ),
+                        video = TestFactories.video(
+                            videoServiceId = "video-id",
+                            title = "A Video title",
+                            channel = TestFactories.channel(
+                                name = "a content partner"
+                            )
+                        )
+                    )
+                )
+            )
         )
 
         mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())

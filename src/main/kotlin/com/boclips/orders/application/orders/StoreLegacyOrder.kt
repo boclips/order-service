@@ -5,6 +5,7 @@ import com.boclips.eventbus.events.order.LegacyOrderItem
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.orders.application.exceptions.LegacyOrderProcessingException
+import com.boclips.orders.application.orders.converters.legacy.OrderStatusConverter
 import com.boclips.orders.application.orders.converters.parseTrimRequest
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
@@ -41,7 +42,7 @@ class StoreLegacyOrder(
             val foundOrder = repo.findOneByLegacyId(order.legacyOrderId)
             if (foundOrder != null) {
                 orderService.update(
-                    OrderUpdateCommand.SetOrderCancellation(orderId = foundOrder.id, cancelled = order.cancelled)
+                    OrderUpdateCommand.ReplaceStatus(orderId = foundOrder.id, orderStatus = order.status)
                 )
             } else {
                 orderService.createIfNonExistent(order = order)
@@ -70,7 +71,7 @@ class StoreLegacyOrder(
             requestingUser = convertLegacyUser(event.requestingUser),
             authorisingUser = convertLegacyUser(event.authorisingUser),
             isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
-            cancelled = "CANCELLED" == event.order.status,
+            status = OrderStatusConverter.from(event.order.status),
             items = event.orderItems.map { convertLegacyItem(it) },
             organisation = OrderOrganisation(name = event.authorisingUser.organisation.name),
             isThroughPlatform = true,

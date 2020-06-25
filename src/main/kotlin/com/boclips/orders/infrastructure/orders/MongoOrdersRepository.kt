@@ -11,7 +11,6 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.jackson.getJacksonModulesFromServiceLoader
 import org.litote.kmongo.*
 import java.time.Instant
 import kotlin.collections.toList
@@ -100,9 +99,8 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
 
     private fun convertUpdateToBson(orderUpdateCommand: OrderUpdateCommand): Bson? {
         return when (orderUpdateCommand) {
-            is OrderUpdateCommand.SetOrderCancellation ->
-                set(OrderDocument::cancelled, orderUpdateCommand.cancelled)
-
+            is OrderUpdateCommand.ReplaceStatus ->
+                set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())
             is OrderUpdateCommand.UpdateOrderCurrency ->
                 set(
                     SetTo(OrderDocument::currency, orderUpdateCommand.currency),
@@ -111,6 +109,7 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 convertItemsUpdateToBson(retrievedOrder = it, updateCommand = orderUpdateCommand)
             }
+
         }
     }
 

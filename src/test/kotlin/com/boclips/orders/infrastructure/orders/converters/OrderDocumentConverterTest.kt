@@ -27,7 +27,7 @@ class OrderDocumentConverterTest {
             OrderDocument(
                 id = id,
                 legacyOrderId = "1234",
-                cancelled = false,
+                status = "COMPLETED",
                 authorisingUser = TestFactories.orderUserDocument(),
                 requestingUser = TestFactories.orderUserDocument(),
                 updatedAt = Instant.MAX,

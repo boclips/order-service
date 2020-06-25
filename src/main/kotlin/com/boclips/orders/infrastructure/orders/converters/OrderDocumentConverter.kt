@@ -12,7 +12,7 @@ object OrderDocumentConverter {
         return OrderDocument(
             id = ObjectId(order.id.value),
             legacyOrderId = order.legacyOrderId,
-            cancelled = order.cancelled,
+            status = order.status.toString(),
             authorisingUser = order.authorisingUser?.let { OrderUserDocumentConverter.toOrderUserDocument(orderUser = it) },
             requestingUser = OrderUserDocumentConverter.toOrderUserDocument(orderUser = order.requestingUser),
             updatedAt = order.updatedAt,
@@ -30,7 +30,7 @@ object OrderDocumentConverter {
         return Order(
             id = OrderId(document.id.toHexString()),
             legacyOrderId = document.legacyOrderId,
-            cancelled = document.cancelled,
+            status = OrderStatus.valueOf(document.status),
             authorisingUser = document.authorisingUser?.let { OrderUserDocumentConverter.toOrderUser(it) },
             requestingUser = OrderUserDocumentConverter.toOrderUser(document.requestingUser),
             createdAt = document.createdAt,

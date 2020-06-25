@@ -2,6 +2,7 @@ package com.boclips.orders.presentation.resources
 
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
@@ -42,6 +43,7 @@ class OrderResourceTest {
                     email = "creator@email.com"
                 ),
                 orderOrganisation = OrderOrganisation(name = "Auth Test Org"),
+                status = OrderStatus.COMPLETED,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),

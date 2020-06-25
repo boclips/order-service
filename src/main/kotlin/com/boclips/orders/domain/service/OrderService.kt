@@ -37,7 +37,7 @@ class OrderService(
                 retrievedOrder = ordersRepository.save(order)
             }
 
-        return retrievedOrder
+        return updateStatus(orderId = retrievedOrder.id)
     }
 
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
@@ -50,7 +50,9 @@ class OrderService(
         .let { manifestConverter.toManifest(fxRatesAgainstPound, *it.toTypedArray()) }
 
     fun update(orderUpdateCommand: OrderUpdateCommand): Order {
-        return ordersRepository.update(orderUpdateCommand)
+        val order = ordersRepository.update(orderUpdateCommand)
+
+        return updateStatus(orderId = order.id)
     }
 
     fun updateCurrency(orderId: OrderId, currency: Currency): Order {
@@ -73,4 +75,30 @@ class OrderService(
         return commands.map { update(it) }
     }
 
+    private fun updateStatus(orderId: OrderId): Order {
+        val order = ordersRepository.findOne(orderId) ?: throw IllegalStateException("Cannot find order to update")
+
+        if (order.status == OrderStatus.CANCELLED) {
+            return order
+        }
+
+        return when {
+            orderIsComplete(order) -> ordersRepository.update(
+                OrderUpdateCommand.ReplaceStatus(
+                    orderId = orderId,
+                    orderStatus = OrderStatus.COMPLETED
+                )
+            )
+            order.status != OrderStatus.INCOMPLETED -> ordersRepository.update(
+                OrderUpdateCommand.ReplaceStatus(
+                    orderId = orderId,
+                    orderStatus = OrderStatus.INCOMPLETED
+                )
+            )
+            else -> order
+        }
+    }
+
+    private fun orderIsComplete(order: Order) =
+        order.currency != null && order.items.all { it.price.amount != null && it.license != null }
 }

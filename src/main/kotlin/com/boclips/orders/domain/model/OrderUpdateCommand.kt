@@ -6,7 +6,7 @@ import java.math.BigDecimal
 import java.util.*
 
 sealed class OrderUpdateCommand(val orderId: OrderId) {
-    class SetOrderCancellation(orderId: OrderId, val cancelled: Boolean) : OrderUpdateCommand(orderId)
+    class ReplaceStatus(orderId: OrderId, val orderStatus: OrderStatus) : OrderUpdateCommand(orderId)
     class UpdateOrderCurrency(orderId: OrderId, val currency: Currency, val fxRateToGbp: BigDecimal) :
         OrderUpdateCommand(orderId)
 

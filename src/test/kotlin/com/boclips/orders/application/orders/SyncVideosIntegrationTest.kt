@@ -24,7 +24,7 @@ class SyncVideosIntegrationTest : AbstractSpringIntegrationTest() {
             downloadableVideoStatus = AssetStatus.PROCESSING
         )
         val order = saveOrder(
-            OrderFactory.completeOrder(
+            OrderFactory.order(
                 items = listOf(
                     OrderFactory.orderItem(video = oldVideo)
                 )

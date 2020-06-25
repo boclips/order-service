@@ -3,6 +3,7 @@ package com.boclips.orders.infrastructure.orders
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
@@ -70,13 +71,13 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can cancel an order`() {
+    fun `can update an order status`() {
         val order = OrderFactory.order(legacyOrderId = "legacy-id")
         ordersRepository.save(order = order)
 
-        ordersRepository.update(OrderUpdateCommand.SetOrderCancellation(orderId = order.id, cancelled = true))
+        ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
 
-        assertThat(ordersRepository.findOne(order.id)!!.cancelled).isEqualTo(true)
+        assertThat(ordersRepository.findOne(order.id)!!.status).isEqualTo(OrderStatus.INVALID)
     }
 
     @Test
@@ -84,7 +85,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val startOfTest = Instant.now().minusMillis(100)
         val order = OrderFactory.order(legacyOrderId = "legacy-id", updatedAt = startOfTest)
         ordersRepository.save(order = order)
-        ordersRepository.update(OrderUpdateCommand.SetOrderCancellation(orderId = order.id, cancelled = true))
+        ordersRepository.update(OrderUpdateCommand.ReplaceStatus(orderId = order.id, orderStatus = OrderStatus.INVALID))
 
         assertThat(ordersRepository.findOne(order.id)!!.updatedAt).isAfter(startOfTest)
     }
@@ -93,9 +94,9 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     fun `throws when updating a non existent order`() {
         assertThrows<OrderNotFoundException> {
             ordersRepository.update(
-                OrderUpdateCommand.SetOrderCancellation(
+                OrderUpdateCommand.ReplaceStatus(
                     orderId = OrderId(ObjectId().toHexString()),
-                    cancelled = true
+                    orderStatus = OrderStatus.INVALID
                 )
             )
 
@@ -106,9 +107,9 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     fun `throws when updating an order with a invalid ID`() {
         assertThrows<OrderNotFoundException> {
             ordersRepository.update(
-                OrderUpdateCommand.SetOrderCancellation(
+                OrderUpdateCommand.ReplaceStatus(
                     orderId = OrderId("you cheeky programmer"),
-                    cancelled = true
+                    orderStatus = OrderStatus.INVALID
                 )
             )
 

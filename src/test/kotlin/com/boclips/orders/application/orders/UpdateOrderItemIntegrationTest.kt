@@ -20,7 +20,6 @@ class UpdateOrderItemIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can update the price of an order item`() {
         val savedOrder = ordersRepository.save(
             OrderFactory.order(
-                currency = null,
                 items = listOf(
                     OrderFactory.orderItem(
                         id = "1",

@@ -25,7 +25,7 @@ class OrderRepositoryEventDecoratorIntegrationTest : AbstractSpringIntegrationTe
     @Test
     fun `event is published on update`() {
         val order = orderRepository.save(OrderFactory.order())
-        orderRepository.update(OrderUpdateCommand.SetOrderCancellation(order.id, true))
+        orderRepository.update(OrderUpdateCommand.ReplaceStatus(order.id, OrderStatus.COMPLETED))
 
         assertThat(eventBus.countEventsOfType(OrderUpdated::class.java)).isOne()
     }

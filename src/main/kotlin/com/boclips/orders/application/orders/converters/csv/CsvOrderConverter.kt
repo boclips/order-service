@@ -66,7 +66,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                 orderItems.firstOrNull()?.let { orderBuilder.currency(it.price.currency) }
 
                 orderBuilder.takeIf { errors.isEmpty() }?.run {
-                    cancelled(false)
+                    status(OrderStatus.INCOMPLETED)
                         .isbnOrProductNumber(firstOrderItem.isbnProductNumber)
                         .authorisingUser(firstOrderItem.memberAuthorise?.let { OrderUser.BasicUser(it) })
                         .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })

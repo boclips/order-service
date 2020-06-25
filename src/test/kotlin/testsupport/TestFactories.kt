@@ -3,6 +3,7 @@ package testsupport
 import com.boclips.eventbus.events.order.*
 import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.*
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
@@ -363,26 +364,19 @@ object PriceFactory {
 }
 
 object OrderFactory {
-
-    fun completeOrder(items: List<OrderItem> = listOf(orderItem())) = order(items = items)
-    fun incompleteOrder(items: List<OrderItem> = listOf(orderItem(license = null))) = order(
-        items = items
-    )
-
-    fun cancelledOrder() = order(cancelled = true)
     fun order(
         id: OrderId = OrderId(value = aValidId()),
         legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
         requestingUser: OrderUser = completeOrderUser(),
         authorisingUser: OrderUser = completeOrderUser(),
-        cancelled: Boolean = false,
+        status: OrderStatus = OrderStatus.INCOMPLETED,
         createdAt: Instant = Instant.now(),
         updatedAt: Instant = Instant.now(),
         items: List<OrderItem> = emptyList(),
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         isThroughPlatform: Boolean = true,
-        currency: Currency? = items.firstOrNull()?.price?.currency,
+        currency: Currency? = null,
         fxRateToGbp: BigDecimal? = null
     ): Order {
         return Order(
@@ -393,11 +387,11 @@ object OrderFactory {
             requestingUser = requestingUser,
             authorisingUser = authorisingUser,
             isbnOrProductNumber = isbnOrProductNumber,
-            cancelled = cancelled,
+            status = status,
             items = items,
             organisation = orderOrganisation,
             isThroughPlatform = isThroughPlatform,
-            currency = currency,
+            currency = currency ?: items.firstOrNull()?.price?.currency,
             fxRateToGbp = fxRateToGbp
         )
     }
@@ -405,7 +399,7 @@ object OrderFactory {
     fun orderDocument(
         id: ObjectId = ObjectId(),
         legacyOrderId: String = "legacyOrderId",
-        cancelled: Boolean = false,
+        status: String = "COMPLETED",
         authorisingUser: OrderUserDocument? = null,
         requestingUser: OrderUserDocument = TestFactories.orderUserDocument(),
         updatedAt: Instant = Instant.now(),
@@ -420,7 +414,7 @@ object OrderFactory {
         return OrderDocument(
             id = id,
             legacyOrderId = legacyOrderId,
-            cancelled = cancelled,
+            status = status,
             authorisingUser = authorisingUser,
             requestingUser = requestingUser,
             updatedAt = updatedAt,
