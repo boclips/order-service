@@ -47,14 +47,14 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `orders are ordered by updated at`() {
-        val firstUpdated = OrderFactory.order(updatedAt = Instant.ofEpochSecond(1))
-        val lastUpdated = OrderFactory.order(updatedAt = Instant.ofEpochSecond(2))
+    fun `orders are ordered by created at`() {
+        val firstCreated = OrderFactory.order(createdAt = Instant.ofEpochSecond(1))
+        val lastCreated = OrderFactory.order(createdAt = Instant.ofEpochSecond(2))
 
-        ordersRepository.save(order = firstUpdated)
-        ordersRepository.save(order = lastUpdated)
+        ordersRepository.save(order = firstCreated)
+        ordersRepository.save(order = lastCreated)
 
-        assertThat(ordersRepository.findAll().first()).isEqualTo(lastUpdated)
+        assertThat(ordersRepository.findAll().first()).isEqualTo(lastCreated)
     }
 
     @Test

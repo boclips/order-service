@@ -37,7 +37,7 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
     override fun findAll(): List<Order> =
         collection()
             .find()
-            .sort(orderBy(OrderDocument::updatedAt, ascending = false))
+            .sort(orderBy(OrderDocument::createdAt, ascending = false))
             .map(OrderDocumentConverter::toOrder)
             .toList()
 
