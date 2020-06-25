@@ -4,7 +4,6 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
-import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
@@ -19,7 +18,7 @@ import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Currency
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 

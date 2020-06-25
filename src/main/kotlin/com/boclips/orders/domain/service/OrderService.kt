@@ -28,14 +28,14 @@ class OrderService(
 
     fun createIfNonExistent(order: Order): Order {
         var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId)
-            if (retrievedOrder == null) {
-                try {
-                    order.items.forEach{ videosClient.requestVideoCaptions(it.video.videoServiceId.value) }
-                } catch (e: Exception) {
-                    logger.warn { "Could not request transcripts because ${e.message}. The order will be processed as usual." }
-                }
-                retrievedOrder = ordersRepository.save(order)
+        if (retrievedOrder == null) {
+            try {
+                order.items.forEach { videosClient.requestVideoCaptions(it.video.videoServiceId.value) }
+            } catch (e: Exception) {
+                logger.warn { "Could not request transcripts because ${e.message}. The order will be processed as usual." }
             }
+            retrievedOrder = ordersRepository.save(order)
+        }
 
         return updateStatus(orderId = retrievedOrder.id)
     }

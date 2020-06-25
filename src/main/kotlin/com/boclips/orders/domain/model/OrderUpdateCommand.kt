@@ -3,7 +3,7 @@ package com.boclips.orders.domain.model
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.Video
 import java.math.BigDecimal
-import java.util.*
+import java.util.Currency
 
 sealed class OrderUpdateCommand(val orderId: OrderId) {
     class ReplaceStatus(orderId: OrderId, val orderStatus: OrderStatus) : OrderUpdateCommand(orderId)

@@ -9,7 +9,13 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.presentation.OrdersController
-import com.boclips.orders.presentation.orders.*
+import com.boclips.orders.presentation.orders.CaptionStatusResource
+import com.boclips.orders.presentation.orders.ChannelResource
+import com.boclips.orders.presentation.orders.OrderItemResource
+import com.boclips.orders.presentation.orders.OrderResource
+import com.boclips.orders.presentation.orders.PriceResource
+import com.boclips.orders.presentation.orders.UserDetailsResource
+import com.boclips.orders.presentation.orders.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.EntityModel
@@ -21,7 +27,7 @@ import java.math.BigDecimal
 import java.net.URL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Currency
 
 class OrderResourceTest {
     @Test

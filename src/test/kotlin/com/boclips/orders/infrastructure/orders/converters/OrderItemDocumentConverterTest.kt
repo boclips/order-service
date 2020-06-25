@@ -5,7 +5,6 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LicenseDocument
-import com.boclips.orders.infrastructure.orders.OrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Nested
@@ -16,7 +15,7 @@ import testsupport.PriceFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Currency
 
 class OrderItemDocumentConverterTest {
     @Test
@@ -101,7 +100,8 @@ class OrderItemDocumentConverterTest {
 
         @Test
         fun `converts full projection link to document`() {
-            val orderItem = OrderFactory.orderItem(video = TestFactories.video(fullProjectionLink = "https://ohhai.com"))
+            val orderItem =
+                OrderFactory.orderItem(video = TestFactories.video(fullProjectionLink = "https://ohhai.com"))
 
             val convertedItem = OrderItemDocumentConverter.toOrderItemDocument(orderItem)
             assertThat(convertedItem.video.fullProjectionLink).describedAs("https://ohhai.com")

@@ -16,40 +16,40 @@ class EventConverter {
 
     fun convertOrder(order: Order): EventOrder {
         return EventOrder.builder()
-                .id(order.id.value)
-                .status(convertOrderStatus(order.status))
-                .createdAt(order.createdAt.atZone(ZoneOffset.UTC))
-                .updatedAt(order.updatedAt.atZone(ZoneOffset.UTC))
-                .customerOrganisationName(order.organisation?.name ?: "UNKNOWN")
-                .items(order.items.map { item ->
-                    OrderItem.builder()
-                            .videoId(VideoId(item.video.videoServiceId.value))
-                            .priceGbp(getItemPriceInGbp(item.price, order))
-                            .build()
-                })
-                .authorisingUser(order.authorisingUser?.let(::convertOrderUser))
-                .requestingUser(order.requestingUser.let(::convertOrderUser))
-                .currency(order.currency)
-                .isbnOrProductNumber(order.isbnOrProductNumber)
-                .fxRateToGbp(order.fxRateToGbp)
-                .isThroughPlatform(order.isThroughPlatform)
-                .build()
+            .id(order.id.value)
+            .status(convertOrderStatus(order.status))
+            .createdAt(order.createdAt.atZone(ZoneOffset.UTC))
+            .updatedAt(order.updatedAt.atZone(ZoneOffset.UTC))
+            .customerOrganisationName(order.organisation?.name ?: "UNKNOWN")
+            .items(order.items.map { item ->
+                OrderItem.builder()
+                    .videoId(VideoId(item.video.videoServiceId.value))
+                    .priceGbp(getItemPriceInGbp(item.price, order))
+                    .build()
+            })
+            .authorisingUser(order.authorisingUser?.let(::convertOrderUser))
+            .requestingUser(order.requestingUser.let(::convertOrderUser))
+            .currency(order.currency)
+            .isbnOrProductNumber(order.isbnOrProductNumber)
+            .fxRateToGbp(order.fxRateToGbp)
+            .isThroughPlatform(order.isThroughPlatform)
+            .build()
     }
 
     fun convertOrderUser(user: OrderUser): EventOrderUser =
-            when (user) {
-                is OrderUser.CompleteUser ->
-                    EventOrderUser.builder()
-                            .firstName(user.firstName)
-                            .lastName(user.lastName)
-                            .email(user.email)
-                            .legacyUserId(user.legacyUserId)
-                            .build()
-                is OrderUser.BasicUser ->
-                    EventOrderUser.builder()
-                            .label(user.label)
-                            .build()
-            }
+        when (user) {
+            is OrderUser.CompleteUser ->
+                EventOrderUser.builder()
+                    .firstName(user.firstName)
+                    .lastName(user.lastName)
+                    .email(user.email)
+                    .legacyUserId(user.legacyUserId)
+                    .build()
+            is OrderUser.BasicUser ->
+                EventOrderUser.builder()
+                    .label(user.label)
+                    .build()
+        }
 
     fun convertOrderStatus(orderStatus: OrderStatus): EventOrderStatus {
         return when (orderStatus) {
@@ -61,8 +61,8 @@ class EventConverter {
     }
 
     private fun getItemPriceInGbp(
-            price: Price,
-            order: Order
+        price: Price,
+        order: Order
     ): BigDecimal {
         price.amount ?: return BigDecimal("0.00")
         order.fxRateToGbp ?: return BigDecimal("0.00")

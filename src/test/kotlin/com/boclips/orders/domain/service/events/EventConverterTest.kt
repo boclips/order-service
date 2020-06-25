@@ -31,14 +31,24 @@ class EventConverterTest {
             orderOrganisation = OrderOrganisation(name = "Pearson"),
             fxRateToGbp = BigDecimal("2"),
             items = listOf(
-                    OrderFactory.orderItem(
-                            video = TestFactories.video(videoServiceId = "the-video-id"),
-                            price = PriceFactory.tenDollars()
-                    )
+                OrderFactory.orderItem(
+                    video = TestFactories.video(videoServiceId = "the-video-id"),
+                    price = PriceFactory.tenDollars()
+                )
             ),
             status = OrderStatus.COMPLETED,
-            authorisingUser = OrderFactory.completeOrderUser(firstName = "Pear", lastName = "Son", email = "pear@son.com", sourceUserId = "pson-1"),
-            requestingUser = OrderFactory.completeOrderUser(firstName = "Apple", lastName = "Son", email = "apple@son.com", sourceUserId = "pson-2"),
+            authorisingUser = OrderFactory.completeOrderUser(
+                firstName = "Pear",
+                lastName = "Son",
+                email = "pear@son.com",
+                sourceUserId = "pson-1"
+            ),
+            requestingUser = OrderFactory.completeOrderUser(
+                firstName = "Apple",
+                lastName = "Son",
+                email = "apple@son.com",
+                sourceUserId = "pson-2"
+            ),
             isbnOrProductNumber = "ISBN-1",
             isThroughPlatform = true,
             currency = Currency.getInstance("USD")
@@ -47,10 +57,10 @@ class EventConverterTest {
         val eventOrder = eventConverter.convertOrder(order)
 
         val assertUserHasFields = { user: OrderUser,
-                                    firstName: String,
-                                    lastName: String,
-                                    email: String,
-                                    userId: String ->
+            firstName: String,
+            lastName: String,
+            email: String,
+            userId: String ->
             assertThat(user.firstName).isEqualTo(firstName)
             assertThat(user.lastName).isEqualTo(lastName)
             assertThat(user.email).isEqualTo(email)
@@ -62,10 +72,10 @@ class EventConverterTest {
         assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
         assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
         assertThat(eventOrder.items).contains(
-                OrderItem.builder()
-                        .priceGbp(BigDecimal("20.00"))
-                        .videoId(VideoId("the-video-id"))
-                        .build()
+            OrderItem.builder()
+                .priceGbp(BigDecimal("20.00"))
+                .videoId(VideoId("the-video-id"))
+                .build()
         )
         assertThat(eventOrder.customerOrganisationName).isEqualTo("Pearson")
         assertNotNull(eventOrder.authorisingUser)
@@ -87,12 +97,12 @@ class EventConverterTest {
     @Test
     fun `price is zero when order has no currency`() {
         val order = OrderFactory.order(
-                currency = null, items = listOf(
+            currency = null, items = listOf(
                 OrderFactory.orderItem(
-                        video = TestFactories.video(),
-                        price = Price(amount = BigDecimal.TEN, currency = null)
+                    video = TestFactories.video(),
+                    price = Price(amount = BigDecimal.TEN, currency = null)
                 )
-        )
+            )
         )
 
         val eventOrder = eventConverter.convertOrder(order)
@@ -103,12 +113,12 @@ class EventConverterTest {
     @Test
     fun `price is zero when order has no price amount`() {
         val order = OrderFactory.order(
-                currency = Currency.getInstance("USD"), items = listOf(
+            currency = Currency.getInstance("USD"), items = listOf(
                 OrderFactory.orderItem(
-                        video = TestFactories.video(),
-                        price = Price(amount = null, currency = Currency.getInstance("USD"))
+                    video = TestFactories.video(),
+                    price = Price(amount = null, currency = Currency.getInstance("USD"))
                 )
-        )
+            )
         )
 
         val eventOrder = eventConverter.convertOrder(order)

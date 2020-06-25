@@ -5,7 +5,6 @@ import com.boclips.orders.domain.model.ManifestItem
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.service.currency.FixedFxRateService
 import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 import java.math.BigDecimal
 import java.time.ZoneOffset
 import java.util.Currency

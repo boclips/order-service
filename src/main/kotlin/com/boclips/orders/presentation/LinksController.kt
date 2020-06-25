@@ -23,7 +23,8 @@ class LinksController {
         } else {
             EntityModel(
                 "",
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LinksController::class.java).getLinks()).withSelfRel()
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LinksController::class.java).getLinks())
+                    .withSelfRel()
             )
         }
 }

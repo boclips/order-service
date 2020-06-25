@@ -21,7 +21,11 @@ class SyncVideos(
                     order.items.mapNotNull { item ->
                         try {
                             val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
-                            OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(orderId = order.id, orderItemsId = item.id, video = newVideo)
+                            OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
+                                orderId = order.id,
+                                orderItemsId = item.id,
+                                video = newVideo
+                            )
                         } catch (e: Exception) {
                             logger.warn("Error syncing video for order: ${order.id.value}", e)
                             null

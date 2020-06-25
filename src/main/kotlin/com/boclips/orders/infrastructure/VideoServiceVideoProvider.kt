@@ -1,7 +1,15 @@
 package com.boclips.orders.infrastructure
 
-import com.boclips.orders.domain.exceptions.*
-import com.boclips.orders.domain.model.orderItem.*
+import com.boclips.orders.domain.exceptions.ChannelNotFoundException
+import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
+import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
+import com.boclips.orders.domain.exceptions.MissingVideoPlaybackId
+import com.boclips.orders.domain.exceptions.VideoNotFoundException
+import com.boclips.orders.domain.model.orderItem.AssetStatus
+import com.boclips.orders.domain.model.orderItem.Channel
+import com.boclips.orders.domain.model.orderItem.ChannelId
+import com.boclips.orders.domain.model.orderItem.Video
+import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
 import com.boclips.videos.api.httpclient.ChannelsClient
@@ -14,7 +22,7 @@ import com.boclips.videos.api.response.video.VideoResource
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.net.URL
-import java.util.*
+import java.util.Currency
 
 @Component
 class VideoServiceVideoProvider(
@@ -28,15 +36,18 @@ class VideoServiceVideoProvider(
         val channel = getChannel(videoResource)
 
         return Video(
-            videoServiceId = VideoId(value = videoResource.id
-                ?: throw IllegalStateException("Missing video for id $videoId")),
+            videoServiceId = VideoId(
+                value = videoResource.id
+                    ?: throw IllegalStateException("Missing video for id $videoId")
+            ),
             title = videoResource.title ?: throw IllegalStateException("Missing title for video $videoId"),
             type = videoResource.type?.name.toString(),
             channelVideoId = videoResource.channelVideoId
                 ?: throw IllegalStateException("Missing channel video id for video $videoId"),
             channel = Channel(
-                videoServiceId = ChannelId(value = videoResource.channelId
-                    ?: throw IllegalStateException("Missing channel id for video $videoId")
+                videoServiceId = ChannelId(
+                    value = videoResource.channelId
+                        ?: throw IllegalStateException("Missing channel id for video $videoId")
                 ),
                 name = videoResource.createdBy
                     ?: throw IllegalStateException("Missing 'created by' for video $videoId"),

@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import java.time.LocalDate
-import java.util.*
+import java.util.Currency
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)

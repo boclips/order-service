@@ -1,6 +1,10 @@
 package com.boclips.orders.presentation.orders
 
-import com.boclips.orders.domain.model.orderItem.*
+import com.boclips.orders.domain.model.orderItem.AssetStatus
+import com.boclips.orders.domain.model.orderItem.Duration
+import com.boclips.orders.domain.model.orderItem.OrderItem
+import com.boclips.orders.domain.model.orderItem.OrderItemLicense
+import com.boclips.orders.domain.model.orderItem.TrimRequest
 import org.springframework.hateoas.Link
 
 data class OrderItemResource(

@@ -31,16 +31,18 @@ class SyncVideosIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        fakeVideoClient.add(VideoResource(
-            id = oldVideo.videoServiceId.value,
-            title = "hello",
-            channelId = "123",
-            channelVideoId = "123",
-            createdBy = "Keyser Söze",
-            captionStatus = CaptionStatus.AVAILABLE,
-            playback = StreamPlaybackResource(id = oldVideo.playbackId, referenceId = oldVideo.playbackId),
-            _links = mapOf("fullProjection" to HateoasLink(href = "https://hello.org"))
-        ))
+        fakeVideoClient.add(
+            VideoResource(
+                id = oldVideo.videoServiceId.value,
+                title = "hello",
+                channelId = "123",
+                channelVideoId = "123",
+                createdBy = "Keyser Söze",
+                captionStatus = CaptionStatus.AVAILABLE,
+                playback = StreamPlaybackResource(id = oldVideo.playbackId, referenceId = oldVideo.playbackId),
+                _links = mapOf("fullProjection" to HateoasLink(href = "https://hello.org"))
+            )
+        )
 
         fakeChannelsClient.add(ChannelResource(id = "123", name = "the real mvp", currency = "GBP"))
 

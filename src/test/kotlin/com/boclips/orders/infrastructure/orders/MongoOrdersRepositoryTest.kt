@@ -11,10 +11,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import testsupport.*
+import testsupport.AbstractSpringIntegrationTest
+import testsupport.BigDecimalWith2DP
+import testsupport.OrderFactory
+import testsupport.PriceFactory
+import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.*
+import java.util.Currency
 
 class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
@@ -192,8 +196,16 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         ordersRepository.bulkUpdate(
             listOf(
-                OrderUpdateCommand.UpdateOrderCurrency(orderId = originalOrder1.id, currency = Currency.getInstance("EUR"), fxRateToGbp = BigDecimal.ONE),
-                OrderUpdateCommand.UpdateOrderCurrency(orderId = originalOrder2.id, currency = Currency.getInstance("EUR"), fxRateToGbp = BigDecimal.ZERO)
+                OrderUpdateCommand.UpdateOrderCurrency(
+                    orderId = originalOrder1.id,
+                    currency = Currency.getInstance("EUR"),
+                    fxRateToGbp = BigDecimal.ONE
+                ),
+                OrderUpdateCommand.UpdateOrderCurrency(
+                    orderId = originalOrder2.id,
+                    currency = Currency.getInstance("EUR"),
+                    fxRateToGbp = BigDecimal.ZERO
+                )
             )
         )
 

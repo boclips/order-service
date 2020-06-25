@@ -8,19 +8,30 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import org.assertj.core.api.Assertions
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import testsupport.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import testsupport.AbstractSpringIntegrationTest
+import testsupport.OrderFactory
+import testsupport.PriceFactory
+import testsupport.TestFactories
+import testsupport.asBackofficeStaff
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Currency
 
 class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Value("classpath:master-orders.csv")
@@ -84,15 +95,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             territory = OrderItemLicense.SINGLE_REGION
                         )
                     ), OrderFactory.orderItem(
-                    price = Price(
-                        amount = BigDecimal.valueOf(10),
-                        currency = Currency.getInstance("EUR")
-                    ),
-                    transcriptRequested = false,
-                    video = TestFactories.video(
-                        channel = TestFactories.channel()
+                        price = Price(
+                            amount = BigDecimal.valueOf(10),
+                            currency = Currency.getInstance("EUR")
+                        ),
+                        transcriptRequested = false,
+                        video = TestFactories.video(
+                            channel = TestFactories.channel()
+                        )
                     )
-                )
                 )
             )
         )
@@ -130,7 +141,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].video._links.fullProjection.href", equalTo("https://videosrus.com")))
+            .andExpect(
+                jsonPath(
+                    "$._embedded.orders[0].items[0].video._links.fullProjection.href",
+                    equalTo("https://videosrus.com")
+                )
+            )
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.videoReference", equalTo("AP-123")))
 
             .andExpect(jsonPath("$._embedded.orders[0].items[0].channel.id", equalTo("123")))
@@ -292,7 +308,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val csv =
-            mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
+            mockMvc.perform(
+                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff()
+            )
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", containsString("text/csv")))
                 .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))

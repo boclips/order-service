@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.AbstractSpringIntegrationTest
-import java.util.*
+import java.util.Currency
 
 internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     @Autowired
