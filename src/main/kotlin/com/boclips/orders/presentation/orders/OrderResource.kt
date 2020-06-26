@@ -1,6 +1,7 @@
 package com.boclips.orders.presentation.orders
 
 import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.presentation.OrdersController
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.server.core.Relation
@@ -10,7 +11,7 @@ data class OrderResource(
     val id: String,
     val legacyOrderId: String,
     val userDetails: UserDetailsResource,
-    val status: String,
+    val status: OrderStatusResource,
     val createdAt: String,
     val updatedAt: String,
     val isbnNumber: String?,
@@ -27,7 +28,13 @@ data class OrderResource(
                 userDetails = UserDetailsResource.toResource(order),
                 createdAt = order.createdAt.toString(),
                 updatedAt = order.updatedAt.toString(),
-                status = order.status.toString(),
+                status = when (order.status) {
+                    OrderStatus.READY -> OrderStatusResource.READY
+                    OrderStatus.INCOMPLETED -> OrderStatusResource.INCOMPLETED
+                    OrderStatus.IN_PROGRESS -> OrderStatusResource.IN_PROGRESS
+                    OrderStatus.CANCELLED -> OrderStatusResource.CANCELLED
+                    OrderStatus.INVALID -> OrderStatusResource.INVALID
+                },
                 items = order.items
                     .map {
                         EntityModel(

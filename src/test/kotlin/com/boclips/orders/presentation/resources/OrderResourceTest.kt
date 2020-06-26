@@ -9,13 +9,7 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.presentation.OrdersController
-import com.boclips.orders.presentation.orders.CaptionStatusResource
-import com.boclips.orders.presentation.orders.ChannelResource
-import com.boclips.orders.presentation.orders.OrderItemResource
-import com.boclips.orders.presentation.orders.OrderResource
-import com.boclips.orders.presentation.orders.PriceResource
-import com.boclips.orders.presentation.orders.UserDetailsResource
-import com.boclips.orders.presentation.orders.VideoResource
+import com.boclips.orders.presentation.orders.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.EntityModel
@@ -100,7 +94,7 @@ class OrderResourceTest {
                     organisationLabel = "Auth Test Org"
 
                 ),
-                status = "READY",
+                status = OrderStatusResource.READY,
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
                 totalPrice = PriceResource(
