@@ -16,7 +16,7 @@ class SyncVideos(
     companion object : KLogging()
 
     operator fun invoke() {
-        ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED)) {
+        ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED, OrderStatus.IN_PROGRESS)) {
             it.windowed(100, 100, true).forEachIndexed { index, orders ->
                 logger.info { "Starting batch ${index + 1} of syncing videos" }
                 val commands = orders.flatMap { order ->

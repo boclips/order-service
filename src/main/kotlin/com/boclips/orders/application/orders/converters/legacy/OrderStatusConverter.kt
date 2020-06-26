@@ -6,7 +6,7 @@ object OrderStatusConverter {
     fun from(status: String): OrderStatus {
         return when (status) {
             "COMPLETED" ->
-                OrderStatus.COMPLETED
+                OrderStatus.READY
             "CONFIRMED" ->
                 OrderStatus.INCOMPLETED
             "OPEN" ->

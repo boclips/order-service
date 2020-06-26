@@ -30,7 +30,7 @@ object OrderDocumentConverter {
         return Order(
             id = OrderId(document.id.toHexString()),
             legacyOrderId = document.legacyOrderId,
-            status = OrderStatus.valueOf(document.status),
+            status = convertOrderStatus(document),
             authorisingUser = document.authorisingUser?.let { OrderUserDocumentConverter.toOrderUser(it) },
             requestingUser = OrderUserDocumentConverter.toOrderUser(document.requestingUser),
             createdAt = document.createdAt,
@@ -42,5 +42,17 @@ object OrderDocumentConverter {
             currency = document.currency,
             fxRateToGbp = document.fxRateToGbp
         )
+    }
+
+    private fun convertOrderStatus(document: OrderDocument): OrderStatus {
+        if (document.status == "COMPLETED") {
+            return OrderStatus.READY
+        }
+
+        return try {
+            OrderStatus.valueOf(document.status)
+        } catch (e: IllegalArgumentException) {
+            OrderStatus.INVALID
+        }
     }
 }

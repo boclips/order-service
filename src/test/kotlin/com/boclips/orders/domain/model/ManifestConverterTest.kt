@@ -37,7 +37,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         val orders = arrayOf(
             OrderFactory.order(
                 createdAt = LocalDate.of(2019, Month.APRIL, 3).atStartOfDay().toInstant(ZoneOffset.UTC),
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(
                     orderItem1,
                     orderItem2
@@ -45,7 +45,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
             ),
             OrderFactory.order(
                 createdAt = LocalDate.of(2019, Month.APRIL, 13).atStartOfDay().toInstant(ZoneOffset.UTC),
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(
                     orderItem3
                 )

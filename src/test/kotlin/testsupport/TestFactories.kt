@@ -405,7 +405,7 @@ object OrderFactory {
         legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
         requestingUser: OrderUser = completeOrderUser(),
         authorisingUser: OrderUser = completeOrderUser(),
-        status: OrderStatus = OrderStatus.INCOMPLETED,
+        status: OrderStatus = OrderStatus.READY,
         createdAt: Instant = Instant.now(),
         updatedAt: Instant = Instant.now(),
         items: List<OrderItem> = emptyList(),
@@ -427,7 +427,7 @@ object OrderFactory {
             items = items,
             organisation = orderOrganisation,
             isThroughPlatform = isThroughPlatform,
-            currency = currency ?: items.firstOrNull()?.price?.currency,
+            currency = currency,
             fxRateToGbp = fxRateToGbp
         )
     }

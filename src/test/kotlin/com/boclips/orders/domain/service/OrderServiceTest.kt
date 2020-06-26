@@ -4,6 +4,7 @@ import com.boclips.orders.application.orders.IllegalOrderStateExport
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.videos.api.request.VideoServiceApiFactory
@@ -12,13 +13,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import testsupport.AbstractSpringIntegrationTest
-import testsupport.BigDecimalWith2DP
-import testsupport.OrderFactory
-import testsupport.PriceFactory
-import testsupport.TestFactories
+import testsupport.*
 import java.math.BigDecimal
-import java.util.Currency
+import java.util.*
 
 class OrderServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -26,7 +23,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can create an order`() {
-        val originalOrder = OrderFactory.order()
+        val originalOrder = OrderFactory.completeOrder()
 
         orderService.createIfNonExistent(originalOrder)
 
@@ -36,13 +33,28 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order is complete if it has a currency and all items have a price and license`() {
+    fun `a created order is ready if it has a currency and all items are ready`() {
         val originalOrder = OrderFactory.order(
             status = OrderStatus.INCOMPLETED,
             items = listOf(
+                OrderFactory.orderItem()
+            )
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
+    }
+
+    @Test
+    fun `a created order is incomplete if a single item is in complete`() {
+        val originalOrder = OrderFactory.order(
+            status = OrderStatus.IN_PROGRESS,
+            items = listOf(
                 OrderFactory.orderItem(
-                    price = PriceFactory.tenDollars(),
-                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                    video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
                 )
             )
         )
@@ -51,7 +63,25 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
 
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
+    }
+
+    @Test
+    fun `a created order is in progress if a single item is in progress`() {
+        val originalOrder = OrderFactory.order(
+            status = OrderStatus.INCOMPLETED,
+            items = listOf(
+                OrderFactory.orderItem(
+                    video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
+                )
+            )
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.IN_PROGRESS)
     }
 
     @Test
@@ -99,7 +129,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     @Test
     fun `cannot replace status of an order to complete if it's not completed`() {
         val order = OrderFactory.order(
-            status = OrderStatus.COMPLETED,
+            status = OrderStatus.READY,
             items = listOf(OrderFactory.orderItem(price = Price(amount = null, currency = null)))
         )
 
@@ -142,7 +172,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `when any order has status incomplete, throws`() {
         listOf(
             OrderFactory.order(
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(OrderFactory.orderItem())
             ),
             OrderFactory.order(
@@ -150,7 +180,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                 items = listOf(OrderFactory.orderItem())
             ),
             OrderFactory.order(
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(OrderFactory.orderItem())
             )
         ).forEach { ordersRepository.save(it) }
@@ -164,7 +194,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `when any orders are cancelled they are filtered`() {
         listOf(
             OrderFactory.order(
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(OrderFactory.orderItem())
             ),
             OrderFactory.order(
@@ -172,7 +202,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                 items = listOf(OrderFactory.orderItem())
             ),
             OrderFactory.order(
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(OrderFactory.orderItem())
             )
         ).forEach { ordersRepository.save(it) }
@@ -190,19 +220,19 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `exports manifest with correct fx rates`() {
         val order =
             OrderFactory.order(
-                status = OrderStatus.COMPLETED, items = listOf(
-                    OrderFactory.orderItem(
-                        price = PriceFactory.tenDollars(),
-                        video = TestFactories.video(
-                            channel = TestFactories.channel(
-                                currency = Currency.getInstance(
-                                    "SGD"
-                                )
+                status = OrderStatus.READY, items = listOf(
+                OrderFactory.orderItem(
+                    price = PriceFactory.tenDollars(),
+                    video = TestFactories.video(
+                        channel = TestFactories.channel(
+                            currency = Currency.getInstance(
+                                "SGD"
                             )
                         )
                     )
-
                 )
+
+            )
             )
 
         orderService.createIfNonExistent(order)
@@ -244,7 +274,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+        assertThat(updatedOrder.status).isEqualTo(OrderStatus.READY)
     }
 
     @Test
@@ -299,6 +329,6 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(updatedOrder.status).isEqualTo(OrderStatus.COMPLETED)
+        assertThat(updatedOrder.status).isEqualTo(OrderStatus.READY)
     }
 }

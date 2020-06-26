@@ -15,6 +15,31 @@ data class OrderItem(
         fun builder() = Builder()
     }
 
+    val status: OrderItemStatus
+        get() {
+            val priceUnavailable = price.currency == null || price.amount == null
+            val captionsUnavailable = video.captionStatus == AssetStatus.UNAVAILABLE
+            val downloadableVideoUnavailable = video.downloadableVideoStatus == AssetStatus.UNAVAILABLE
+            val licenseUnavailable = license == null
+
+            if (
+                priceUnavailable ||
+                captionsUnavailable ||
+                downloadableVideoUnavailable ||
+                licenseUnavailable
+            ) {
+                return OrderItemStatus.INCOMPLETED
+            }
+
+            if (video.captionStatus == AssetStatus.REQUESTED ||
+                video.captionStatus == AssetStatus.PROCESSING
+            ) {
+                return OrderItemStatus.IN_PROGRESS
+            }
+
+            return OrderItemStatus.READY
+        }
+
     class Builder {
         private lateinit var id: String
         private lateinit var price: Price

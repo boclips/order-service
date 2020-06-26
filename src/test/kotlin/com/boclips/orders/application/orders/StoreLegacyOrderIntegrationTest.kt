@@ -4,6 +4,7 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
+import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
@@ -212,6 +213,10 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
             VideoResource(
                 id = "video-id",
                 title = "hello",
+                playback = StreamPlaybackResource(
+                    id = "123",
+                    referenceId = "123"
+                ),
                 createdBy = "our content partne",
                 channelId = "ted-id",
                 channelVideoId = "",
@@ -231,6 +236,6 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         val orders = ordersRepository.findAll()
         assertThat(orders).hasSize(1)
-        assertThat(orders.first().status).isEqualTo(OrderStatus.INCOMPLETED)
+        assertThat(orders.first().status).isEqualTo(OrderStatus.CANCELLED)
     }
 }

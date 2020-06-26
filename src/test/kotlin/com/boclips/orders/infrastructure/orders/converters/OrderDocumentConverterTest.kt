@@ -1,5 +1,6 @@
 package com.boclips.orders.infrastructure.orders.converters
 
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.infrastructure.orders.OrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
@@ -27,7 +28,7 @@ class OrderDocumentConverterTest {
             OrderDocument(
                 id = id,
                 legacyOrderId = "1234",
-                status = "COMPLETED",
+                status = "READY",
                 authorisingUser = TestFactories.orderUserDocument(),
                 requestingUser = TestFactories.orderUserDocument(),
                 updatedAt = Instant.MAX,
@@ -40,5 +41,13 @@ class OrderDocumentConverterTest {
                 fxRateToGbp = null
             ).let(OrderDocumentConverter::toOrder).items
         ).isEmpty()
+    }
+
+    @Test
+    fun `legacy status COMPLETED gets converted to READY`() {
+        val document = OrderFactory.orderDocument(status = "COMPLETED")
+        val order = OrderDocumentConverter.toOrder(document)
+
+        assertThat(order.status).isEqualTo(OrderStatus.READY)
     }
 }

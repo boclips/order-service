@@ -1,5 +1,6 @@
 package com.boclips.orders.application.orders
 
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
@@ -27,7 +28,8 @@ class SyncVideosIntegrationTest : AbstractSpringIntegrationTest() {
             OrderFactory.order(
                 items = listOf(
                     OrderFactory.orderItem(video = oldVideo)
-                )
+                ),
+                status = OrderStatus.INCOMPLETED
             )
         )
 

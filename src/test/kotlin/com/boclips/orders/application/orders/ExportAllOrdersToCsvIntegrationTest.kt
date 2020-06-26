@@ -20,7 +20,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `can export orders to csv`() {
         val order = OrderFactory.order(
-            status = OrderStatus.COMPLETED,
+            status = OrderStatus.READY,
             currency = Currency.getInstance("GBP"),
             items = listOf(
                 OrderFactory.orderItem(

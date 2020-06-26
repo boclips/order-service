@@ -36,7 +36,7 @@ class EventConverterTest {
                     price = PriceFactory.tenDollars()
                 )
             ),
-            status = OrderStatus.COMPLETED,
+            status = OrderStatus.READY,
             authorisingUser = OrderFactory.completeOrderUser(
                 firstName = "Pear",
                 lastName = "Son",
@@ -88,7 +88,7 @@ class EventConverterTest {
 
     @Test
     fun `convert order status`() {
-        assertThat(eventConverter.convertOrderStatus(OrderStatus.COMPLETED)).isEqualTo(EventOrderStatus.COMPLETED)
+        assertThat(eventConverter.convertOrderStatus(OrderStatus.READY)).isEqualTo(EventOrderStatus.COMPLETED)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.CANCELLED)).isEqualTo(EventOrderStatus.CANCELLED)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.INCOMPLETED)).isEqualTo(EventOrderStatus.INCOMPLETED)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.INVALID)).isEqualTo(EventOrderStatus.INVALID)

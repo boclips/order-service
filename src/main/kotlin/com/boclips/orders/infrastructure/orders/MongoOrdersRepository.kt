@@ -11,15 +11,9 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.SetTo
-import org.litote.kmongo.combine
-import org.litote.kmongo.deleteMany
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.orderBy
-import org.litote.kmongo.set
+import org.litote.kmongo.*
 import java.time.Instant
+import kotlin.collections.toList
 
 const val databaseName = "order-service-db"
 
@@ -33,7 +27,7 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
         collection()
             .insertOne(
                 OrderDocumentConverter.toOrderDocument(order)
-            ).let { this.findOne(order.id) }!!
+            ).let { this.findOne(order.id) } ?: throw IllegalStateException("Could not save order")
 
     override fun deleteAll() {
         collection().deleteMany()
@@ -98,9 +92,8 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
 
     override fun streamAll(filter: OrderFilter, consumer: (orders: Sequence<Order>) -> Unit) {
         val filterBson = when (filter) {
-            is OrderFilter.HasStatus -> OrderDocument::status eq filter.status.name
+            is OrderFilter.HasStatus -> OrderDocument::status `in` filter.status.map { it.name }
         }
-
 
         val sequence = Sequence {
             collection()

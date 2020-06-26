@@ -2,12 +2,8 @@ package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.orders.domain.model.Manifest
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.OrderUpdateCommand
-import com.boclips.orders.domain.model.OrdersRepository
+import com.boclips.orders.domain.model.*
+import com.boclips.orders.domain.model.orderItem.OrderItemStatus
 import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.videos.api.httpclient.VideosClient
 import mu.KLogging
@@ -15,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.Currency
+import java.util.*
 
 @Component
 class OrderService(
@@ -77,19 +73,26 @@ class OrderService(
 
     private fun updateStatus(orderId: OrderId): Order {
         val order = ordersRepository.findOne(orderId) ?: throw IllegalStateException("Cannot find order to update")
+        val currentStatus = order.status
 
         if (order.status == OrderStatus.CANCELLED) {
             return order
         }
 
         return when {
-            orderIsComplete(order) -> ordersRepository.update(
+            orderIsReady(order) && currentStatus != OrderStatus.READY -> ordersRepository.update(
                 OrderUpdateCommand.ReplaceStatus(
                     orderId = orderId,
-                    orderStatus = OrderStatus.COMPLETED
+                    orderStatus = OrderStatus.READY
                 )
             )
-            order.status != OrderStatus.INCOMPLETED -> ordersRepository.update(
+            orderIsInProgress(order) && currentStatus != OrderStatus.IN_PROGRESS -> ordersRepository.update(
+                OrderUpdateCommand.ReplaceStatus(
+                    orderId = orderId,
+                    orderStatus = OrderStatus.IN_PROGRESS
+                )
+            )
+            orderIsIncomplete(order) && currentStatus != OrderStatus.INCOMPLETED -> ordersRepository.update(
                 OrderUpdateCommand.ReplaceStatus(
                     orderId = orderId,
                     orderStatus = OrderStatus.INCOMPLETED
@@ -99,6 +102,15 @@ class OrderService(
         }
     }
 
-    private fun orderIsComplete(order: Order) =
-        order.currency != null && order.items.all { it.price.amount != null && it.license != null }
+    private fun orderIsReady(order: Order) =
+        order.currency != null && order.items.all { it.status == OrderItemStatus.READY }
+
+    private fun orderIsIncomplete(order: Order) = order.currency == null || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
+
+    private fun orderIsInProgress(order: Order) =
+        order.currency != null &&
+            order.items.any { it.status != OrderItemStatus.INCOMPLETED } &&
+            order.items.any {
+                it.status == OrderItemStatus.IN_PROGRESS
+            }
 }

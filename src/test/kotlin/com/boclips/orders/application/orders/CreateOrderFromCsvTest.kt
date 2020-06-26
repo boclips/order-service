@@ -10,6 +10,7 @@ import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.util.*
 
 class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
@@ -45,9 +46,12 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
         this.defaultVideoClientResponse()
         val orderToBeCreated = OrderFactory.order(
             legacyOrderId = "1",
-            updatedAt = LocalDateTime.of(2011, 1, 1, 1, 1).toInstant(ZoneOffset.UTC)
+            updatedAt = LocalDateTime.of(2011, 1, 1, 1, 1).toInstant(ZoneOffset.UTC),
+            currency = Currency.getInstance("GBP")
         )
+
         ordersRepository.save(orderToBeCreated)
+
         val csvOrderMetadata =
             TestFactories.csvOrderItemMetadata(legacyOrderId = "1")
 

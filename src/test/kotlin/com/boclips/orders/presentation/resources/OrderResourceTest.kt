@@ -49,7 +49,7 @@ class OrderResourceTest {
                     email = "creator@email.com"
                 ),
                 orderOrganisation = OrderOrganisation(name = "Auth Test Org"),
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),
@@ -100,7 +100,7 @@ class OrderResourceTest {
                     organisationLabel = "Auth Test Org"
 
                 ),
-                status = "COMPLETED",
+                status = "READY",
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
                 totalPrice = PriceResource(

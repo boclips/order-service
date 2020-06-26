@@ -283,7 +283,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `can export a csv with orders`() {
         ordersRepository.save(
             OrderFactory.order(
-                status = OrderStatus.COMPLETED,
+                status = OrderStatus.READY,
                 items = listOf(
                     OrderFactory.orderItem(
                         price = Price(

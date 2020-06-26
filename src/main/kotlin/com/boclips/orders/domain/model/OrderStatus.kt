@@ -9,8 +9,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     visible = true
 )
 enum class OrderStatus {
-    COMPLETED,
-    CANCELLED,
+    READY,
     INCOMPLETED,
+    IN_PROGRESS,
+    CANCELLED,
     INVALID;
 }
