@@ -4,14 +4,17 @@ import com.boclips.orders.domain.model.OrderFilter
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
+import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.infrastructure.VideoServiceVideoProvider
 import mu.KLogging
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
 
 @Component
 class SyncVideos(
     private val ordersRepository: OrdersRepository,
-    private val videoServiceVideoProvider: VideoServiceVideoProvider
+    private val videoServiceVideoProvider: VideoServiceVideoProvider,
+    private val orderService: OrderService
 ) {
     companion object : KLogging()
 
@@ -35,7 +38,7 @@ class SyncVideos(
                     }
                 }
 
-                ordersRepository.bulkUpdate(commands)
+                orderService.bulkUpdate(commands)
             }
         }
     }
