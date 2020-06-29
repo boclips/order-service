@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     implementation 'com.github.boclips:kaltura-client:0.58.0'
-    implementation 'com.github.boclips:event-bus:4.2.7'
+    implementation 'com.github.boclips:event-bus:4.2.10'
     implementation 'com.github.boclips:boclips-spring-security:0.387.0'
     implementation 'com.github.boclips:boclips-spring-web:0.128.0'
     implementation 'com.github.boclips:videos:v531'

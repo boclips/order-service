@@ -104,7 +104,7 @@ abstract class AbstractSpringIntegrationTest {
         )
     }
 
-    fun saveOrder(order: Order): Order {
+    fun saveOrder(order: Order = OrderFactory.completeOrder()): Order {
         return ordersRepository.save(order)
     }
 }

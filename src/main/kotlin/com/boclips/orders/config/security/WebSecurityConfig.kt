@@ -33,6 +33,10 @@ class OrderServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers(HttpMethod.POST, "/v1/orders").hasRole(UserRoles.CREATE_ORDERS)
             .antMatchers(HttpMethod.PATCH, "/v1/orders/**").hasRole(UserRoles.UPDATE_ORDERS)
 
+            .antMatchers(HttpMethod.POST, "/v1/admin/orders/actions/broadcast_orders").run {
+                this.hasRole(UserRoles.BROADCAST_EVENTS)
+            }
+
             .anyRequest().denyAll()
     }
 }
