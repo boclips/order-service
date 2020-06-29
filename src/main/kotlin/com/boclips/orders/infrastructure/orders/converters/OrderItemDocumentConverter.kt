@@ -36,7 +36,8 @@ object OrderItemDocumentConverter {
             video = VideoDocument(
                 videoServiceId = it.video.videoServiceId.value,
                 title = it.video.title,
-                type = it.video.type,
+                type = it.video.types.firstOrNull() ?: "",
+                types = it.video.types,
                 fullProjectionLink = it.video.fullProjectionLink.toString(),
                 captionStatus = it.video.captionStatus.toString(),
                 hasHDVideo = when (it.video.downloadableVideoStatus) {
@@ -77,7 +78,7 @@ object OrderItemDocumentConverter {
             video = Video(
                 videoServiceId = VideoId(value = document.video.videoServiceId),
                 title = document.video.title,
-                type = document.video.type,
+                types = document.video.types ?: listOf(document.video.type),
                 channelVideoId = document.source.videoReference,
                 channel = Channel(
                     videoServiceId = ChannelId(value = document.source.channel.videoServiceChannelId),

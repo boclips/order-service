@@ -36,7 +36,7 @@ data class OrderItemResource(
                 video = VideoResource(
                     id = item.video.videoServiceId.value,
                     title = item.video.title,
-                    type = item.video.type,
+                    types = item.video.types,
                     videoReference = item.video.channelVideoId,
                     maxResolutionAvailable = when (item.video.downloadableVideoStatus) {
                         AssetStatus.AVAILABLE -> true

@@ -173,7 +173,7 @@ object TestFactories {
     fun video(
         videoServiceId: String = "video-service-id",
         title: String = "joshua tree",
-        videoType: String = "INSTRUCTIONAL_CLIPS",
+        videoTypes: List<String> = listOf("INSTRUCTIONAL_CLIPS"),
         videoReference: String = "ted_1234",
         channel: Channel = channel(),
         fullProjectionLink: String = "https://great-vids.com",
@@ -186,7 +186,7 @@ object TestFactories {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
             title = title,
-            type = videoType,
+            types = videoTypes,
             channelVideoId = videoReference,
             channel = channel,
             fullProjectionLink = URL(fullProjectionLink),
@@ -278,6 +278,7 @@ object TestFactories {
         referenceId: String = "12345679",
         title: String = "A great vide",
         type: String = "NEWS",
+        types: List<String> = listOf("NEWS"),
         fullProjectionLink: String = "https://bestvids4u.com",
         playbackId: String = "playback-id",
         captionStatus: String = "AVAILABLE",
@@ -286,6 +287,7 @@ object TestFactories {
         return VideoDocument(
             videoServiceId = referenceId,
             title = title,
+            types = types,
             type = type,
             fullProjectionLink = fullProjectionLink,
             playbackId = playbackId,

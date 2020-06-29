@@ -4,7 +4,6 @@ import com.boclips.eventbus.events.order.LegacyOrderExtraFields
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
-import com.boclips.videos.api.request.video.PlaybackResource
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
@@ -61,7 +60,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "ted",
                 channelId = "ted-id",
                 channelVideoId = "",
-                type = VideoTypeResource(id = 1, name = "NEWS"),
+                types = listOf(VideoTypeResource(id = 1, name = "NEWS")),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com")),
                 playback = StreamPlaybackResource(id = "123", referenceId = "123")
             )
@@ -138,7 +137,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         assertThat(item.video.channel.name).isEqualTo("ted")
         assertThat(item.video.videoServiceId.value).isEqualTo("video-id")
         assertThat(item.video.title).isEqualTo("hippos are cool")
-        assertThat(item.video.type).isEqualTo("NEWS")
+        assertThat(item.video.types).hasSize(1)
+        assertThat(item.video.types.first()).isEqualTo("NEWS")
     }
 
     @Test

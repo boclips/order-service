@@ -6,7 +6,7 @@ data class Video(
     val videoServiceId: VideoId,
     val playbackId: String,
     val title: String,
-    val type: String,
+    val types: List<String>,
     val channelVideoId: String,
     val channel: Channel,
     val fullProjectionLink: URL,

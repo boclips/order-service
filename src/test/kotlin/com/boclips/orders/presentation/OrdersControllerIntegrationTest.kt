@@ -82,7 +82,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                             videoServiceId = "1234",
                             videoReference = "AP-123",
                             title = "A Video",
-                            videoType = "STOCK",
+                            videoTypes = listOf("STOCK"),
                             fullProjectionLink = "https://videosrus.com",
                             channel = TestFactories.channel(
                                 channelId = "123",
@@ -140,7 +140,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseTerritory", equalTo("Single Region")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.id", equalTo("1234")))
             .andExpect(jsonPath("$._embedded.orders[0].items[0].video.title", equalTo("A Video")))
-            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$._embedded.orders[0].items[0].video.types[0]", equalTo("STOCK")))
             .andExpect(
                 jsonPath(
                     "$._embedded.orders[0].items[0].video._links.fullProjection.href",
@@ -204,7 +204,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video",
-                            videoType = "STOCK",
+                            videoTypes = listOf("STOCK"),
                             videoReference = "AP-123",
                             fullProjectionLink = "https://videosrus.com",
                             channel = TestFactories.channel(
@@ -240,7 +240,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))
             .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
             .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
-            .andExpect(jsonPath("$.items[0].video.type", equalTo("STOCK")))
+            .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
             .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://videosrus.com")))
             .andExpect(jsonPath("$.items[0].video.videoReference", equalTo("AP-123")))
             .andExpect(

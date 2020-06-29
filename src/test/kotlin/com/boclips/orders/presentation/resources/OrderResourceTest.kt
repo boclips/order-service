@@ -58,7 +58,7 @@ class OrderResourceTest {
                         trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
                             videoServiceId = "video-id",
-                            videoType = "STOCK",
+                            videoTypes = listOf("STOCK"),
                             title = "video title",
                             videoReference = "TED_11",
                             channel = TestFactories.channel(
@@ -118,7 +118,7 @@ class OrderResourceTest {
                             trim = "blah",
                             video = VideoResource(
                                 id = "video-id",
-                                type = "STOCK",
+                                types = listOf("STOCK"),
                                 title = "video title",
                                 videoReference = "TED_11",
                                 maxResolutionAvailable = true,
