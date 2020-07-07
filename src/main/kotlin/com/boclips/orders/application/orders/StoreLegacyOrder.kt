@@ -7,14 +7,7 @@ import com.boclips.eventbus.events.order.LegacyOrderUser
 import com.boclips.orders.application.exceptions.LegacyOrderProcessingException
 import com.boclips.orders.application.orders.converters.legacy.OrderStatusConverter
 import com.boclips.orders.application.orders.converters.parseTrimRequest
-import com.boclips.orders.domain.model.LegacyOrdersRepository
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderUpdateCommand
-import com.boclips.orders.domain.model.OrderUser
-import com.boclips.orders.domain.model.OrdersRepository
-import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.VideoId
 import com.boclips.orders.domain.service.OrderService
@@ -36,6 +29,7 @@ class StoreLegacyOrder(
     @BoclipsEventListener
     fun onLegacyOrderSubmitted(event: LegacyOrderSubmitted) {
         try {
+            logger.info { "Received legacy order ${event.order.id}" }
             val order = convertLegacyOrder(event)
 
             // Ideally update and create would be two different events so we wouldn't have to distinguish them here
@@ -56,6 +50,8 @@ class StoreLegacyOrder(
                     authorisingUser = event.authorisingUser
                 )
             )
+
+            logger.info { "Saved legacy order ${event.order.id}" }
         } catch (e: Exception) {
             logger.error { "Couldn't process legacy order: ${event.order.id} due to : $e" }
             throw LegacyOrderProcessingException(e)
