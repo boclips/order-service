@@ -54,7 +54,8 @@ class VideoServiceVideoProvider(
             captionStatus = when (videoResource.captionStatus) {
                 CaptionStatus.REQUESTED -> AssetStatus.REQUESTED
                 CaptionStatus.PROCESSING -> AssetStatus.PROCESSING
-                CaptionStatus.AVAILABLE -> AssetStatus.AVAILABLE
+                CaptionStatus.HUMAN_GENERATED_AVAILABLE -> AssetStatus.AVAILABLE
+                CaptionStatus.AUTO_GENERATED_AVAILABLE -> AssetStatus.UNAVAILABLE
                 CaptionStatus.NOT_AVAILABLE -> AssetStatus.UNAVAILABLE
                 CaptionStatus.UNKNOWN -> AssetStatus.UNKNOWN
                 null -> AssetStatus.UNKNOWN

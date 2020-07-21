@@ -40,7 +40,7 @@ class SyncVideosIntegrationTest : AbstractSpringIntegrationTest() {
                 channelId = "123",
                 channelVideoId = "123",
                 createdBy = "Keyser Söze",
-                captionStatus = CaptionStatus.AVAILABLE,
+                captionStatus = CaptionStatus.HUMAN_GENERATED_AVAILABLE,
                 playback = StreamPlaybackResource(id = oldVideo.playbackId, referenceId = oldVideo.playbackId),
                 _links = mapOf("fullProjection" to HateoasLink(href = "https://hello.org"))
             )

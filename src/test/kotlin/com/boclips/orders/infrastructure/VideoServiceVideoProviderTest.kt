@@ -39,7 +39,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 id = "video-id",
                 title = "hello",
                 createdBy = "our content partner",
-                captionStatus = CaptionStatus.AVAILABLE,
+                captionStatus = CaptionStatus.HUMAN_GENERATED_AVAILABLE,
                 playback = StreamPlaybackResource(
                     id = "playback-id",
                     referenceId = "reference-id",
