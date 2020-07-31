@@ -36,7 +36,7 @@ dependencies {
     implementation 'com.github.boclips:event-bus:4.2.10'
     implementation 'com.github.boclips:boclips-spring-security:0.387.0'
     implementation 'com.github.boclips:boclips-spring-web:0.128.0'
-    implementation 'com.github.boclips:videos:v554'
+    implementation 'com.github.boclips:videos:v564'
 
     implementation 'io.github.openfeign:feign-core:10.7.2'
 
