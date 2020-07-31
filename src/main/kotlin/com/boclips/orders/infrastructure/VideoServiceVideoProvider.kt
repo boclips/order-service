@@ -11,6 +11,7 @@ import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
+import feign.FeignException
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.net.URL
@@ -74,8 +75,12 @@ class VideoServiceVideoProvider(
     private fun getChannel(videoResource: VideoResource): ChannelResource {
         return try {
             channelsClient.getChannel(videoResource.channelId!!)
-        } catch (e: Exception) {
-            throw ChannelNotFoundException(ChannelId(videoResource.channelId ?: ""))
+        } catch (e: FeignException) {
+            when (e.status()) {
+                404 -> throw ChannelNotFoundException(ChannelId(videoResource.channelId ?: ""))
+                else -> throw e
+                    .also { logger.warn(e) { "Something went wrong when fetching channel: ${videoResource.channel}" } }
+            }
         }
     }
 
