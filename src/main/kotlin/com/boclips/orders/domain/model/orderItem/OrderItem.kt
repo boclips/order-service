@@ -18,7 +18,7 @@ data class OrderItem(
     val status: OrderItemStatus
         get() {
             val priceUnavailable = price.currency == null || price.amount == null
-            val captionsUnavailable = video.captionStatus == AssetStatus.UNAVAILABLE
+            val captionsUnavailable = video.captionStatus == AssetStatus.UNAVAILABLE && transcriptRequested
             val downloadableVideoUnavailable = video.downloadableVideoStatus == AssetStatus.UNAVAILABLE
             val licenseUnavailable = license == null
 

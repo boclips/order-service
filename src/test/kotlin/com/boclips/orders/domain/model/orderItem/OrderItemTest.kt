@@ -73,11 +73,20 @@ class OrderItemTest {
 
         @Test
         fun `order item is incomplete when missing caption`() {
-            val orderItem = OrderFactory.orderItem(video = TestFactories.video(
+            val orderItem = OrderFactory.orderItem(transcriptRequested = true, video = TestFactories.video(
                 captionStatus = AssetStatus.UNAVAILABLE)
             )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.INCOMPLETED)
+        }
+
+        @Test
+        fun `order item is ready when missing caption but a user has not requested them`() {
+            val orderItem = OrderFactory.orderItem(transcriptRequested = false, video = TestFactories.video(
+                captionStatus = AssetStatus.UNAVAILABLE)
+            )
+
+            assertThat(orderItem.status).isEqualTo(OrderItemStatus.READY)
         }
     }
 }
