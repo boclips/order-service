@@ -26,6 +26,7 @@ class EventConverterTest {
     fun `convert order`() {
         val order = OrderFactory.order(
             id = OrderId("the-id"),
+            legacyOrderId = "identitatem",
             createdAt = ZonedDateTime.parse("2018-10-05T12:13:14Z").toInstant(),
             updatedAt = ZonedDateTime.parse("2019-10-05T12:13:14Z").toInstant(),
             orderOrganisation = OrderOrganisation(name = "Pearson"),
@@ -68,6 +69,7 @@ class EventConverterTest {
         }
 
         assertThat(eventOrder.id).isEqualTo("the-id")
+        assertThat(eventOrder.legacyOrderId).isEqualTo("identitatem")
         assertThat(eventOrder.status).isEqualTo(EventOrderStatus.COMPLETED)
         assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
         assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
