@@ -20,7 +20,7 @@ class ManifestConverter() {
                     salePrice = orderItem.price,
                     orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),
                     license = orderItem.license
-                        ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid state exception. Order item is $orderItem"),
+                        ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} is missing license info. Order item is $orderItem"),
                     fxRate = fxRateService.getRate(
                         orderItem.price.currency
                             ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid currency. Order item is $orderItem"),
