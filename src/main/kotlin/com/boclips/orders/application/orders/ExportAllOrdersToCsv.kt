@@ -17,11 +17,11 @@ class ExportAllOrdersToCsv(val orderService: OrderService) {
         try {
             val fxRatesAgainstPound = FxRateRequestConverter.convert(
                 PoundFxRateRequest(
-                    eur = getOrThrow(eur, "eur"),
-                    usd = getOrThrow(usd, "usd"),
-                    aud = getOrThrow(aud, "aud"),
-                    sgd = getOrThrow(sgd, "sgd"),
-                    cad = getOrThrow(cad, "cad")
+                    eur = eur,
+                    usd = usd,
+                    aud = aud,
+                    sgd = sgd,
+                    cad = cad
                 )
             )
 
@@ -35,10 +35,6 @@ class ExportAllOrdersToCsv(val orderService: OrderService) {
                 message = "Order ${e.order.id.value}: The order isn't complete and cannot be exported"
             )
         }
-
-    private fun getOrThrow(value: BigDecimal?, param: String): BigDecimal {
-        return value ?: throw InvalidExportRequest("$param must not be null")
-    }
 }
 
 private fun List<ManifestCsvMetadata>.toCsv() =

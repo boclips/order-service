@@ -10,7 +10,11 @@ class Price(
 ) {
     val amount: BigDecimal? = amount?.setScale(2, RoundingMode.HALF_UP)
 
-    fun toReadableString(): String = "${currency?.currencyCode} $amount"
+    fun toReadableString(): String? {
+        return if(currency?.currencyCode != null && amount != null) {
+            "${currency.currencyCode} $amount"
+        } else null
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

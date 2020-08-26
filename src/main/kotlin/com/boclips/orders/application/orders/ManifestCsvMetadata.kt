@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.math.RoundingMode
 
 @JsonPropertyOrder(
+    ManifestCsvMetadata.ORDER_ID,
     ManifestCsvMetadata.CONTENT_PARTNER,
     ManifestCsvMetadata.ORDER_DATE,
     ManifestCsvMetadata.BOCLIPS_ID,
@@ -16,9 +17,12 @@ import java.math.RoundingMode
     ManifestCsvMetadata.SALES_AMOUNT,
     ManifestCsvMetadata.FX_RATE,
     ManifestCsvMetadata.LICENSE_CURRENCY,
-    ManifestCsvMetadata.LICENSE_SALES_AMOUNT
+    ManifestCsvMetadata.LICENSE_SALES_AMOUNT,
+    ManifestCsvMetadata.ORDER_STATUS
 )
 data class ManifestCsvMetadata(
+    @get:JsonProperty(ORDER_ID)
+    val orderId: String,
     @get:JsonProperty(CONTENT_PARTNER)
     val contentPartner: String,
     @get:JsonProperty(ORDER_DATE)
@@ -40,10 +44,13 @@ data class ManifestCsvMetadata(
     @get:JsonProperty(LICENSE_CURRENCY)
     val currency: String,
     @get:JsonProperty(LICENSE_SALES_AMOUNT)
-    val licenseSalesAmount: String
+    val licenseSalesAmount: String,
+    @get:JsonProperty(ORDER_STATUS)
+    val orderStatus: String
 
 ) {
     companion object {
+        const val ORDER_ID = "Order ID"
         const val CONTENT_PARTNER = "Content Partner"
         const val ORDER_DATE = "Order date"
         const val BOCLIPS_ID = "boclips ID"
@@ -55,21 +62,23 @@ data class ManifestCsvMetadata(
         const val FX_RATE = "FX Rate"
         const val LICENSE_CURRENCY = "License Currency"
         const val LICENSE_SALES_AMOUNT = "License Sales Amount"
+        const val ORDER_STATUS = "Order Status"
 
         fun from(manifestItem: ManifestItem): ManifestCsvMetadata = manifestItem.let {
             ManifestCsvMetadata(
+                orderId = it.orderId.value,
                 contentPartner = it.video.channel.name,
-                orderDate = manifestItem.orderDate.toString(),
+                orderDate = it.orderDate.toString(),
                 boclipsId = it.video.videoServiceId.value,
                 sourceId = it.video.channelVideoId,
                 title = it.video.title,
-                licenseDuration = it.license.duration.toReadableString(),
-                territory = it.license.territory,
-                salesAmount = it.salePrice.toReadableString(),
-                fxRate = it.fxRate.setScale(2, RoundingMode.HALF_UP).toString(),
-                currency = it.convertedSalesAmount.currency?.currencyCode
-                    ?: throw IllegalStateException("Currency cannot be null"),
-                licenseSalesAmount = it.convertedSalesAmount.amount.toString()
+                licenseDuration = it.license?.duration?.toReadableString() ?: "",
+                territory = it.license?.territory ?: "",
+                salesAmount = it.salePrice.toReadableString() ?: "",
+                fxRate = it.fxRate?.setScale(2, RoundingMode.HALF_UP)?.toString() ?: "",
+                currency = it.convertedSalesAmount.currency?.currencyCode ?: "",
+                licenseSalesAmount = it.convertedSalesAmount.amount?.toString() ?: "",
+                orderStatus = it.orderStatus.toString()
             )
         }
     }

@@ -39,7 +39,7 @@ class OrderService(
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
         .filter { it.status != OrderStatus.CANCELLED }
         .onEach {
-            if (it.status == OrderStatus.INCOMPLETED || it.status == OrderStatus.INVALID) {
+            if (it.status == OrderStatus.INVALID) {
                 throw IllegalOrderStateExport(it)
             }
         }

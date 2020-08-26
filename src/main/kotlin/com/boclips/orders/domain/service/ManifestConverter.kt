@@ -16,16 +16,16 @@ class ManifestConverter() {
         return Manifest(orders.flatMap { order ->
             order.items.map { orderItem ->
                 ManifestItem(
+                    orderId = order.id,
                     video = orderItem.video,
                     salePrice = orderItem.price,
                     orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),
-                    license = orderItem.license
-                        ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} is missing license info. Order item is $orderItem"),
-                    fxRate = fxRateService.getRate(
-                        orderItem.price.currency
-                            ?: throw IllegalStateException("order-item ${orderItem.id} for order: ${order.id} has an invalid currency. Order item is $orderItem"),
+                    license = orderItem.license,
+                    fxRate = orderItem.price.currency?.let { fxRateService.getRateWhenExists(
+                        it,
                         orderItem.video.channel.currency
-                    )
+                    )},
+                    orderStatus = order.status
                 )
             }
         })

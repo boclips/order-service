@@ -36,6 +36,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         )
         val orders = arrayOf(
             OrderFactory.order(
+                id = OrderId("1"),
                 createdAt = LocalDate.of(2019, Month.APRIL, 3).atStartOfDay().toInstant(ZoneOffset.UTC),
                 status = OrderStatus.READY,
                 items = listOf(
@@ -44,8 +45,9 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
                 )
             ),
             OrderFactory.order(
+                id = OrderId("2"),
                 createdAt = LocalDate.of(2019, Month.APRIL, 13).atStartOfDay().toInstant(ZoneOffset.UTC),
-                status = OrderStatus.READY,
+                status = OrderStatus.INCOMPLETED,
                 items = listOf(
                     orderItem3
                 )
@@ -54,25 +56,72 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         val expectedManifest = ManifestFactory.manifest(
             items = listOf(
                 ManifestFactory.item(
+                    orderId = OrderId("1"),
                     video = orderItem1.video,
                     license = orderItem1.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
                     salePrice = PriceFactory.onePound(),
-                    fxRate = BigDecimal.ONE.setScale(5)
+                    fxRate = BigDecimal.ONE.setScale(5),
+                    orderStatus = OrderStatus.READY
                 ),
                 ManifestFactory.item(
+                    orderId = OrderId("1"),
                     video = orderItem2.video,
                     license = orderItem2.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
                     salePrice = PriceFactory.tenPounds(),
-                    fxRate = BigDecimal.ONE.setScale(5)
+                    fxRate = BigDecimal.ONE.setScale(5),
+                    orderStatus = OrderStatus.READY
                 ),
                 ManifestFactory.item(
+                    orderId = OrderId("2"),
                     video = orderItem3.video,
                     license = orderItem3.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 13),
                     salePrice = PriceFactory.zeroEuros(),
-                    fxRate = BigDecimal.ONE.setScale(5)
+                    fxRate = BigDecimal.ONE.setScale(5),
+                    orderStatus = OrderStatus.INCOMPLETED
+                )
+            )
+        )
+
+        val manifest = manifestConverter.toManifest(
+            mapOf(
+                Currency.getInstance("GBP") to BigDecimal.ONE,
+                Currency.getInstance("EUR") to BigDecimal.ONE,
+                Currency.getInstance("USD") to BigDecimal.ONE
+            ), *orders
+        )
+
+        assertThat(manifest).isEqualTo(expectedManifest)
+    }
+
+    @Test
+    fun `Convert orders into a manifest doesn't fail on missing optional fields`() {
+        val orderItem1 = OrderFactory.orderItem(
+            price = Price(amount = null, currency = null),
+            video = TestFactories.video(channel = TestFactories.channel(currency = Currency.getInstance("USD"))),
+            license = null
+        )
+
+        val orders = arrayOf(
+            OrderFactory.order(
+                id = OrderId("1"),
+                createdAt = LocalDate.of(2019, Month.APRIL, 3).atStartOfDay().toInstant(ZoneOffset.UTC),
+                status = OrderStatus.READY,
+                items = listOf(orderItem1)
+            )
+        )
+        val expectedManifest = ManifestFactory.manifest(
+            items = listOf(
+                ManifestFactory.item(
+                    orderId = OrderId("1"),
+                    video = orderItem1.video,
+                    license = null,
+                    orderDate = LocalDate.of(2019, Month.APRIL, 3),
+                    salePrice = PriceFactory.empty(),
+                    fxRate = null,
+                    orderStatus = OrderStatus.READY
                 )
             )
         )

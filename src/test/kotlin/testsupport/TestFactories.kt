@@ -392,6 +392,11 @@ object PriceFactory {
         BigDecimalWith2DP.TEN,
         Currency.getInstance("GBP")
     )
+
+    fun empty() = Price(
+        amount = null,
+        currency = null
+    )
 }
 
 object OrderFactory {
@@ -541,17 +546,21 @@ object ManifestFactory {
     )
 
     fun item(
+        orderId: OrderId = OrderId("123"),
         video: Video = TestFactories.video(),
-        license: OrderItemLicense = OrderFactory.orderItemLicense(),
+        license: OrderItemLicense? = OrderFactory.orderItemLicense(),
         orderDate: LocalDate = LocalDate.of(2019, Month.APRIL, 3),
         salePrice: Price = PriceFactory.onePound(),
-        fxRate: BigDecimal = BigDecimal.TEN
+        fxRate: BigDecimal? = BigDecimal.TEN,
+        orderStatus: OrderStatus = OrderStatus.READY
     ) = ManifestItem(
+        orderId = orderId,
         video = video,
         license = license,
         orderDate = orderDate,
         salePrice = salePrice,
-        fxRate = fxRate
+        fxRate = fxRate,
+        orderStatus = orderStatus
     )
 }
 

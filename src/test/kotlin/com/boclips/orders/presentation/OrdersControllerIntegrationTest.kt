@@ -328,26 +328,20 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `exporting orders gives 400 when missing currencies`() {
-        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2").accept("text/csv").asBackofficeStaff())
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    fun `gets an error when exporting incomplete orders to csv`() {
-        val order = ordersRepository.save(
+    fun `when request is missing currencies empty relevant cells are returned`() {
+        ordersRepository.save(
             OrderFactory.order(
                 status = OrderStatus.INCOMPLETED,
                 items = listOf(
-                    OrderFactory.orderItem(
-                        price = Price(
-                            amount = BigDecimal.valueOf(1),
-                            currency = Currency.getInstance("EUR")
-                        ),
-                        license = OrderFactory.orderItemLicense(
-                            duration = Duration.Time(10, ChronoUnit.YEARS),
-                            territory = "WW"
-                        ),
+                        OrderFactory.orderItem(
+                            price = Price(
+                                amount = BigDecimal.valueOf(10),
+                                currency = Currency.getInstance("EUR")
+                            ),
+                            license = OrderFactory.orderItemLicense(
+                                duration = Duration.Time(10, ChronoUnit.YEARS),
+                                territory = "WW"
+                            ),
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video title",
@@ -360,18 +354,56 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff())
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.error", equalTo("Invalid Order State")))
-            .andExpect(
-                jsonPath(
-                    "$.message",
-                    equalTo("Order ${order.id.value}: The order isn't complete and cannot be exported")
+     val csv =   mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asBackofficeStaff())
+            .andExpect(status().isOk)
+            .andExpect(header().string("Content-Type", containsString("text/csv")))
+            .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
+            .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
+            .andReturn().response.contentAsString
+
+        println(csv)
+        Assertions.assertThat(csv).apply {
+            containsSubsequence(""","a content partner",2020-08-26,video-id,ted_1234,"A Video title",10,WW,"EUR 10.00",,USD,,INCOMPLETED""")
+        }    }
+
+    @Test
+    fun `when exporting incomplete orders there are empty relevant cells`() {
+        ordersRepository.save(
+            OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = null,
+                            currency = null
+                        ),
+                        license = null,
+                        video = TestFactories.video(
+                            videoServiceId = "video-id",
+                            title = "A Video title",
+                            channel = TestFactories.channel(
+                                name = "a content partner"
+                            )
+                        )
+                    )
                 )
             )
-            .andExpect(jsonPath("$.path", equalTo("/v1/orders")))
-            .andExpect(jsonPath("$.status", equalTo(400)))
-            .andExpect(jsonPath("$.timestamp").exists())
+        )
+
+        val csv =
+            mockMvc.perform(
+                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff()
+            )
+                .andExpect(status().isOk)
+                .andExpect(header().string("Content-Type", containsString("text/csv")))
+                .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
+                .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
+                .andReturn().response.contentAsString
+
+        println(csv)
+        Assertions.assertThat(csv).apply {
+            containsSubsequence(""""A Video title",,,,,USD,""")
+        }
     }
 
     @Test

@@ -10,13 +10,15 @@ data class Manifest(
 )
 
 data class ManifestItem(
+    val orderId: OrderId,
     val video: Video,
     val orderDate: LocalDate,
-    val license: OrderItemLicense,
+    val license: OrderItemLicense?,
     val salePrice: Price,
-    val fxRate: BigDecimal
+    val fxRate: BigDecimal?,
+    val orderStatus: OrderStatus
 ) {
     val convertedSalesAmount: Price
-        get() = Price(salePrice.amount?.times(fxRate), video.channel.currency)
+        get() = Price(fxRate?.let { salePrice.amount?.times(fxRate)}, video.channel.currency)
 }
 

@@ -13,6 +13,7 @@ object FxRateRequestConverter {
             Currency.getInstance("AUD") to request.aud,
             Currency.getInstance("CAD") to request.cad,
             Currency.getInstance("GBP") to BigDecimal.ONE
-        )
+        ).mapNotNull { it.value?.let {value -> it.key to value} }
+            .toMap()
     }
 }

@@ -169,7 +169,25 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when any order has status incomplete, throws`() {
+    fun `when any order has status invalid, throws`() {
+        listOf(
+            OrderFactory.order(
+                status = OrderStatus.READY,
+                items = listOf(OrderFactory.orderItem())
+            ),
+            OrderFactory.order(
+                status = OrderStatus.INVALID,
+                items = listOf(OrderFactory.orderItem())
+            )
+        ).forEach { ordersRepository.save(it) }
+
+        assertThrows<IllegalOrderStateExport> {
+            orderService.exportManifest(emptyMap())
+        }
+    }
+
+    @Test
+    fun `export both ready and incompleted orders`() {
         listOf(
             OrderFactory.order(
                 status = OrderStatus.READY,
@@ -185,9 +203,12 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
             )
         ).forEach { ordersRepository.save(it) }
 
-        assertThrows<IllegalOrderStateExport> {
-            orderService.exportManifest(emptyMap())
-        }
+        val manifest = orderService.exportManifest(mapOf(
+            Currency.getInstance("USD") to BigDecimal.TEN,
+            Currency.getInstance("GBP") to BigDecimal.ONE
+        ))
+
+        assertThat(manifest.items).hasSize(3)
     }
 
     @Test
@@ -248,6 +269,69 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         assertThat(manifest.items.first().fxRate).isEqualTo(BigDecimal.valueOf(0.50000).setScale(5))
         assertThat(manifest.items.first().convertedSalesAmount.amount).isEqualTo(BigDecimalWith2DP.valueOf(5))
         assertThat(manifest.items.first().convertedSalesAmount.currency).isEqualTo(Currency.getInstance("SGD"))
+    }
+
+    @Test
+    fun `export manifest has empty cells where values are missing`() {
+        val order =
+            OrderFactory.order(
+                status = OrderStatus.READY, items = listOf(
+                OrderFactory.orderItem(
+                        license = null,
+                    price = PriceFactory.empty(),
+                    video = TestFactories.video(
+                        channel = TestFactories.channel(
+                            currency = Currency.getInstance(
+                                "SGD"
+                            )
+                        )
+                    )
+                )
+
+            )
+            )
+        orderService.createIfNonExistent(order)
+
+        val manifest = orderService.exportManifest(
+            fxRatesAgainstPound = emptyMap()
+        )
+
+        assertThat(manifest.items).hasSize(1)
+        assertThat(manifest.items.first().salePrice.currency).isNull()
+        assertThat(manifest.items.first().salePrice.amount).isNull()
+        assertThat(manifest.items.first().license).isNull()
+    }
+
+    @Test
+    fun `when pricing and currency is provided but no fx rate null is returned`(){
+        val order =
+                OrderFactory.order(
+                        status = OrderStatus.READY, items = listOf(
+                        OrderFactory.orderItem(
+                                license = null,
+                                price = PriceFactory.onePound(),
+                                video = TestFactories.video(
+                                        channel = TestFactories.channel(
+                                                currency = Currency.getInstance(
+                                                        "SGD"
+                                                )
+                                        )
+                                )
+                        )
+
+                )
+                )
+        orderService.createIfNonExistent(order)
+
+        val manifest = orderService.exportManifest(
+                fxRatesAgainstPound = emptyMap()
+        )
+
+        assertThat(manifest.items).hasSize(1)
+        assertThat(manifest.items.first().fxRate).isNull()
+        assertThat(manifest.items.first().salePrice.amount).isEqualTo(BigDecimalWith2DP.valueOf(1))
+        assertThat(manifest.items.first().salePrice.currency).isEqualTo(Currency.getInstance("GBP"))
+        assertThat(manifest.items.first().license).isNull()
     }
 
     @Test

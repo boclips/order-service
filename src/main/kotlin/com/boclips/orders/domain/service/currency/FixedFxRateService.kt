@@ -12,6 +12,13 @@ class FixedFxRateService(private val fxRates: Map<Currency, BigDecimal>) :
         return getRate(from, to)
     }
 
+    fun getRateWhenExists(from: Currency, to: Currency): BigDecimal? {
+        val fromFxRate: BigDecimal? = fxRates[from]
+        val toFxRate: BigDecimal? = fxRates[to]
+
+        return fromFxRate?.let {toFxRate?.divide(it, 5, RoundingMode.HALF_UP)}
+    }
+
     fun getRate(from: Currency, to: Currency): BigDecimal {
         val toFxRate = fxRates[to]
             ?: throw IllegalCurrencyException("Currency fx rate missing: ${to.currencyCode}. Cannot determine the fx rate")
