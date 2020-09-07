@@ -36,7 +36,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         )
         val orders = arrayOf(
             OrderFactory.order(
-                id = OrderId("1"),
+                legacyOrderId = "1",
                 createdAt = LocalDate.of(2019, Month.APRIL, 3).atStartOfDay().toInstant(ZoneOffset.UTC),
                 status = OrderStatus.READY,
                 items = listOf(
@@ -45,7 +45,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
                 )
             ),
             OrderFactory.order(
-                id = OrderId("2"),
+                legacyOrderId = "2",
                 createdAt = LocalDate.of(2019, Month.APRIL, 13).atStartOfDay().toInstant(ZoneOffset.UTC),
                 status = OrderStatus.INCOMPLETED,
                 items = listOf(
@@ -56,7 +56,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         val expectedManifest = ManifestFactory.manifest(
             items = listOf(
                 ManifestFactory.item(
-                    orderId = OrderId("1"),
+                    legacyOrderId = "1",
                     video = orderItem1.video,
                     license = orderItem1.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
@@ -65,7 +65,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
                     orderStatus = OrderStatus.READY
                 ),
                 ManifestFactory.item(
-                    orderId = OrderId("1"),
+                    legacyOrderId = "1",
                     video = orderItem2.video,
                     license = orderItem2.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),
@@ -74,7 +74,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
                     orderStatus = OrderStatus.READY
                 ),
                 ManifestFactory.item(
-                    orderId = OrderId("2"),
+                    legacyOrderId = "2",
                     video = orderItem3.video,
                     license = orderItem3.license!!,
                     orderDate = LocalDate.of(2019, Month.APRIL, 13),
@@ -106,7 +106,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
 
         val orders = arrayOf(
             OrderFactory.order(
-                id = OrderId("1"),
+                legacyOrderId = "legacy-order-id",
                 createdAt = LocalDate.of(2019, Month.APRIL, 3).atStartOfDay().toInstant(ZoneOffset.UTC),
                 status = OrderStatus.READY,
                 items = listOf(orderItem1)
@@ -115,7 +115,7 @@ class ManifestConverterTest : AbstractSpringIntegrationTest() {
         val expectedManifest = ManifestFactory.manifest(
             items = listOf(
                 ManifestFactory.item(
-                    orderId = OrderId("1"),
+                    legacyOrderId = "legacy-order-id",
                     video = orderItem1.video,
                     license = null,
                     orderDate = LocalDate.of(2019, Month.APRIL, 3),

@@ -24,6 +24,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.deleteAll()
 
         val order = OrderFactory.order(
+            legacyOrderId = "legacy-order-id",
             status = OrderStatus.READY,
             currency = Currency.getInstance("GBP"),
             items = listOf(
@@ -54,7 +55,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val firstRow = csvResource.parseCsv().first()
-        assertThat(firstRow[ManifestCsvMetadata.ORDER_ID]).isEqualTo(retrievedOrder.id.value)
+        assertThat(firstRow[ManifestCsvMetadata.ORDER_ID]).isEqualTo(retrievedOrder.legacyOrderId)
         assertThat(firstRow[ManifestCsvMetadata.ORDER_STATUS]).isEqualTo(OrderStatus.READY.toString())
         assertThat(firstRow[ManifestCsvMetadata.FX_RATE]).isEqualTo("2.31")
         assertThat(firstRow[ManifestCsvMetadata.LICENSE_SALES_AMOUNT]).isEqualTo("23.13")
@@ -71,7 +72,7 @@ class ExportAllOrdersToCsvIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         val firstRow = csvResource.parseCsv().first()
-        assertThat(firstRow[ManifestCsvMetadata.ORDER_ID]).isEqualTo(retrievedOrder.id.value)
+        assertThat(firstRow[ManifestCsvMetadata.ORDER_ID]).isEqualTo(retrievedOrder.legacyOrderId)
         assertThat(firstRow[ManifestCsvMetadata.ORDER_STATUS]).isEqualTo(OrderStatus.READY.toString())
         assertThat(firstRow[ManifestCsvMetadata.FX_RATE]).isEqualTo("")
         assertThat(firstRow[ManifestCsvMetadata.LICENSE_SALES_AMOUNT]).isEqualTo("")

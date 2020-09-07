@@ -31,7 +31,7 @@ class ExportAllOrdersToCsvTest {
             ManifestFactory.manifest(
                 items = listOf(
                     ManifestFactory.item(
-                        orderId = OrderId("1"),
+                        legacyOrderId = "1",
                         orderDate = LocalDate.of(2019, Month.JUNE, 20),
                         salePrice = Price(BigDecimal.TEN, Currency.getInstance("USD")),
                         license = OrderItemLicense(Duration.Time(5, ChronoUnit.YEARS), "WW"),
@@ -48,7 +48,7 @@ class ExportAllOrdersToCsvTest {
                         orderStatus = OrderStatus.INCOMPLETED
                     ),
                     ManifestFactory.item(
-                        orderId = OrderId("2"),
+                        legacyOrderId = "2",
                         orderDate = LocalDate.of(2019, Month.JUNE, 20),
                         salePrice = Price(null, null),
                         license = OrderItemLicense(Duration.Time(100, ChronoUnit.YEARS), "UK"),
@@ -65,7 +65,7 @@ class ExportAllOrdersToCsvTest {
                         orderStatus = OrderStatus.READY
                     ),
                     ManifestFactory.item(
-                        orderId = OrderId("2"),
+                        legacyOrderId = "2",
                         orderDate = LocalDate.of(2019, Month.APRIL, 1),
                         salePrice = Price(BigDecimal.ZERO, Currency.getInstance("GBP")),
                         license = OrderItemLicense(Duration.Time(10, ChronoUnit.YEARS), "WW"),

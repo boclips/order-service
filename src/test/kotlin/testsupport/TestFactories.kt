@@ -546,7 +546,7 @@ object ManifestFactory {
     )
 
     fun item(
-        orderId: OrderId = OrderId("123"),
+        legacyOrderId: String = "123",
         video: Video = TestFactories.video(),
         license: OrderItemLicense? = OrderFactory.orderItemLicense(),
         orderDate: LocalDate = LocalDate.of(2019, Month.APRIL, 3),
@@ -554,7 +554,7 @@ object ManifestFactory {
         fxRate: BigDecimal? = BigDecimal.TEN,
         orderStatus: OrderStatus = OrderStatus.READY
     ) = ManifestItem(
-        orderId = orderId,
+        legacyOrderId = legacyOrderId,
         video = video,
         license = license,
         orderDate = orderDate,

@@ -19,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -331,6 +332,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `when request is missing currencies empty relevant cells are returned`() {
         ordersRepository.save(
             OrderFactory.order(
+                legacyOrderId = "legacy-order-id",
                 status = OrderStatus.INCOMPLETED,
                 items = listOf(
                         OrderFactory.orderItem(
@@ -355,16 +357,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
      val csv =   mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asBackofficeStaff())
-            .andExpect(status().isOk)
+         .andDo(MockMvcResultHandlers.print())
+         .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", containsString("text/csv")))
             .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
             .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
             .andReturn().response.contentAsString
 
-        println(csv)
         Assertions.assertThat(csv).apply {
-            containsSubsequence(""","a content partner",2020-08-26,video-id,ted_1234,"A Video title",10,WW,"EUR 10.00",,USD,,INCOMPLETED""")
-        }    }
+            containsSubsequence("legacy-order-id")
+            containsSubsequence(""",video-id,ted_1234,"A Video title",10,WW,"EUR 10.00",,USD,,INCOMPLETED""")
+        }
+    }
 
     @Test
     fun `when exporting incomplete orders there are empty relevant cells`() {
@@ -394,13 +398,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(
                 get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff()
             )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", containsString("text/csv")))
                 .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
                 .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
                 .andReturn().response.contentAsString
 
-        println(csv)
         Assertions.assertThat(csv).apply {
             containsSubsequence(""""A Video title",,,,,USD,""")
         }

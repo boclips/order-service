@@ -16,7 +16,7 @@ class ManifestConverter() {
         return Manifest(orders.flatMap { order ->
             order.items.map { orderItem ->
                 ManifestItem(
-                    orderId = order.id,
+                    legacyOrderId = order.legacyOrderId,
                     video = orderItem.video,
                     salePrice = orderItem.price,
                     orderDate = order.createdAt.atOffset(ZoneOffset.UTC).toLocalDate(),

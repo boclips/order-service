@@ -1,6 +1,5 @@
 package com.boclips.orders.application.orders
 
-import com.boclips.orders.application.exceptions.InvalidExportRequest
 import com.boclips.orders.application.orders.converters.FxRateRequestConverter
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.presentation.exceptions.FailedExportException
