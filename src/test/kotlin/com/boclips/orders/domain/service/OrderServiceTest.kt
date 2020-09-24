@@ -13,9 +13,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
-import testsupport.*
+import testsupport.AbstractSpringIntegrationTest
+import testsupport.BigDecimalWith2DP
+import testsupport.OrderFactory
+import testsupport.PriceFactory
+import testsupport.TestFactories
 import java.math.BigDecimal
-import java.util.*
+import java.util.Currency
 
 class OrderServiceTest : AbstractSpringIntegrationTest() {
     @Autowired
@@ -85,31 +89,55 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order requests captions`() {
+    fun `a created order requests captions and the caption status is updated`() {
         val video1 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val video2 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val originalOrder = OrderFactory.order(
             status = OrderStatus.INCOMPLETED,
             items = listOf(
                 OrderFactory.orderItem(
-                    video = TestFactories.video(videoServiceId = video1.id!!),
+                    video = TestFactories.video(videoServiceId = video1.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
                     license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
                 ),
                 OrderFactory.orderItem(
-                    video = TestFactories.video(videoServiceId = video2.id!!),
+                    video = TestFactories.video(videoServiceId = video2.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
                     license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
                 )
             )
         )
 
-        orderService.createIfNonExistent(originalOrder)
+        val createdOrder = orderService.createIfNonExistent(originalOrder)
 
         assertThat(fakeVideoClient.getVideo(video1.id!!).captionStatus)
             .isEqualTo(CaptionStatus.REQUESTED)
         assertThat(fakeVideoClient.getVideo(video2.id!!).captionStatus)
             .isEqualTo(CaptionStatus.REQUESTED)
+
+        assertThat(createdOrder.items[0].video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
+        assertThat(createdOrder.items[1].video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
+    }
+
+    @Test
+    fun `captions aren't requested if already available`() {
+        // Right now this is the only way to set captions as already requested
+        fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
+            .also { fakeVideoClient.requestVideoCaptions(it.id!!) }
+
+        val originalOrder = OrderFactory.order(
+            status = OrderStatus.INCOMPLETED,
+            items = listOf(
+                OrderFactory.orderItem(
+                    video = TestFactories.video(),
+                    price = PriceFactory.tenDollars(),
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                )
+            )
+        )
+        val createdOrder = orderService.createIfNonExistent(originalOrder)
+
+        assertThat(createdOrder.items[0].video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
     }
 
     @Test
@@ -203,10 +231,12 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
             )
         ).forEach { ordersRepository.save(it) }
 
-        val manifest = orderService.exportManifest(mapOf(
-            Currency.getInstance("USD") to BigDecimal.TEN,
-            Currency.getInstance("GBP") to BigDecimal.ONE
-        ))
+        val manifest = orderService.exportManifest(
+            mapOf(
+                Currency.getInstance("USD") to BigDecimal.TEN,
+                Currency.getInstance("GBP") to BigDecimal.ONE
+            )
+        )
 
         assertThat(manifest.items).hasSize(3)
     }
@@ -242,18 +272,18 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val order =
             OrderFactory.order(
                 status = OrderStatus.READY, items = listOf(
-                OrderFactory.orderItem(
-                    price = PriceFactory.tenDollars(),
-                    video = TestFactories.video(
-                        channel = TestFactories.channel(
-                            currency = Currency.getInstance(
-                                "SGD"
+                    OrderFactory.orderItem(
+                        price = PriceFactory.tenDollars(),
+                        video = TestFactories.video(
+                            channel = TestFactories.channel(
+                                currency = Currency.getInstance(
+                                    "SGD"
+                                )
                             )
                         )
                     )
-                )
 
-            )
+                )
             )
 
         orderService.createIfNonExistent(order)
@@ -276,19 +306,19 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val order =
             OrderFactory.order(
                 status = OrderStatus.READY, items = listOf(
-                OrderFactory.orderItem(
+                    OrderFactory.orderItem(
                         license = null,
-                    price = PriceFactory.empty(),
-                    video = TestFactories.video(
-                        channel = TestFactories.channel(
-                            currency = Currency.getInstance(
-                                "SGD"
+                        price = PriceFactory.empty(),
+                        video = TestFactories.video(
+                            channel = TestFactories.channel(
+                                currency = Currency.getInstance(
+                                    "SGD"
+                                )
                             )
                         )
                     )
-                )
 
-            )
+                )
             )
         orderService.createIfNonExistent(order)
 
@@ -303,28 +333,28 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `when pricing and currency is provided but no fx rate null is returned`(){
+    fun `when pricing and currency is provided but no fx rate null is returned`() {
         val order =
-                OrderFactory.order(
-                        status = OrderStatus.READY, items = listOf(
-                        OrderFactory.orderItem(
-                                license = null,
-                                price = PriceFactory.onePound(),
-                                video = TestFactories.video(
-                                        channel = TestFactories.channel(
-                                                currency = Currency.getInstance(
-                                                        "SGD"
-                                                )
-                                        )
+            OrderFactory.order(
+                status = OrderStatus.READY, items = listOf(
+                    OrderFactory.orderItem(
+                        license = null,
+                        price = PriceFactory.onePound(),
+                        video = TestFactories.video(
+                            channel = TestFactories.channel(
+                                currency = Currency.getInstance(
+                                    "SGD"
                                 )
+                            )
                         )
+                    )
 
                 )
-                )
+            )
         orderService.createIfNonExistent(order)
 
         val manifest = orderService.exportManifest(
-                fxRatesAgainstPound = emptyMap()
+            fxRatesAgainstPound = emptyMap()
         )
 
         assertThat(manifest.items).hasSize(1)
