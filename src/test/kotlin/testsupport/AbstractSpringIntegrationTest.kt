@@ -10,6 +10,7 @@ import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
@@ -75,7 +76,7 @@ abstract class AbstractSpringIntegrationTest {
     }
 
     fun defaultVideoClientResponse(
-        videoId: String = "123456789012345678901234",
+        videoId: String = "video-service-id",
         channelId: String = "content-partner-id",
         channelName: String = "our-content-partner",
         channelCurrency: Currency? = Currency.getInstance("GBP")
@@ -92,6 +93,8 @@ abstract class AbstractSpringIntegrationTest {
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
+
+        fakeVideoClient.updateCaptionStatus(videoId, CaptionStatus.HUMAN_GENERATED_AVAILABLE)
 
         fakeChannelsClient.add(
             ChannelResource(

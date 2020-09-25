@@ -7,6 +7,7 @@ import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import org.assertj.core.api.Assertions.assertThat
@@ -65,6 +66,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 playback = StreamPlaybackResource(id = "123", referenceId = "123")
             )
         )
+
+        fakeVideoClient.updateCaptionStatus("video-id", CaptionStatus.HUMAN_GENERATED_AVAILABLE)
 
         val items = listOf(
             TestFactories.legacyOrderItem(

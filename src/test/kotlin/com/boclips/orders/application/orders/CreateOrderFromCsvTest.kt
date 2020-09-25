@@ -43,7 +43,7 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `ignores orders with the clashing legacy order ids`() {
-        this.defaultVideoClientResponse()
+        defaultVideoClientResponse(videoId = "123")
         val orderToBeCreated = OrderFactory.order(
             legacyOrderId = "1",
             updatedAt = LocalDateTime.of(2011, 1, 1, 1, 1).toInstant(ZoneOffset.UTC),
@@ -53,7 +53,7 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(orderToBeCreated)
 
         val csvOrderMetadata =
-            TestFactories.csvOrderItemMetadata(legacyOrderId = "1")
+            TestFactories.csvOrderItemMetadata(legacyOrderId = "1", videoId = "123")
 
         createOrderFromCsv.invoke(listOf(csvOrderMetadata))
 

@@ -2,7 +2,12 @@ package com.boclips.orders.infrastructure.orders
 
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.orders.domain.model.*
+import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderFilter
+import com.boclips.orders.domain.model.OrderId
+import com.boclips.orders.domain.model.OrderUpdateCommand
+import com.boclips.orders.domain.model.OrdersRepository
+import com.boclips.orders.domain.model.Price
 import com.boclips.orders.infrastructure.orders.converters.OrderDocumentConverter
 import com.boclips.orders.infrastructure.orders.converters.OrderItemDocumentConverter
 import com.mongodb.MongoClient
@@ -11,9 +16,16 @@ import com.mongodb.client.model.UpdateOneModel
 import mu.KLogging
 import org.bson.conversions.Bson
 import org.bson.types.ObjectId
-import org.litote.kmongo.*
+import org.litote.kmongo.SetTo
+import org.litote.kmongo.`in`
+import org.litote.kmongo.combine
+import org.litote.kmongo.deleteMany
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.orderBy
+import org.litote.kmongo.set
 import java.time.Instant
-import kotlin.collections.toList
 
 const val databaseName = "order-service-db"
 
@@ -141,6 +153,11 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
                     )
                     is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense -> orderItem.copy(license = updateCommand.orderItemLicense)
                     is OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo -> orderItem.copy(video = updateCommand.video)
+                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus -> orderItem.copy(
+                        video = orderItem.video.copy(
+                            captionStatus = updateCommand.captionStatus
+                        )
+                    )
                 }
             } else {
                 orderItem

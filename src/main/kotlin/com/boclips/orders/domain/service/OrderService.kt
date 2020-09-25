@@ -2,7 +2,13 @@ package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.orders.domain.model.*
+import com.boclips.orders.domain.model.Manifest
+import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderId
+import com.boclips.orders.domain.model.OrderStatus
+import com.boclips.orders.domain.model.OrderUpdateCommand
+import com.boclips.orders.domain.model.OrdersRepository
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.OrderItemStatus
 import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.videos.api.httpclient.VideosClient
@@ -11,7 +17,7 @@ import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.*
+import java.util.Currency
 
 @Component
 class OrderService(
@@ -25,12 +31,8 @@ class OrderService(
     fun createIfNonExistent(order: Order): Order {
         var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId)
         if (retrievedOrder == null) {
-            try {
-                order.items.forEach { videosClient.requestVideoCaptions(it.video.videoServiceId.value) }
-            } catch (e: Exception) {
-                logger.warn { "Could not request transcripts because ${e.message}. The order will be processed as usual." }
-            }
             retrievedOrder = ordersRepository.save(order)
+                .also { requestCaptions(it.id) }
         }
 
         return updateStatus(orderId = retrievedOrder.id)
@@ -105,7 +107,8 @@ class OrderService(
     private fun orderIsReady(order: Order) =
         order.currency != null && order.items.all { it.status == OrderItemStatus.READY }
 
-    private fun orderIsIncomplete(order: Order) = order.currency == null || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
+    private fun orderIsIncomplete(order: Order) =
+        order.currency == null || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
 
     private fun orderIsInProgress(order: Order) =
         order.currency != null &&
@@ -113,4 +116,25 @@ class OrderService(
             order.items.any {
                 it.status == OrderItemStatus.IN_PROGRESS
             }
+
+    private fun requestCaptions(orderId: OrderId) {
+        val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
+
+        val updateCommands =
+            order.items.mapNotNull {
+                try {
+                    videosClient.requestVideoCaptions(it.video.videoServiceId.value)
+                    return@mapNotNull OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus(
+                        order.id,
+                        it.id,
+                        AssetStatus.REQUESTED
+                    )
+                } catch (e: Exception) {
+                    logger.warn { "Could not request transcripts because ${e.message} for order: ${orderId.value}  - item: ${it.id}. The order will be processed as usual." }
+                    return@mapNotNull null
+                }
+            }
+
+        bulkUpdate(updateCommands)
+    }
 }

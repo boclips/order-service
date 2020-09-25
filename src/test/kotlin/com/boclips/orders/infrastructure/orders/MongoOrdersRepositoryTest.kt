@@ -5,6 +5,7 @@ import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
+import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import org.assertj.core.api.Assertions.assertThat
@@ -187,6 +188,28 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.duration).isEqualTo(Duration.Description("5 Years"))
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
+    }
+
+    @Test
+    fun `can update the caption status of an order item`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(id = "1", video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE)),
+                    OrderFactory.orderItem(id = "2", video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE))
+                )
+            )
+        )
+
+        val updatedOrder = ordersRepository.update(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus(
+                orderId = originalOrder.id,
+                orderItemId = "1",
+                captionStatus = AssetStatus.REQUESTED
+            )
+        )
+
+        assertThat(updatedOrder.items.first { it.id == "1" }.video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
     }
 
     @Test
