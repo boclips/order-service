@@ -4,8 +4,10 @@ import com.boclips.orders.application.orders.CreateOrderFromCsv
 import com.boclips.orders.application.orders.ExportAllOrdersToCsv
 import com.boclips.orders.application.orders.GetOrder
 import com.boclips.orders.application.orders.GetOrders
+import com.boclips.orders.application.orders.UpdateOrder
 import com.boclips.orders.application.orders.UpdateOrderCurrency
 import com.boclips.orders.application.orders.UpdateOrderItem
+import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
@@ -37,7 +39,8 @@ class OrdersController(
     private val createOrderFromCsv: CreateOrderFromCsv,
     private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
     private val updateOrderCurrency: UpdateOrderCurrency,
-    private val updateOrderItem: UpdateOrderItem
+    private val updateOrderItem: UpdateOrderItem,
+    private val updateOrder: UpdateOrder
 ) {
     companion object {
         fun getOrdersLink(): Link = WebMvcLinkBuilder.linkTo(
@@ -126,6 +129,21 @@ class OrdersController(
     fun patchOrderCurrency(@PathVariable id: String, @RequestParam currency: String) =
         updateOrderCurrency(orderId = id, currency = currency)
             .run { getOrderResource(id) }
+
+    @PatchMapping(value = ["/{id}"], params = ["!currency"])
+    fun patchOrder(
+        @PathVariable id: String,
+        @RequestBody updateOrderRequest: UpdateOrderRequest?
+    ): EntityModel<OrderResource> {
+        return try {
+            wrapOrder(updateOrder(id, updateOrderRequest))
+        } catch (ex: InvalidOrderUpdateRequest) {
+            throw OrderServiceApiException(
+                status = HttpStatus.BAD_REQUEST,
+                message = ex.message ?: "Unknown error"
+            )
+        }
+    }
 
     @PatchMapping(value = ["/{id}/items/{itemId}"], params = ["price"])
     fun patchOrderItemPrice(

@@ -3,6 +3,7 @@ package com.boclips.orders.infrastructure.orders
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
+import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.orderItem.AssetStatus
@@ -195,8 +196,14 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val originalOrder = ordersRepository.save(
             OrderFactory.order(
                 items = listOf(
-                    OrderFactory.orderItem(id = "1", video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE)),
-                    OrderFactory.orderItem(id = "2", video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE))
+                    OrderFactory.orderItem(
+                        id = "1",
+                        video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE)
+                    ),
+                    OrderFactory.orderItem(
+                        id = "2",
+                        video = TestFactories.video(captionStatus = AssetStatus.UNAVAILABLE)
+                    )
                 )
             )
         )
@@ -214,7 +221,12 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `can bulk update many orders`() {
-        val originalOrder1 = ordersRepository.save(OrderFactory.order(currency = Currency.getInstance("GBP")))
+        val originalOrder1 = ordersRepository.save(
+            OrderFactory.order(
+                currency = Currency.getInstance("GBP"),
+                orderOrganisation = OrderOrganisation("bad org")
+            )
+        )
         val originalOrder2 = ordersRepository.save(OrderFactory.order(currency = Currency.getInstance("USD")))
 
         ordersRepository.bulkUpdate(
@@ -223,6 +235,10 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
                     orderId = originalOrder1.id,
                     currency = Currency.getInstance("EUR"),
                     fxRateToGbp = BigDecimal.ONE
+                ),
+                OrderUpdateCommand.UpdateOrderOrganisation(
+                    orderId = originalOrder1.id,
+                    organisation = OrderOrganisation("wow org")
                 ),
                 OrderUpdateCommand.UpdateOrderCurrency(
                     orderId = originalOrder2.id,
@@ -236,6 +252,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val update2 = ordersRepository.findOne(originalOrder2.id)!!
 
         assertThat(update1.currency).isEqualTo(Currency.getInstance("EUR"))
+        assertThat(update1.organisation?.name).isEqualTo("wow org")
         assertThat(update2.currency).isEqualTo(Currency.getInstance("EUR"))
     }
 

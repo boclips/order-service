@@ -127,10 +127,12 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
                     SetTo(OrderDocument::currency, orderUpdateCommand.currency),
                     SetTo(OrderDocument::fxRateToGbp, orderUpdateCommand.fxRateToGbp)
                 )
+            is OrderUpdateCommand.UpdateOrderOrganisation -> set(
+                OrderDocument::organisation, orderUpdateCommand.organisation.name
+            )
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 convertItemsUpdateToBson(retrievedOrder = it, updateCommand = orderUpdateCommand)
             }
-
         }
     }
 

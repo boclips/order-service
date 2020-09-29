@@ -10,6 +10,7 @@ sealed class OrderUpdateCommand(val orderId: OrderId) {
     class ReplaceStatus(orderId: OrderId, val orderStatus: OrderStatus) : OrderUpdateCommand(orderId)
     class UpdateOrderCurrency(orderId: OrderId, val currency: Currency, val fxRateToGbp: BigDecimal) :
         OrderUpdateCommand(orderId)
+    class UpdateOrderOrganisation(orderId: OrderId, val organisation: OrderOrganisation) : OrderUpdateCommand(orderId)
 
     sealed class OrderItemUpdateCommand(orderId: OrderId, val orderItemsId: String) : OrderUpdateCommand(orderId) {
         class UpdateOrderItemPrice(orderId: OrderId, orderItemsId: String, val amount: BigDecimal) :

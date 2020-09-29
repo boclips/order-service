@@ -335,15 +335,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 legacyOrderId = "legacy-order-id",
                 status = OrderStatus.INCOMPLETED,
                 items = listOf(
-                        OrderFactory.orderItem(
-                            price = Price(
-                                amount = BigDecimal.valueOf(10),
-                                currency = Currency.getInstance("EUR")
-                            ),
-                            license = OrderFactory.orderItemLicense(
-                                duration = Duration.Time(10, ChronoUnit.YEARS),
-                                territory = "WW"
-                            ),
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = BigDecimal.valueOf(10),
+                            currency = Currency.getInstance("EUR")
+                        ),
+                        license = OrderFactory.orderItemLicense(
+                            duration = Duration.Time(10, ChronoUnit.YEARS),
+                            territory = "WW"
+                        ),
                         video = TestFactories.video(
                             videoServiceId = "video-id",
                             title = "A Video title",
@@ -356,9 +356,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-     val csv =   mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asBackofficeStaff())
-         .andDo(MockMvcResultHandlers.print())
-         .andExpect(status().isOk)
+        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asBackofficeStaff())
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", containsString("text/csv")))
             .andExpect(header().string("Content-Disposition", containsString("attachment; filename=\"orders-2")))
             .andExpect(header().string("Content-Disposition", endsWith(".csv\"")))
@@ -476,6 +476,52 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform((patch("/v1/orders/{id}?currency=USD", order.id.value).asBackofficeStaff()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalPrice.currency").value("USD"))
+    }
+
+    @Test
+    fun `can update organisation of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                orderOrganisation = OrderOrganisation("org1")
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                """
+                {
+                    "organisation": "org2"
+                }
+                """.trimIndent()
+                ).asBackofficeStaff())
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("org2")))
+    }
+
+
+    @Test
+    fun `returns a bad request when update request is invalid`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                orderOrganisation = OrderOrganisation("org1")
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                """
+                {
+                    "organisation": ""
+                }
+                """.trimIndent()
+                ).asBackofficeStaff())
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
