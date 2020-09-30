@@ -506,11 +506,11 @@ object OrderFactory {
     }
 
     fun orderItemLicense(
-        duration: Duration = Duration.Time(
+        duration: Duration? = Duration.Time(
             amount = 100,
             unit = ChronoUnit.YEARS
         ),
-        territory: String = OrderItemLicense.WORLDWIDE
+        territory: String? = OrderItemLicense.WORLDWIDE
     ): OrderItemLicense {
         return OrderItemLicense(
             duration = duration,

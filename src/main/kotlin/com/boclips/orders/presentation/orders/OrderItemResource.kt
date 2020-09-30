@@ -60,7 +60,7 @@ data class OrderItemResource(
                 notes = item.notes
             )
 
-        private fun getDurationLabel(license: OrderItemLicense): String {
+        private fun getDurationLabel(license: OrderItemLicense): String? {
             return when (license.duration) {
                 is Duration.Time -> {
                     val unit = license.duration.unit.name.toLowerCase().capitalize().let {
@@ -74,6 +74,7 @@ data class OrderItemResource(
                     "${license.duration.amount} $unit"
                 }
                 is Duration.Description -> license.duration.label
+                null -> null
             }
         }
     }

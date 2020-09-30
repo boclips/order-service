@@ -2,6 +2,8 @@ package com.boclips.orders.infrastructure.orders
 
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
+import com.boclips.orders.domain.model.orderItem.Duration
+import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderFilter
 import com.boclips.orders.domain.model.OrderId
@@ -26,6 +28,7 @@ import org.litote.kmongo.getCollection
 import org.litote.kmongo.orderBy
 import org.litote.kmongo.set
 import java.time.Instant
+import kotlin.collections.toList
 
 const val databaseName = "order-service-db"
 
@@ -133,6 +136,7 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 convertItemsUpdateToBson(retrievedOrder = it, updateCommand = orderUpdateCommand)
             }
+
         }
     }
 
@@ -153,7 +157,18 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
                             currency = orderItem.price.currency
                         )
                     )
-                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense -> orderItem.copy(license = updateCommand.orderItemLicense)
+                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemTerritory -> orderItem.copy(
+                        license = OrderItemLicense(
+                            duration = orderItem.license?.duration,
+                            territory = updateCommand.territory
+                        )
+                    )
+                    is OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemDuration -> orderItem.copy(
+                        license = OrderItemLicense(
+                            duration = Duration.Description(updateCommand.duration),
+                            territory = orderItem.license?.territory
+                        )
+                    )
                     is OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo -> orderItem.copy(video = updateCommand.video)
                     is OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus -> orderItem.copy(
                         video = orderItem.video.copy(

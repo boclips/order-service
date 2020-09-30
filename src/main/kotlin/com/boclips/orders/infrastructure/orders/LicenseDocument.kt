@@ -6,7 +6,7 @@ data class LicenseDocument(
     val amount: Int?,
     val unit: ChronoUnit?,
     val description: String?,
-    val territory: String
+    val territory: String?
 ) {
     fun isValidTime(): Boolean {
         return amount != null && unit != null

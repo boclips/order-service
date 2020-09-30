@@ -8,6 +8,7 @@ import com.boclips.orders.application.orders.UpdateOrder
 import com.boclips.orders.application.orders.UpdateOrderCurrency
 import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
+import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
 import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
@@ -163,8 +164,12 @@ class OrdersController(
         @PathVariable itemId: String,
         @Valid @RequestBody updateOrderItem: UpdateOrderItemRequest?
     ) =
-        updateOrderItem(id = id, orderItemId = itemId, updateRequest = updateOrderItem).run {
-            getOrderResource(id)
+        try {
+            updateOrderItem(id = id, orderItemId = itemId, updateRequest = updateOrderItem).run {
+                getOrderResource(id)
+            }
+        } catch (ex: InvalidUpdateOrderItemRequest) {
+            throw OrderServiceApiException("Invalid update request")
         }
 
     @PostMapping(consumes = ["multipart/form-data"])

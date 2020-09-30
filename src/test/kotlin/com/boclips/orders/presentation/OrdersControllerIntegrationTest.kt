@@ -635,7 +635,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform(
             patch(
-                "/v1/orders/{id}/items/{itemId}?territory=2Years",
+                "/v1/orders/{id}/items/{itemId}",
                 order.id.value,
                 "1"
             ).contentType(MediaType.APPLICATION_JSON)

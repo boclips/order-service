@@ -1,9 +1,8 @@
 package com.boclips.orders.application.orders
 
+import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderUpdateCommand
-import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.presentation.UpdateOrderItemRequest
 import org.springframework.stereotype.Component
@@ -20,17 +19,28 @@ class UpdateOrderItem(private val orderService: OrderService) {
             )
         }
 
-        val licenseUpdate = updateRequest?.license?.let {
-            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense(
+        val territoryUpdate = updateRequest?.license?.territory?.let {
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemTerritory(
                 orderId = orderId,
                 orderItemsId = orderItemId,
-                orderItemLicense = OrderItemLicense(
-                    territory = it.territory!!,
-                    duration = Duration.Description(it.duration!!)
-                )
+                territory = it
             )
         }
 
-        orderService.bulkUpdate(listOfNotNull(priceUpdate, licenseUpdate))
+        val durationUpdate = updateRequest?.license?.duration?.let {
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemDuration(
+                orderId = orderId,
+                orderItemsId = orderItemId,
+                duration = it
+            )
+        }
+
+        val commands = listOfNotNull(priceUpdate, durationUpdate, territoryUpdate)
+
+        if (commands.isEmpty()) {
+            throw InvalidUpdateOrderItemRequest()
+        }
+
+        orderService.bulkUpdate(commands)
     }
 }

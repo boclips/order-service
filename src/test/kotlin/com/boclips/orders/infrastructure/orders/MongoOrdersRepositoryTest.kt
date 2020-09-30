@@ -8,7 +8,6 @@ import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
@@ -174,21 +173,41 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             OrderFactory.order(
                 items = listOf(
                     OrderFactory.orderItem(id = "1"),
-                    OrderFactory.orderItem(id = "2", license = OrderFactory.orderItemLicense(territory = "1 Year"))
+                    OrderFactory.orderItem(id = "2", license = OrderFactory.orderItemLicense(territory = "A Castle"))
                 )
             )
         )
 
         val updatedOrder = ordersRepository.update(
-            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemLicense(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemTerritory(
                 orderId = originalOrder.id,
                 orderItemsId = "2",
-                orderItemLicense = OrderItemLicense(duration = Duration.Description("5 Years"), territory = "A park")
+                 territory = "A park"
+            )
+        )
+
+        assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
+    }
+    @Test
+    fun `can update the duration order item`() {
+        val originalOrder = ordersRepository.save(
+            OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(id = "1"),
+                    OrderFactory.orderItem(id = "2", license = OrderFactory.orderItemLicense(duration = Duration.Description("1 Year")))
+                )
+            )
+        )
+
+        val updatedOrder = ordersRepository.update(
+            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemDuration(
+                orderId = originalOrder.id,
+                orderItemsId = "2",
+                duration = "5 Years"
             )
         )
 
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.duration).isEqualTo(Duration.Description("5 Years"))
-        assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
     }
 
     @Test
