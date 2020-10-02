@@ -69,8 +69,10 @@ class OrderService(
         )
     }
 
-    fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
-        return commands.map { update(it) }
+    fun bulkUpdate(commands: List<OrderUpdateCommand>) {
+        ordersRepository.bulkUpdate(commands)
+
+        commands.map { updateStatus(it.orderId) }
     }
 
     private fun updateStatus(orderId: OrderId): Order {

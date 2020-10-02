@@ -501,6 +501,30 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("org2")))
     }
 
+    @Test
+    fun `can update currency of an order using a body`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                currency = Currency.getInstance("GBP"),
+                orderOrganisation = OrderOrganisation("org1")
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                """
+                {
+                    "currency": "USD"
+                }
+                """.trimIndent()
+                ).asBackofficeStaff())
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.currency", equalTo("USD")))
+    }
+
 
     @Test
     fun `returns a bad request when update request is invalid`() {
