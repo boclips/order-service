@@ -490,7 +490,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "organisation": "org2"
                 }
@@ -514,7 +514,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "currency": "USD"
                 }
@@ -522,9 +522,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asBackofficeStaff())
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.currency", equalTo("USD")))
+            .andExpect(jsonPath("$.totalPrice.currency").value("USD"))
     }
-
 
     @Test
     fun `returns a bad request when update request is invalid`() {
@@ -538,7 +537,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "organisation": ""
                 }
@@ -675,8 +674,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asBackofficeStaff()
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Wales")))
-            .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("456")))
+            .andExpect(jsonPath("$.orderItems[0].license.territory", equalTo("Wales")))
+            .andExpect(jsonPath("$.orderItems[0].license.duration", equalTo("456")))
     }
 
     @Test

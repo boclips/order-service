@@ -75,8 +75,10 @@ class UpdateOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `throws appropriately when invalid currency is supplied`() {
+        val order = saveOrder(OrderFactory.order(orderOrganisation = OrderOrganisation(name = "org1")))
+
         assertThrows<InvalidCurrencyFormatException> {
-            updateOrder(id = "whatever", updateOrderRequest = UpdateOrderRequest(currency = "Not quite a currency"))
+            updateOrder(order.id.value, updateOrderRequest = UpdateOrderRequest(currency = "Not quite a currency"))
         }
     }
 }

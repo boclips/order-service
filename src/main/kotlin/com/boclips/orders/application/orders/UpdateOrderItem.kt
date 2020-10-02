@@ -1,14 +1,17 @@
 package com.boclips.orders.application.orders
 
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
+import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.presentation.UpdateOrderItemRequest
+import com.boclips.orders.presentation.orders.OrderResource
 import org.springframework.stereotype.Component
 
 @Component
 class UpdateOrderItem(private val orderService: OrderService) {
+
     operator fun invoke(id: String, orderItemId: String, updateRequest: UpdateOrderItemRequest?) {
         val orderId = OrderId(value = id)
         val priceUpdate = updateRequest?.price?.let {
