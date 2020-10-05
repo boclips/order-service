@@ -33,20 +33,7 @@ object OrderItemDocumentConverter {
                 videoReference = it.video.channelVideoId
             ),
             trim = toTrimmingString(it.trim),
-            video = VideoDocument(
-                videoServiceId = it.video.videoServiceId.value,
-                title = it.video.title,
-                type = it.video.types.firstOrNull() ?: "",
-                types = it.video.types,
-                fullProjectionLink = it.video.fullProjectionLink.toString(),
-                captionStatus = it.video.captionStatus.toString(),
-                hasHDVideo = when (it.video.downloadableVideoStatus) {
-                    AssetStatus.AVAILABLE -> true
-                    AssetStatus.UNAVAILABLE -> false
-                    else -> false
-                },
-                playbackId = it.video.playbackId
-            ),
+            video = toVideoDocument(it.video),
             license = it.license?.duration?.let { duration ->
                 when (duration) {
                     is Duration.Time -> LicenseDocument(
@@ -65,6 +52,23 @@ object OrderItemDocumentConverter {
             },
             notes = it.notes,
             id = it.id
+        )
+    }
+
+    fun toVideoDocument(video: Video): VideoDocument {
+        return VideoDocument(
+            videoServiceId = video.videoServiceId.value,
+            title = video.title,
+            type = video.types.firstOrNull() ?: "",
+            types = video.types,
+            fullProjectionLink = video.fullProjectionLink.toString(),
+            captionStatus = video.captionStatus.toString(),
+            hasHDVideo = when (video.downloadableVideoStatus) {
+                AssetStatus.AVAILABLE -> true
+                AssetStatus.UNAVAILABLE -> false
+                else -> false
+            },
+            playbackId = video.playbackId
         )
     }
 

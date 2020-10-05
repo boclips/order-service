@@ -89,6 +89,8 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
     }
 
     override fun bulkUpdate(orderUpdateCommands: List<OrderUpdateCommand>) {
+        if (orderUpdateCommands.isEmpty()) return
+
         val updateDocs = orderUpdateCommands.mapNotNull {
             convertUpdateToBson(it)?.let { updateBson ->
                 UpdateOneModel<OrderDocument>(
