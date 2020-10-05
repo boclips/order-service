@@ -5,7 +5,6 @@ import com.boclips.orders.application.orders.ExportAllOrdersToCsv
 import com.boclips.orders.application.orders.GetOrder
 import com.boclips.orders.application.orders.GetOrders
 import com.boclips.orders.application.orders.UpdateOrder
-import com.boclips.orders.application.orders.UpdateOrderCurrency
 import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
@@ -39,7 +38,6 @@ class OrdersController(
     private val getOrder: GetOrder,
     private val createOrderFromCsv: CreateOrderFromCsv,
     private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
-    private val updateOrderCurrency: UpdateOrderCurrency,
     private val updateOrderItem: UpdateOrderItem,
     private val updateOrder: UpdateOrder
 ) {
@@ -126,12 +124,7 @@ class OrdersController(
     @GetMapping("/{id}")
     fun getOrderResource(@PathVariable("id") id: String?) = wrapOrder(getOrder(id))
 
-    @PatchMapping(value = ["/{id}"], params = ["currency"])
-    fun patchOrderCurrency(@PathVariable id: String, @RequestParam currency: String) =
-        updateOrderCurrency(orderId = id, currency = currency)
-            .run { getOrderResource(id) }
-
-    @PatchMapping(value = ["/{id}"], params = ["!currency"])
+    @PatchMapping(value = ["/{id}"])
     fun patchOrder(
         @PathVariable id: String,
         @RequestBody updateOrderRequest: UpdateOrderRequest?

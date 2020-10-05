@@ -466,19 +466,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update currency of an order`() {
-        val order = ordersRepository.save(
-            OrderFactory.order(
-                items = listOf(OrderFactory.orderItem(price = PriceFactory.onePound()))
-            )
-        )
-
-        mockMvc.perform((patch("/v1/orders/{id}?currency=USD", order.id.value).asBackofficeStaff()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.totalPrice.currency").value("USD"))
-    }
-
-    @Test
     fun `can update organisation of an order`() {
         val order = ordersRepository.save(
             OrderFactory.order(
@@ -502,7 +489,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `can update currency of an order using a body`() {
+    fun `can update currency of an order`() {
         val order = ordersRepository.save(
             OrderFactory.order(
                 currency = Currency.getInstance("GBP"),
@@ -603,12 +590,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         mockMvc.perform((patch("/v1/orders/{id}/items/{itemId}?price=200", order.id.value, "blah").asBackofficeStaff()))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
-    }
-
-    @Test
-    fun `incorrect currency returns 400`() {
-        mockMvc.perform((patch("/v1/orders/irrelevant?currency=nasty-currency").asBackofficeStaff()))
-            .andExpect(status().isBadRequest)
     }
 
     @Test
