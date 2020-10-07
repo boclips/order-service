@@ -61,6 +61,11 @@ class OrdersController(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(id)
         ).withSelfRel()
 
+
+        fun getUpdateOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).patchOrder(id, null)
+        ).withRel("update")
+
         fun getOrderLink(): Link = WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(null)
         ).withRel("order")
@@ -172,5 +177,5 @@ class OrdersController(
         }
 
     private fun wrapOrder(orderResource: OrderResource) =
-        EntityModel(orderResource, getSelfOrderLink(orderResource.id))
+        EntityModel(orderResource, getSelfOrderLink(orderResource.id), getUpdateOrderLink(orderResource.id))
 }

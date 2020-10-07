@@ -261,6 +261,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$.items[0].channel.currency", equalTo("GBP")))
 
             .andExpect(jsonPath("$._links.self.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
+            .andExpect(jsonPath("$._links.update.href", endsWith("/orders/5ceeb99bd0e30a1a57ae9767")))
     }
 
     @Test
