@@ -28,7 +28,7 @@ import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
-import testsupport.asBackofficeStaff
+import testsupport.asHQStaff
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -110,7 +110,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         mockMvc.perform(
-            get("/v1/orders").asBackofficeStaff()
+            get("/v1/orders").asHQStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
             .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("a beautiful isbnNumber")))
@@ -163,7 +163,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `empty orders propagates in json response`() {
         mockMvc.perform(
-            get("/v1/orders").asBackofficeStaff()
+            get("/v1/orders").asHQStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$._embedded.orders").exists())
     }
@@ -221,7 +221,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         mockMvc.perform(
-            get("/v1/orders/5ceeb99bd0e30a1a57ae9767").asBackofficeStaff()
+            get("/v1/orders/5ceeb99bd0e30a1a57ae9767").asHQStaff()
         ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
             .andExpect(jsonPath("$.legacyOrderId", equalTo("456")))
@@ -266,7 +266,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `get appropriate response when getting non-existent order`() {
-        mockMvc.perform(get("/v1/orders/notthere").asBackofficeStaff())
+        mockMvc.perform(get("/v1/orders/notthere").asHQStaff())
             .andExpect(status().isNotFound)
     }
 
@@ -277,7 +277,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", ordersCsv.file.readBytes())
-                .asBackofficeStaff()
+                .asHQStaff()
         ).andExpect(status().isCreated)
     }
 
@@ -311,7 +311,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val csv =
             mockMvc.perform(
-                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff()
+                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asHQStaff()
             )
                 .andExpect(status().isOk)
                 .andExpect(header().string("Content-Type", containsString("text/csv")))
@@ -357,7 +357,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asBackofficeStaff())
+        val csv = mockMvc.perform(get("/v1/orders?usd=1.1&&aud=2").accept("text/csv").asHQStaff())
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", containsString("text/csv")))
@@ -397,7 +397,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         val csv =
             mockMvc.perform(
-                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asBackofficeStaff()
+                get("/v1/orders?usd=1.1&eur=0.5&aud=2&sgd=3&cad=2.1").accept("text/csv").asHQStaff()
             )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
@@ -423,7 +423,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", ordersCsv.file.readBytes())
-                .asBackofficeStaff()
+                .asHQStaff()
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid CSV")))
             .andExpect(
@@ -444,7 +444,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         mockMvc.perform(
             multipart("/v1/orders")
                 .file("file", invalidCsv.file.readBytes())
-                .asBackofficeStaff()
+                .asHQStaff()
         ).andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.error", equalTo("Invalid CSV")))
             .andExpect(
@@ -483,7 +483,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "organisation": "org2"
                 }
                 """.trimIndent()
-                ).asBackofficeStaff())
+                ).asHQStaff())
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("org2")))
@@ -507,7 +507,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "currency": "USD"
                 }
                 """.trimIndent()
-                ).asBackofficeStaff())
+                ).asHQStaff())
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalPrice.currency", equalTo("USD")))
@@ -531,7 +531,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "organisation": ""
                 }
                 """.trimIndent()
-                ).asBackofficeStaff())
+                ).asHQStaff())
         )
             .andExpect(status().isBadRequest)
     }
@@ -549,7 +549,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "/v1/orders/{id}/items/{itemId}?price=200",
                 order.id.value,
                 "hello"
-            ).asBackofficeStaff())
+            ).asHQStaff())
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(jsonPath("$.items[0].price.value").value("200.0"))
@@ -574,7 +574,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """
                     {"price": "200"}
                 """.trimIndent()
-                ).asBackofficeStaff()
+                ).asHQStaff()
                 )
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -589,7 +589,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform((patch("/v1/orders/{id}/items/{itemId}?price=200", order.id.value, "blah").asBackofficeStaff()))
+        mockMvc.perform((patch("/v1/orders/{id}/items/{itemId}?price=200", order.id.value, "blah").asHQStaff()))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
@@ -606,7 +606,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 "/v1/orders/{id}/items/{itemId}?price=",
                 order.id.value,
                 "hello"
-            ).asBackofficeStaff())
+            ).asHQStaff())
         ).andExpect(status().isBadRequest)
     }
 
@@ -622,7 +622,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        mockMvc.perform(get("/v1/orders/{id}", order.id.value).asBackofficeStaff())
+        mockMvc.perform(get("/v1/orders/{id}", order.id.value).asHQStaff())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalPrice.value", equalTo(3.0)))
     }
@@ -654,7 +654,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         } 
                     }
                     """.trimIndent()
-                ).asBackofficeStaff()
+                ).asHQStaff()
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Wales")))
@@ -675,7 +675,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     "license": {}
                     }
                     """.trimIndent()
-                ).asBackofficeStaff()
+                ).asHQStaff()
         )
             .andExpect(status().isBadRequest)
     }

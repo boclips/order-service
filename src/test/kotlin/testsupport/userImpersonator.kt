@@ -4,9 +4,9 @@ import com.boclips.orders.config.security.UserRoles
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
-fun MockHttpServletRequestBuilder.asBackofficeStaff() = this.with(
+fun MockHttpServletRequestBuilder.asHQStaff() = this.with(
     SecurityMockMvcRequestPostProcessors
-        .user("backofficestaff")
+        .user("hqstaff")
         .roles(
             UserRoles.VIEW_ORDERS,
             UserRoles.CREATE_ORDERS,
@@ -14,7 +14,7 @@ fun MockHttpServletRequestBuilder.asBackofficeStaff() = this.with(
         )
 )
 
-fun MockHttpServletRequestBuilder.asNonBackOfficeStaff() = this.asTeacher()
+fun MockHttpServletRequestBuilder.asNonHQStaff() = this.asTeacher()
 
 fun MockHttpServletRequestBuilder.asOperator() = this.with(
     SecurityMockMvcRequestPostProcessors
