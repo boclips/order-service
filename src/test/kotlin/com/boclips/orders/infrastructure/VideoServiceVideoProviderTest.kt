@@ -65,6 +65,30 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `throws when channel id is missing`() {
+        val videoId = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partner",
+                captionStatus = CaptionStatus.HUMAN_GENERATED_AVAILABLE,
+                playback = StreamPlaybackResource(
+                    id = "playback-id",
+                    referenceId = "reference-id",
+                    maxResolutionAvailable = true
+                ),
+                channelId = null,
+                channelVideoId = "",
+                _links = mapOf(
+                    "fullProjection" to HateoasLink("https://great-vids.com")
+                )
+            )
+        )
+
+        assertThrows<IllegalStateException> { videoProvider.get(videoId = VideoId(value = videoId.id!!)) }
+    }
+
+    @Test
     fun `exception if video cannot be found`() {
         assertThrows<VideoNotFoundException> {
             videoProvider.get(videoId = VideoId(value = "hideandseek"))

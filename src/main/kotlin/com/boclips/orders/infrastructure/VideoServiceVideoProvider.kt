@@ -74,12 +74,14 @@ class VideoServiceVideoProvider(
 
     private fun getChannel(videoResource: VideoResource): ChannelResource {
         return try {
-            channelsClient.getChannel(videoResource.channelId!!)
+            videoResource.channelId?.let { channelsClient.getChannel(it) }
+                ?: throw java.lang.IllegalStateException("Missing channelId on videoResource")
         } catch (e: FeignException) {
             when (e.status()) {
                 404 -> throw ChannelNotFoundException(ChannelId(videoResource.channelId ?: ""))
-                else -> throw e
-                    .also { logger.warn(e) { "Something went wrong when fetching channel: ${videoResource.channel}" } }
+                else ->
+                    throw e
+                        .also { logger.warn(e) { "Something went wrong when fetching channel: ${videoResource.channel}" } }
             }
         }
     }

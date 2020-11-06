@@ -53,7 +53,7 @@ class StoreLegacyOrder(
 
             logger.info { "Saved legacy order ${event.order.id}" }
         } catch (e: Exception) {
-            logger.error { "Couldn't process legacy order: ${event.order.id} due to : $e" }
+            logger.error(e) { "Couldn't process legacy order: ${event.order.id} due to : $e" }
             throw LegacyOrderProcessingException(e)
         }
     }
