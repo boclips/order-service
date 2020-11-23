@@ -16,7 +16,7 @@ object CartDocumentConverter {
         )
     }
 
-    fun toCart(document: CartDocument): Cart {
+    fun fromDocument(document: CartDocument): Cart {
         return Cart(
             cartId = CartId(document.id.toHexString()),
             userId = UserId(document.userId),

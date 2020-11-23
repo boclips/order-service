@@ -46,8 +46,12 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
 
     override fun findByUserId(userId: UserId): Cart? {
         return collection().findOne(CartDocument::userId eq userId.value)?.let(
-            CartDocumentConverter::toCart
+            CartDocumentConverter::fromDocument
         )
+    }
+
+    override fun findAll(): List<Cart> {
+        return collection().find().map(CartDocumentConverter::fromDocument).toList()
     }
 
     override fun deleteAll() {

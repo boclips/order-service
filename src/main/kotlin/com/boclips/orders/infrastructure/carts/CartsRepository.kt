@@ -10,4 +10,5 @@ interface CartsRepository {
     fun update(cartUpdateCommand: CartUpdateCommand): Cart
     fun findByUserId(userId: UserId): Cart?
     fun deleteAll()
+    fun findAll(): List<Cart>
 }

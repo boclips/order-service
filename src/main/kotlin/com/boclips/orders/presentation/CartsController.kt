@@ -1,7 +1,9 @@
 package com.boclips.orders.presentation
 
 import com.boclips.orders.application.cart.AddItemToCart
+import com.boclips.orders.application.cart.GetOrCreateCart
 import com.boclips.orders.presentation.carts.CartItemsResource
+import com.boclips.orders.presentation.carts.CartResource
 import com.boclips.orders.presentation.exceptions.FailedCartItemCreationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,8 +18,14 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/users")
 class CartsController(
+    private val getOrCreateCart: GetOrCreateCart,
     private val addItemToCart: AddItemToCart
 ) {
+    @GetMapping("/{id}/cart")
+    fun getCart(@PathVariable id: String): ResponseEntity<CartResource> {
+        return ResponseEntity.ok(CartResource.fromCart(getOrCreateCart(id)))
+    }
+
     @PostMapping("/{id}/cart/items")
     fun addCartItem(
         @Valid @RequestBody createCartItem: CreateCartItemsRequest,
