@@ -27,6 +27,14 @@ fun MockHttpServletRequestBuilder.asOperator() = this.with(
         )
 )
 
+fun MockHttpServletRequestBuilder.asPublisher(userId: String = "publisher") = this.with(
+    SecurityMockMvcRequestPostProcessors
+        .user(userId)
+        .roles(
+            UserRoles.ADD_CART_ITEMS
+        )
+)
+
 fun MockHttpServletRequestBuilder.asTeacher() = this.with(
     SecurityMockMvcRequestPostProcessors
         .user("ateacher")

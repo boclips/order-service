@@ -12,7 +12,7 @@ object CartDocumentConverter {
         return CartDocument(
             id = ObjectId(cart.cartId.value),
             userId = cart.userId.value,
-            items = cart.items.map { CartItemDocument(videoId = it.videoId.value) }
+            items = cart.items.map { cartItemToCartItemDocument(it) }
         )
     }
 
@@ -20,7 +20,19 @@ object CartDocumentConverter {
         return Cart(
             cartId = CartId(document.id.toHexString()),
             userId = UserId(document.userId),
-            items = document.items.map { CartItem(videoId = VideoId(it.videoId)) }
+            items = document.items.map { cartItemDocumentToCartItem(it) }
         )
     }
+
+    fun cartItemToCartItemDocument(cartItem: CartItem): CartItemDocument =
+        CartItemDocument(
+            id = cartItem.id,
+            videoId = cartItem.videoId.value
+        )
+
+    private fun cartItemDocumentToCartItem(document: CartItemDocument): CartItem =
+        CartItem(
+            id = document.id,
+            videoId = VideoId(document.videoId)
+        )
 }

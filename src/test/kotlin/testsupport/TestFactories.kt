@@ -543,19 +543,20 @@ object OrderFactory {
 
 object CartFactory {
     fun sample(
-        items: List<CartItem> = listOf(),
-        userId: UserId = UserId("user-id"),
-        cartId: CartId = CartId(ObjectId.get().toHexString())
+        cartId: CartId = CartId(ObjectId.get().toHexString()),
+        userId: String = "user-id",
+        items: List<CartItem> = emptyList()
     ): Cart =
         Cart(
             items = items,
-            userId = userId,
+            userId = UserId(userId),
             cartId = cartId
         )
 
-    fun cartItems(
-        items: List<String> = listOf("1")
-    ): List<CartItem> = items.map { CartItem(VideoId(it)) }
+    fun cartItem(
+        id: String = "cart-item-id",
+        videoId: String = "video-id"
+    ) = CartItem(id = id, videoId = VideoId(videoId))
 }
 
 object ManifestFactory {

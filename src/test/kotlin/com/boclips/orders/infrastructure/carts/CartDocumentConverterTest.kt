@@ -8,7 +8,7 @@ class CartDocumentConverterTest {
 
     @Test
     fun `converts cart to and from document`() {
-        val originalCart = CartFactory.sample(items = CartFactory.cartItems(listOf("1", "2")))
+        val originalCart = CartFactory.sample(items = listOf(CartFactory.cartItem(videoId = "video-id")))
 
         val cartDocument = CartDocumentConverter.toCartDocument(originalCart)
         val cart = CartDocumentConverter.toCart(cartDocument)
