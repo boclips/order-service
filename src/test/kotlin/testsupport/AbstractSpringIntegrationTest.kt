@@ -3,6 +3,8 @@ package testsupport
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.cart.Cart
+import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
 import com.boclips.videos.api.httpclient.test.fakes.ChannelsClientFake
@@ -51,6 +53,9 @@ abstract class AbstractSpringIntegrationTest {
     lateinit var ordersRepository: MongoOrdersRepository
 
     @Autowired
+    lateinit var mongoCartsRepository: MongoCartsRepository
+
+    @Autowired
     lateinit var fakeVideoClient: VideosClientFake
 
     @Autowired
@@ -65,6 +70,7 @@ abstract class AbstractSpringIntegrationTest {
     @BeforeEach
     fun setup() {
         ordersRepository.deleteAll()
+        mongoCartsRepository.deleteAll()
         legacyOrdersRepository.clear()
     }
 
@@ -109,5 +115,9 @@ abstract class AbstractSpringIntegrationTest {
 
     fun saveOrder(order: Order = OrderFactory.completeOrder()): Order {
         return ordersRepository.save(order)
+    }
+
+    fun createCart(userId: String): Cart {
+        return mongoCartsRepository.create(CartFactory.sample(userId = userId))
     }
 }

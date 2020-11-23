@@ -1,6 +1,7 @@
 package com.boclips.orders.infrastructure
 
 import com.boclips.orders.domain.exceptions.*
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.domain.model.orderItem.*
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
