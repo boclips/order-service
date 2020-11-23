@@ -11,7 +11,7 @@ class CartDocumentConverterTest {
         val originalCart = CartFactory.sample(items = listOf(CartFactory.cartItem(videoId = "video-id")))
 
         val cartDocument = CartDocumentConverter.toCartDocument(originalCart)
-        val cart = CartDocumentConverter.toCart(cartDocument)
+        val cart = CartDocumentConverter.fromDocument(cartDocument)
 
         assertThat(cart).isEqualTo(originalCart)
     }

@@ -31,6 +31,7 @@ fun MockHttpServletRequestBuilder.asPublisher(userId: String = "publisher") = th
     SecurityMockMvcRequestPostProcessors
         .user(userId)
         .roles(
+            UserRoles.VIEW_CART,
             UserRoles.ADD_CART_ITEMS
         )
 )

@@ -31,6 +31,27 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `finds all carts`() {
+        mongoCartsRepository.create(CartFactory.sample(userId = "user-one"))
+        mongoCartsRepository.create(CartFactory.sample(userId = "user-two"))
+
+        val carts = mongoCartsRepository.findAll()
+
+        assertThat(carts).hasSize(2)
+    }
+
+    @Test
+    fun `deletes all carts`() {
+        mongoCartsRepository.create(CartFactory.sample(userId = "user-one"))
+        mongoCartsRepository.create(CartFactory.sample(userId = "user-two"))
+
+        mongoCartsRepository.deleteAll()
+
+        val carts = mongoCartsRepository.findAll()
+        assertThat(carts).hasSize(0)
+    }
+
+    @Test
     fun `adds new items to cart`() {
         val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf())
         mongoCartsRepository.create(cart)
