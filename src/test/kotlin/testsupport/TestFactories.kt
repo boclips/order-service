@@ -15,6 +15,10 @@ import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.cart.Cart
+import com.boclips.orders.domain.model.cart.CartId
+import com.boclips.orders.domain.model.cart.CartItem
+import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Channel
 import com.boclips.orders.domain.model.orderItem.ChannelId
@@ -23,7 +27,7 @@ import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.domain.model.orderItem.Video
-import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.infrastructure.orders.ChannelDocument
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
 import com.boclips.orders.infrastructure.orders.LicenseDocument
@@ -535,6 +539,23 @@ object OrderFactory {
     fun basicOrderUser(
         label: String = "Matt <hello@boclips.tom>"
     ): OrderUser = OrderUser.BasicUser(label = label)
+}
+
+object CartFactory {
+    fun sample(
+        items: List<CartItem> = listOf(),
+        userId: UserId = UserId("user-id"),
+        cartId: CartId = CartId(ObjectId.get().toHexString())
+    ): Cart =
+        Cart(
+            items = items,
+            userId = userId,
+            cartId = cartId
+        )
+
+    fun cartItems(
+        items: List<String> = listOf("1")
+    ): List<CartItem> = items.map { CartItem(VideoId(it)) }
 }
 
 object ManifestFactory {

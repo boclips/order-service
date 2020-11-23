@@ -9,7 +9,7 @@ import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.domain.model.orderItem.Video
-import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.infrastructure.orders.ChannelDocument
 import com.boclips.orders.infrastructure.orders.LicenseDocument
 import com.boclips.orders.infrastructure.orders.OrderDocument

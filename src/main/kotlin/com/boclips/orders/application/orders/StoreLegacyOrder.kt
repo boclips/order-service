@@ -9,7 +9,7 @@ import com.boclips.orders.application.orders.converters.legacy.OrderStatusConver
 import com.boclips.orders.application.orders.converters.parseTrimRequest
 import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.orderItem.OrderItem
-import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument

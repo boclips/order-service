@@ -4,7 +4,7 @@ import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
 import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
 import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.orderItem.AssetStatus
-import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink

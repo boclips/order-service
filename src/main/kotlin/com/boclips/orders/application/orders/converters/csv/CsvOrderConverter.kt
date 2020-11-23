@@ -8,7 +8,7 @@ import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.VideoId
+import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
 import mu.KLogging

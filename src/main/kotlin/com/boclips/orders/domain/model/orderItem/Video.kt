@@ -1,5 +1,6 @@
 package com.boclips.orders.domain.model.orderItem
 
+import com.boclips.orders.domain.model.video.VideoId
 import java.net.URL
 
 data class Video(

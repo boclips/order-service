@@ -5,6 +5,7 @@ import com.boclips.orders.config.KeycloakProperties
 import com.boclips.orders.config.security.AppKeycloakConfigResolver
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.service.currency.FxRateService
+import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.currency.CurrencyLayerFxRateService
 import com.boclips.orders.infrastructure.orders.MongoLegacyOrdersRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
@@ -32,6 +33,11 @@ class InfrastructureConfiguration(
     @Bean
     fun mongoOrdersRepository(): MongoOrdersRepository {
         return MongoOrdersRepository(mongoClient())
+    }
+
+    @Bean
+    fun mongoCartsRepository(): MongoCartsRepository {
+        return MongoCartsRepository(mongoClient())
     }
 
     @Bean

@@ -2,14 +2,14 @@ package com.boclips.orders.infrastructure.orders
 
 import com.boclips.orders.domain.exceptions.OrderItemNotFoundException
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
-import com.boclips.orders.domain.model.orderItem.Duration
-import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderFilter
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.Duration
+import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.infrastructure.orders.converters.OrderDocumentConverter
 import com.boclips.orders.infrastructure.orders.converters.OrderItemDocumentConverter
 import com.mongodb.MongoClient
@@ -82,7 +82,6 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
             )
         }
 
-
         return findOne(orderUpdateCommand.orderId) ?: throw OrderNotFoundException(
             orderUpdateCommand.orderId
         )
@@ -138,7 +137,6 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
             is OrderUpdateCommand.OrderItemUpdateCommand -> findOne(orderUpdateCommand.orderId)?.let {
                 convertItemsUpdateToBson(retrievedOrder = it, updateCommand = orderUpdateCommand)
             }
-
         }
     }
 
