@@ -8,8 +8,16 @@ import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.presentation.OrdersController
-import com.boclips.orders.presentation.orders.*
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemLink
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemPriceLink
+import com.boclips.orders.presentation.orders.CaptionStatusResource
+import com.boclips.orders.presentation.orders.ChannelResource
+import com.boclips.orders.presentation.orders.OrderItemResource
+import com.boclips.orders.presentation.orders.OrderResource
+import com.boclips.orders.presentation.orders.OrderStatusResource
+import com.boclips.orders.presentation.orders.PriceResource
+import com.boclips.orders.presentation.orders.UserDetailsResource
+import com.boclips.orders.presentation.orders.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.hateoas.EntityModel
@@ -133,8 +141,8 @@ class OrderResourceTest {
                             licenseTerritory = "Multi Region",
                             notes = "hello, I'm a note"
                         ),
-                        OrdersController.getUpdateOrderItemPriceLink("123", "item-id"),
-                        OrdersController.getUpdateOrderItemLink("123", "item-id")
+                        getUpdateOrderItemPriceLink("123", "item-id"),
+                        getUpdateOrderItemLink("123", "item-id")
                     )
                 ),
                 throughPlatform = false

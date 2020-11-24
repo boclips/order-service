@@ -2,6 +2,7 @@ package com.boclips.orders.presentation
 
 import com.boclips.orders.domain.model.cart.UserId
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.AbstractSpringIntegrationTest
+import testsupport.CartFactory
 import testsupport.asPublisher
 
 class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
@@ -20,11 +22,12 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         val userId = "publishers-user-id"
 
         mockMvc.perform(
-            get("/v1/users/$userId/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.userId", equalTo(userId)))
             .andExpect(jsonPath("$.items", hasSize<Any>(0)))
+            .andExpect(jsonPath("$._links", hasSize<Any>(2)))
 
         assertThat(mongoCartsRepository.findByUserId(UserId(userId))).isNotNull
     }
@@ -35,7 +38,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         createCart(userId)
 
         mockMvc.perform(
-            get("/v1/users/$userId/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.userId", equalTo(userId)))
@@ -45,12 +48,31 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `checks all links in cart`() {
+        val userId = "publishers-user-id"
+        createCart(userId, listOf(CartFactory.cartItem(id = "cart-item-id")))
+
+        mockMvc.perform(
+            get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.userId", equalTo(userId)))
+            .andExpect(jsonPath("$.items", hasSize<Any>(1)))
+            .andExpect(jsonPath("$.items[0]._links[0].rel", equalTo("self")))
+            .andExpect(jsonPath("$.items[0]._links[0].href", endsWith("/cart-item-id")))
+            .andExpect(jsonPath("$._links[0].rel", equalTo("self")))
+            .andExpect(jsonPath("$._links[0].href", endsWith("/cart")))
+            .andExpect(jsonPath("$._links[1].rel", equalTo("cartItems")))
+            .andExpect(jsonPath("$._links[1].href", endsWith("/cart/items")))
+    }
+
+    @Test
     fun `can create and retrieve cart items`() {
         val userId = "publishers-user-id"
         createCart(userId)
 
         mockMvc.perform(
-            post("/v1/users/$userId/cart/items").contentType(MediaType.APPLICATION_JSON).content(
+            post("/v1/cart/items").contentType(MediaType.APPLICATION_JSON).content(
                 """
                     {
                         "videoId": "video-id-1"
@@ -63,7 +85,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 jsonPath("$.items[0].videoId", equalTo("video-id-1"))
             )
 
-        mockMvc.perform(get("/v1/users/$userId/cart").contentType(MediaType.APPLICATION_JSON).asPublisher())
+        mockMvc.perform(get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.userId", equalTo(userId)))
         jsonPath("$.items[0].videoId", equalTo("video-id-1"))

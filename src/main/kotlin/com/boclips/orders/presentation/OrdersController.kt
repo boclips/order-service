@@ -9,12 +9,13 @@ import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
 import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrdersLink
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderLink
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.Link
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -41,55 +42,6 @@ class OrdersController(
     private val updateOrderItem: UpdateOrderItem,
     private val updateOrder: UpdateOrder
 ) {
-    companion object {
-        fun getOrdersLink(): Link = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
-        ).withRel("orders")
-
-        fun getExportOrdersLink(): Link = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderCsv(
-                null, null, null, null, null
-            )
-        ).withRel("exportOrders")
-
-        fun getSelfOrdersLink(): Link =
-            WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
-            ).withRel("orders").withSelfRel()
-
-        fun getSelfOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(id)
-        ).withSelfRel()
-
-
-        fun getUpdateOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).patchOrder(id, null)
-        ).withRel("update")
-
-        fun getOrderLink(): Link = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(null)
-        ).withRel("order")
-
-        fun getUpdateOrderItemPriceLink(orderId: String, orderItemId: String): Link {
-            val uri = WebMvcLinkBuilder.linkTo(OrdersController::class.java)
-                .toUriComponentsBuilder()
-                .pathSegment("orders", orderId, "items", orderItemId)
-                .queryParam("price", "{price}")
-                .build()
-                .toUriString()
-
-            return Link(uri, "updatePrice")
-        }
-
-        fun getUpdateOrderItemLink(orderId: String, orderItemId: String) = WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).patchOrderItem(
-                orderId,
-                orderItemId,
-                null
-            )
-        ).withRel("update")
-    }
-
     @GetMapping(produces = ["!text/csv"])
     fun getOrderList() =
         getOrders()

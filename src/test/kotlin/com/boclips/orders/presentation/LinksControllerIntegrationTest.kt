@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.asHQStaff
 import testsupport.asNonHQStaff
+import testsupport.asPublisher
 
 class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
@@ -31,6 +32,14 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     endsWith("/orders{?usd,eur,sgd,aud,cad}")
                 )
             )
+    }
+
+    @Test
+    fun `publishers users have access to cart link`() {
+        mockMvc.perform(get("/v1/").asPublisher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.cart").exists())
+            .andExpect(jsonPath("$._links.cart.href", endsWith("/cart")))
     }
 
     @Test
