@@ -2,7 +2,8 @@ package com.boclips.orders.presentation.orders
 
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.presentation.OrdersController
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemLink
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemPriceLink
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.server.core.Relation
 
@@ -39,8 +40,8 @@ data class OrderResource(
                     .map {
                         EntityModel(
                             OrderItemResource.fromOrderItem(it),
-                            OrdersController.getUpdateOrderItemPriceLink(order.id.value, it.id),
-                            OrdersController.getUpdateOrderItemLink(order.id.value, it.id)
+                            getUpdateOrderItemPriceLink(order.id.value, it.id),
+                            getUpdateOrderItemLink(order.id.value, it.id)
                         )
                     },
                 totalPrice = PriceResource(

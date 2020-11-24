@@ -4,6 +4,7 @@ import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.cart.Cart
+import com.boclips.orders.domain.model.cart.CartItem
 import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
@@ -117,7 +118,7 @@ abstract class AbstractSpringIntegrationTest {
         return ordersRepository.save(order)
     }
 
-    fun createCart(userId: String): Cart {
-        return mongoCartsRepository.create(CartFactory.sample(userId = userId))
+    fun createCart(userId: String, items: List<CartItem> = emptyList()): Cart {
+        return mongoCartsRepository.create(CartFactory.sample(userId = userId, items = items))
     }
 }

@@ -2,9 +2,10 @@ package com.boclips.orders.presentation
 
 import com.boclips.orders.application.cart.AddItemToCart
 import com.boclips.orders.application.cart.GetOrCreateCart
+import com.boclips.orders.presentation.carts.CartItemResource
 import com.boclips.orders.presentation.carts.CartItemsResource
 import com.boclips.orders.presentation.carts.CartResource
-import com.boclips.orders.presentation.exceptions.FailedCartItemCreationException
+import com.boclips.security.utils.UserExtractor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,34 +17,42 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("/v1/cart")
 class CartsController(
     private val getOrCreateCart: GetOrCreateCart,
     private val addItemToCart: AddItemToCart
 ) {
-    @GetMapping("/{id}/cart")
-    fun getCart(@PathVariable id: String): ResponseEntity<CartResource> {
-        return ResponseEntity.ok(CartResource.fromCart(getOrCreateCart(id)))
+    @GetMapping
+    fun getCart(): ResponseEntity<CartResource> {
+        val userId = UserExtractor.getCurrentUser()?.id
+
+        return try {
+            val resource = CartResource.fromCart(getOrCreateCart(userId!!))
+            ResponseEntity.ok(resource)
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
     }
 
-    @PostMapping("/{id}/cart/items")
+    @PostMapping("/items")
     fun addCartItem(
-        @Valid @RequestBody createCartItem: CreateCartItemsRequest,
-        @PathVariable id: String
+        @Valid @RequestBody createCartItem: CreateCartItemsRequest?
     ): ResponseEntity<Any> {
-        val cartItems = try {
-            addItemToCart(createCartItem.videoId, id)
-        } catch (e: Exception) {
-            throw FailedCartItemCreationException(
-                error = "Error creating cart item",
-                message = "cart item could be created",
-                status = HttpStatus.BAD_REQUEST
-            )
-        }
+        val userId = UserExtractor.getCurrentUser()?.id
 
-        return ResponseEntity(
-            CartItemsResource.fromCartItems(cartItems),
-            HttpStatus.CREATED
-        )
+        return try {
+            val cartItems = addItemToCart(createCartItem!!.videoId, userId!!)
+            ResponseEntity(
+                CartItemsResource.fromCartItems(cartItems),
+                HttpStatus.CREATED
+            )
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
+        }
+    }
+
+    @GetMapping("/items/{id}")
+    fun getCartItem(@PathVariable id: String?): ResponseEntity<CartItemResource> {
+        TODO("to be implemented - for now it's only for link building")
     }
 }
