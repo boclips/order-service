@@ -62,5 +62,10 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(
                 jsonPath("$.items[0].videoId", equalTo("video-id-1"))
             )
+
+        mockMvc.perform(get("/v1/users/$userId/cart").contentType(MediaType.APPLICATION_JSON).asPublisher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.userId", equalTo(userId)))
+        jsonPath("$.items[0].videoId", equalTo("video-id-1"))
     }
 }
