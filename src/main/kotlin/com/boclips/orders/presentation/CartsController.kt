@@ -3,8 +3,8 @@ package com.boclips.orders.presentation
 import com.boclips.orders.application.cart.AddItemToCart
 import com.boclips.orders.application.cart.GetOrCreateCart
 import com.boclips.orders.presentation.carts.CartItemResource
-import com.boclips.orders.presentation.carts.CartItemsResource
 import com.boclips.orders.presentation.carts.CartResource
+import com.boclips.orders.presentation.hateos.CartsLinkBuilder
 import com.boclips.security.utils.UserExtractor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -41,11 +41,10 @@ class CartsController(
         val userId = UserExtractor.getCurrentUser()?.id
 
         return try {
-            val cartItems = addItemToCart(createCartItem!!.videoId, userId!!)
-            ResponseEntity(
-                CartItemsResource.fromCartItems(cartItems),
-                HttpStatus.CREATED
-            )
+            val newItem = addItemToCart(createCartItem!!.videoId, userId!!)
+            ResponseEntity
+                .created(CartsLinkBuilder.cartItemLink(newItem.id)!!.toUri())
+                .body(CartItemResource.fromCartItem(newItem))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
