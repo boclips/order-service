@@ -21,7 +21,6 @@ class LinksController {
                 OrdersLinkBuilder.getOrderLink(),
                 OrdersLinkBuilder.getExportOrdersLink(),
                 CartsLinkBuilder.cartLink(),
-                CartsLinkBuilder.addItemToCartLink(),
                 getSelfLink()
             )
         )
