@@ -6,6 +6,7 @@ import com.boclips.orders.presentation.carts.CartItemResource
 import com.boclips.orders.presentation.carts.CartResource
 import com.boclips.orders.presentation.hateos.CartsLinkBuilder
 import com.boclips.security.utils.UserExtractor
+import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,12 +24,12 @@ class CartsController(
     private val addItemToCart: AddItemToCart
 ) {
     @GetMapping
-    fun getCart(): ResponseEntity<CartResource> {
+    fun getCart(): ResponseEntity<EntityModel<CartResource>> {
         val userId = UserExtractor.getCurrentUser()?.id
 
         return try {
             val resource = CartResource.fromCart(getOrCreateCart(userId!!))
-            ResponseEntity.ok(resource)
+            ResponseEntity.ok(EntityModel(resource, listOfNotNull(CartsLinkBuilder.cartSelfLink(), CartsLinkBuilder.addItemToCartLink())))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
@@ -37,7 +38,7 @@ class CartsController(
     @PostMapping("/items")
     fun addCartItem(
         @Valid @RequestBody createCartItem: CreateCartItemsRequest?
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<EntityModel<CartItemResource>> {
         val userId = UserExtractor.getCurrentUser()?.id
 
         return try {

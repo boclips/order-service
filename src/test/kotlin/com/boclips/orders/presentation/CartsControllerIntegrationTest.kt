@@ -6,12 +6,15 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasKey
+import org.hamcrest.Matchers.hasLength
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -32,7 +35,8 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items", hasSize<Any>(0)))
-                .andExpect(jsonPath("$._links", hasSize<Any>(2)))
+                .andExpect(jsonPath("$._links", hasKey("self")))
+                .andExpect(jsonPath("$._links", hasKey("addItem")))
 
             assertThat(mongoCartsRepository.findByUserId(UserId(userId))).isNotNull
         }
@@ -59,14 +63,12 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(
                 get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
             )
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items", hasSize<Any>(1)))
-                .andExpect(jsonPath("$.items[0]._links[0].rel", equalTo("self")))
-                .andExpect(jsonPath("$.items[0]._links[0].href", endsWith("/cart-item-id")))
-                .andExpect(jsonPath("$._links[0].rel", equalTo("self")))
-                .andExpect(jsonPath("$._links[0].href", endsWith("/cart")))
-                .andExpect(jsonPath("$._links[1].rel", equalTo("addItem")))
-                .andExpect(jsonPath("$._links[1].href", endsWith("/cart/items")))
+                .andExpect(jsonPath("$.items[0]._links.self.href", endsWith("/cart-item-id")))
+                .andExpect(jsonPath("$._links.self.href", endsWith("/cart")))
+                .andExpect(jsonPath("$._links.addItem.href", endsWith("/cart/items")))
         }
     }
 
@@ -88,12 +90,13 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.videoId", equalTo("video-id-1")))
-                .andExpect(jsonPath("$.id", (Matchers.not(emptyString()))))
+                .andExpect(jsonPath("$.id", Matchers.not(emptyString())))
                 .andExpect(MockMvcResultMatchers.header().exists("Location"))
 
             mockMvc.perform(get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id-1")))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
     }
 }
