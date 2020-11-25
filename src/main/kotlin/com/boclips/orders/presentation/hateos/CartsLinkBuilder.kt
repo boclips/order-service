@@ -9,14 +9,14 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 object CartsLinkBuilder {
     object Rels {
         const val CART = "cart"
-        const val CART_ITEMS = "cartItems"
+        const val ADD_ITEM_TO_CART = "addItem"
     }
 
     fun cartSelfLink(): Link = WebMvcLinkBuilder.linkTo(
         WebMvcLinkBuilder.methodOn(CartsController::class.java).getCart()
     ).withSelfRel()
 
-    fun cartLink(): Link? {
+    fun getCartLink(): Link? {
         return getIfHasRole(UserRoles.VIEW_CART) {
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(CartsController::class.java).getCart()
@@ -28,7 +28,7 @@ object CartsLinkBuilder {
         return getIfHasRole(UserRoles.VIEW_CART) {
             WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(CartsController::class.java).addCartItem(null)
-            ).withRel(Rels.CART_ITEMS)
+            ).withRel(Rels.ADD_ITEM_TO_CART)
         }
     }
 
