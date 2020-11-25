@@ -20,7 +20,7 @@ class LinksController {
                 OrdersLinkBuilder.getOrdersLink(),
                 OrdersLinkBuilder.getOrderLink(),
                 OrdersLinkBuilder.getExportOrdersLink(),
-                CartsLinkBuilder.cartLink(),
+                CartsLinkBuilder.getCartLink(),
                 getSelfLink()
             )
         )
