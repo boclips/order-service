@@ -43,6 +43,14 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `publishers users have access to add item to cart link`() {
+        mockMvc.perform(get("/v1/").asPublisher())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$._links.cartItems").exists())
+            .andExpect(jsonPath("$._links.cartItems.href", endsWith("/cart/items")))
+    }
+
+    @Test
     fun `valid without correct roles gets an empty link`() {
         mockMvc.perform(get("/v1/").asNonHQStaff())
             .andExpect(status().isOk)
