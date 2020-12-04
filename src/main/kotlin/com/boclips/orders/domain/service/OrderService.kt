@@ -121,19 +121,21 @@ class OrderService(
         val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
 
         val updateCommands =
-            order.items.mapNotNull {
-                try {
-                    videosClient.requestVideoCaptions(it.video.videoServiceId.value)
-                    return@mapNotNull OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus(
-                        order.id,
-                        it.id,
-                        AssetStatus.REQUESTED
-                    )
-                } catch (e: Exception) {
-                    logger.warn { "Could not request transcripts because ${e.message} for order: ${orderId.value}  - item: ${it.id}. The order will be processed as usual." }
-                    return@mapNotNull null
+            order.items
+                .filter { orderItem -> orderItem.transcriptRequested }
+                .mapNotNull {
+                    try {
+                        videosClient.requestVideoCaptions(it.video.videoServiceId.value)
+                        return@mapNotNull OrderUpdateCommand.OrderItemUpdateCommand.UpdateCaptionStatus(
+                            order.id,
+                            it.id,
+                            AssetStatus.REQUESTED
+                        )
+                    } catch (e: Exception) {
+                        logger.warn { "Could not request transcripts because ${e.message} for order: ${orderId.value}  - item: ${it.id}. The order will be processed as usual." }
+                        return@mapNotNull null
+                    }
                 }
-            }
 
         bulkUpdate(updateCommands)
     }

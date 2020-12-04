@@ -7,7 +7,6 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
-import com.boclips.orders.domain.model.orderItem.Video
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.response.video.CaptionStatus
 import org.assertj.core.api.Assertions.assertThat
@@ -92,7 +91,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order requests captions and the caption status is updated`() {
+    fun `a created order requests captions when 'transcriptRequested' and the caption status is updated`() {
         val video1 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val video2 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val originalOrder = OrderFactory.order(
@@ -101,12 +100,14 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                 OrderFactory.orderItem(
                     video = TestFactories.video(videoServiceId = video1.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
-                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK"),
+                    transcriptRequested = true
                 ),
                 OrderFactory.orderItem(
                     video = TestFactories.video(videoServiceId = video2.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
-                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK")
+                    license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK"),
+                    transcriptRequested = false
                 )
             )
         )
@@ -116,10 +117,10 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         assertThat(fakeVideoClient.getVideo(video1.id!!).captionStatus)
             .isEqualTo(CaptionStatus.REQUESTED)
         assertThat(fakeVideoClient.getVideo(video2.id!!).captionStatus)
-            .isEqualTo(CaptionStatus.REQUESTED)
+            .isEqualTo(CaptionStatus.NOT_AVAILABLE)
 
         assertThat(createdOrder.items[0].video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
-        assertThat(createdOrder.items[1].video.captionStatus).isEqualTo(AssetStatus.REQUESTED)
+        assertThat(createdOrder.items[1].video.captionStatus).isEqualTo(AssetStatus.UNAVAILABLE)
     }
 
     @Test
@@ -274,7 +275,8 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `exports manifest with correct fx rates`() {
         val order =
             OrderFactory.order(
-                status = OrderStatus.READY, items = listOf(
+                status = OrderStatus.READY,
+                items = listOf(
                     OrderFactory.orderItem(
                         price = PriceFactory.tenDollars(),
                         video = TestFactories.video(
@@ -308,7 +310,8 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `export manifest has empty cells where values are missing`() {
         val order =
             OrderFactory.order(
-                status = OrderStatus.READY, items = listOf(
+                status = OrderStatus.READY,
+                items = listOf(
                     OrderFactory.orderItem(
                         license = null,
                         price = PriceFactory.empty(),
@@ -339,7 +342,8 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     fun `when pricing and currency is provided but no fx rate null is returned`() {
         val order =
             OrderFactory.order(
-                status = OrderStatus.READY, items = listOf(
+                status = OrderStatus.READY,
+                items = listOf(
                     OrderFactory.orderItem(
                         license = null,
                         price = PriceFactory.onePound(),
