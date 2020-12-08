@@ -17,17 +17,7 @@ data class OrderItem(
 
     val status: OrderItemStatus
         get() {
-            val priceUnavailable = price.currency == null || price.amount == null
-            val captionsUnavailable = video.captionStatus == AssetStatus.UNAVAILABLE && transcriptRequested
-            val downloadableVideoUnavailable = video.downloadableVideoStatus == AssetStatus.UNAVAILABLE
-            val licenseUnavailable = license == null
-
-            if (
-                priceUnavailable ||
-                captionsUnavailable ||
-                downloadableVideoUnavailable ||
-                licenseUnavailable
-            ) {
+            if (incompleteReasons.isNotEmpty()) {
                 return OrderItemStatus.INCOMPLETED
             }
 
@@ -39,6 +29,31 @@ data class OrderItem(
 
             return OrderItemStatus.READY
         }
+
+    val incompleteReasons: List<IncompleteReason>
+        get() {
+            return IncompleteReason.values().filter { it.checkIncompleteReason(this) }
+        }
+
+    enum class IncompleteReason {
+        CAPTIONS_UNAVAILABLE {
+            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+                return orderItem.video.captionStatus == AssetStatus.UNAVAILABLE && orderItem.transcriptRequested
+            }
+        },
+        PRICE_UNAVAILABLE {
+            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+                return orderItem.price.currency == null || orderItem.price.amount == null
+            }
+        },
+        LICENSE_UNAVAILABLE {
+            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+                return orderItem.license?.duration == null || orderItem.license.territory == null
+            }
+        };
+
+        abstract fun checkIncompleteReason(orderItem: OrderItem): Boolean
+    }
 
     class Builder {
         private lateinit var id: String

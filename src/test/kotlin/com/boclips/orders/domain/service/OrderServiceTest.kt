@@ -55,12 +55,31 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `a created order is ready despite of missing HD video asset`() {
+        val originalOrder = OrderFactory.order(
+            status = OrderStatus.IN_PROGRESS,
+            items = listOf(
+                OrderFactory.orderItem(
+                    transcriptRequested = false,
+                    video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
+                )
+            )
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
+    }
+
+    @Test
     fun `a created order is incomplete if a single item is in complete`() {
         val originalOrder = OrderFactory.order(
             status = OrderStatus.IN_PROGRESS,
             items = listOf(
                 OrderFactory.orderItem(
-                    video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
+                    price = Price(amount = null, currency = null)
                 )
             )
         )
