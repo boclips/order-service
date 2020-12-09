@@ -74,12 +74,15 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order is incomplete if a single item is in complete`() {
+    fun `a created order is incomplete if a single item is incomplete`() {
         val originalOrder = OrderFactory.order(
             status = OrderStatus.IN_PROGRESS,
             items = listOf(
                 OrderFactory.orderItem(
-                    price = Price(amount = null, currency = null)
+                    price = Price(amount = null, currency = Currency.getInstance("GBP"))
+                ),
+                OrderFactory.orderItem(
+                    video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
                 )
             )
         )

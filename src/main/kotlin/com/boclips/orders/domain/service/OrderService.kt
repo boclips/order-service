@@ -1,29 +1,23 @@
 package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
-import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.Manifest
 import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.OrderItemStatus
-import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.videos.api.httpclient.VideosClient
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.Currency
 
 @Component
 class OrderService(
     val ordersRepository: OrdersRepository,
     val manifestConverter: ManifestConverter,
-    val fxRateService: FxRateService,
     val videosClient: VideosClient
 ) {
     companion object : KLogging()
@@ -32,10 +26,10 @@ class OrderService(
         var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId)
         if (retrievedOrder == null) {
             retrievedOrder = ordersRepository.save(order)
-                .also { requestCaptions(it.id) }
+                .let { requestCaptions(it) }
         }
 
-        return updateStatus(orderId = retrievedOrder.id)
+        return updateStatus(retrievedOrder)
     }
 
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
@@ -49,76 +43,52 @@ class OrderService(
 
     fun update(orderUpdateCommand: OrderUpdateCommand): Order {
         val order = ordersRepository.update(orderUpdateCommand)
-
-        return updateStatus(orderId = order.id)
-    }
-
-    fun updateCurrency(orderId: OrderId, currency: Currency): Order {
-        val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
-
-        return update(
-            OrderUpdateCommand.UpdateOrderCurrency(
-                orderId,
-                currency,
-                fxRateService.getRate(
-                    from = currency,
-                    to = Currency.getInstance("GBP"),
-                    on = ZonedDateTime.ofInstant(order.createdAt, ZoneId.of("UTC")).toLocalDate()
-                )
-            )
-        )
+        return updateStatus(order)
     }
 
     fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
         return commands.map { update(it) }
     }
 
-    private fun updateStatus(orderId: OrderId): Order {
-        val order = ordersRepository.findOne(orderId) ?: throw IllegalStateException("Cannot find order to update")
+    private fun updateStatus(order: Order): Order {
         val currentStatus = order.status
 
-        if (order.status == OrderStatus.CANCELLED) {
-            return order
+        val candidateStatus = when {
+            orderIsCancelled(order) -> OrderStatus.CANCELLED
+            orderIsReady(order) -> OrderStatus.READY
+            orderIsIncomplete(order) -> OrderStatus.INCOMPLETED
+            orderIsInProgress(order) -> OrderStatus.IN_PROGRESS
+            else -> currentStatus
         }
 
-        return when {
-            orderIsReady(order) && currentStatus != OrderStatus.READY -> ordersRepository.update(
+        return if (candidateStatus != currentStatus) {
+            ordersRepository.update(
                 OrderUpdateCommand.ReplaceStatus(
-                    orderId = orderId,
-                    orderStatus = OrderStatus.READY
+                    orderId = order.id,
+                    orderStatus = candidateStatus
                 )
             )
-            orderIsInProgress(order) && currentStatus != OrderStatus.IN_PROGRESS -> ordersRepository.update(
-                OrderUpdateCommand.ReplaceStatus(
-                    orderId = orderId,
-                    orderStatus = OrderStatus.IN_PROGRESS
-                )
-            )
-            orderIsIncomplete(order) && currentStatus != OrderStatus.INCOMPLETED -> ordersRepository.update(
-                OrderUpdateCommand.ReplaceStatus(
-                    orderId = orderId,
-                    orderStatus = OrderStatus.INCOMPLETED
-                )
-            )
-            else -> order
+        } else {
+            order
         }
     }
 
+    private fun orderIsCancelled(order: Order) =
+        order.status == OrderStatus.CANCELLED
+
     private fun orderIsReady(order: Order) =
-        order.currency != null && order.items.all { it.status == OrderItemStatus.READY }
+        order.currency != null
+            && order.items.all { it.status == OrderItemStatus.READY }
 
     private fun orderIsIncomplete(order: Order) =
-        order.currency == null || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
+        order.currency == null
+            || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
 
     private fun orderIsInProgress(order: Order) =
-        order.currency != null &&
-            order.items.any {
-                it.status == OrderItemStatus.IN_PROGRESS
-            }
+        order.currency != null
+            && order.items.any { it.status == OrderItemStatus.IN_PROGRESS }
 
-    private fun requestCaptions(orderId: OrderId) {
-        val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
-
+    private fun requestCaptions(order: Order): Order {
         val updateCommands =
             order.items
                 .filter { orderItem -> orderItem.transcriptRequested }
@@ -131,11 +101,12 @@ class OrderService(
                             AssetStatus.REQUESTED
                         )
                     } catch (e: Exception) {
-                        logger.warn { "Could not request transcripts because ${e.message} for order: ${orderId.value}  - item: ${it.id}. The order will be processed as usual." }
+                        logger.warn { "Could not request transcripts because ${e.message} for order: ${order.id.value}  - item: ${it.id}. The order will be processed as usual." }
                         return@mapNotNull null
                     }
                 }
 
         bulkUpdate(updateCommands)
+        return ordersRepository.findOne(order.id)!!
     }
 }
