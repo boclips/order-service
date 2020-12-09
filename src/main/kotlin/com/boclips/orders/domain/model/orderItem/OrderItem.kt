@@ -32,27 +32,27 @@ data class OrderItem(
 
     val incompleteReasons: List<IncompleteReason>
         get() {
-            return IncompleteReason.values().filter { it.checkIncompleteReason(this) }
+            return IncompleteReason.values().filter { it.check(this) }
         }
 
     enum class IncompleteReason {
         CAPTIONS_UNAVAILABLE {
-            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+            override fun check(orderItem: OrderItem): Boolean {
                 return orderItem.video.captionStatus == AssetStatus.UNAVAILABLE && orderItem.transcriptRequested
             }
         },
         PRICE_UNAVAILABLE {
-            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+            override fun check(orderItem: OrderItem): Boolean {
                 return orderItem.price.currency == null || orderItem.price.amount == null
             }
         },
         LICENSE_UNAVAILABLE {
-            override fun checkIncompleteReason(orderItem: OrderItem): Boolean {
+            override fun check(orderItem: OrderItem): Boolean {
                 return orderItem.license?.duration == null || orderItem.license.territory == null
             }
         };
 
-        abstract fun checkIncompleteReason(orderItem: OrderItem): Boolean
+        abstract fun check(orderItem: OrderItem): Boolean
     }
 
     class Builder {
