@@ -112,7 +112,6 @@ class OrderService(
 
     private fun orderIsInProgress(order: Order) =
         order.currency != null &&
-            order.items.any { it.status != OrderItemStatus.INCOMPLETED } &&
             order.items.any {
                 it.status == OrderItemStatus.IN_PROGRESS
             }
