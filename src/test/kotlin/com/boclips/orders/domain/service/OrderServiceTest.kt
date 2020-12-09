@@ -74,13 +74,12 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order is incomplete if a single item is in complete`() {
+    fun `a created order is incomplete if a single item is incomplete`() {
         val originalOrder = OrderFactory.order(
-            status = OrderStatus.IN_PROGRESS,
+            status = OrderStatus.INCOMPLETED,
             items = listOf(
-                OrderFactory.orderItem(
-                    price = Price(amount = null, currency = null)
-                )
+                OrderFactory.orderItem(license = null),
+                OrderFactory.orderItem(transcriptRequested = true, video = TestFactories.video(captionStatus = AssetStatus.PROCESSING))
             )
         )
 
@@ -89,6 +88,24 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
 
         assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
+    }
+
+
+    @Test
+    fun `an incomplete status is cleared when order information is filled in`() {
+        val originalOrder = OrderFactory.order(
+            legacyOrderId = "hithere",
+            status = OrderStatus.INCOMPLETED,
+            items = listOf(
+                OrderFactory.orderItem(transcriptRequested = true, video = TestFactories.video(captionStatus = AssetStatus.PROCESSING))
+            )
+        )
+
+        orderService.createIfNonExistent(originalOrder)
+
+        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.IN_PROGRESS)
     }
 
     @Test

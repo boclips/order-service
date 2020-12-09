@@ -110,12 +110,13 @@ class OrderService(
     private fun orderIsIncomplete(order: Order) =
         order.currency == null || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
 
-    private fun orderIsInProgress(order: Order) =
-        order.currency != null &&
+    private fun orderIsInProgress(order: Order): Boolean {
+        return order.currency != null &&
             order.items.any { it.status != OrderItemStatus.INCOMPLETED } &&
             order.items.any {
                 it.status == OrderItemStatus.IN_PROGRESS
             }
+    }
 
     private fun requestCaptions(orderId: OrderId) {
         val order = ordersRepository.findOne(orderId) ?: throw OrderNotFoundException(orderId)
