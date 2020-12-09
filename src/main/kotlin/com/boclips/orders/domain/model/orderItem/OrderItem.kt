@@ -35,26 +35,6 @@ data class OrderItem(
             return IncompleteReason.values().filter { it.check(this) }
         }
 
-    enum class IncompleteReason {
-        CAPTIONS_UNAVAILABLE {
-            override fun check(orderItem: OrderItem): Boolean {
-                return orderItem.video.captionStatus == AssetStatus.UNAVAILABLE && orderItem.transcriptRequested
-            }
-        },
-        PRICE_UNAVAILABLE {
-            override fun check(orderItem: OrderItem): Boolean {
-                return orderItem.price.currency == null || orderItem.price.amount == null
-            }
-        },
-        LICENSE_UNAVAILABLE {
-            override fun check(orderItem: OrderItem): Boolean {
-                return orderItem.license?.duration == null || orderItem.license.territory == null
-            }
-        };
-
-        abstract fun check(orderItem: OrderItem): Boolean
-    }
-
     class Builder {
         private lateinit var id: String
         private lateinit var price: Price
