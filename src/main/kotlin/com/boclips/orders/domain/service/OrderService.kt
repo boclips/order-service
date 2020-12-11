@@ -79,6 +79,7 @@ class OrderService(
     private fun orderIsReady(order: Order) =
         order.currency != null
             && order.items.all { it.status == OrderItemStatus.READY }
+            && order.status != OrderStatus.DELIVERED
 
     private fun orderIsIncomplete(order: Order) =
         order.currency == null

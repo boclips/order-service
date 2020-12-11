@@ -4,7 +4,9 @@ import com.boclips.orders.application.orders.exceptions.InvalidCurrencyFormatExc
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.presentation.UpdateOrderRequest
+import com.boclips.orders.presentation.orders.OrderStatusResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -26,6 +28,27 @@ class UpdateOrderIntegrationTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedOrder.userDetails.organisationLabel).isEqualTo("org2")
+    }
+
+    @Test
+    fun `can update a readied order status to delivered`() {
+        val order = saveOrder(
+            OrderFactory.order(
+                status = OrderStatus.READY,
+                currency = Currency.getInstance(
+                    "USD"
+                )
+            )
+        )
+
+        val updatedOrder = updateOrder(
+            id = order.id.value,
+            updateOrderRequest = UpdateOrderRequest(
+                status = OrderStatusResource.DELIVERED
+            )
+        )
+
+        assertThat(updatedOrder.status).isEqualTo(OrderStatusResource.DELIVERED)
     }
 
     @Test
@@ -76,7 +99,7 @@ class UpdateOrderIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `throws appropriately when invalid currency is supplied`() {
         val order = saveOrder()
-        
+
         assertThrows<InvalidCurrencyFormatException> {
             updateOrder(id = order.id.value, updateOrderRequest = UpdateOrderRequest(currency = "Not quite a currency"))
         }

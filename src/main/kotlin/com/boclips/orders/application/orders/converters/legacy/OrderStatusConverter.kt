@@ -15,6 +15,8 @@ object OrderStatusConverter {
                 OrderStatus.INCOMPLETED
             "CANCELLED" ->
                 OrderStatus.CANCELLED
+            "DELIVERED" ->
+                OrderStatus.DELIVERED
             else ->
                 OrderStatus.INVALID
         }

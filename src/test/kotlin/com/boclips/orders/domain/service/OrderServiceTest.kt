@@ -1,6 +1,7 @@
 package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
+import com.boclips.orders.domain.exceptions.StatusUpdateNotAllowedException
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.Price
@@ -10,6 +11,7 @@ import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.videos.api.request.VideoServiceApiFactory
 import com.boclips.videos.api.response.video.CaptionStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,81 +37,6 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)
 
         assertThat(originalOrder).isEqualTo(retrievedOrder)
-    }
-
-    @Test
-    fun `a created order is ready if it has a currency and all items are ready`() {
-        defaultVideoClientResponse(videoId = "123")
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.INCOMPLETED,
-            items = listOf(
-                OrderFactory.orderItem(video = TestFactories.video(videoServiceId = "123"))
-            )
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
-    }
-
-    @Test
-    fun `a created order is ready despite of missing HD video asset`() {
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.IN_PROGRESS,
-            items = listOf(
-                OrderFactory.orderItem(
-                    transcriptRequested = false,
-                    video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
-                )
-            )
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
-    }
-
-    @Test
-    fun `a created order is incomplete if a single item is incomplete`() {
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.IN_PROGRESS,
-            items = listOf(
-                OrderFactory.orderItem(
-                    price = Price(amount = null, currency = Currency.getInstance("GBP"))
-                ),
-                OrderFactory.orderItem(
-                    video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
-                )
-            )
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
-    }
-
-    @Test
-    fun `a created order is in progress if a single item is in progress`() {
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.INCOMPLETED,
-            items = listOf(
-                OrderFactory.orderItem(
-                    video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
-                )
-            )
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.IN_PROGRESS)
     }
 
     @Test
@@ -164,48 +91,6 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         val createdOrder = orderService.createIfNonExistent(originalOrder)
 
         assertThat(createdOrder.items[0].video.captionStatus).isEqualTo(AssetStatus.AVAILABLE)
-    }
-
-    @Test
-    fun `an order with missing item license is not complete`() {
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.INCOMPLETED,
-            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
-    }
-
-    @Test
-    fun `cannot replace status of an order to complete if it's not completed`() {
-        val order = OrderFactory.order(
-            status = OrderStatus.READY,
-            items = listOf(OrderFactory.orderItem(price = Price(amount = null, currency = null)))
-        )
-
-        orderService.createIfNonExistent(order)
-
-        val retreivedOrder = ordersRepository.findOne(order.id)!!
-
-        assertThat(retreivedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
-    }
-
-    @Test
-    fun `a cancelled order can not been complete`() {
-        val originalOrder = OrderFactory.order(
-            status = OrderStatus.CANCELLED,
-            items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars()))
-        )
-
-        orderService.createIfNonExistent(originalOrder)
-
-        val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
-
-        assertThat(retrievedOrder.status).isEqualTo(OrderStatus.CANCELLED)
     }
 
     @Test
@@ -394,35 +279,6 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updating an order also updates its status`() {
-        defaultVideoClientResponse("123")
-        val order = OrderFactory.order(
-            items = listOf(
-                OrderFactory.orderItem(
-                    price = Price(
-                        amount = null,
-                        currency = Currency.getInstance("USD")
-                    ),
-                    video = TestFactories.video("123")
-                )
-            ),
-            status = OrderStatus.INCOMPLETED
-        )
-
-        orderService.createIfNonExistent(order)
-
-        val updatedOrder = orderService.update(
-            OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
-                order.id,
-                order.items.first().id,
-                BigDecimal.valueOf(100)
-            )
-        )
-
-        assertThat(updatedOrder.status).isEqualTo(OrderStatus.READY)
-    }
-
-    @Test
     fun `can bulk update an order`() {
         val order =
             OrderFactory.order(items = listOf(OrderFactory.orderItem(id = "1", price = PriceFactory.zeroEuros())))
@@ -477,5 +333,173 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
         )
 
         assertThat(updatedOrder.status).isEqualTo(OrderStatus.READY)
+    }
+
+    @Nested
+    inner class Statuses {
+        @Test
+        fun `a created order is in progress if a single item is in progress`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
+                    )
+                )
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.IN_PROGRESS)
+        }
+
+        @Test
+        fun `a created order is incomplete if a single item is incomplete`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.IN_PROGRESS,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(amount = null, currency = Currency.getInstance("GBP"))
+                    ),
+                    OrderFactory.orderItem(
+                        video = TestFactories.video(captionStatus = AssetStatus.PROCESSING)
+                    )
+                )
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
+        }
+
+        @Test
+        fun `a created order is ready despite missing HD video asset`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.IN_PROGRESS,
+                items = listOf(
+                    OrderFactory.orderItem(
+                        transcriptRequested = false,
+                        video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
+                    )
+                )
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
+        }
+
+        @Test
+        fun `a created order is ready if it has a currency and all items are ready`() {
+            defaultVideoClientResponse(videoId = "123")
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(
+                    OrderFactory.orderItem(video = TestFactories.video(videoServiceId = "123"))
+                )
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.READY)
+        }
+
+        @Test
+        fun `updating an order also updates its status`() {
+            defaultVideoClientResponse("123")
+            val order = OrderFactory.order(
+                items = listOf(
+                    OrderFactory.orderItem(
+                        price = Price(
+                            amount = null,
+                            currency = Currency.getInstance("USD")
+                        ),
+                        video = TestFactories.video("123")
+                    )
+                ),
+                status = OrderStatus.INCOMPLETED
+            )
+
+            orderService.createIfNonExistent(order)
+
+            val updatedOrder = orderService.update(
+                OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemPrice(
+                    order.id,
+                    order.items.first().id,
+                    BigDecimal.valueOf(100)
+                )
+            )
+
+            assertThat(updatedOrder.status).isEqualTo(OrderStatus.READY)
+        }
+
+        @Test
+        fun `a cancelled order can not been complete`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.CANCELLED,
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars()))
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.CANCELLED)
+        }
+
+        @Test
+        fun `cannot complete an order to if it's not completed`() {
+            val order = OrderFactory.order(
+                status = OrderStatus.READY,
+                items = listOf(OrderFactory.orderItem(price = Price(amount = null, currency = null)))
+            )
+
+            orderService.createIfNonExistent(order)
+
+            val retreivedOrder = ordersRepository.findOne(order.id)!!
+
+            assertThat(retreivedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
+        }
+
+        @Test
+        fun `an order with missing item license is not complete`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            val retrievedOrder = ordersRepository.findOne(originalOrder.id)!!
+
+            assertThat(retrievedOrder.status).isEqualTo(OrderStatus.INCOMPLETED)
+        }
+
+        @Test
+        fun `an order cannot be delivered in a non ready state`() {
+            val originalOrder = OrderFactory.order(
+                status = OrderStatus.INCOMPLETED,
+                items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
+            )
+
+            orderService.createIfNonExistent(originalOrder)
+
+            assertThrows<StatusUpdateNotAllowedException> {
+                orderService.update(
+                    OrderUpdateCommand.ReplaceStatus(
+                        orderId = originalOrder.id,
+                        orderStatus = OrderStatus.DELIVERED
+                    )
+                )
+            }
+        }
     }
 }

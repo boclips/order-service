@@ -490,6 +490,31 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can update the status of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                orderOrganisation = OrderOrganisation("org1"),
+                currency = Currency.getInstance("USD"),
+                status = OrderStatus.READY
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                """
+                {
+                    "status": "DELIVERED"
+                }
+                """.trimIndent()
+                ).asHQStaff())
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.status", equalTo("DELIVERED")))
+    }
+
+    @Test
     fun `can update currency of an order`() {
         val order = ordersRepository.save(
             OrderFactory.order(

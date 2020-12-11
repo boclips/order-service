@@ -31,6 +31,7 @@ data class OrderResource(
                 updatedAt = order.updatedAt.toString(),
                 status = when (order.status) {
                     OrderStatus.READY -> OrderStatusResource.READY
+                    OrderStatus.DELIVERED -> OrderStatusResource.DELIVERED
                     OrderStatus.INCOMPLETED -> OrderStatusResource.INCOMPLETED
                     OrderStatus.IN_PROGRESS -> OrderStatusResource.IN_PROGRESS
                     OrderStatus.CANCELLED -> OrderStatusResource.CANCELLED

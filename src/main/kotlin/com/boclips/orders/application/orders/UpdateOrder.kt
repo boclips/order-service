@@ -5,12 +5,14 @@ import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateReques
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.orders.presentation.UpdateOrderRequest
 import com.boclips.orders.presentation.orders.OrderResource
+import com.boclips.orders.presentation.orders.OrderStatusResource
 import org.springframework.stereotype.Component
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -33,6 +35,9 @@ class UpdateOrder(
             },
             updateOrderRequest?.currency?.let {
                 getCurrencyUpdate(it, orderId)
+            },
+            updateOrderRequest?.status?.let {
+                getStatusUpdate(it, orderId)
             }
         )
 
@@ -84,6 +89,24 @@ class UpdateOrder(
         (Currency.getAvailableCurrencies()
             .firstOrNull { it.currencyCode == currency }
             ?: throw InvalidCurrencyFormatException(currency))
+    }
+
+    private fun getStatusUpdate(
+        it: OrderStatusResource,
+        orderId: OrderId
+    ): OrderUpdateCommand.ReplaceStatus {
+
+        return OrderUpdateCommand.ReplaceStatus(
+            orderId = orderId,
+            orderStatus = when (it) {
+                OrderStatusResource.DELIVERED -> OrderStatus.DELIVERED
+                OrderStatusResource.READY -> TODO()
+                OrderStatusResource.IN_PROGRESS -> TODO()
+                OrderStatusResource.INCOMPLETED -> TODO()
+                OrderStatusResource.CANCELLED -> TODO()
+                OrderStatusResource.INVALID -> TODO()
+            }
+        )
     }
 }
 
