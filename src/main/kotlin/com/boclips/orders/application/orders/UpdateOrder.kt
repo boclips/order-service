@@ -3,13 +3,16 @@ package com.boclips.orders.application.orders
 import com.boclips.orders.application.orders.exceptions.InvalidCurrencyFormatException
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
+import com.boclips.orders.domain.exceptions.StatusUpdateNotAllowedException
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUpdateCommand
 import com.boclips.orders.domain.model.OrdersRepository
 import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.domain.service.currency.FxRateService
 import com.boclips.orders.presentation.UpdateOrderRequest
+import com.boclips.orders.presentation.UpdateOrderStatusRequest
 import com.boclips.orders.presentation.orders.OrderResource
 import org.springframework.stereotype.Component
 import java.time.ZoneId
@@ -33,6 +36,9 @@ class UpdateOrder(
             },
             updateOrderRequest?.currency?.let {
                 getCurrencyUpdate(it, orderId)
+            },
+            updateOrderRequest?.status?.let {
+                getStatusUpdate(it, orderId)
             }
         )
 
@@ -40,10 +46,15 @@ class UpdateOrder(
             throw InvalidOrderUpdateRequest("No valid fields specified")
         }
 
-        orderService.bulkUpdate(commands)
-        return ordersRepository.findOne(orderId)?.let { OrderResource.fromOrder(it) } ?: throw OrderNotFoundException(
-            orderId
-        )
+        try {
+            orderService.bulkUpdate(commands)
+        } catch (e: StatusUpdateNotAllowedException) {
+            throw InvalidOrderUpdateRequest("Cannot update status from ${e.from} to ${e.to}")
+        }
+
+        return ordersRepository.findOne(orderId)
+            ?.let { OrderResource.fromOrder(it) }
+            ?: throw OrderNotFoundException(orderId)
     }
 
     private fun getCurrencyUpdate(
@@ -84,6 +95,20 @@ class UpdateOrder(
         (Currency.getAvailableCurrencies()
             .firstOrNull { it.currencyCode == currency }
             ?: throw InvalidCurrencyFormatException(currency))
+    }
+
+    private fun getStatusUpdate(
+        it: UpdateOrderStatusRequest,
+        orderId: OrderId
+    ): OrderUpdateCommand.ReplaceStatus {
+
+        return OrderUpdateCommand.ReplaceStatus(
+            orderId = orderId,
+            orderStatus = when (it) {
+                UpdateOrderStatusRequest.DELIVERED -> OrderStatus.DELIVERED
+                UpdateOrderStatusRequest.READY -> OrderStatus.READY
+            }
+        )
     }
 }
 

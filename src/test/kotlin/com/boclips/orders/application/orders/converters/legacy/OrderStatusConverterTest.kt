@@ -12,6 +12,7 @@ class OrderStatusConverterTest {
         assertThat(OrderStatusConverter.from("OPEN")).isEqualTo(OrderStatus.INCOMPLETED)
         assertThat(OrderStatusConverter.from("PROCESSING")).isEqualTo(OrderStatus.INCOMPLETED)
         assertThat(OrderStatusConverter.from("CANCELLED")).isEqualTo(OrderStatus.CANCELLED)
+        assertThat(OrderStatusConverter.from("DELIVERED")).isEqualTo(OrderStatus.DELIVERED)
     }
 
     @Test

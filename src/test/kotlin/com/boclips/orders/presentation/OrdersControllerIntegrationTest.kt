@@ -478,7 +478,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "organisation": "org2"
                 }
@@ -487,6 +487,54 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("org2")))
+    }
+
+    @Test
+    fun `can update the status of an order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                orderOrganisation = OrderOrganisation("org1"),
+                currency = Currency.getInstance("USD"),
+                status = OrderStatus.READY
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                {
+                    "status": "DELIVERED"
+                }
+                """.trimIndent()
+                ).asHQStaff())
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.status", equalTo("DELIVERED")))
+    }
+
+    @Test
+    fun `cannot update the status of an unready order`() {
+        val order = ordersRepository.save(
+            OrderFactory.order(
+                orderOrganisation = OrderOrganisation("org1"),
+                status = OrderStatus.INCOMPLETED
+            )
+        )
+
+        mockMvc.perform(
+            (patch("/v1/orders/{id}", order.id.value)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                {
+                    "status": "DELIVERED"
+                }
+                """.trimIndent()
+                ).asHQStaff())
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -502,7 +550,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "currency": "USD"
                 }
@@ -512,7 +560,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.totalPrice.currency", equalTo("USD")))
     }
-
 
     @Test
     fun `returns a bad request when update request is invalid`() {
@@ -526,7 +573,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             (patch("/v1/orders/{id}", order.id.value)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                """
+                    """
                 {
                     "organisation": ""
                 }

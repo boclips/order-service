@@ -1,6 +1,7 @@
 package com.boclips.orders.domain.service
 
 import com.boclips.orders.application.orders.IllegalOrderStateExport
+import com.boclips.orders.domain.exceptions.StatusUpdateNotAllowedException
 import com.boclips.orders.domain.model.Manifest
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderStatus
@@ -29,7 +30,7 @@ class OrderService(
                 .let { requestCaptions(it) }
         }
 
-        return updateStatus(retrievedOrder)
+        return syncStatus(retrievedOrder)
     }
 
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
@@ -42,15 +43,41 @@ class OrderService(
         .let { manifestConverter.toManifest(fxRatesAgainstPound, *it.toTypedArray()) }
 
     fun update(orderUpdateCommand: OrderUpdateCommand): Order {
+        validateUpdate(orderUpdateCommand)
         val order = ordersRepository.update(orderUpdateCommand)
-        return updateStatus(order)
+        return syncStatus(order)
     }
 
     fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
         return commands.map { update(it) }
     }
 
-    private fun updateStatus(order: Order): Order {
+    private fun validateUpdate(orderUpdateCommand: OrderUpdateCommand) {
+        when (orderUpdateCommand) {
+            is OrderUpdateCommand.ReplaceStatus -> {
+                if (orderUpdateCommand.orderStatus == OrderStatus.CANCELLED) {
+                    return;
+                }
+
+                val order = ordersRepository.findOne(orderUpdateCommand.orderId)
+                val currentStatusIsUpdatable =
+                    order?.status == OrderStatus.READY || order?.status == OrderStatus.DELIVERED
+
+                val candidateStatusIsValid = orderUpdateCommand.orderStatus == OrderStatus.READY ||
+                    orderUpdateCommand.orderStatus == OrderStatus.DELIVERED
+
+
+                if (!currentStatusIsUpdatable || !candidateStatusIsValid) {
+                    throw StatusUpdateNotAllowedException(
+                        from = order?.status,
+                        to = orderUpdateCommand.orderStatus
+                    )
+                }
+            }
+        }
+    }
+
+    private fun syncStatus(order: Order): Order {
         val currentStatus = order.status
 
         val candidateStatus = when {
@@ -79,6 +106,7 @@ class OrderService(
     private fun orderIsReady(order: Order) =
         order.currency != null
             && order.items.all { it.status == OrderItemStatus.READY }
+            && order.status != OrderStatus.DELIVERED
 
     private fun orderIsIncomplete(order: Order) =
         order.currency == null
