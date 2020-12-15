@@ -54,7 +54,7 @@ class EventConverter {
 
     fun convertOrderStatus(orderStatus: OrderStatus): EventOrderStatus {
         return when (orderStatus) {
-            OrderStatus.READY -> EventOrderStatus.COMPLETED
+            OrderStatus.READY -> EventOrderStatus.READY
             OrderStatus.DELIVERED -> EventOrderStatus.DELIVERED
             OrderStatus.CANCELLED -> EventOrderStatus.CANCELLED
             OrderStatus.INCOMPLETED -> EventOrderStatus.INCOMPLETED

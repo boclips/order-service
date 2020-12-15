@@ -70,7 +70,7 @@ class EventConverterTest {
 
         assertThat(eventOrder.id).isEqualTo("the-id")
         assertThat(eventOrder.legacyOrderId).isEqualTo("identitatem")
-        assertThat(eventOrder.status).isEqualTo(EventOrderStatus.COMPLETED)
+        assertThat(eventOrder.status).isEqualTo(EventOrderStatus.READY)
         assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
         assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
         assertThat(eventOrder.items).contains(
@@ -90,7 +90,7 @@ class EventConverterTest {
 
     @Test
     fun `convert order status`() {
-        assertThat(eventConverter.convertOrderStatus(OrderStatus.READY)).isEqualTo(EventOrderStatus.COMPLETED)
+        assertThat(eventConverter.convertOrderStatus(OrderStatus.READY)).isEqualTo(EventOrderStatus.READY)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.CANCELLED)).isEqualTo(EventOrderStatus.CANCELLED)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.INCOMPLETED)).isEqualTo(EventOrderStatus.INCOMPLETED)
         assertThat(eventConverter.convertOrderStatus(OrderStatus.INVALID)).isEqualTo(EventOrderStatus.INVALID)
