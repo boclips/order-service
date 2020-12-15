@@ -4,6 +4,7 @@ import com.boclips.orders.application.orders.CreateOrderFromCsv
 import com.boclips.orders.application.orders.ExportAllOrdersToCsv
 import com.boclips.orders.application.orders.GetOrder
 import com.boclips.orders.application.orders.GetOrders
+import com.boclips.orders.application.orders.PlaceOrder
 import com.boclips.orders.application.orders.UpdateOrder
 import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
@@ -40,7 +41,8 @@ class OrdersController(
     private val createOrderFromCsv: CreateOrderFromCsv,
     private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
     private val updateOrderItem: UpdateOrderItem,
-    private val updateOrder: UpdateOrder
+    private val updateOrder: UpdateOrder,
+    private val placeOrder: PlaceOrder
 ) {
     @GetMapping(produces = ["!text/csv"])
     fun getOrderList() =
@@ -127,6 +129,13 @@ class OrdersController(
         createOrderFromCsv.invoke(OrderCsvUploadConverter.convertToMetadata(file.bytes)).run {
             ResponseEntity(HttpStatus.CREATED)
         }
+
+    @PostMapping
+    fun createOrder(@RequestBody request: PlaceOrderRequest?): ResponseEntity<Any> {
+        return placeOrder(request!!).let { createdOrder ->
+            ResponseEntity.created(getSelfOrderLink(createdOrder.id.value).toUri()).build()
+        }
+    }
 
     private fun wrapOrder(orderResource: OrderResource) =
         EntityModel(orderResource, getSelfOrderLink(orderResource.id), getUpdateOrderLink(orderResource.id))

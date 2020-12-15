@@ -10,12 +10,14 @@ import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import testsupport.AbstractSpringIntegrationTest
+import java.math.BigDecimal
 import java.util.Currency
 
 internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
@@ -47,6 +49,7 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
                 ),
                 channelId = channel.id,
                 channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
                 _links = mapOf(
                     "fullProjection" to HateoasLink("https://great-vids.com")
                 )

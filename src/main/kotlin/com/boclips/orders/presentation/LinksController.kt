@@ -19,6 +19,7 @@ class LinksController {
             listOfNotNull(
                 OrdersLinkBuilder.getOrdersLink(),
                 OrdersLinkBuilder.getOrderLink(),
+                OrdersLinkBuilder.getPlaceOrderLink(),
                 OrdersLinkBuilder.getExportOrdersLink(),
                 CartsLinkBuilder.getCartLink(),
                 getSelfLink()

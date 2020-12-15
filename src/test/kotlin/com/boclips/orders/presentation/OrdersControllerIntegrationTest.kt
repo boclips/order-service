@@ -7,11 +7,15 @@ import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.presentation.orders.PriceResource
+import com.nhaarman.mockito_kotlin.notNull
+import io.kotlintest.matchers.file.exist
 import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.isEmptyOrNullString
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
@@ -20,6 +24,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -30,6 +35,8 @@ import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
 import testsupport.asHQStaff
+import testsupport.asPublisher
+import testsupport.asTeacher
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -778,6 +785,104 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     ).asHQStaff()
             )
                 .andExpect(status().isBadRequest)
+        }
+    }
+
+    @Nested
+    inner class PlaceOrder {
+
+        @Test
+        fun `order is placed`() {
+            defaultVideoClientResponse()
+
+            val orderLocationUrl = mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"user-id",
+                                      "email":"definitely-not-batman@wayne.com",
+                                      "firstName":"Bruce",
+                                      "lastName":"Wayne",
+                                      "organisation":{
+                                         "id":"org-id",
+                                         "name":"Wayne Enterprises"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asPublisher()
+                    )
+            )
+                .andExpect(status().isCreated)
+                .andExpect(header().exists("Location"))
+                .andReturn().response.getHeader("Location")!!
+
+            mockMvc.perform(get(orderLocationUrl).asPublisher())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.items[0].id", equalTo("item-id")))
+                .andExpect(jsonPath("$.items[0].video.id", equalTo("video-service-id")))
+                .andExpect(jsonPath("$.items[0].trim", nullValue()))
+                .andExpect(jsonPath("$.items[0].notes", nullValue()))
+                .andExpect(jsonPath("$.items[0].price.value", equalTo(600.0)))
+                .andExpect(jsonPath("$.items[0].price.currency", equalTo("GBP")))
+                .andExpect(jsonPath("$.items[0].licenseDuration", nullValue()))
+                .andExpect(jsonPath("$.items[0].licenseTerritory", nullValue()))
+                .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("GBP 600.00")))
+                .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(false)))
+                .andExpect(jsonPath("$.items[0].video.title", equalTo("hippos are cool")))
+                .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
+                .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://great-vids.com")))
+                .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("Wayne Enterprises")))
+                .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")))
+                .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")))
+                .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.updatedAt").exists())
+                .andExpect(jsonPath("$.totalPrice.currency", equalTo("GBP")))
+                .andExpect(jsonPath("$.throughPlatform", equalTo(true)))
+        }
+
+        @Test
+        fun `403 when missing role for creating orders`() {
+            mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"user-id",
+                                      "email":"definitely-not-batman@wayne.com",
+                                      "firstName":"Bruce",
+                                      "lastName":"Wayne",
+                                      "organisation":{
+                                         "id":"org-id",
+                                         "name":"Wayne Enterprises"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asTeacher()
+                    )
+            )
+                .andExpect(status().isForbidden)
         }
     }
 }

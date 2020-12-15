@@ -5,6 +5,7 @@ data class OrderUserDocument(
     val lastName: String?,
     val email: String?,
     val legacyUserId: String?,
+    val userId: String?,
     val label: String?
 ) {
     fun isBasicUser(): Boolean {
@@ -15,6 +16,6 @@ data class OrderUserDocument(
         return !firstName.isNullOrEmpty() &&
             !lastName.isNullOrEmpty() &&
             !email.isNullOrEmpty() &&
-            !legacyUserId.isNullOrEmpty()
+            !(legacyUserId.isNullOrEmpty() && userId.isNullOrEmpty())
     }
 }

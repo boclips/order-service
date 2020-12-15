@@ -5,7 +5,8 @@ sealed class OrderUser {
         val firstName: String,
         val lastName: String,
         val email: String,
-        val legacyUserId: String
+        val legacyUserId: String? = null,
+        val userId: String? = null
     ) : OrderUser()
 
     data class BasicUser(val label: String) : OrderUser()

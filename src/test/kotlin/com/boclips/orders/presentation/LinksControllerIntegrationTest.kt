@@ -35,11 +35,12 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `publishers users have access to cart link`() {
+    fun `publishers users have access to cart and placeOrder link`() {
         mockMvc.perform(get("/v1/").asPublisher())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.cart").exists())
             .andExpect(jsonPath("$._links.cart.href", endsWith("/cart")))
+            .andExpect(jsonPath("$._links.placeOrder.href", endsWith("/orders")))
     }
 
     @Test

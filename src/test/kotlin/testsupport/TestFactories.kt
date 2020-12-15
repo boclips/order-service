@@ -38,6 +38,7 @@ import com.boclips.orders.infrastructure.orders.SourceDocument
 import com.boclips.orders.infrastructure.orders.VideoDocument
 import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
+import com.boclips.videos.api.response.video.PriceResource
 import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
@@ -185,7 +186,8 @@ object TestFactories {
         captionStatus: AssetStatus = AssetStatus.AVAILABLE,
         downloadableVideoStatus: AssetStatus = AssetStatus.AVAILABLE,
         captionAdminLink: URL? = null,
-        videoUploadLink: URL? = null
+        videoUploadLink: URL? = null,
+        price: Price? = null
     ): Video {
         return Video(
             videoServiceId = VideoId(value = videoServiceId),
@@ -198,7 +200,8 @@ object TestFactories {
             captionStatus = captionStatus,
             downloadableVideoStatus = downloadableVideoStatus,
             captionAdminLink = captionAdminLink ?: KalturaLinkConverter.getCaptionAdminLink(playbackId),
-            videoUploadLink = videoUploadLink ?: KalturaLinkConverter.getVideoUploadLink(playbackId)
+            videoUploadLink = videoUploadLink ?: KalturaLinkConverter.getVideoUploadLink(playbackId),
+            price = price
         )
     }
 
@@ -220,14 +223,16 @@ object TestFactories {
         firstName: String? = "OrderingBob",
         lastName: String? = "Smith",
         email: String? = "bobsmith@hello.com",
-        sourceUserId: String? = "abc123",
+        legacyUserId: String? = "legacy-abc123",
+        userId: String? = "abc123",
         label: String? = null
     ): OrderUserDocument {
         return OrderUserDocument(
             firstName = firstName,
             lastName = lastName,
             email = email,
-            legacyUserId = sourceUserId,
+            legacyUserId = legacyUserId,
+            userId = userId,
             label = label
         )
     }
@@ -238,7 +243,8 @@ object TestFactories {
             firstName = null,
             lastName = null,
             email = null,
-            legacyUserId = null
+            legacyUserId = null,
+            userId = null
         )
     }
 

@@ -12,12 +12,19 @@ object OrdersLinkBuilder {
         const val EXPORT_ORDERS = "exportOrders"
         const val UPDATE_ORDERS = "update"
         const val ORDER = "order"
+        const val PLACE_ORDER = "placeOrder"
     }
 
     fun getOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
         ).withRel(Rels.ORDERS)
+    }
+
+    fun getPlaceOrderLink(): Link? = getIfHasRole(UserRoles.PLACE_ORDER) {
+        WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).createOrder(null)
+        ).withRel(Rels.PLACE_ORDER)
     }
 
     fun getExportOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {

@@ -88,15 +88,14 @@ class Order(
     }
 
     class Builder {
-        private lateinit var legacyOrderId: String
         private lateinit var status: OrderStatus
         private lateinit var requestingUser: OrderUser
         private lateinit var updatedAt: Instant
         private lateinit var createdAt: Instant
         private lateinit var items: List<OrderItem>
 
+        private var legacyOrderId: String? = null
         private var isThroughPlatform: Boolean = true
-
         private var authorisingUser: OrderUser? = null
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
@@ -118,20 +117,23 @@ class Order(
         fun currency(currency: Currency?) = apply { this.currency = currency }
         fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
 
-        fun build(): Order = Order(
-            id = OrderId(ObjectId().toHexString()),
-            legacyOrderId = legacyOrderId,
-            status = status,
-            authorisingUser = authorisingUser,
-            requestingUser = requestingUser,
-            organisation = organisation,
-            updatedAt = updatedAt,
-            createdAt = createdAt,
-            isbnOrProductNumber = isbnOrProductNumber,
-            isThroughPlatform = isThroughPlatform,
-            items = items,
-            currency = currency,
-            fxRateToGbp = fxRateToGbp
-        )
+        fun build(): Order {
+            val id = OrderId(ObjectId().toHexString())
+            return Order(
+                id = id,
+                legacyOrderId = legacyOrderId ?: id.value,
+                status = status,
+                authorisingUser = authorisingUser,
+                requestingUser = requestingUser,
+                organisation = organisation,
+                updatedAt = updatedAt,
+                createdAt = createdAt,
+                isbnOrProductNumber = isbnOrProductNumber,
+                isThroughPlatform = isThroughPlatform,
+                items = items,
+                currency = currency,
+                fxRateToGbp = fxRateToGbp
+            )
+        }
     }
 }

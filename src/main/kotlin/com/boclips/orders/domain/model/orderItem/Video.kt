@@ -1,5 +1,6 @@
 package com.boclips.orders.domain.model.orderItem
 
+import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.video.VideoId
 import java.net.URL
 
@@ -14,7 +15,8 @@ data class Video(
     val captionStatus: AssetStatus,
     val downloadableVideoStatus: AssetStatus,
     val videoUploadLink: URL,
-    val captionAdminLink: URL
+    val captionAdminLink: URL,
+    val price: Price?
 )
 
 enum class AssetStatus {

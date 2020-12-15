@@ -94,7 +94,8 @@ object OrderItemDocumentConverter {
                 captionAdminLink = KalturaLinkConverter.getCaptionAdminLink(document.video.playbackId),
                 captionStatus = document.video.captionStatus.let { AssetStatus.valueOf(it) },
                 downloadableVideoStatus = if (document.video.hasHDVideo) AssetStatus.AVAILABLE else AssetStatus.UNAVAILABLE,
-                playbackId = document.video.playbackId
+                playbackId = document.video.playbackId,
+                price = null
             ),
             license = document.license?.let { license ->
                 OrderItemLicense(

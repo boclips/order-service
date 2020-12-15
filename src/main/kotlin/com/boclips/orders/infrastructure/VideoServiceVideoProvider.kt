@@ -1,6 +1,7 @@
 package com.boclips.orders.infrastructure
 
 import com.boclips.orders.domain.exceptions.*
+import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.video.VideoId
 import com.boclips.orders.domain.model.orderItem.*
 import com.boclips.orders.domain.service.VideoProvider
@@ -69,7 +70,8 @@ class VideoServiceVideoProvider(
             },
             captionAdminLink = KalturaLinkConverter.getCaptionAdminLink(videoResource.playback?.id),
             videoUploadLink = KalturaLinkConverter.getVideoUploadLink(videoResource.playback?.id),
-            playbackId = videoResource.playback?.id ?: throw MissingVideoPlaybackId(videoId)
+            playbackId = videoResource.playback?.id ?: throw MissingVideoPlaybackId(videoId),
+            price = videoResource.price?.let { Price(amount = it.amount, currency = it.currency) } ?: throw TODO("no price on video?")
         )
     }
 

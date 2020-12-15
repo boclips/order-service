@@ -8,6 +8,7 @@ import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
 import org.assertj.core.api.Assertions.assertThat
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.OrderFactory
 import testsupport.TestFactories
+import java.math.BigDecimal
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.Currency
@@ -61,6 +63,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "ted",
                 channelId = "ted-id",
                 channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
                 types = listOf(VideoTypeResource(id = 1, name = "NEWS")),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com")),
                 playback = StreamPlaybackResource(id = "123", referenceId = "123")
@@ -166,6 +169,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 channelId = "ted-id",
                 channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
                 playback = StreamPlaybackResource(id = "123", referenceId = "123"),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
@@ -223,6 +227,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 createdBy = "our content partne",
                 channelId = "ted-id",
                 channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )

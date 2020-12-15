@@ -3,6 +3,7 @@ package testsupport
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartItem
 import com.boclips.orders.infrastructure.carts.MongoCartsRepository
@@ -13,8 +14,11 @@ import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
+import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
+import com.boclips.videos.api.response.video.VideoTypeResource
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -26,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.Currency
 
@@ -86,7 +91,9 @@ abstract class AbstractSpringIntegrationTest {
         videoId: String = "video-service-id",
         channelId: String = "content-partner-id",
         channelName: String = "our-content-partner",
-        channelCurrency: Currency? = Currency.getInstance("GBP")
+        channelCurrency: Currency? = Currency.getInstance("GBP"),
+        price: PriceResource = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("GBP")),
+        types: List<VideoTypeResource> = listOf(VideoTypeResource(id = 1, name = "STOCK"))
     ) {
         fakeVideoClient.add(
             VideoResource(
@@ -97,6 +104,8 @@ abstract class AbstractSpringIntegrationTest {
                 playback = StreamPlaybackResource(id = "playback-id", referenceId = "ref-id"),
                 releasedOn = LocalDate.now(),
                 createdBy = "creat0r",
+                price = price,
+                types = types,
                 _links = mapOf("fullProjection" to HateoasLink("https://great-vids.com"))
             )
         )
