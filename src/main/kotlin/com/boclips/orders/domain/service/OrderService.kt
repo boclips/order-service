@@ -42,46 +42,52 @@ class OrderService(
         }
         .let { manifestConverter.toManifest(fxRatesAgainstPound, *it.toTypedArray()) }
 
+
+    fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
+        return commands.map { update(it) }
+    }
+
     fun update(orderUpdateCommand: OrderUpdateCommand): Order {
         validateUpdate(orderUpdateCommand)
         val order = ordersRepository.update(orderUpdateCommand)
         return syncStatus(order)
     }
 
-    fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
-        return commands.map { update(it) }
-    }
-
     private fun validateUpdate(orderUpdateCommand: OrderUpdateCommand) {
         when (orderUpdateCommand) {
-            is OrderUpdateCommand.ReplaceStatus -> {
-                if (orderUpdateCommand.orderStatus == OrderStatus.CANCELLED) {
-                    return;
-                }
-
-                val order = ordersRepository.findOne(orderUpdateCommand.orderId)
-                val currentStatusIsUpdatable =
-                    order?.status == OrderStatus.READY || order?.status == OrderStatus.DELIVERED
-
-                val candidateStatusIsValid = orderUpdateCommand.orderStatus == OrderStatus.READY ||
-                    orderUpdateCommand.orderStatus == OrderStatus.DELIVERED
-
-
-                if (!currentStatusIsUpdatable || !candidateStatusIsValid) {
-                    throw StatusUpdateNotAllowedException(
-                        from = order?.status,
-                        to = orderUpdateCommand.orderStatus
-                    )
-                }
-            }
+            is OrderUpdateCommand.ReplaceStatus -> validateReplaceStatus(orderUpdateCommand)
+            else -> return
         }
     }
+
+    private fun validateReplaceStatus(command: OrderUpdateCommand.ReplaceStatus) {
+        val currentStatus = ordersRepository.findOne(command.orderId)?.status
+        val newStatus = command.orderStatus
+        when {
+            cancellingOrder(newStatus) -> return
+            deliveringReadyOrder(currentStatus, newStatus) -> return
+            undoDeliveredOrder(currentStatus, newStatus) -> return
+            else -> throw StatusUpdateNotAllowedException(
+                from = currentStatus,
+                to = newStatus
+            )
+        }
+    }
+
+    private fun cancellingOrder(newStatus: OrderStatus) = newStatus === OrderStatus.CANCELLED
+
+    private fun deliveringReadyOrder(currentStatus: OrderStatus?, newStatus: OrderStatus) =
+        currentStatus === OrderStatus.READY && newStatus === OrderStatus.DELIVERED
+
+    private fun undoDeliveredOrder(currentStatus: OrderStatus?, newStatus: OrderStatus) =
+        currentStatus === OrderStatus.DELIVERED && newStatus === OrderStatus.READY
 
     private fun syncStatus(order: Order): Order {
         val currentStatus = order.status
 
         val candidateStatus = when {
             orderIsCancelled(order) -> OrderStatus.CANCELLED
+            orderIsDelivered(order) -> OrderStatus.DELIVERED
             orderIsReady(order) -> OrderStatus.READY
             orderIsIncomplete(order) -> OrderStatus.INCOMPLETED
             orderIsInProgress(order) -> OrderStatus.IN_PROGRESS
@@ -103,10 +109,12 @@ class OrderService(
     private fun orderIsCancelled(order: Order) =
         order.status == OrderStatus.CANCELLED
 
+    private fun orderIsDelivered(order: Order) =
+        order.status == OrderStatus.DELIVERED
+
     private fun orderIsReady(order: Order) =
         order.currency != null
             && order.items.all { it.status == OrderItemStatus.READY }
-            && order.status != OrderStatus.DELIVERED
 
     private fun orderIsIncomplete(order: Order) =
         order.currency == null

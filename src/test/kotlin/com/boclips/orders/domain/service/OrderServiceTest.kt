@@ -488,10 +488,11 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
     @Nested
     inner class UpdatingStatuses {
-        @Test
-        fun `an order cannot be delivered in a non ready state`() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus::class, mode = EnumSource.Mode.EXCLUDE, names = ["READY"])
+        fun `an order cannot be delivered in a non ready state`(nonReadyStatus: OrderStatus) {
             val originalOrder = OrderFactory.order(
-                status = OrderStatus.INCOMPLETED,
+                status = nonReadyStatus,
                 items = listOf(OrderFactory.orderItem(price = PriceFactory.tenDollars(), license = null))
             )
 
