@@ -1,6 +1,7 @@
 package com.boclips.orders.infrastructure.carts
 
 import com.boclips.orders.domain.model.CartUpdateCommand
+import com.boclips.orders.domain.model.cart.UserId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -65,6 +66,20 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedCart.items).hasSize(1)
         assertThat(updatedCart.items.first().videoId.value).isEqualTo("video-id")
+    }
+
+    @Test
+    fun `empties cart`() {
+        val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()))
+        mongoCartsRepository.create(cart)
+
+        mongoCartsRepository.update(
+            CartUpdateCommand.EmptyCart(
+                userId = cart.userId
+            )
+        )
+
+        assertThat(mongoCartsRepository.findByUserId(UserId("publishers-user-id"))?.items).isEmpty()
     }
 
     @Test

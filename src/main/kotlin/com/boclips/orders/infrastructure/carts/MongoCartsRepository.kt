@@ -11,6 +11,7 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.push
+import org.litote.kmongo.set
 
 const val databaseName = "order-service-db"
 
@@ -30,6 +31,10 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
             is CartUpdateCommand.AddItem -> push(
                 CartDocument::items,
                 CartDocumentConverter.cartItemToCartItemDocument(cartUpdateCommand.cartItem)
+            )
+            is CartUpdateCommand.EmptyCart -> set(
+                CartDocument::items,
+                emptyList()
             )
         }
 

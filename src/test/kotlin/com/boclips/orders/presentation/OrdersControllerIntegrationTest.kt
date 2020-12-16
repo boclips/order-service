@@ -4,13 +4,12 @@ import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.presentation.orders.PriceResource
-import com.nhaarman.mockito_kotlin.notNull
-import io.kotlintest.matchers.file.exist
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
@@ -31,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import testsupport.AbstractSpringIntegrationTest
+import testsupport.CartFactory
 import testsupport.OrderFactory
 import testsupport.PriceFactory
 import testsupport.TestFactories
@@ -795,6 +795,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `order is placed`() {
             defaultVideoClientResponse()
 
+            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
+
             val orderLocationUrl = mockMvc.perform(
                 (
                     post("/v1/orders")
@@ -843,8 +845,18 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
                 .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://great-vids.com")))
                 .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("Wayne Enterprises")))
-                .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")))
-                .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")))
+                .andExpect(
+                    jsonPath(
+                        "$.userDetails.requestingUserLabel",
+                        equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$.userDetails.authorisingUserLabel",
+                        equalTo("Bruce Wayne <definitely-not-batman@wayne.com>")
+                    )
+                )
                 .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists())
@@ -883,6 +895,44 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
             )
                 .andExpect(status().isForbidden)
+        }
+
+        @Test
+        fun `cart gets emptied after order has been placed`() {
+            defaultVideoClientResponse()
+
+            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
+
+            mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"user-id",
+                                      "email":"definitely-not-batman@wayne.com",
+                                      "firstName":"Bruce",
+                                      "lastName":"Wayne",
+                                      "organisation":{
+                                         "id":"org-id",
+                                         "name":"Wayne Enterprises"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asPublisher("user-id")
+                    )
+            ).andExpect(status().isCreated)
+
+            assertThat(mongoCartsRepository.findByUserId(UserId("user-id"))!!.items).isEmpty()
         }
     }
 }
