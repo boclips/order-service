@@ -83,6 +83,24 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can delete a cart item`() {
+        val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()))
+        val cartItem = CartFactory.cartItem(videoId = "video-id")
+        mongoCartsRepository.create(cart)
+
+        mongoCartsRepository.update(
+            CartUpdateCommand.AddItem(
+                userId = cart.userId,
+                cartItem = cartItem
+            )
+        )
+
+        mongoCartsRepository.deleteItem(userId = cart.userId, cartItemId = cartItem.id)
+
+        assertThat(mongoCartsRepository.findByUserId(UserId("publishers-user-id"))?.items).isEmpty()
+    }
+
+    @Test
     fun `throws exception when cart does not exist`() {
         val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf())
 

@@ -1,6 +1,7 @@
 package com.boclips.orders.presentation
 
 import com.boclips.orders.application.cart.AddItemToCart
+import com.boclips.orders.application.cart.DeleteCartItem
 import com.boclips.orders.application.cart.GetOrCreateCart
 import com.boclips.orders.presentation.carts.CartItemResource
 import com.boclips.orders.presentation.carts.CartResource
@@ -9,6 +10,7 @@ import com.boclips.security.utils.UserExtractor
 import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +23,8 @@ import javax.validation.Valid
 @RequestMapping("/v1/cart")
 class CartsController(
     private val getOrCreateCart: GetOrCreateCart,
-    private val addItemToCart: AddItemToCart
+    private val addItemToCart: AddItemToCart,
+    private val deleteCartItem: DeleteCartItem
 ) {
     @GetMapping
     fun getCart(): ResponseEntity<EntityModel<CartResource>> {
@@ -29,7 +32,12 @@ class CartsController(
 
         return try {
             val resource = CartResource.fromCart(getOrCreateCart(userId!!))
-            ResponseEntity.ok(EntityModel(resource, listOfNotNull(CartsLinkBuilder.cartSelfLink(), CartsLinkBuilder.addItemToCartLink())))
+            ResponseEntity.ok(
+                EntityModel(
+                    resource,
+                    listOfNotNull(CartsLinkBuilder.cartSelfLink(), CartsLinkBuilder.addItemToCartLink())
+                )
+            )
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
@@ -55,4 +63,12 @@ class CartsController(
     fun getCartItem(@PathVariable id: String?): ResponseEntity<CartItemResource> {
         TODO("to be implemented - for now it's only for link building")
     }
+
+    @DeleteMapping("/items/{id}")
+    fun deleteItem(@PathVariable id: String): ResponseEntity<Any> =
+        if (deleteCartItem(id = id, userId = UserExtractor.getCurrentUser()?.id)) {
+            ResponseEntity(HttpStatus.NO_CONTENT)
+        } else {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
 }

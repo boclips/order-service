@@ -8,6 +8,7 @@ interface CartsRepository {
     fun create(cart: Cart): Cart
     fun update(cartUpdateCommand: CartUpdateCommand): Cart
     fun findByUserId(userId: UserId): Cart?
+    fun deleteItem(userId: UserId, cartItemId: String): Boolean
     fun deleteAll()
     fun findAll(): List<Cart>
 }

@@ -7,11 +7,11 @@ import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasKey
-import org.hamcrest.Matchers.hasLength
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -73,7 +73,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
     }
 
     @Nested
-    inner class AddItemToCart {
+    inner class CartOperations {
         @Test
         fun `can create cart item`() {
             val userId = "publishers-user-id"
@@ -97,6 +97,79 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id-1")))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `can delete cart item`() {
+            val userId = "publishers-user-id"
+            createCart(userId)
+
+            val cartItemUrl = mockMvc.perform(
+                post("/v1/cart/items").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                        "videoId": "video-id-1"
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andReturn().response.getHeaderValue("location")
+
+            mockMvc.perform(
+                delete("$cartItemUrl").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            )
+                .andExpect(status().isNoContent)
+
+            mockMvc.perform(
+                get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            ).andExpect(jsonPath("$.items", hasSize<Any>(0)))
+        }
+
+        @Test
+        fun `should return NOT FOUND if cart id is not found`() {
+            val userId = "publishers-user-id"
+            createCart(userId)
+
+            mockMvc.perform(
+                post("/v1/cart/items").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                        "videoId": "video-id-1"
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            )
+
+            mockMvc.perform(
+                delete("/v1/cart/items/madeup-cart-id").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            )
+                .andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `can't delete someone else's cart item`() {
+            val userId = "publishers-user-id"
+            val otherUserId = "other-publishers-user-id"
+
+            createCart(userId)
+
+            val cartItemUrl = mockMvc.perform(
+                post("/v1/cart/items").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                        "videoId": "video-id-1"
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andReturn().response.getHeaderValue("location")
+
+            mockMvc.perform(
+                delete("$cartItemUrl").contentType(MediaType.APPLICATION_JSON).asPublisher(otherUserId)
+            )
+                .andExpect(status().isNotFound)
+
+            mockMvc.perform(
+                get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
+            ).andExpect(jsonPath("$.items", hasSize<Any>(1)))
         }
     }
 }

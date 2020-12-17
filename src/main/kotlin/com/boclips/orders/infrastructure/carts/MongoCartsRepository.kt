@@ -2,6 +2,7 @@ package com.boclips.orders.infrastructure.carts
 
 import com.boclips.orders.domain.model.CartUpdateCommand
 import com.boclips.orders.domain.model.cart.Cart
+import com.boclips.orders.domain.model.cart.CartItemDocumentId
 import com.boclips.orders.domain.model.cart.UserId
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
@@ -10,6 +11,7 @@ import org.litote.kmongo.deleteMany
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
+import org.litote.kmongo.pull
 import org.litote.kmongo.push
 import org.litote.kmongo.set
 
@@ -47,6 +49,16 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
 
         return findByUserId(cartUpdateCommand.userId)
             ?: throw IllegalStateException("Adding cart items: cart does not exist for user: ${cartUpdateCommand.userId}")
+    }
+
+    override fun deleteItem(userId: UserId, cartItemId: String): Boolean {
+        return collection().updateOne(
+            CartDocument::userId eq userId.value,
+            pull(
+                CartDocument::items,
+                CartItemDocumentId(cartItemId)
+            )
+        ).modifiedCount > 0
     }
 
     override fun findByUserId(userId: UserId): Cart? {
