@@ -934,5 +934,43 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             assertThat(mongoCartsRepository.findByUserId(UserId("user-id"))!!.items).isEmpty()
         }
+
+        @Test
+        fun `400 when there is incomplete user data in request`() {
+            defaultVideoClientResponse()
+
+            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
+
+            mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"user-id",
+                                      "email":"definitely-not-batman@wayne.com",
+                                      "firstName":"Bruce",
+                                      "lastName":"",
+                                      "organisation":{
+                                         "id":"org-id",
+                                         "name":"Wayne Enterprises"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asPublisher()
+                    )
+            )
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.message", equalTo("User data is incomplete")))
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.boclips.orders.application.orders.converters.csv
 
+import com.boclips.orders.application.orders.exceptions.IncompleteUserData
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
@@ -45,12 +46,14 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
     }
 
     private fun toOrderUser(userRequest: PlaceOrderRequestUser) =
-        OrderUser.CompleteUser(
-            firstName = userRequest.firstName,
-            lastName = userRequest.lastName,
-            email = userRequest.email,
-            userId = userRequest.id
-        )
+        takeIf { isUserDataValid(userRequest) }?.let {
+            OrderUser.CompleteUser(
+                firstName = userRequest.firstName,
+                lastName = userRequest.lastName,
+                email = userRequest.email,
+                userId = userRequest.id
+            )
+        } ?: throw IncompleteUserData()
 
     fun toOrderItem(itemRequest: PlaceOrderRequestItem): OrderItem {
         return videoProvider.get(VideoId(value = itemRequest.videoId)).let {
@@ -63,4 +66,10 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
                 .build()
         }
     }
+
+    private fun isUserDataValid(userRequest: PlaceOrderRequestUser): Boolean =
+        userRequest.firstName.isNotBlank() &&
+            userRequest.lastName.isNotBlank() &&
+            userRequest.email.isNotBlank() &&
+            userRequest.id.isNotBlank()
 }
