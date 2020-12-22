@@ -52,7 +52,7 @@ dependencies {
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.5'
     implementation 'io.sentry:sentry-logback:1.7.23'
     implementation 'com.damnhandy:handy-uri-templates:2.1.8'
-    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-web-starter:2.0.3'
+    implementation 'io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:3.2.2'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.2.0"
