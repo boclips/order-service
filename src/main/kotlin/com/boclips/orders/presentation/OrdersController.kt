@@ -15,6 +15,7 @@ import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrdersLin
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderLink
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
+import mu.KLogging
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
@@ -44,12 +45,27 @@ class OrdersController(
     private val updateOrder: UpdateOrder,
     private val placeOrder: PlaceOrder
 ) {
+    companion object : KLogging() {
+        const val DEFAULT_PAGE_SIZE = 10
+        const val DEFAULT_PAGE_NUMBER = 0
+    }
+
     @GetMapping(produces = ["!text/csv"])
-    fun getOrderList() =
-        getOrders()
-            .map { wrapOrder(it) }
+    fun getOrderList(
+        @RequestParam(name = "size", required = false) size: Int?,
+        @RequestParam(name = "page", required = false) page: Int?
+    ): ResponseEntity<Any> {
+        val pageSize = size ?: DEFAULT_PAGE_SIZE
+        val pageNumber = page ?: DEFAULT_PAGE_NUMBER
+
+        val orders = getOrders(pageSize, pageNumber)
+
+        val resource = orders.map { wrapOrder(it) }
             .let(HateoasEmptyCollection::fixIfEmptyCollection)
             .let { CollectionModel(it, getSelfOrdersLink()) }
+
+        return ResponseEntity(resource, HttpStatus.OK)
+    }
 
     @GetMapping(produces = ["text/csv"])
     fun getOrderCsv(

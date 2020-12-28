@@ -32,6 +32,38 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `gets descending paginated orders`() {
+        var i = 0
+        while (i < 20) {
+            val order = OrderFactory.order(isbnOrProductNumber = "order-$i")
+            ordersRepository.save(order = order)
+            i += 1
+        }
+
+        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1)
+        assertThat(page).hasSize(5)
+        assertThat(page[0].isbnOrProductNumber).isEqualTo("order-19")
+        assertThat(page[4].isbnOrProductNumber).isEqualTo("order-15")
+
+        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2)
+        assertThat(page2).hasSize(5)
+        assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-14")
+        assertThat(page2[4].isbnOrProductNumber).isEqualTo("order-10")
+
+        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3)
+        assertThat(page3).hasSize(5)
+        assertThat(page3[0].isbnOrProductNumber).isEqualTo("order-9")
+        assertThat(page3[4].isbnOrProductNumber).isEqualTo("order-5")
+
+        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4)
+        assertThat(page4).hasSize(5)
+        assertThat(page4[0].isbnOrProductNumber).isEqualTo("order-4")
+        assertThat(page4[4].isbnOrProductNumber).isEqualTo("order-0")
+
+        assertThat(ordersRepository.findAll()).hasSize(20)
+    }
+
+    @Test
     fun `can get order by id`() {
         val id = ObjectId().toHexString()
         val order = OrderFactory.order(
@@ -104,7 +136,6 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
                     orderStatus = OrderStatus.INVALID
                 )
             )
-
         }
     }
 
@@ -117,7 +148,6 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
                     orderStatus = OrderStatus.INVALID
                 )
             )
-
         }
     }
 
@@ -182,19 +212,23 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             OrderUpdateCommand.OrderItemUpdateCommand.UpdateOrderItemTerritory(
                 orderId = originalOrder.id,
                 orderItemsId = "2",
-                 territory = "A park"
+                territory = "A park"
             )
         )
 
         assertThat(updatedOrder.items.first { it.id == "2" }.license!!.territory).isEqualTo("A park")
     }
+
     @Test
     fun `can update the duration order item`() {
         val originalOrder = ordersRepository.save(
             OrderFactory.order(
                 items = listOf(
                     OrderFactory.orderItem(id = "1"),
-                    OrderFactory.orderItem(id = "2", license = OrderFactory.orderItemLicense(duration = Duration.Description("1 Year")))
+                    OrderFactory.orderItem(
+                        id = "2",
+                        license = OrderFactory.orderItemLicense(duration = Duration.Description("1 Year"))
+                    )
                 )
             )
         )

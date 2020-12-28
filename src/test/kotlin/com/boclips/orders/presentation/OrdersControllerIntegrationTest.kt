@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.isEmptyOrNullString
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Nested
@@ -175,6 +176,35 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
 
                 .andExpect(jsonPath("$._links.self").exists())
+        }
+
+        @Test
+        fun `gets paginated orders by default`() {
+            var i = 0
+            while (i < 20) {
+                ordersRepository.save(OrderFactory.order(isbnOrProductNumber = "order-$i"))
+                i += 1
+            }
+
+            mockMvc.perform(
+                get("/v1/orders?page=1&size=5").asHQStaff()
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
+
+            mockMvc.perform(
+                get("/v1/orders?page=2&size=5").asHQStaff()
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-14")))
+
+            mockMvc.perform(
+                get("/v1/orders?page=3&size=5").asHQStaff()
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-9")))
+
+            mockMvc.perform(
+                get("/v1/orders?page=4&size=5").asHQStaff()
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-4")))
         }
 
         @Test

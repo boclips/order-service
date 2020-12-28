@@ -28,7 +28,6 @@ import org.litote.kmongo.getCollection
 import org.litote.kmongo.orderBy
 import org.litote.kmongo.set
 import java.time.Instant
-import kotlin.collections.toList
 
 const val databaseName = "order-service-db"
 
@@ -47,6 +46,18 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
     override fun deleteAll() {
         collection().deleteMany()
     }
+
+    override fun getPaginated(pageSize: Int, pageNumber: Int): List<Order> =
+        collection().find().sort(orderBy(OrderDocument::createdAt, ascending = false))
+            .skip(
+                when {
+                    pageNumber > 0 -> (pageNumber - 1) * pageSize
+                    else -> 0
+                }
+            ).limit(
+                pageSize
+            ).map(OrderDocumentConverter::toOrder)
+            .toList()
 
     override fun findAll(): List<Order> =
         collection()

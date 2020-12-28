@@ -17,7 +17,7 @@ object OrdersLinkBuilder {
 
     fun getOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
         WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList(null, null)
         ).withRel(Rels.ORDERS)
     }
 
@@ -43,7 +43,7 @@ object OrdersLinkBuilder {
 
     fun getSelfOrdersLink(): Link =
         WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList()
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList(null, null)
         ).withRel(Rels.ORDERS).withSelfRel()
 
     fun getSelfOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(

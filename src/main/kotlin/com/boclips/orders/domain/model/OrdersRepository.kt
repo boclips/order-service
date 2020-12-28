@@ -3,6 +3,7 @@ package com.boclips.orders.domain.model
 interface OrdersRepository {
     fun save(order: Order): Order
     fun deleteAll()
+    fun getPaginated(pageSize: Int, pageNumber: Int): List<Order>
     fun findAll(): List<Order>
     fun findOne(id: OrderId): Order?
     fun findOneByLegacyId(legacyOrderId: String): Order?

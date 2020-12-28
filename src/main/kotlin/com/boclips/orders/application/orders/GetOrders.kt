@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class GetOrders(
     private val orderRepository: OrdersRepository
 ) {
-    operator fun invoke() =
-        orderRepository.findAll()
+    operator fun invoke(pageSize: Int, pageNumber: Int) =
+        orderRepository.getPaginated(pageSize, pageNumber)
             .map { OrderResource.fromOrder(it) }
 }
