@@ -2,9 +2,14 @@ package com.boclips.orders.presentation.orders
 
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderStatus
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemPriceLink
+import com.boclips.videos.api.response.HateoasLink
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.Link
+import org.springframework.hateoas.LinkRelation
 import org.springframework.hateoas.server.core.Relation
 
 @Relation(collectionRelation = "orders")
@@ -18,7 +23,9 @@ data class OrderResource(
     val isbnNumber: String?,
     val items: List<EntityModel<OrderItemResource>>,
     val totalPrice: PriceResource,
-    val throughPlatform: Boolean
+    val throughPlatform: Boolean,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var _links: Map<LinkRelation, Link>?
 ) {
     companion object {
         fun fromOrder(order: Order): OrderResource =
@@ -48,9 +55,14 @@ data class OrderResource(
                 totalPrice = PriceResource(
                     value = order.totalPrice,
                     currency = order.currency
-
                 ),
-                throughPlatform = order.isThroughPlatform
+                throughPlatform = order.isThroughPlatform,
+                _links = resourceLink(order.id.value).map { it.rel to it }.toMap()
+            )
+
+        private fun resourceLink(orderId: String) =
+            listOfNotNull(
+                getSelfOrderLink(orderId)
             )
     }
 }

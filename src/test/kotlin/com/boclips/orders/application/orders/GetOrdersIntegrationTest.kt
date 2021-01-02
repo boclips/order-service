@@ -16,9 +16,9 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(OrderFactory.order(legacyOrderId = "hello"))
         ordersRepository.save(OrderFactory.order(legacyOrderId = "bye"))
 
-        val retrievedOrders = getOrders(pageSize = 5, pageNumber = 0)
+        val retrievedOrders = getOrders.getPaginated(pageSize = 5, pageNumber = 0)
 
-        assertThat(retrievedOrders.map { it.legacyOrderId })
+        assertThat(retrievedOrders.elements.map { it.legacyOrderId })
             .containsExactlyInAnyOrder("hello", "bye")
     }
 }

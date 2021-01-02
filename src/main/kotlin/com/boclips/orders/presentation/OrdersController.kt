@@ -9,14 +9,12 @@ import com.boclips.orders.application.orders.UpdateOrder
 import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
-import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
+import com.boclips.orders.presentation.converters.OrdersToResourceConverter
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
-import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrdersLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderLink
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
 import mu.KLogging
-import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -43,7 +41,8 @@ class OrdersController(
     private val exportAllOrdersToCsv: ExportAllOrdersToCsv,
     private val updateOrderItem: UpdateOrderItem,
     private val updateOrder: UpdateOrder,
-    private val placeOrder: PlaceOrder
+    private val placeOrder: PlaceOrder,
+    private val ordersToResourceConverter: OrdersToResourceConverter
 ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10
@@ -58,11 +57,9 @@ class OrdersController(
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_NUMBER
 
-        val orders = getOrders(pageSize, pageNumber)
+        val orders = getOrders.getPaginated(pageSize, pageNumber)
 
-        val resource = orders.map { wrapOrder(it) }
-            .let(HateoasEmptyCollection::fixIfEmptyCollection)
-            .let { CollectionModel(it, getSelfOrdersLink()) }
+        val resource = ordersToResourceConverter.convert(orders)
 
         return ResponseEntity(resource, HttpStatus.OK)
     }

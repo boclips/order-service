@@ -8,6 +8,7 @@ import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemPriceLink
 import com.boclips.orders.presentation.orders.CaptionStatusResource
@@ -145,7 +146,10 @@ class OrderResourceTest {
                         getUpdateOrderItemLink("123", "item-id")
                     )
                 ),
-                throughPlatform = false
+                throughPlatform = false,
+                _links = listOf(
+                    OrdersLinkBuilder.getSelfOrderLink("123")
+                ).map { it.rel to it }.toMap()
             )
         )
     }
