@@ -200,36 +200,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 get("/v1/orders?page=1&size=5").asPublisher()
             ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=2&size=5").asHQStaff()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-14")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=2&size=5").asPublisher()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-14")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=3&size=5").asHQStaff()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-9")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=3&size=5").asPublisher()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-9")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=4&size=5").asHQStaff()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-4")))
-
-            mockMvc.perform(
-                get("/v1/orders?page=4&size=5").asPublisher()
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-4")))
+                .andExpect(
+                    jsonPath("$.page.totalElements", equalTo(20))
+                ).andExpect(
+                    jsonPath("$.page.size", equalTo(5))
+                ).andExpect(
+                    jsonPath("$.page.totalPages", equalTo(4))
+                )
         }
 
         @Test

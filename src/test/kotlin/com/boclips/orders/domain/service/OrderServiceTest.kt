@@ -38,7 +38,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
 
         val retrievedOrder = ordersRepository.findOne(originalOrder.id)
 
-        assertThat(originalOrder).isEqualTo(retrievedOrder)
+        assertThat(originalOrder.id.value).isEqualTo(retrievedOrder?.id?.value)
     }
 
     @Test

@@ -28,7 +28,12 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val order = OrderFactory.order()
 
         ordersRepository.save(order = order)
-        assertThat(ordersRepository.getPaginated(10, 1)).containsExactly(order)
+
+        val orderFromMongo = ordersRepository.getPaginated(10, 1)
+
+        assertThat(orderFromMongo[0].id.value).isEqualTo(order.id.value)
+        assertThat(orderFromMongo[0].legacyOrderId).isEqualTo(order.legacyOrderId)
+        assertThat(orderFromMongo[0].authorisingUser).isEqualTo(order.authorisingUser)
     }
 
     @Test
@@ -72,7 +77,9 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         ordersRepository.save(order = order)
 
-        assertThat(ordersRepository.findOne(OrderId(value = id))).isEqualTo(order)
+        val foundOrder = ordersRepository.findOne(OrderId(value = id))
+
+        assertThat(foundOrder?.id?.value).isEqualTo(order.id.value)
     }
 
     @Test
@@ -92,7 +99,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(order = firstCreated)
         ordersRepository.save(order = lastCreated)
 
-        assertThat(ordersRepository.findAll().first()).isEqualTo(lastCreated)
+        assertThat(ordersRepository.findAll().first().id.value).isEqualTo(lastCreated.id.value)
     }
 
     @Test
@@ -104,7 +111,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         val retrievedOrder = ordersRepository.findOneByLegacyId("legacy-id")
 
-        assertThat(retrievedOrder).isEqualTo(order)
+        assertThat(retrievedOrder?.legacyOrderId).isEqualTo(order.legacyOrderId)
     }
 
     @Test

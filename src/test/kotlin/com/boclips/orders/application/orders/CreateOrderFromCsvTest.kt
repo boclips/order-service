@@ -59,6 +59,6 @@ class CreateOrderFromCsvTest : AbstractSpringIntegrationTest() {
 
         val createdOrders = ordersRepository.findAll()
         assertThat(createdOrders).hasSize(1)
-        assertThat(createdOrders.first()).isEqualTo(orderToBeCreated)
+        assertThat(createdOrders.first().id.value).isEqualTo(orderToBeCreated.id.value)
     }
 }
