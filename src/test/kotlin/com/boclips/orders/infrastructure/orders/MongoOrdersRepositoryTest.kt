@@ -28,7 +28,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         val order = OrderFactory.order()
 
         ordersRepository.save(order = order)
-        assertThat(ordersRepository.findAll()).containsExactly(order)
+        assertThat(ordersRepository.getPaginated(10, 1)).containsExactly(order)
     }
 
     @Test
