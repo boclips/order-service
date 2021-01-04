@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 object OrdersLinkBuilder {
     object Rels {
-        const val ALL_ORDERS = "allOrders"
+        const val ORDERS = "orders"
         const val EXPORT_ORDERS = "exportOrders"
         const val UPDATE_ORDERS = "update"
         const val ORDER = "order"
@@ -19,7 +19,7 @@ object OrdersLinkBuilder {
     fun getAllOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getAllOrderList()
-        ).withRel(Rels.ALL_ORDERS)
+        ).withRel(Rels.ORDERS)
     }
 
     fun getOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
@@ -51,7 +51,7 @@ object OrdersLinkBuilder {
     fun getSelfOrdersLink(): Link =
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getAllOrderList()
-        ).withRel(Rels.ALL_ORDERS).withSelfRel()
+        ).withRel(Rels.ORDERS).withSelfRel()
 
     fun getSelfOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(
         WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(id)
