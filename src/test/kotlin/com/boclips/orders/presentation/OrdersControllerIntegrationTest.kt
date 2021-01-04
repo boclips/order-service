@@ -190,41 +190,77 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `gets paginated orders`() {
-            var i = 0
-            while (i < 20) {
-                ordersRepository.save(
-                    OrderFactory.order(
-                        isbnOrProductNumber = "order-$i",
-                        requestingUser = OrderFactory.completeOrderUser(
-                            userId = "1234"
-                        )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-1",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
                     )
                 )
-                i += 1
-            }
+            )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-2",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
+                    )
+                )
+            )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-3",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
+                    )
+                )
+            )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-4",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
+                    )
+                )
+            )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-5",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
+                    )
+                )
+            )
+            ordersRepository.save(
+                OrderFactory.order(
+                    isbnOrProductNumber = "order-6",
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = "1234"
+                    )
+                )
+            )
 
             mockMvc.perform(
-                get("/v1/orders/items?page=1&size=5").asPublisher(userId = "1234")
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
+                get("/v1/orders/items?page=1&size=3").asPublisher(userId = "1234")
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-6")))
                 .andExpect(
-                    jsonPath("$.page.totalElements", equalTo(20))
+                    jsonPath("$.page.totalElements", equalTo(6))
                 ).andExpect(
-                    jsonPath("$.page.size", equalTo(5))
+                    jsonPath("$.page.size", equalTo(3))
                 ).andExpect(
-                    jsonPath("$.page.totalPages", equalTo(4))
+                    jsonPath("$.page.totalPages", equalTo(2))
                 )
 
             mockMvc.perform(
-                get("/v1/orders/items?page=1&size=5").asPublisher(userId = "1234")
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
-                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
+                get("/v1/orders/items?page=2&size=3").asPublisher(userId = "1234")
+            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
+                .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-3")))
                 .andExpect(
-                    jsonPath("$.page.totalElements", equalTo(20))
+                    jsonPath("$.page.totalElements", equalTo(6))
                 ).andExpect(
-                    jsonPath("$.page.size", equalTo(5))
+                    jsonPath("$.page.size", equalTo(3))
                 ).andExpect(
-                    jsonPath("$.page.totalPages", equalTo(4))
+                    jsonPath("$.page.totalPages", equalTo(2))
                 )
         }
 
