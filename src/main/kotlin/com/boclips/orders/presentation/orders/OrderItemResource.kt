@@ -5,7 +5,10 @@ import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.hateoas.Link
+import org.springframework.hateoas.LinkRelation
 
 data class OrderItemResource(
     val price: PriceResource?,
@@ -16,10 +19,12 @@ data class OrderItemResource(
     val licenseTerritory: String?,
     val trim: String?,
     val notes: String?,
-    val id: String
+    val id: String,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    var _links: Map<LinkRelation, Link>?
 ) {
     companion object {
-        fun fromOrderItem(item: OrderItem): OrderItemResource =
+        fun fromOrderItem(item: OrderItem, orderId: String? = null): OrderItemResource =
             OrderItemResource(
                 id = item.id,
                 price = PriceResource.fromPrice(item.price),
@@ -57,7 +62,14 @@ data class OrderItemResource(
                 ),
                 licenseDuration = item.license?.let(this::getDurationLabel),
                 licenseTerritory = item.license?.territory,
-                notes = item.notes
+                notes = item.notes,
+                _links = orderId?.let { resourceLink(itemId = item.id, orderId = it).map { it.rel to it }.toMap() }
+            )
+
+        private fun resourceLink(orderId: String, itemId: String) =
+            listOfNotNull(
+                OrdersLinkBuilder.getUpdateOrderItemPriceLink(orderItemId = itemId, orderId = orderId),
+                OrdersLinkBuilder.getUpdateOrderItemLink(orderItemId = itemId, orderId = orderId)
             )
 
         private fun getDurationLabel(license: OrderItemLicense): String? {

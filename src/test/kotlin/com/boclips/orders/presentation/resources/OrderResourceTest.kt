@@ -21,7 +21,6 @@ import com.boclips.orders.presentation.orders.UserDetailsResource
 import com.boclips.orders.presentation.orders.VideoResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.Link
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
@@ -111,39 +110,39 @@ class OrderResourceTest {
                     currency = Currency.getInstance("EUR")
                 ),
                 items = listOf(
-                    EntityModel(
-                        OrderItemResource(
-                            id = "item-id",
-                            price = PriceResource(
-                                value = BigDecimalWith2DP.ONE,
-                                currency = Currency.getInstance("EUR")
-                            ),
-                            transcriptRequested = false,
-                            channel = ChannelResource(
-                                id = "paper",
-                                name = "cup",
-                                currency = "GBP"
-                            ),
-                            trim = "blah",
-                            video = VideoResource(
-                                id = "video-id",
-                                types = listOf("STOCK"),
-                                title = "video title",
-                                videoReference = "TED_11",
-                                maxResolutionAvailable = true,
-                                captionStatus = CaptionStatusResource.PROCESSING,
-                                _links = mapOf(
-                                    "fullProjection" to Link("http://super-vid.com", "fullProjection"),
-                                    "videoUpload" to Link("https://great-vides.com", "videoUpload"),
-                                    "captionAdmin" to Link("https://great-vides.com", "captionAdmin")
-                                )
-                            ),
-                            licenseDuration = "10 Years",
-                            licenseTerritory = "Multi Region",
-                            notes = "hello, I'm a note"
+                    OrderItemResource(
+                        id = "item-id",
+                        price = PriceResource(
+                            value = BigDecimalWith2DP.ONE,
+                            currency = Currency.getInstance("EUR")
                         ),
-                        getUpdateOrderItemPriceLink("123", "item-id"),
-                        getUpdateOrderItemLink("123", "item-id")
+                        transcriptRequested = false,
+                        channel = ChannelResource(
+                            id = "paper",
+                            name = "cup",
+                            currency = "GBP"
+                        ),
+                        trim = "blah",
+                        video = VideoResource(
+                            id = "video-id",
+                            types = listOf("STOCK"),
+                            title = "video title",
+                            videoReference = "TED_11",
+                            maxResolutionAvailable = true,
+                            captionStatus = CaptionStatusResource.PROCESSING,
+                            _links = mapOf(
+                                "fullProjection" to Link("http://super-vid.com", "fullProjection"),
+                                "videoUpload" to Link("https://great-vides.com", "videoUpload"),
+                                "captionAdmin" to Link("https://great-vides.com", "captionAdmin")
+                            )
+                        ),
+                        licenseDuration = "10 Years",
+                        licenseTerritory = "Multi Region",
+                        notes = "hello, I'm a note",
+                        _links = listOf(
+                            getUpdateOrderItemPriceLink("123", "item-id"),
+                            getUpdateOrderItemLink("123", "item-id")
+                        ).map { it.rel to it }.toMap()
                     )
                 ),
                 throughPlatform = false,

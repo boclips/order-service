@@ -85,6 +85,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     currency = Currency.getInstance("EUR"),
                     items = listOf(
                         OrderFactory.orderItem(
+                            id = "1234",
                             price = Price(
                                 amount = BigDecimal.valueOf(1),
                                 currency = Currency.getInstance("EUR")
@@ -149,6 +150,17 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     jsonPath(
                         "$._embedded.orders[0]._links.self.href",
                         endsWith("/orders/5ceeb99bd0e30a1a57ae9767")
+                    )
+                )
+                .andExpect(
+                    jsonPath(
+                        "$._embedded.orders[0].items[0]._links.updatePrice.href",
+                        endsWith("/orders/5ceeb99bd0e30a1a57ae9767/items/1234?price={price}")
+                    )
+                ).andExpect(
+                    jsonPath(
+                        "$._embedded.orders[0].items[0]._links.update.href",
+                        endsWith("/orders/5ceeb99bd0e30a1a57ae9767/items/1234")
                     )
                 )
 

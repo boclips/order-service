@@ -3,11 +3,7 @@ package com.boclips.orders.presentation.orders
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
-import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemLink
-import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderItemPriceLink
-import com.boclips.videos.api.response.HateoasLink
 import com.fasterxml.jackson.annotation.JsonInclude
-import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.LinkRelation
 import org.springframework.hateoas.server.core.Relation
@@ -21,7 +17,7 @@ data class OrderResource(
     val createdAt: String,
     val updatedAt: String,
     val isbnNumber: String?,
-    val items: List<EntityModel<OrderItemResource>>,
+    val items: List<OrderItemResource>,
     val totalPrice: PriceResource,
     val throughPlatform: Boolean,
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -46,11 +42,7 @@ data class OrderResource(
                 },
                 items = order.items
                     .map {
-                        EntityModel(
-                            OrderItemResource.fromOrderItem(it),
-                            getUpdateOrderItemPriceLink(order.id.value, it.id),
-                            getUpdateOrderItemLink(order.id.value, it.id)
-                        )
+                        OrderItemResource.fromOrderItem(it, order.id.value)
                     },
                 totalPrice = PriceResource(
                     value = order.totalPrice,
