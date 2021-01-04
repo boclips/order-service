@@ -17,6 +17,7 @@ class LinksController {
         EntityModel(
             "",
             listOfNotNull(
+                OrdersLinkBuilder.getAllOrdersLink(),
                 OrdersLinkBuilder.getOrdersLink(),
                 OrdersLinkBuilder.getOrderLink(),
                 OrdersLinkBuilder.getPlaceOrderLink(),

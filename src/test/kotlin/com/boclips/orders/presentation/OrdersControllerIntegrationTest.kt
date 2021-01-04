@@ -189,15 +189,22 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `gets paginated orders by default`() {
+        fun `gets paginated orders`() {
             var i = 0
             while (i < 20) {
-                ordersRepository.save(OrderFactory.order(isbnOrProductNumber = "order-$i"))
+                ordersRepository.save(
+                    OrderFactory.order(
+                        isbnOrProductNumber = "order-$i",
+                        requestingUser = OrderFactory.completeOrderUser(
+                            userId = "1234"
+                        )
+                    )
+                )
                 i += 1
             }
 
             mockMvc.perform(
-                get("/v1/orders?page=1&size=5").asHQStaff()
+                get("/v1/orders/items?page=1&size=5").asPublisher(userId = "1234")
             ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
                 .andExpect(
@@ -209,7 +216,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
 
             mockMvc.perform(
-                get("/v1/orders?page=1&size=5").asPublisher()
+                get("/v1/orders/items?page=1&size=5").asPublisher(userId = "1234")
             ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(5)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-19")))
                 .andExpect(

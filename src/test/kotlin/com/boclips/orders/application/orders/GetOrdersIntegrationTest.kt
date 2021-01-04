@@ -16,7 +16,32 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
         ordersRepository.save(OrderFactory.order(legacyOrderId = "hello"))
         ordersRepository.save(OrderFactory.order(legacyOrderId = "bye"))
 
-        val retrievedOrders = getOrders.getPaginated(pageSize = 5, pageNumber = 0)
+        val retrievedOrders = getOrders.getAll()
+
+        assertThat(retrievedOrders.map { it.legacyOrderId })
+            .containsExactlyInAnyOrder("hello", "bye")
+    }
+
+    @Test
+    fun `can get paginated a list of order resources`() {
+        ordersRepository.save(
+            OrderFactory.order(
+                legacyOrderId = "hello",
+                requestingUser = OrderFactory.completeOrderUser(
+                    userId = "1234"
+                )
+            )
+        )
+        ordersRepository.save(
+            OrderFactory.order(
+                legacyOrderId = "bye",
+                requestingUser = OrderFactory.completeOrderUser(
+                    userId = "1234"
+                )
+            )
+        )
+
+        val retrievedOrders = getOrders.getPaginated(10, 1, "1234")
 
         assertThat(retrievedOrders.elements.map { it.legacyOrderId })
             .containsExactlyInAnyOrder("hello", "bye")

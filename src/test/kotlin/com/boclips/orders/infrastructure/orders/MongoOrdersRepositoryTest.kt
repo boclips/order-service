@@ -15,6 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.BigDecimalWith2DP
 import testsupport.OrderFactory
+import testsupport.OrderFactory.completeOrderUser
 import testsupport.PriceFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -29,7 +30,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         ordersRepository.save(order = order)
 
-        val orderFromMongo = ordersRepository.getPaginated(10, 1)
+        val orderFromMongo = ordersRepository.findAll()
 
         assertThat(orderFromMongo[0].id.value).isEqualTo(order.id.value)
         assertThat(orderFromMongo[0].legacyOrderId).isEqualTo(order.legacyOrderId)
@@ -37,30 +38,33 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `gets descending paginated orders`() {
+    fun `gets descending paginated user orders`() {
         var i = 0
         while (i < 20) {
-            val order = OrderFactory.order(isbnOrProductNumber = "order-$i")
+            val order = OrderFactory.order(
+                isbnOrProductNumber = "order-$i",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
             ordersRepository.save(order = order)
             i += 1
         }
 
-        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1)
+        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1, userId = "1234")
         assertThat(page).hasSize(5)
         assertThat(page[0].isbnOrProductNumber).isEqualTo("order-19")
         assertThat(page[4].isbnOrProductNumber).isEqualTo("order-15")
 
-        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2)
+        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2, userId = "1234")
         assertThat(page2).hasSize(5)
         assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-14")
         assertThat(page2[4].isbnOrProductNumber).isEqualTo("order-10")
 
-        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3)
+        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3, userId = "1234")
         assertThat(page3).hasSize(5)
         assertThat(page3[0].isbnOrProductNumber).isEqualTo("order-9")
         assertThat(page3[4].isbnOrProductNumber).isEqualTo("order-5")
 
-        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4)
+        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4, userId = "1234")
         assertThat(page4).hasSize(5)
         assertThat(page4[0].isbnOrProductNumber).isEqualTo("order-4")
         assertThat(page4[4].isbnOrProductNumber).isEqualTo("order-0")

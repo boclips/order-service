@@ -22,6 +22,7 @@ import org.litote.kmongo.SetTo
 import org.litote.kmongo.`in`
 import org.litote.kmongo.combine
 import org.litote.kmongo.deleteMany
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
@@ -47,8 +48,9 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
         collection().deleteMany()
     }
 
-    override fun getPaginated(pageSize: Int, pageNumber: Int): List<Order> =
-        collection().find().sort(orderBy(OrderDocument::createdAt, ascending = false))
+    override fun getPaginated(pageSize: Int, pageNumber: Int, userId: String): List<Order> =
+        collection().find(OrderDocument::requestingUser / OrderUserDocument::userId eq userId)
+            .sort(orderBy(OrderDocument::createdAt, ascending = false))
             .skip(
                 when {
                     pageNumber > 0 -> (pageNumber - 1) * pageSize

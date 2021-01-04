@@ -21,6 +21,7 @@ import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.Currency
 
 class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
@@ -111,14 +112,19 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         val order = orders.first()
         assertThat(order.id).isNotNull
         assertThat(order.legacyOrderId).isEqualTo(legacyOrder.id)
-        assertThat(order.createdAt).isEqualTo(date.toInstant())
-        assertThat(order.updatedAt).isEqualTo(date.toInstant())
+        assertThat(order.createdAt).isEqualTo(
+            date.toInstant().truncatedTo(ChronoUnit.MILLIS)
+        )
+        assertThat(order.updatedAt).isEqualTo(
+            date.toInstant().truncatedTo(ChronoUnit.MILLIS)
+        )
         assertThat(order.requestingUser).isEqualTo(
             OrderFactory.completeOrderUser(
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
-                email = "123@macs.com"
+                email = "123@macs.com",
+                userId = null
             )
         )
         assertThat(order.authorisingUser).isEqualTo(
@@ -126,7 +132,8 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
                 firstName = "Steve",
                 lastName = "Jobs",
                 sourceUserId = "123",
-                email = "123@macs.com"
+                email = "123@macs.com",
+                userId = null
             )
         )
         assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")

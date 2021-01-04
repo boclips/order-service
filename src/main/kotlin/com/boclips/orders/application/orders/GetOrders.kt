@@ -12,8 +12,9 @@ import org.springframework.stereotype.Component
 class GetOrders(
     private val orderRepository: OrdersRepository
 ) {
-    fun getPaginated(pageSize: Int, pageNumber: Int): ResultsPage<Order, Int> {
-        val orders = orderRepository.getPaginated(pageSize, pageNumber)
+    fun getPaginated(pageSize: Int, pageNumber: Int, userId: String): ResultsPage<Order, Int> {
+
+        val orders = orderRepository.getPaginated(pageSize, pageNumber, userId)
 
         val totalElements = orderRepository.findAll().size
 

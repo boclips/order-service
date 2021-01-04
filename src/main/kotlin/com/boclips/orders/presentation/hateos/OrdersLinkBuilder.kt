@@ -8,17 +8,24 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
 
 object OrdersLinkBuilder {
     object Rels {
-        const val ORDERS = "orders"
+        const val ALL_ORDERS = "allOrders"
         const val EXPORT_ORDERS = "exportOrders"
         const val UPDATE_ORDERS = "update"
         const val ORDER = "order"
+        const val USER_ORDERS = "userOrders"
         const val PLACE_ORDER = "placeOrder"
+    }
+
+    fun getAllOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
+        WebMvcLinkBuilder.linkTo(
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getAllOrderList()
+        ).withRel(Rels.ALL_ORDERS)
     }
 
     fun getOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
         WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList(null, null)
-        ).withRel(Rels.ORDERS)
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getPaginatedOrderList(null, null)
+        ).withRel(Rels.USER_ORDERS)
     }
 
     fun getPlaceOrderLink(): Link? = getIfHasRole(UserRoles.PLACE_ORDER) {
@@ -43,8 +50,8 @@ object OrdersLinkBuilder {
 
     fun getSelfOrdersLink(): Link =
         WebMvcLinkBuilder.linkTo(
-            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderList(null, null)
-        ).withRel(Rels.ORDERS).withSelfRel()
+            WebMvcLinkBuilder.methodOn(OrdersController::class.java).getAllOrderList()
+        ).withRel(Rels.ALL_ORDERS).withSelfRel()
 
     fun getSelfOrderLink(id: String): Link = WebMvcLinkBuilder.linkTo(
         WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(id)

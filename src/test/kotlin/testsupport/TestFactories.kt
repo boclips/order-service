@@ -38,7 +38,6 @@ import com.boclips.orders.infrastructure.orders.SourceDocument
 import com.boclips.orders.infrastructure.orders.VideoDocument
 import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
-import com.boclips.videos.api.response.video.PriceResource
 import org.bson.types.ObjectId
 import testsupport.TestFactories.aValidId
 import java.math.BigDecimal
@@ -60,8 +59,8 @@ object TestFactories {
     fun legacyOrder(
         id: String = aValidId(),
         uuid: String = "uuid-123",
-        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
-        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
+        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS),
+        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS),
         legacyOrderNextStatus: LegacyOrderNextStatus = LegacyOrderNextStatus.builder()
             .nextStates(emptyList())
             .roles(emptyList())
@@ -89,8 +88,8 @@ object TestFactories {
         id: String = "123",
         uuid: String = "123",
         assetId: String = "assetId123",
-        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
-        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC),
+        dateCreated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS),
+        dateUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MILLIS),
         status: String = "status",
         transcriptsRequired: Boolean = false,
         trimming: String = "10 - 15"
@@ -532,13 +531,15 @@ object OrderFactory {
         firstName: String = "OrderingBob",
         lastName: String = "Smith",
         email: String = "bobsmith@hello.com",
-        sourceUserId: String = "abc123"
+        sourceUserId: String = "abc123",
+        userId: String? = "abc123"
     ): OrderUser {
         return OrderUser.CompleteUser(
             firstName = firstName,
             lastName = lastName,
             email = email,
-            legacyUserId = sourceUserId
+            legacyUserId = sourceUserId,
+            userId = userId
         )
     }
 

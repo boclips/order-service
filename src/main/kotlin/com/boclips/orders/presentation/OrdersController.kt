@@ -10,11 +10,15 @@ import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
 import com.boclips.orders.presentation.converters.OrdersToResourceConverter
+import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
+import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrdersLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getUpdateOrderLink
 import com.boclips.orders.presentation.orders.OrderCsvUploadConverter
 import com.boclips.orders.presentation.orders.OrderResource
+import com.boclips.security.utils.UserExtractor
 import mu.KLogging
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -50,14 +54,22 @@ class OrdersController(
     }
 
     @GetMapping(produces = ["!text/csv"])
-    fun getOrderList(
+    fun getAllOrderList() =
+        getOrders.getAll()
+            .map { wrapOrder(it) }
+            .let(HateoasEmptyCollection::fixIfEmptyCollection)
+            .let { CollectionModel(it, getSelfOrdersLink()) }
+
+    @GetMapping("/items")
+    fun getPaginatedOrderList(
         @RequestParam(name = "size", required = false) size: Int?,
         @RequestParam(name = "page", required = false) page: Int?
     ): ResponseEntity<Any> {
         val pageSize = size ?: DEFAULT_PAGE_SIZE
         val pageNumber = page ?: DEFAULT_PAGE_NUMBER
+        val userId = UserExtractor.getCurrentUser()!!.id
 
-        val orders = getOrders.getPaginated(pageSize, pageNumber)
+        val orders = getOrders.getPaginated(pageSize, pageNumber, userId)
 
         val resource = ordersToResourceConverter.convert(orders)
 
