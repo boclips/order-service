@@ -22,8 +22,8 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
     fun `hq staff have access to an orders link`() {
         mockMvc.perform(get("/v1/").asHQStaff())
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$._links.allOrders").exists())
-            .andExpect(jsonPath("$._links.allOrders.href", endsWith("/orders")))
+            .andExpect(jsonPath("$._links.orders").exists())
+            .andExpect(jsonPath("$._links.orders.href", endsWith("/orders")))
             .andExpect(jsonPath("$._links.userOrders").exists())
             .andExpect(jsonPath("$._links.userOrders.href", endsWith("orders/items{?size,page}")))
             .andExpect(jsonPath("$._links.order").exists())
