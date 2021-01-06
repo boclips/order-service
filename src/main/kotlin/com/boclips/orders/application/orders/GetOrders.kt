@@ -14,12 +14,12 @@ class GetOrders(
 ) {
     fun getPaginated(pageSize: Int, pageNumber: Int, userId: String): ResultsPage<Order, Int> {
 
-        val orders = orderRepository.getPaginated(pageSize, pageNumber, userId)
+        val paginatedOrders = orderRepository.getPaginated(pageSize, pageNumber, userId)
 
-        val totalElements = orderRepository.findAll().size
+        val totalElements = paginatedOrders.totalElements
 
         return ResultsPage(
-            elements = orders,
+            elements = paginatedOrders.orders,
             counts = totalElements,
             pageInfo = PageInfo(
                 hasMoreElements = (pageNumber + 1) * pageSize < totalElements,

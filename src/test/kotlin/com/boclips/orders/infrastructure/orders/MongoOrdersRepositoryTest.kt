@@ -49,27 +49,40 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             i += 1
         }
 
-        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1, userId = "1234")
+        val differentOrder = OrderFactory.order(
+            isbnOrProductNumber = "order-$i",
+            requestingUser = completeOrderUser(userId = "differentUser")
+        )
+
+        ordersRepository.save(order = differentOrder)
+
+        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1, userId = "1234").orders
         assertThat(page).hasSize(5)
         assertThat(page[0].isbnOrProductNumber).isEqualTo("order-19")
         assertThat(page[4].isbnOrProductNumber).isEqualTo("order-15")
 
-        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2, userId = "1234")
+        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2, userId = "1234").orders
         assertThat(page2).hasSize(5)
         assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-14")
         assertThat(page2[4].isbnOrProductNumber).isEqualTo("order-10")
 
-        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3, userId = "1234")
+        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3, userId = "1234").orders
         assertThat(page3).hasSize(5)
         assertThat(page3[0].isbnOrProductNumber).isEqualTo("order-9")
         assertThat(page3[4].isbnOrProductNumber).isEqualTo("order-5")
 
-        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4, userId = "1234")
+        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4, userId = "1234").orders
         assertThat(page4).hasSize(5)
         assertThat(page4[0].isbnOrProductNumber).isEqualTo("order-4")
         assertThat(page4[4].isbnOrProductNumber).isEqualTo("order-0")
 
-        assertThat(ordersRepository.findAll()).hasSize(20)
+        assertThat(
+            ordersRepository.getPaginated(
+                pageSize = 5,
+                pageNumber = 1,
+                userId = "1234"
+            ).totalElements
+        ).isEqualTo(20)
     }
 
     @Test
