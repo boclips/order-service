@@ -39,42 +39,60 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `gets descending paginated user orders`() {
-        var i = 0
-        while (i < 20) {
-            val order = OrderFactory.order(
-                isbnOrProductNumber = "order-$i",
+
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-1",
                 requestingUser = completeOrderUser(userId = "1234")
             )
-            ordersRepository.save(order = order)
-            i += 1
-        }
-
-        val differentOrder = OrderFactory.order(
-            isbnOrProductNumber = "order-$i",
-            requestingUser = completeOrderUser(userId = "differentUser")
+        )
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-2",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
+        )
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-3",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
+        )
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-4",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
+        )
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-5",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
+        )
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "order-6",
+                requestingUser = completeOrderUser(userId = "1234")
+            )
         )
 
-        ordersRepository.save(order = differentOrder)
+        ordersRepository.save(
+            order = OrderFactory.order(
+                isbnOrProductNumber = "different",
+                requestingUser = completeOrderUser(userId = "differentUser")
+            )
+        )
 
-        val page = ordersRepository.getPaginated(pageSize = 5, pageNumber = 1, userId = "1234").orders
-        assertThat(page).hasSize(5)
-        assertThat(page[0].isbnOrProductNumber).isEqualTo("order-19")
-        assertThat(page[4].isbnOrProductNumber).isEqualTo("order-15")
+        val page = ordersRepository.getPaginated(pageSize = 3, pageNumber = 1, userId = "1234").orders
+        assertThat(page).hasSize(3)
+        assertThat(page[0].isbnOrProductNumber).isEqualTo("order-6")
+        assertThat(page[2].isbnOrProductNumber).isEqualTo("order-4")
 
-        val page2 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 2, userId = "1234").orders
-        assertThat(page2).hasSize(5)
-        assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-14")
-        assertThat(page2[4].isbnOrProductNumber).isEqualTo("order-10")
-
-        val page3 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 3, userId = "1234").orders
-        assertThat(page3).hasSize(5)
-        assertThat(page3[0].isbnOrProductNumber).isEqualTo("order-9")
-        assertThat(page3[4].isbnOrProductNumber).isEqualTo("order-5")
-
-        val page4 = ordersRepository.getPaginated(pageSize = 5, pageNumber = 4, userId = "1234").orders
-        assertThat(page4).hasSize(5)
-        assertThat(page4[0].isbnOrProductNumber).isEqualTo("order-4")
-        assertThat(page4[4].isbnOrProductNumber).isEqualTo("order-0")
+        val page2 = ordersRepository.getPaginated(pageSize = 3, pageNumber = 2, userId = "1234").orders
+        assertThat(page2).hasSize(3)
+        assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-3")
+        assertThat(page2[2].isbnOrProductNumber).isEqualTo("order-1")
 
         assertThat(
             ordersRepository.getPaginated(
@@ -82,7 +100,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
                 pageNumber = 1,
                 userId = "1234"
             ).totalElements
-        ).isEqualTo(20)
+        ).isEqualTo(6)
     }
 
     @Test
