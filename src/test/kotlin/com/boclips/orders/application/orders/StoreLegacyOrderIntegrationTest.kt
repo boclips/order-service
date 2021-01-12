@@ -1,6 +1,7 @@
 package com.boclips.orders.application.orders
 
 import com.boclips.eventbus.events.order.LegacyOrderExtraFields
+import com.boclips.orders.domain.model.OrderSource
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.infrastructure.orders.LegacyOrderDocument
@@ -138,6 +139,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         )
         assertThat(order.isbnOrProductNumber).isEqualTo("some-isbn")
         assertThat(order.status).isEqualTo(OrderStatus.INCOMPLETED)
+        assertThat(order.orderSource).isEqualTo(OrderSource.LEGACY)
 
         assertThat(order.items.size).isEqualTo(1)
         val item = order.items.first()

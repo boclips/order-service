@@ -7,14 +7,7 @@ import com.boclips.eventbus.events.order.LegacyOrderNextStatus
 import com.boclips.eventbus.events.order.LegacyOrderOrganisation
 import com.boclips.eventbus.events.order.LegacyOrderSubmitted
 import com.boclips.eventbus.events.order.LegacyOrderUser
-import com.boclips.orders.domain.model.Manifest
-import com.boclips.orders.domain.model.ManifestItem
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.OrderUser
-import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartId
 import com.boclips.orders.domain.model.cart.CartItem
@@ -428,6 +421,7 @@ object OrderFactory {
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         isThroughPlatform: Boolean = true,
+        orderSource: OrderSource? = null,
         currency: Currency? = items.firstOrNull()?.price?.currency,
         fxRateToGbp: BigDecimal? = null
     ): Order {
@@ -443,6 +437,7 @@ object OrderFactory {
             items = items,
             organisation = orderOrganisation,
             isThroughPlatform = isThroughPlatform,
+            orderSource = orderSource,
             currency = currency,
             fxRateToGbp = fxRateToGbp
         )
@@ -461,6 +456,7 @@ object OrderFactory {
         organisation: String? = null,
         currency: Currency? = null,
         orderThroughPlatform: Boolean = true,
+        orderSource: String? = null,
         fxRateToGbp: BigDecimal? = null
     ): OrderDocument {
         return OrderDocument(
@@ -476,6 +472,7 @@ object OrderFactory {
             organisation = organisation,
             currency = currency,
             orderThroughPlatform = orderThroughPlatform,
+            orderSource = orderSource,
             fxRateToGbp = fxRateToGbp
         )
     }

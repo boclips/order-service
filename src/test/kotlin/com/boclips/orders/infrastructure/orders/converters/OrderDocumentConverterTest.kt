@@ -37,6 +37,7 @@ class OrderDocumentConverterTest {
                 items = null,
                 organisation = "",
                 orderThroughPlatform = true,
+                orderSource = null,
                 currency = null,
                 fxRateToGbp = null
             ).let(OrderDocumentConverter::toOrder).items

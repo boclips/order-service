@@ -1,5 +1,7 @@
 package com.boclips.orders.presentation
 
+import com.boclips.eventbus.events.order.OrderCreated
+import com.boclips.eventbus.events.order.OrderSource
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
@@ -949,6 +951,10 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.updatedAt").exists())
                 .andExpect(jsonPath("$.totalPrice.currency", equalTo("GBP")))
                 .andExpect(jsonPath("$.throughPlatform", equalTo(true)))
+
+            val events = eventBus.getEventsOfType(OrderCreated::class.java)
+            assertThat(events).hasSize(1)
+            assertThat(events[0].order.orderSource).isEqualTo(OrderSource.BOCLIPS)
         }
 
         @Test

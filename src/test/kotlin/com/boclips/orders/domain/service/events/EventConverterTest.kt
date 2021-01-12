@@ -3,10 +3,7 @@ package com.boclips.orders.domain.service.events
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.events.order.OrderItem
 import com.boclips.eventbus.events.order.OrderUser
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -52,6 +49,7 @@ class EventConverterTest {
             ),
             isbnOrProductNumber = "ISBN-1",
             isThroughPlatform = true,
+            orderSource = OrderSource.LEGACY,
             currency = Currency.getInstance("USD")
         )
 
@@ -86,6 +84,7 @@ class EventConverterTest {
         assertThat(eventOrder.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(eventOrder.fxRateToGbp).isEqualTo(BigDecimal("2"))
         assertThat(eventOrder.isbnOrProductNumber).isEqualTo("ISBN-1")
+        assertThat(eventOrder.orderSource).isEqualTo(com.boclips.eventbus.events.order.OrderSource.LEGACY)
     }
 
     @Test

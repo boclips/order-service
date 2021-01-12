@@ -2,15 +2,13 @@ package com.boclips.orders.domain.service.events
 
 import com.boclips.eventbus.domain.video.VideoId
 import com.boclips.eventbus.events.order.OrderItem
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.OrderUser
-import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.*
 import java.math.BigDecimal
 import java.time.ZoneOffset
 import com.boclips.eventbus.events.order.Order as EventOrder
 import com.boclips.eventbus.events.order.OrderStatus as EventOrderStatus
 import com.boclips.eventbus.events.order.OrderUser as EventOrderUser
+import com.boclips.eventbus.events.order.OrderSource as EventOrderSource
 
 class EventConverter {
 
@@ -34,10 +32,22 @@ class EventConverter {
             .isbnOrProductNumber(order.isbnOrProductNumber)
             .fxRateToGbp(order.fxRateToGbp)
             .isThroughPlatform(order.isThroughPlatform)
+            .orderSource(order.orderSource?.let(::convertOrderSource))
             .build()
     }
 
-    fun convertOrderUser(user: OrderUser): EventOrderUser =
+    fun convertOrderStatus(orderStatus: OrderStatus): EventOrderStatus {
+        return when (orderStatus) {
+            OrderStatus.READY -> EventOrderStatus.READY
+            OrderStatus.DELIVERED -> EventOrderStatus.DELIVERED
+            OrderStatus.CANCELLED -> EventOrderStatus.CANCELLED
+            OrderStatus.INCOMPLETED -> EventOrderStatus.INCOMPLETED
+            OrderStatus.IN_PROGRESS -> EventOrderStatus.INCOMPLETED
+            OrderStatus.INVALID -> EventOrderStatus.INVALID
+        }
+    }
+
+    private fun convertOrderUser(user: OrderUser): EventOrderUser =
         when (user) {
             is OrderUser.CompleteUser ->
                 EventOrderUser.builder()
@@ -52,14 +62,11 @@ class EventConverter {
                     .build()
         }
 
-    fun convertOrderStatus(orderStatus: OrderStatus): EventOrderStatus {
-        return when (orderStatus) {
-            OrderStatus.READY -> EventOrderStatus.READY
-            OrderStatus.DELIVERED -> EventOrderStatus.DELIVERED
-            OrderStatus.CANCELLED -> EventOrderStatus.CANCELLED
-            OrderStatus.INCOMPLETED -> EventOrderStatus.INCOMPLETED
-            OrderStatus.IN_PROGRESS -> EventOrderStatus.INCOMPLETED
-            OrderStatus.INVALID -> EventOrderStatus.INVALID
+    private fun convertOrderSource(orderSource: OrderSource): EventOrderSource {
+        return when (orderSource) {
+            OrderSource.LEGACY -> EventOrderSource.LEGACY
+            OrderSource.MANUAL -> EventOrderSource.MANUAL
+            OrderSource.BOCLIPS -> EventOrderSource.BOCLIPS
         }
     }
 
