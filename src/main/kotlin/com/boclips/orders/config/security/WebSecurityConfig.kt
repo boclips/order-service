@@ -35,6 +35,7 @@ class OrderServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
 
             .antMatchers(HttpMethod.POST, "/v1/cart/items").hasRole(UserRoles.ADD_CART_ITEMS)
             .antMatchers(HttpMethod.DELETE, "/v1/cart/items/*").hasRole(UserRoles.DELETE_CART_ITEMS)
+            .antMatchers(HttpMethod.PATCH, "/v1/cart/items/*").hasRole(UserRoles.UPDATE_CART)
             .antMatchers(HttpMethod.GET, "/v1/cart").hasRole(UserRoles.VIEW_CART)
 
             .antMatchers(HttpMethod.POST, "/v1/admin/orders/actions/broadcast_orders").run {

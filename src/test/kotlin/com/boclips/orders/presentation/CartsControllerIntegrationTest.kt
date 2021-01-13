@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -170,6 +171,39 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(
                 get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
             ).andExpect(jsonPath("$.items", hasSize<Any>(1)))
+        }
+
+        @Test
+        fun `can update cart item with addition services`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
+
+            mockMvc.perform(
+                patch("/v1/cart/items/${cartItemId.id}").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim" : {
+                        "trim": true,
+                        "from": "1:23",
+                        "to": "2:69"
+                        }
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().is2xxSuccessful)
+
+            mockMvc.perform(get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.trim", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:69")))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
     }
 }

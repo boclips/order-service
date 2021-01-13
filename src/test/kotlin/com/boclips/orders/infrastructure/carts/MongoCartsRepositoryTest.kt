@@ -1,6 +1,8 @@
 package com.boclips.orders.infrastructure.carts
 
 import com.boclips.orders.domain.model.CartUpdateCommand
+import com.boclips.orders.domain.model.cart.AdditionalServices
+import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -66,6 +68,53 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedCart.items).hasSize(1)
         assertThat(updatedCart.items.first().videoId.value).isEqualTo("video-id")
+    }
+
+    @Test
+    fun `updates existing cart item with additional service information`() {
+        val userId = "publishers-user-id"
+
+        val cart = CartFactory.sample(
+            userId = userId,
+            items = listOf()
+        )
+        val cartItem = CartFactory.cartItem(videoId = "video-id")
+        val cartItem2 = CartFactory.cartItem(id = "other-id", videoId = "video-id2")
+
+        mongoCartsRepository.create(cart)
+
+        mongoCartsRepository.update(
+            CartUpdateCommand.AddItem(
+                userId = UserId(userId),
+                cartItem = cartItem
+            )
+        )
+        mongoCartsRepository.update(
+            CartUpdateCommand.AddItem(
+                userId = UserId(userId),
+                cartItem = cartItem2
+            )
+        )
+
+        mongoCartsRepository.updateCartItem(
+            UserId(userId),
+            cartItemId = cartItem.id,
+            additionalServices = AdditionalServices(
+                TrimService(
+                    trim = true,
+                    from = "6:66",
+                    to = "6:69"
+                )
+            )
+        )
+
+        val updatedCart = mongoCartsRepository.findByUserId(UserId(userId))
+
+        assertThat(updatedCart?.items).hasSize(2)
+        assertThat(updatedCart?.items?.first()?.videoId?.value).isEqualTo("video-id")
+        assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.trim).isEqualTo(true)
+        assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.from).isEqualTo("6:66")
+        assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.to).isEqualTo("6:69")
     }
 
     @Test

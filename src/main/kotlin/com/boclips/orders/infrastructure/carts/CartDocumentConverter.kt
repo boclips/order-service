@@ -1,8 +1,10 @@
 package com.boclips.orders.infrastructure.carts
 
+import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartId
 import com.boclips.orders.domain.model.cart.CartItem
+import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.domain.model.video.VideoId
 import org.bson.types.ObjectId
@@ -27,12 +29,38 @@ object CartDocumentConverter {
     fun cartItemToCartItemDocument(cartItem: CartItem): CartItemDocument =
         CartItemDocument(
             id = cartItem.id,
-            videoId = cartItem.videoId.value
+            videoId = cartItem.videoId.value,
+            additionalServices = cartItem.additionalServices?.let { additionalServicesDocument(it) }
         )
 
-    private fun cartItemDocumentToCartItem(document: CartItemDocument): CartItem =
+    fun cartItemDocumentToCartItem(document: CartItemDocument): CartItem =
         CartItem(
             id = document.id,
-            videoId = VideoId(document.videoId)
+            videoId = VideoId(document.videoId),
+            additionalServices = document.additionalServices?.let { additionalServices(it) }
+        )
+
+    private fun additionalServices(document: AdditionalServicesDocument): AdditionalServices =
+        AdditionalServices(
+            trim = trimService(document.trim)
+        )
+
+    private fun trimService(document: TrimServiceDocument): TrimService =
+        TrimService(
+            trim = document.trim,
+            from = document.from,
+            to = document.to
+        )
+
+    fun additionalServicesDocument(additionalServices: AdditionalServices): AdditionalServicesDocument =
+        AdditionalServicesDocument(
+            trim = trimServiceDocument(additionalServices.trim)
+        )
+
+    fun trimServiceDocument(trimService: TrimService): TrimServiceDocument =
+        TrimServiceDocument(
+            trim = trimService.trim,
+            from = trimService.from,
+            to = trimService.to
         )
 }

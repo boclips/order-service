@@ -1,9 +1,9 @@
 package testsupport
 
 import com.boclips.eventbus.infrastructure.SynchronousFakeEventBus
+import com.boclips.orders.application.cart.AddItemToCart
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartItem
 import com.boclips.orders.infrastructure.carts.MongoCartsRepository
@@ -14,7 +14,6 @@ import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.HateoasLink
 import com.boclips.videos.api.response.channel.ChannelResource
-import com.boclips.videos.api.response.channel.ContentTypeResource
 import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
@@ -73,6 +72,9 @@ abstract class AbstractSpringIntegrationTest {
     @Autowired
     lateinit var eventBus: SynchronousFakeEventBus
 
+    @Autowired
+    lateinit var addItemToCart: AddItemToCart
+
     @BeforeEach
     fun setup() {
         ordersRepository.deleteAll()
@@ -129,5 +131,9 @@ abstract class AbstractSpringIntegrationTest {
 
     fun createCart(userId: String, items: List<CartItem> = emptyList()): Cart {
         return mongoCartsRepository.create(CartFactory.sample(userId = userId, items = items))
+    }
+
+    fun saveItemToCart(videoId: String, userId: String): CartItem {
+        return addItemToCart(videoId, userId)
     }
 }

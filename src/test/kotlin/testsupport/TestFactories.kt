@@ -15,9 +15,11 @@ import com.boclips.orders.domain.model.OrderOrganisation
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartId
 import com.boclips.orders.domain.model.cart.CartItem
+import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Channel
@@ -562,8 +564,9 @@ object CartFactory {
 
     fun cartItem(
         id: String = "cart-item-id",
-        videoId: String = "video-id"
-    ) = CartItem(id = id, videoId = VideoId(videoId))
+        videoId: String = "video-id",
+        additionalServices: AdditionalServices = AdditionalServices(TrimService(true, "0:00", "12:00"))
+    ) = CartItem(id = id, videoId = VideoId(videoId), additionalServices = additionalServices)
 }
 
 object ManifestFactory {
