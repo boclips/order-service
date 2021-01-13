@@ -41,7 +41,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val retrievedOrders = getOrders.getPaginated(10, 1, "1234")
+        val retrievedOrders = getOrders.getPaginated(10, 0, "1234")
 
         assertThat(retrievedOrders.elements.map { it.legacyOrderId })
             .containsExactlyInAnyOrder("hello", "bye")

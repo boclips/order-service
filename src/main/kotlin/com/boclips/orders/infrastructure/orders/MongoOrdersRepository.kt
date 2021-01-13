@@ -50,21 +50,17 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
     }
 
     override fun getPaginated(pageSize: Int, pageNumber: Int, userId: String): PaginatedOrder {
-        val totalElements: Int
-
         val userOrders =
-            collection().find(OrderDocument::requestingUser / OrderUserDocument::userId eq userId).let {
-                totalElements = it.count()
-                it.sort(orderBy(OrderDocument::createdAt, ascending = false))
-                    .skip(
-                        when {
-                            pageNumber > 0 -> (pageNumber - 1) * pageSize
-                            else -> 0
-                        }
-                    ).limit(
-                        pageSize
-                    )
-            }.map(OrderDocumentConverter::toOrder).toList()
+            collection().find(OrderDocument::requestingUser / OrderUserDocument::userId eq userId)
+                .sort(orderBy(OrderDocument::createdAt, ascending = false))
+                .skip(
+                    pageNumber * pageSize
+                ).limit(
+                    pageSize
+                ).map(OrderDocumentConverter::toOrder).toList()
+
+        val totalElements =
+            collection().find(OrderDocument::requestingUser / OrderUserDocument::userId eq userId).count()
 
         return PaginatedOrder(
             orders = userOrders,

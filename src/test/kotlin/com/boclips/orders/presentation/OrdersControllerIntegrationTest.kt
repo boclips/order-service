@@ -240,7 +240,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                get("/v1/orders/items?page=1&size=3").asPublisher(userId = "1234")
+                get("/v1/orders/items?page=0&size=3").asPublisher(userId = "1234")
             ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-6")))
                 .andExpect(
@@ -252,7 +252,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
 
             mockMvc.perform(
-                get("/v1/orders/items?page=2&size=3").asPublisher(userId = "1234")
+                get("/v1/orders/items?page=1&size=3").asPublisher(userId = "1234")
             ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-3")))
                 .andExpect(

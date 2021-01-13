@@ -84,12 +84,12 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        val page = ordersRepository.getPaginated(pageSize = 3, pageNumber = 1, userId = "1234").orders
+        val page = ordersRepository.getPaginated(pageSize = 3, pageNumber = 0, userId = "1234").orders
         assertThat(page).hasSize(3)
         assertThat(page[0].isbnOrProductNumber).isEqualTo("order-6")
         assertThat(page[2].isbnOrProductNumber).isEqualTo("order-4")
 
-        val page2 = ordersRepository.getPaginated(pageSize = 3, pageNumber = 2, userId = "1234").orders
+        val page2 = ordersRepository.getPaginated(pageSize = 3, pageNumber = 1, userId = "1234").orders
         assertThat(page2).hasSize(3)
         assertThat(page2[0].isbnOrProductNumber).isEqualTo("order-3")
         assertThat(page2[2].isbnOrProductNumber).isEqualTo("order-1")
@@ -97,7 +97,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
         assertThat(
             ordersRepository.getPaginated(
                 pageSize = 5,
-                pageNumber = 1,
+                pageNumber = 0,
                 userId = "1234"
             ).totalElements
         ).isEqualTo(6)
