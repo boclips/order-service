@@ -1,5 +1,6 @@
 package com.boclips.orders.infrastructure.carts
 
+import com.boclips.orders.domain.exceptions.CartItemNotFoundException
 import com.boclips.orders.domain.model.CartUpdateCommand
 import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.Cart
@@ -59,14 +60,23 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
         userId: UserId,
         cartItemId: String,
         additionalServices: AdditionalServices
-    ): Boolean {
-        return collection().updateOne(
+    ): Cart? {
+        collection().findOne(
+            and(
+                CartDocument::userId eq userId.value,
+                CartDocument::items / CartItemDocument::id eq cartItemId
+            )
+        ) ?: throw CartItemNotFoundException(cartItemId)
+
+        collection().updateOne(
             and(CartDocument::userId eq userId.value, CartDocument::items / CartItemDocument::id eq cartItemId),
             set(
                 CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices,
                 CartDocumentConverter.additionalServicesDocument(additionalServices)
             )
-        ).modifiedCount > 0
+        )
+
+        return findByUserId(userId)
     }
 
     override fun deleteItem(userId: UserId, cartItemId: String): Boolean {

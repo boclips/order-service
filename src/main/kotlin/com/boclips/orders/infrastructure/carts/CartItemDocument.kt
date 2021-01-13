@@ -7,11 +7,10 @@ data class CartItemDocument(
 )
 
 data class AdditionalServicesDocument(
-    val trim: TrimServiceDocument
+    val trim: TrimServiceDocument?
 )
 
 data class TrimServiceDocument(
-    val trim: Boolean,
     val from: String,
     val to: String
 )

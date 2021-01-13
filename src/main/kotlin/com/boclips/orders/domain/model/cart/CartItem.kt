@@ -9,11 +9,10 @@ data class CartItem(
 )
 
 data class AdditionalServices(
-    val trim: TrimService
+    val trim: TrimService?
 )
 
 data class TrimService(
-    val trim: Boolean,
     val from: String,
     val to: String
 )

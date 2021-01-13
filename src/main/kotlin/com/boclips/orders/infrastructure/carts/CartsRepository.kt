@@ -15,7 +15,7 @@ interface CartsRepository {
         userId: UserId,
         cartItemId: String,
         additionalServices: AdditionalServices
-    ): Boolean
+    ): Cart?
 
     fun findAll(): List<Cart>
 }

@@ -66,18 +66,21 @@ class CartsController(
     fun updateCartItem(
         @Valid @RequestBody additionalServicesRequest: AdditionalServicesRequest?,
         @PathVariable id: String?
-    ): ResponseEntity<CartItemResource> {
-        return if (
-            updateCartItemAdditionalServices(
-                cartItemId = id!!,
-                userId = UserExtractor.getCurrentUser()?.id!!,
-                additionalServices = additionalServicesRequest!!
+    ): ResponseEntity<EntityModel<CartResource>> {
+        val updatedCart = updateCartItemAdditionalServices(
+            cartItemId = id!!,
+            userId = UserExtractor.getCurrentUser()?.id!!,
+            additionalServices = additionalServicesRequest!!
+        )
+
+        val resource = updatedCart?.let { CartResource.fromCart(it) }
+
+        return ResponseEntity.ok(
+            EntityModel(
+                resource,
+                listOfNotNull(CartsLinkBuilder.cartSelfLink(), CartsLinkBuilder.addItemToCartLink())
             )
-        ) {
-            ResponseEntity.status(HttpStatus.OK).build()
-        } else {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
-        }
+        )
     }
 
     @GetMapping("/items/{id}")

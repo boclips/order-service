@@ -186,7 +186,6 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """
                     {
                     "trim" : {
-                        "trim": true,
                         "from": "1:23",
                         "to": "2:69"
                         }
@@ -194,16 +193,34 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """.trimIndent()
                 ).asPublisher(userId)
             ).andExpect(status().is2xxSuccessful)
-
-            mockMvc.perform(get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId))
-                .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
                 .andExpect(jsonPath("$.items[0].additionalServices").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
-                .andExpect(jsonPath("$.items[0].additionalServices.trim.trim", equalTo(true)))
                 .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
                 .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:69")))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `get 404 when updating a missing cart item`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            saveItemToCart(videoId = "video-id", userId = userId)
+
+            mockMvc.perform(
+                patch("/v1/cart/items/1234").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim" : {
+                        "from": "1:23",
+                        "to": "2:69"
+                        }
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().isNotFound)
         }
     }
 }

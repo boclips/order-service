@@ -42,24 +42,22 @@ object CartDocumentConverter {
 
     private fun additionalServices(document: AdditionalServicesDocument): AdditionalServices =
         AdditionalServices(
-            trim = trimService(document.trim)
+            trim = document.trim?.let { trimService(it) }
         )
 
     private fun trimService(document: TrimServiceDocument): TrimService =
         TrimService(
-            trim = document.trim,
             from = document.from,
             to = document.to
         )
 
     fun additionalServicesDocument(additionalServices: AdditionalServices): AdditionalServicesDocument =
         AdditionalServicesDocument(
-            trim = trimServiceDocument(additionalServices.trim)
+            trim = additionalServices.trim?.let { trimServiceDocument(it) }
         )
 
     fun trimServiceDocument(trimService: TrimService): TrimServiceDocument =
         TrimServiceDocument(
-            trim = trimService.trim,
             from = trimService.from,
             to = trimService.to
         )

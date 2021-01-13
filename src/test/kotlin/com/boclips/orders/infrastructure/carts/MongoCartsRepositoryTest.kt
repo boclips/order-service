@@ -1,5 +1,6 @@
 package com.boclips.orders.infrastructure.carts
 
+import com.boclips.orders.domain.exceptions.CartItemNotFoundException
 import com.boclips.orders.domain.model.CartUpdateCommand
 import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.TrimService
@@ -101,7 +102,6 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
             cartItemId = cartItem.id,
             additionalServices = AdditionalServices(
                 TrimService(
-                    trim = true,
                     from = "6:66",
                     to = "6:69"
                 )
@@ -112,9 +112,36 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThat(updatedCart?.items).hasSize(2)
         assertThat(updatedCart?.items?.first()?.videoId?.value).isEqualTo("video-id")
-        assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.trim).isEqualTo(true)
         assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.from).isEqualTo("6:66")
         assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.to).isEqualTo("6:69")
+    }
+
+    @Test
+    fun `throws item doesn't exist exception`() {
+        val userId = "publishers-user-id"
+
+        val cart = CartFactory.sample(
+            userId = userId,
+            items = listOf()
+        )
+
+        mongoCartsRepository.create(cart)
+
+        assertThrows<CartItemNotFoundException> {
+            mongoCartsRepository.updateCartItem(
+                UserId(userId),
+                cartItemId = "1234",
+                additionalServices = AdditionalServices(
+                    TrimService(
+                        from = "6:66",
+                        to = "6:69"
+                    )
+                )
+            )
+        }
+            .message.let {
+                assertThat(it).contains("Could not find cart item with ID: 1234")
+            }
     }
 
     @Test
