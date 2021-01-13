@@ -22,6 +22,16 @@ class OrderDocumentConverterTest {
     }
 
     @Test
+    fun `order source can be missing - until we update the old orders`() {
+        val originalOrder = OrderFactory.order(orderSource = null)
+
+        val document = OrderDocumentConverter.toOrderDocument(originalOrder)
+        val reconvertedOrder = OrderDocumentConverter.toOrder(document)
+
+        assertThat(reconvertedOrder.orderSource).isEqualTo(null)
+    }
+
+    @Test
     fun `defaults to empty list if items are missing`() {
         val id = ObjectId()
         assertThat(
@@ -37,6 +47,7 @@ class OrderDocumentConverterTest {
                 items = null,
                 organisation = "",
                 orderThroughPlatform = true,
+                orderSource = null,
                 currency = null,
                 fxRateToGbp = null
             ).let(OrderDocumentConverter::toOrder).items

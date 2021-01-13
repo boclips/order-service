@@ -1,5 +1,6 @@
 package com.boclips.orders.application.orders.converters.csv
 
+import com.boclips.orders.domain.model.OrderSource
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
@@ -162,12 +163,23 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `sets order through platform`() {
+        fun `can set order through platform to false and source to MANUAL`() {
             val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = "no")
 
             val orders = toSuccessfulOrders(csvOrderItem)
 
             assertThat(orders.first().isThroughPlatform).isFalse()
+            assertThat(orders.first().orderSource).isEqualTo(OrderSource.MANUAL)
+        }
+
+        @Test
+        fun `can set order through platform to true and source to LEGACY`() {
+            val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = "yes")
+
+            val orders = toSuccessfulOrders(csvOrderItem)
+
+            assertThat(orders.first().isThroughPlatform).isTrue()
+            assertThat(orders.first().orderSource).isEqualTo(OrderSource.LEGACY)
         }
 
         private fun toSuccessfulOrders(csvOrderItems: List<CsvOrderItemMetadata>) =

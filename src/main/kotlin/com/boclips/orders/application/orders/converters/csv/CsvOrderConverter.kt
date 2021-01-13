@@ -2,10 +2,7 @@ package com.boclips.orders.application.orders.converters.csv
 
 import com.boclips.orders.application.orders.converters.parseTrimRequest
 import com.boclips.orders.domain.exceptions.BoclipsException
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.OrderUser
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.video.VideoId
@@ -13,7 +10,7 @@ import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
 import mu.KLogging
 import org.springframework.stereotype.Component
-import java.util.UUID
+import java.util.*
 import kotlin.reflect.KClass
 
 @Component
@@ -57,22 +54,31 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
 
                 validator.setNotNullOrError(
                     firstOrderItem.orderThroughPlatform,
-                    { orderBuilder.isThroughPlatform(it.parseBoolean()) },
+                    {
+                        val isThroughPlatform = it.parseBoolean()
+                        orderBuilder.isThroughPlatform(isThroughPlatform)
+                        orderBuilder.orderSource(if (isThroughPlatform) OrderSource.LEGACY else OrderSource.MANUAL)
+                    },
                     "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"
                 )
 
                 val orderItems = csvOrderItems.mapNotNull { toOrderItem(it, validator) }
                 orderBuilder.items(orderItems)
-                orderItems.firstOrNull()?.let { orderBuilder.currency(it.price.currency) }
+                orderItems
+                    .firstOrNull()
+                    ?.let { orderBuilder.currency(it.price.currency) }
 
-                orderBuilder.takeIf { errors.isEmpty() }?.run {
-                    status(OrderStatus.INCOMPLETED)
-                        .isbnOrProductNumber(firstOrderItem.isbnProductNumber)
-                        .authorisingUser(firstOrderItem.memberAuthorise?.let { OrderUser.BasicUser(it) })
-                        .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })
-                        .build()
-                }
-            }.let { orders ->
+                orderBuilder
+                    .takeIf { errors.isEmpty() }
+                    ?.run {
+                        status(OrderStatus.INCOMPLETED)
+                            .isbnOrProductNumber(firstOrderItem.isbnProductNumber)
+                            .authorisingUser(firstOrderItem.memberAuthorise?.let { OrderUser.BasicUser(it) })
+                            .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })
+                            .build()
+                    }
+            }
+            .let { orders ->
                 OrdersResult.instanceOf(orders, errors)
             }
     }
@@ -101,15 +107,19 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
             "Field ${CsvOrderItemMetadata.TERRITORY} must not be null"
         )
 
-        return orderItemBuilder.takeIf { validator.errors.isEmpty() }?.run {
-            price(csvItem.price.parsePrice())
-                .transcriptRequested(csvItem.captioning.parseBoolean())
-                .trim(csvItem.trim.parseTrimRequest())
-                .license(orderItemLicenseBuilder.build())
-                .notes(csvItem.notes?.takeIf { it.isNotBlank() })
-                .id(UUID.randomUUID().toString())
-                .build()
-        }
+        return orderItemBuilder
+            .takeIf { validator.errors.isEmpty() }
+            ?.run {
+                price(csvItem.price.parsePrice())
+                    .transcriptRequested(csvItem.captioning.parseBoolean())
+                    .trim(csvItem.trim.parseTrimRequest())
+                    .license(orderItemLicenseBuilder.build())
+                    .notes(csvItem.notes?.takeIf { it.isNotBlank() })
+                    .id(UUID
+                        .randomUUID()
+                        .toString())
+                    .build()
+            }
     }
 }
 
@@ -151,6 +161,7 @@ data class OrderValidator(
 }
 
 private fun Array<out Pair<KClass<out Exception>, String>>.findMessageForException(e: Exception) =
-    this.firstOrNull { (exception) -> exception.isInstance(e) }
+    this
+        .firstOrNull { (exception) -> exception.isInstance(e) }
         ?.let { (_, message) -> "$message: ${e.message}" }
 

@@ -19,6 +19,7 @@ class Order(
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
     val isThroughPlatform: Boolean,
+    val orderSource: OrderSource?,
     val currency: Currency?,
     val fxRateToGbp: BigDecimal?,
     items: Iterable<OrderItem>
@@ -96,6 +97,7 @@ class Order(
 
         private var legacyOrderId: String? = null
         private var isThroughPlatform: Boolean = true
+        private var orderSource: OrderSource? = null
         private var authorisingUser: OrderUser? = null
         private var organisation: OrderOrganisation? = null
         private var isbnOrProductNumber: String? = null
@@ -111,9 +113,10 @@ class Order(
         fun createdAt(createdAt: Instant) = apply { this.createdAt = createdAt }
         fun isbnOrProductNumber(isbnOrProductNumber: String?) = apply { this.isbnOrProductNumber = isbnOrProductNumber }
         fun items(items: List<OrderItem>) = apply { this.items = items }
+
         fun isThroughPlatform(orderThroughPlatform: Boolean) =
             apply { this.isThroughPlatform = orderThroughPlatform }
-
+        fun orderSource(orderSource: OrderSource?) = apply { this.orderSource = orderSource }
         fun currency(currency: Currency?) = apply { this.currency = currency }
         fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
 
@@ -130,6 +133,7 @@ class Order(
                 createdAt = createdAt,
                 isbnOrProductNumber = isbnOrProductNumber,
                 isThroughPlatform = isThroughPlatform,
+                orderSource = orderSource,
                 items = items,
                 currency = currency,
                 fxRateToGbp = fxRateToGbp

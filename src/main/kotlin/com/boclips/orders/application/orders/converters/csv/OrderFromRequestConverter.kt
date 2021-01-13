@@ -1,10 +1,7 @@
 package com.boclips.orders.application.orders.converters.csv
 
 import com.boclips.orders.application.orders.exceptions.IncompleteUserData
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
-import com.boclips.orders.domain.model.OrderUser
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.TrimRequest
 import com.boclips.orders.domain.model.video.VideoId
@@ -34,6 +31,7 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
             .createdAt(Instant.now())
             .updatedAt(Instant.now())
             .isThroughPlatform(true)
+            .orderSource(OrderSource.BOCLIPS)
             .isbnOrProductNumber(null)
             .fxRateToGbp(null)
             .build()

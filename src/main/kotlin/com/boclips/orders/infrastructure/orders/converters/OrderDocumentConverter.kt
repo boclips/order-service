@@ -1,10 +1,8 @@
 package com.boclips.orders.infrastructure.orders.converters
 
-import com.boclips.orders.domain.model.Order
-import com.boclips.orders.domain.model.OrderId
-import com.boclips.orders.domain.model.OrderOrganisation
-import com.boclips.orders.domain.model.OrderStatus
+import com.boclips.orders.domain.model.*
 import com.boclips.orders.infrastructure.orders.OrderDocument
+import mu.KLogging
 import org.bson.types.ObjectId
 
 object OrderDocumentConverter {
@@ -21,6 +19,7 @@ object OrderDocumentConverter {
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
             organisation = order.organisation?.name,
             orderThroughPlatform = order.isThroughPlatform,
+            orderSource = order.orderSource?.name,
             currency = order.currency,
             fxRateToGbp = order.fxRateToGbp
         )
@@ -39,9 +38,17 @@ object OrderDocumentConverter {
             items = document.items?.map { OrderItemDocumentConverter.toOrderItem(it, document) } ?: emptyList(),
             organisation = document.organisation?.let { OrderOrganisation(name = it) },
             isThroughPlatform = document.orderThroughPlatform,
+            orderSource = convertOrderSource(document),
             currency = document.currency,
             fxRateToGbp = document.fxRateToGbp
         )
+    }
+
+    private fun convertOrderSource(document: OrderDocument): OrderSource? = try {
+        document.orderSource?.let { OrderSource.valueOf(it) }
+    } catch (e: IllegalArgumentException) {
+        KLogging().logger.error { "Illegal orderSource value ${document.orderSource} when converting from orderDocument of id ${document.id}" }
+        null
     }
 
     private fun convertOrderStatus(document: OrderDocument): OrderStatus {
