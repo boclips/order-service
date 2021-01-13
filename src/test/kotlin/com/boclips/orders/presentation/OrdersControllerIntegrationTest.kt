@@ -42,6 +42,8 @@ import testsupport.asPublisher
 import testsupport.asTeacher
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.Currency
 
@@ -192,78 +194,35 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `gets paginated orders`() {
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-1",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-2",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-3",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-4",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-5",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
-            ordersRepository.save(
-                OrderFactory.order(
-                    isbnOrProductNumber = "order-6",
-                    requestingUser = OrderFactory.completeOrderUser(
-                        userId = "1234"
-                    )
-                )
-            )
+            for (i in 1..6) {
+                ordersRepository.save(
+                    OrderFactory.order(
+                        isbnOrProductNumber = "order-${i}",
+                        requestingUser = OrderFactory.completeOrderUser(
+                            userId = "1234"
+                        ),
 
-            mockMvc.perform(
-                get("/v1/orders/items?page=0&size=3").asPublisher(userId = "1234")
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
+                        // A guaranteed order
+                        createdAt = LocalDate.of(2000, 1, 1 + i).atStartOfDay().toInstant(ZoneOffset.UTC)
+                    )
+                )
+            }
+
+            mockMvc.perform(get("/v1/orders/items?page=0&size=3").asPublisher(userId = "1234"))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-6")))
-                .andExpect(
-                    jsonPath("$.page.totalElements", equalTo(6))
-                ).andExpect(
-                    jsonPath("$.page.size", equalTo(3))
-                ).andExpect(
-                    jsonPath("$.page.totalPages", equalTo(2))
-                )
+                .andExpect(jsonPath("$.page.totalElements", equalTo(6)))
+                .andExpect(jsonPath("$.page.size", equalTo(3)))
+                .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
 
-            mockMvc.perform(
-                get("/v1/orders/items?page=1&size=3").asPublisher(userId = "1234")
-            ).andExpect(status().isOk).andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
+            mockMvc.perform(get("/v1/orders/items?page=1&size=3").asPublisher(userId = "1234"))
+                .andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("order-3")))
-                .andExpect(
-                    jsonPath("$.page.totalElements", equalTo(6))
-                ).andExpect(
-                    jsonPath("$.page.size", equalTo(3))
-                ).andExpect(
-                    jsonPath("$.page.totalPages", equalTo(2))
-                )
+                .andExpect(jsonPath("$._embedded.orders", hasSize<Any>(3)))
+                .andExpect(jsonPath("$.page.totalElements", equalTo(6)))
+                .andExpect(jsonPath("$.page.size", equalTo(3)))
+                .andExpect(jsonPath("$.page.totalPages", equalTo(2)))
         }
 
         @Test
