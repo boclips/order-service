@@ -422,7 +422,6 @@ object OrderFactory {
         items: List<OrderItem> = emptyList(),
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
-        isThroughPlatform: Boolean = true,
         orderSource: OrderSource = OrderSource.LEGACY,
         currency: Currency? = items.firstOrNull()?.price?.currency,
         fxRateToGbp: BigDecimal? = null
@@ -438,7 +437,6 @@ object OrderFactory {
             status = status,
             items = items,
             organisation = orderOrganisation,
-            isThroughPlatform = isThroughPlatform,
             orderSource = orderSource,
             currency = currency,
             fxRateToGbp = fxRateToGbp
@@ -457,7 +455,6 @@ object OrderFactory {
         items: List<OrderItemDocument>? = null,
         organisation: String? = null,
         currency: Currency? = null,
-        orderThroughPlatform: Boolean = true,
         orderSource: String = "LEGACY",
         fxRateToGbp: BigDecimal? = null
     ): OrderDocument {
@@ -473,7 +470,6 @@ object OrderFactory {
             items = items,
             organisation = organisation,
             currency = currency,
-            orderThroughPlatform = orderThroughPlatform,
             orderSource = orderSource,
             fxRateToGbp = fxRateToGbp
         )

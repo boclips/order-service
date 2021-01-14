@@ -49,7 +49,6 @@ class OrderDocumentConverterTest {
                 isbnOrProductNumber = "anisbn",
                 items = null,
                 organisation = "",
-                orderThroughPlatform = true,
                 orderSource = "BOCLIPS",
                 currency = null,
                 fxRateToGbp = null

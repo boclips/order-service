@@ -2,6 +2,7 @@ package com.boclips.orders.presentation.resources
 
 import com.boclips.orders.domain.model.OrderId
 import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderSource
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.AssetStatus
@@ -55,6 +56,7 @@ class OrderResourceTest {
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),
+                orderSource = OrderSource.LEGACY,
                 items = listOf(
                     OrderFactory.orderItem(
                         id = "item-id",
@@ -86,8 +88,7 @@ class OrderResourceTest {
                         ),
                         notes = "hello, I'm a note"
                     )
-                ),
-                isThroughPlatform = false
+                )
             )
         )
 
@@ -145,7 +146,7 @@ class OrderResourceTest {
                         ).map { it.rel to it }.toMap()
                     )
                 ),
-                throughPlatform = false,
+                throughPlatform = true,
                 _links = listOf(
                     OrdersLinkBuilder.getSelfOrderLink("123")
                 ).map { it.rel to it }.toMap()

@@ -163,22 +163,20 @@ class CsvOrderConverterTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `can set order through platform to false and source to MANUAL`() {
+        fun `can set order source to MANUAL`() {
             val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = "no")
 
             val orders = toSuccessfulOrders(csvOrderItem)
 
-            assertThat(orders.first().isThroughPlatform).isFalse()
             assertThat(orders.first().orderSource).isEqualTo(OrderSource.MANUAL)
         }
 
         @Test
-        fun `can set order through platform to true and source to LEGACY`() {
+        fun `can set order source to LEGACY`() {
             val csvOrderItem = TestFactories.csvOrderItemMetadata(orderThroughPlatform = "yes")
 
             val orders = toSuccessfulOrders(csvOrderItem)
 
-            assertThat(orders.first().isThroughPlatform).isTrue()
             assertThat(orders.first().orderSource).isEqualTo(OrderSource.LEGACY)
         }
 

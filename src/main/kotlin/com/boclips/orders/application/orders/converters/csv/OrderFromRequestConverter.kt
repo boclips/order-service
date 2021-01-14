@@ -30,7 +30,6 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
             .status(OrderStatus.INCOMPLETED)
             .createdAt(Instant.now())
             .updatedAt(Instant.now())
-            .isThroughPlatform(true)
             .orderSource(OrderSource.BOCLIPS)
             .isbnOrProductNumber(null)
             .fxRateToGbp(null)

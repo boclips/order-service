@@ -48,7 +48,6 @@ class EventConverterTest {
                 sourceUserId = "pson-2"
             ),
             isbnOrProductNumber = "ISBN-1",
-            isThroughPlatform = true,
             orderSource = OrderSource.LEGACY,
             currency = Currency.getInstance("USD")
         )
@@ -84,6 +83,7 @@ class EventConverterTest {
         assertThat(eventOrder.currency).isEqualTo(Currency.getInstance("USD"))
         assertThat(eventOrder.fxRateToGbp).isEqualTo(BigDecimal("2"))
         assertThat(eventOrder.isbnOrProductNumber).isEqualTo("ISBN-1")
+        assertThat(eventOrder.isThroughPlatform).isEqualTo(true)
         assertThat(eventOrder.orderSource).isEqualTo(com.boclips.eventbus.events.order.OrderSource.LEGACY)
     }
 

@@ -31,8 +31,8 @@ class EventConverter {
             .currency(order.currency)
             .isbnOrProductNumber(order.isbnOrProductNumber)
             .fxRateToGbp(order.fxRateToGbp)
-            .isThroughPlatform(order.isThroughPlatform)
-            .orderSource(order.orderSource?.let(::convertOrderSource))
+            .isThroughPlatform(order.orderSource == OrderSource.LEGACY)
+            .orderSource(order.orderSource.let(::convertOrderSource))
             .build()
     }
 

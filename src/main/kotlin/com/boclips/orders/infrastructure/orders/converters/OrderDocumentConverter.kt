@@ -19,7 +19,6 @@ object OrderDocumentConverter {
             isbnOrProductNumber = order.isbnOrProductNumber,
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
             organisation = order.organisation?.name,
-            orderThroughPlatform = order.isThroughPlatform,
             orderSource = order.orderSource.name,
             currency = order.currency,
             fxRateToGbp = order.fxRateToGbp
@@ -38,7 +37,6 @@ object OrderDocumentConverter {
             isbnOrProductNumber = document.isbnOrProductNumber,
             items = document.items?.map { OrderItemDocumentConverter.toOrderItem(it, document) } ?: emptyList(),
             organisation = document.organisation?.let { OrderOrganisation(name = it) },
-            isThroughPlatform = document.orderThroughPlatform,
             orderSource = convertOrderSource(document),
             currency = document.currency,
             fxRateToGbp = document.fxRateToGbp

@@ -1,5 +1,6 @@
 package com.boclips.orders.application.orders.converters.csv
 
+import com.boclips.eventbus.events.order.OrderSource
 import com.boclips.eventbus.events.order.OrderStatus
 import com.boclips.orders.application.orders.exceptions.IncompleteUserData
 import com.boclips.orders.domain.model.OrderUser
@@ -65,7 +66,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.status.toString()).isEqualTo(OrderStatus.INCOMPLETED.toString())
         assertThat(convertedOrder.createdAt).isNotNull()
         assertThat(convertedOrder.updatedAt).isNotNull()
-        assertThat(convertedOrder.isThroughPlatform).isTrue()
+        assertThat(convertedOrder.orderSource.toString()).isEqualTo(OrderSource.BOCLIPS.toString())
         assertThat(convertedOrder.isbnOrProductNumber).isNull()
         assertThat(convertedOrder.fxRateToGbp).isNull()
     }

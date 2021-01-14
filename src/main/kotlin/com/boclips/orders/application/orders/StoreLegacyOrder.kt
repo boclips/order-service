@@ -70,7 +70,6 @@ class StoreLegacyOrder(
             status = OrderStatusConverter.from(event.order.status),
             items = event.orderItems.map { convertLegacyItem(it) },
             organisation = OrderOrganisation(name = event.authorisingUser.organisation.name),
-            isThroughPlatform = true,
             orderSource = OrderSource.LEGACY,
             currency = null,
             fxRateToGbp = null

@@ -18,7 +18,6 @@ data class OrderDocument(
     val items: List<OrderItemDocument>?,
     val organisation: String? = null,
     val currency: Currency?,
-    val orderThroughPlatform: Boolean,
     val orderSource: String,
     val fxRateToGbp: BigDecimal?
 )

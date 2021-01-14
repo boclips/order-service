@@ -1,6 +1,7 @@
 package com.boclips.orders.presentation.orders
 
 import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderSource
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -48,7 +49,7 @@ data class OrderResource(
                     value = order.totalPrice,
                     currency = order.currency
                 ),
-                throughPlatform = order.isThroughPlatform,
+                throughPlatform = order.orderSource == OrderSource.LEGACY,
                 _links = resourceLink(order.id.value).map { it.rel to it }.toMap()
             )
 

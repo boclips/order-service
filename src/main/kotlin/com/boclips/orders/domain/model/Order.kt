@@ -18,7 +18,6 @@ class Order(
     val updatedAt: Instant,
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
-    val isThroughPlatform: Boolean,
     val orderSource: OrderSource,
     val currency: Currency?,
     val fxRateToGbp: BigDecimal?,
@@ -63,7 +62,6 @@ class Order(
         if (updatedAt != other.updatedAt) return false
         if (createdAt != other.createdAt) return false
         if (isbnOrProductNumber != other.isbnOrProductNumber) return false
-        if (isThroughPlatform != other.isThroughPlatform) return false
         if (currency != other.currency) return false
         if (fxRateToGbp != other.fxRateToGbp) return false
         if (orderItems != other.orderItems) return false
@@ -81,7 +79,6 @@ class Order(
         result = 31 * result + updatedAt.hashCode()
         result = 31 * result + createdAt.hashCode()
         result = 31 * result + (isbnOrProductNumber?.hashCode() ?: 0)
-        result = 31 * result + isThroughPlatform.hashCode()
         result = 31 * result + (currency?.hashCode() ?: 0)
         result = 31 * result + (fxRateToGbp?.hashCode() ?: 0)
         result = 31 * result + orderItems.hashCode()
@@ -96,7 +93,6 @@ class Order(
         private lateinit var items: List<OrderItem>
 
         private var legacyOrderId: String? = null
-        private var isThroughPlatform: Boolean = true
         private var orderSource: OrderSource? = null
         private var authorisingUser: OrderUser? = null
         private var organisation: OrderOrganisation? = null
@@ -114,8 +110,6 @@ class Order(
         fun isbnOrProductNumber(isbnOrProductNumber: String?) = apply { this.isbnOrProductNumber = isbnOrProductNumber }
         fun items(items: List<OrderItem>) = apply { this.items = items }
 
-        fun isThroughPlatform(orderThroughPlatform: Boolean) =
-            apply { this.isThroughPlatform = orderThroughPlatform }
         fun orderSource(orderSource: OrderSource?) = apply { this.orderSource = orderSource }
         fun currency(currency: Currency?) = apply { this.currency = currency }
         fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
@@ -132,7 +126,6 @@ class Order(
                 updatedAt = updatedAt,
                 createdAt = createdAt,
                 isbnOrProductNumber = isbnOrProductNumber,
-                isThroughPlatform = isThroughPlatform,
                 orderSource = orderSource!!,
                 items = items,
                 currency = currency,

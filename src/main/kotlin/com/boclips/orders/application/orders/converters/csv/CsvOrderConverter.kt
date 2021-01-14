@@ -56,7 +56,6 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     firstOrderItem.orderThroughPlatform,
                     {
                         val isThroughPlatform = it.parseBoolean()
-                        orderBuilder.isThroughPlatform(isThroughPlatform)
                         orderBuilder.orderSource(if (isThroughPlatform) OrderSource.LEGACY else OrderSource.MANUAL)
                     },
                     "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"

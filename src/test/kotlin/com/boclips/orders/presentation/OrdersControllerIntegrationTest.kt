@@ -255,6 +255,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     ),
                     orderOrganisation = OrderOrganisation(name = "An Org"),
                     status = OrderStatus.INCOMPLETED,
+                    orderSource = com.boclips.orders.domain.model.OrderSource.BOCLIPS,
                     createdAt = Instant.EPOCH,
                     updatedAt = Instant.EPOCH.plusMillis(1),
                     currency = Currency.getInstance("EUR"),
@@ -284,8 +285,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 )
                             )
                         )
-                    ),
-                    isThroughPlatform = false
+                    )
                 )
             )
 
@@ -909,7 +909,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists())
                 .andExpect(jsonPath("$.totalPrice.currency", equalTo("GBP")))
-                .andExpect(jsonPath("$.throughPlatform", equalTo(true)))
+                .andExpect(jsonPath("$.throughPlatform", equalTo(false)))
 
             val events = eventBus.getEventsOfType(OrderCreated::class.java)
             assertThat(events).hasSize(1)
