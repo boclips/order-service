@@ -1,5 +1,6 @@
 package com.boclips.orders.infrastructure.orders.converters
 
+import com.boclips.orders.domain.exceptions.IllegalOrderStateException
 import com.boclips.orders.domain.model.*
 import com.boclips.orders.infrastructure.orders.OrderDocument
 import mu.KLogging
@@ -19,7 +20,7 @@ object OrderDocumentConverter {
             items = order.items.map(OrderItemDocumentConverter::toOrderItemDocument),
             organisation = order.organisation?.name,
             orderThroughPlatform = order.isThroughPlatform,
-            orderSource = order.orderSource?.name,
+            orderSource = order.orderSource.name,
             currency = order.currency,
             fxRateToGbp = order.fxRateToGbp
         )
@@ -44,11 +45,11 @@ object OrderDocumentConverter {
         )
     }
 
-    private fun convertOrderSource(document: OrderDocument): OrderSource? = try {
-        document.orderSource?.let { OrderSource.valueOf(it) }
+    private fun convertOrderSource(document: OrderDocument): OrderSource = try {
+        document.orderSource.let { OrderSource.valueOf(it) }
     } catch (e: IllegalArgumentException) {
-        KLogging().logger.error { "Illegal orderSource value ${document.orderSource} when converting from orderDocument of id ${document.id}" }
-        null
+        KLogging().logger.error { "Illegal orderSource value ${document.orderSource} when converting from orderDocument of id ${document.id.toHexString()}" }
+        throw IllegalOrderStateException(OrderId(document.id.toHexString()), "Illegal orderSource value: '${document.orderSource}'")
     }
 
     private fun convertOrderStatus(document: OrderDocument): OrderStatus {

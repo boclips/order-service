@@ -1,10 +1,12 @@
 package com.boclips.orders.infrastructure.orders.converters
 
+import com.boclips.orders.domain.exceptions.IllegalOrderStateException
 import com.boclips.orders.domain.model.OrderStatus
 import com.boclips.orders.infrastructure.orders.OrderDocument
 import org.assertj.core.api.Assertions.assertThat
 import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import testsupport.OrderFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
@@ -22,13 +24,14 @@ class OrderDocumentConverterTest {
     }
 
     @Test
-    fun `order source can be missing - until we update the old orders`() {
-        val originalOrder = OrderFactory.order(orderSource = null)
+    fun `illegal order source in order document throws exception`() {
+        val document = OrderFactory.orderDocument(orderSource = "dibi dub dub")
 
-        val document = OrderDocumentConverter.toOrderDocument(originalOrder)
-        val reconvertedOrder = OrderDocumentConverter.toOrder(document)
-
-        assertThat(reconvertedOrder.orderSource).isEqualTo(null)
+        val exception = assertThrows<IllegalOrderStateException> {
+            OrderDocumentConverter.toOrder(document)
+        }
+        assertThat(exception.message).contains(document.id.toHexString())
+        assertThat(exception.message).contains("Illegal orderSource value: 'dibi dub dub'")
     }
 
     @Test
@@ -47,7 +50,7 @@ class OrderDocumentConverterTest {
                 items = null,
                 organisation = "",
                 orderThroughPlatform = true,
-                orderSource = null,
+                orderSource = "BOCLIPS",
                 currency = null,
                 fxRateToGbp = null
             ).let(OrderDocumentConverter::toOrder).items

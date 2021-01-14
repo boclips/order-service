@@ -19,7 +19,7 @@ class Order(
     val createdAt: Instant,
     val isbnOrProductNumber: String?,
     val isThroughPlatform: Boolean,
-    val orderSource: OrderSource?,
+    val orderSource: OrderSource,
     val currency: Currency?,
     val fxRateToGbp: BigDecimal?,
     items: Iterable<OrderItem>
@@ -133,7 +133,7 @@ class Order(
                 createdAt = createdAt,
                 isbnOrProductNumber = isbnOrProductNumber,
                 isThroughPlatform = isThroughPlatform,
-                orderSource = orderSource,
+                orderSource = orderSource!!,
                 items = items,
                 currency = currency,
                 fxRateToGbp = fxRateToGbp

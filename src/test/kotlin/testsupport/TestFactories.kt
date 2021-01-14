@@ -423,7 +423,7 @@ object OrderFactory {
         isbnOrProductNumber: String = "some-isbn",
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         isThroughPlatform: Boolean = true,
-        orderSource: OrderSource? = null,
+        orderSource: OrderSource = OrderSource.LEGACY,
         currency: Currency? = items.firstOrNull()?.price?.currency,
         fxRateToGbp: BigDecimal? = null
     ): Order {
@@ -458,7 +458,7 @@ object OrderFactory {
         organisation: String? = null,
         currency: Currency? = null,
         orderThroughPlatform: Boolean = true,
-        orderSource: String? = null,
+        orderSource: String = "LEGACY",
         fxRateToGbp: BigDecimal? = null
     ): OrderDocument {
         return OrderDocument(
