@@ -15,6 +15,7 @@ import com.boclips.orders.presentation.UpdateOrderRequest
 import com.boclips.orders.presentation.UpdateOrderStatusRequest
 import com.boclips.orders.presentation.orders.OrderResource
 import org.springframework.stereotype.Component
+import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Currency
@@ -39,6 +40,9 @@ class UpdateOrder(
             },
             updateOrderRequest?.status?.let {
                 getStatusUpdate(it, orderId)
+            },
+            updateOrderRequest?.status?.let {
+                getDeliveryDateUpdate(orderId, it)
             }
         )
 
@@ -100,16 +104,23 @@ class UpdateOrder(
     private fun getStatusUpdate(
         it: UpdateOrderStatusRequest,
         orderId: OrderId
-    ): OrderUpdateCommand.ReplaceStatus {
+    ) = OrderUpdateCommand.ReplaceStatus(
+        orderId = orderId,
+        orderStatus = when (it) {
+            UpdateOrderStatusRequest.DELIVERED -> OrderStatus.DELIVERED
+            UpdateOrderStatusRequest.READY -> OrderStatus.READY
+        }
+    )
 
-        return OrderUpdateCommand.ReplaceStatus(
-            orderId = orderId,
-            orderStatus = when (it) {
-                UpdateOrderStatusRequest.DELIVERED -> OrderStatus.DELIVERED
-                UpdateOrderStatusRequest.READY -> OrderStatus.READY
-            }
-        )
-    }
+    private fun getDeliveryDateUpdate(
+        orderId: OrderId,
+        it: UpdateOrderStatusRequest
+    ) = OrderUpdateCommand.ReplaceDeliveryDate(
+        orderId = orderId, deliveryDate = when (it) {
+            UpdateOrderStatusRequest.DELIVERED -> Instant.now()
+            UpdateOrderStatusRequest.READY -> null
+        }
+    )
 }
 
 

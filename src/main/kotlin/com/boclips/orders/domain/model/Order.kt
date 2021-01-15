@@ -17,6 +17,7 @@ class Order(
     val organisation: OrderOrganisation?,
     val updatedAt: Instant,
     val createdAt: Instant,
+    val deliveryDate: Instant? = null,
     val isbnOrProductNumber: String?,
     val orderSource: OrderSource,
     val currency: Currency?,
@@ -61,6 +62,7 @@ class Order(
         if (organisation != other.organisation) return false
         if (updatedAt != other.updatedAt) return false
         if (createdAt != other.createdAt) return false
+        if (deliveryDate != other.deliveryDate) return false
         if (isbnOrProductNumber != other.isbnOrProductNumber) return false
         if (currency != other.currency) return false
         if (fxRateToGbp != other.fxRateToGbp) return false
@@ -78,6 +80,7 @@ class Order(
         result = 31 * result + (organisation?.hashCode() ?: 0)
         result = 31 * result + updatedAt.hashCode()
         result = 31 * result + createdAt.hashCode()
+        result = 31 * result + deliveryDate.hashCode()
         result = 31 * result + (isbnOrProductNumber?.hashCode() ?: 0)
         result = 31 * result + (currency?.hashCode() ?: 0)
         result = 31 * result + (fxRateToGbp?.hashCode() ?: 0)

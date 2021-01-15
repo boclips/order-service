@@ -66,6 +66,7 @@ class StoreLegacyOrder(
             updatedAt = event.order.dateUpdated.toInstant(),
             requestingUser = convertLegacyUser(event.requestingUser),
             authorisingUser = convertLegacyUser(event.authorisingUser),
+            deliveryDate = null,
             isbnOrProductNumber = event.order.extraFields.isbnOrProductNumber,
             status = OrderStatusConverter.from(event.order.status),
             items = event.orderItems.map { convertLegacyItem(it) },

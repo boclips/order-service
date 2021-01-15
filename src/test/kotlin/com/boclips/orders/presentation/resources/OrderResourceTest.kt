@@ -55,6 +55,7 @@ class OrderResourceTest {
                 status = OrderStatus.READY,
                 updatedAt = Instant.ofEpochSecond(100),
                 createdAt = Instant.ofEpochSecond(100),
+                deliveryDate = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),
                 orderSource = OrderSource.LEGACY,
                 items = listOf(
@@ -106,6 +107,7 @@ class OrderResourceTest {
                 status = OrderStatusResource.READY,
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
+                deliveryDate = Instant.ofEpochSecond(100).toString(),
                 totalPrice = PriceResource(
                     value = BigDecimalWith2DP.ONE,
                     currency = Currency.getInstance("EUR")

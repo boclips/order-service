@@ -170,6 +170,25 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updates delivery date of order`() {
+        val startOfTest = Instant.now().minusMillis(100)
+        val order = OrderFactory.order(deliveryDate = null)
+        ordersRepository.save(order = order)
+        ordersRepository.update(OrderUpdateCommand.ReplaceDeliveryDate(orderId = order.id, deliveryDate = Instant.now()))
+
+        assertThat(ordersRepository.findOne(order.id)!!.deliveryDate).isAfter(startOfTest)
+    }
+
+    @Test
+    fun `updates delivery date with null`() {
+        val order = OrderFactory.order(deliveryDate = Instant.now())
+        ordersRepository.save(order = order)
+        ordersRepository.update(OrderUpdateCommand.ReplaceDeliveryDate(orderId = order.id, deliveryDate = null))
+
+        assertThat(ordersRepository.findOne(order.id)!!.deliveryDate).isNull()
+    }
+
+    @Test
     fun `throws when updating a non existent order`() {
         assertThrows<OrderNotFoundException> {
             ordersRepository.update(

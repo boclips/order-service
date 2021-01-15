@@ -14,6 +14,7 @@ data class OrderDocument(
     val requestingUser: OrderUserDocument,
     val updatedAt: Instant,
     val createdAt: Instant,
+    val deliveryDate: Instant? = null,
     val isbnOrProductNumber: String?,
     val items: List<OrderItemDocument>?,
     val organisation: String? = null,

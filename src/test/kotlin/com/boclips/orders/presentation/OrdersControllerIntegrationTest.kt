@@ -676,6 +676,66 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `when order status is updated to delivered delivery date is set`() {
+            val order = ordersRepository.save(
+                OrderFactory.order(
+                    orderOrganisation = OrderOrganisation("org1"),
+                    currency = Currency.getInstance("USD"),
+                    status = OrderStatus.READY,
+                    deliveryDate = null
+                )
+            )
+
+            mockMvc.perform(
+                (
+                    patch("/v1/orders/{id}", order.id.value)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                {
+                    "status": "DELIVERED"
+                }
+                            """.trimIndent()
+                        ).asHQStaff()
+                    )
+            )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.status", equalTo("DELIVERED")))
+                .andExpect(jsonPath("$.deliveryDate").exists())
+        }
+
+        @Test
+        fun `when order status is updated to ready delivery date is set to null`() {
+            val order = ordersRepository.save(
+                OrderFactory.order(
+                    orderOrganisation = OrderOrganisation("org1"),
+                    currency = Currency.getInstance("USD"),
+                    status = OrderStatus.DELIVERED,
+                    deliveryDate = Instant.now()
+                )
+            )
+
+            mockMvc.perform(
+                (
+                    patch("/v1/orders/{id}", order.id.value)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                {
+                    "status": "READY"
+                }
+                            """.trimIndent()
+                        ).asHQStaff()
+                    )
+            )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.deliveryDate", nullValue()))
+                .andExpect(jsonPath("$.status", equalTo("READY")))
+        }
+
+        @Test
         fun `cannot update the status of an unready order`() {
             val order = ordersRepository.save(
                 OrderFactory.order(
