@@ -413,7 +413,7 @@ object OrderFactory {
     fun cancelledOrder() = order(status = OrderStatus.CANCELLED)
     fun order(
         id: OrderId = OrderId(value = aValidId()),
-        legacyOrderId: String = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
+        legacyOrderId: String? = "deadb33f-f33df00d-d00fb3ad-c00bfeed",
         requestingUser: OrderUser = completeOrderUser(),
         authorisingUser: OrderUser = completeOrderUser(),
         status: OrderStatus = OrderStatus.READY,
@@ -579,7 +579,7 @@ object ManifestFactory {
         fxRate: BigDecimal? = BigDecimal.TEN,
         orderStatus: OrderStatus = OrderStatus.READY
     ) = ManifestItem(
-        legacyOrderId = legacyOrderId,
+        orderId = legacyOrderId,
         video = video,
         license = license,
         orderDate = orderDate,

@@ -244,7 +244,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
 
         eventBus.publish(
             TestFactories.legacyOrderSubmitted(
-                legacyOrder = TestFactories.legacyOrder(id = order.legacyOrderId, status = "CANCELLED"),
+                legacyOrder = TestFactories.legacyOrder(id = order.legacyOrderId!!, status = "CANCELLED"),
                 legacyOrderItems = items,
                 authorisingUser = genericUser,
                 requestingUser = genericUser

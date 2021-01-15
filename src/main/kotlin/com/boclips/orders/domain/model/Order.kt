@@ -10,7 +10,7 @@ import java.util.*
 
 class Order(
     val id: OrderId,
-    val legacyOrderId: String,
+    val legacyOrderId: String?,
     val status: OrderStatus,
     val authorisingUser: OrderUser?,
     val requestingUser: OrderUser,
@@ -115,10 +115,9 @@ class Order(
         fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
 
         fun build(): Order {
-            val id = OrderId(ObjectId().toHexString())
             return Order(
-                id = id,
-                legacyOrderId = legacyOrderId ?: id.value,
+                id = OrderId(ObjectId().toHexString()),
+                legacyOrderId = legacyOrderId,
                 status = status,
                 authorisingUser = authorisingUser,
                 requestingUser = requestingUser,

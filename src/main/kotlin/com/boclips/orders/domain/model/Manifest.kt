@@ -10,7 +10,7 @@ data class Manifest(
 )
 
 data class ManifestItem(
-    val legacyOrderId: String,
+    val orderId: String,
     val video: Video,
     val orderDate: LocalDate,
     val license: OrderItemLicense?,

@@ -24,13 +24,19 @@ class OrderService(
     companion object : KLogging()
 
     fun createIfNonExistent(order: Order): Order {
-        var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId)
+        var retrievedOrder = ordersRepository.findOneByLegacyId(order.legacyOrderId!!)
         if (retrievedOrder == null) {
             retrievedOrder = ordersRepository.save(order)
                 .let { requestCaptions(it) }
         }
 
         return syncStatus(retrievedOrder)
+    }
+
+    fun create(order: Order): Order {
+        return ordersRepository.save(order)
+            .also { requestCaptions(it) }
+            .also { syncStatus(it) }
     }
 
     fun exportManifest(fxRatesAgainstPound: Map<Currency, BigDecimal>): Manifest = ordersRepository.findAll()
@@ -41,7 +47,6 @@ class OrderService(
             }
         }
         .let { manifestConverter.toManifest(fxRatesAgainstPound, *it.toTypedArray()) }
-
 
     fun bulkUpdate(commands: List<OrderUpdateCommand>): List<Order> {
         return commands.map { update(it) }
@@ -113,16 +118,16 @@ class OrderService(
         order.status == OrderStatus.DELIVERED
 
     private fun orderIsReady(order: Order) =
-        order.currency != null
-            && order.items.all { it.status == OrderItemStatus.READY }
+        order.currency != null &&
+            order.items.all { it.status == OrderItemStatus.READY }
 
     private fun orderIsIncomplete(order: Order) =
-        order.currency == null
-            || order.items.any { it.status == OrderItemStatus.INCOMPLETED }
+        order.currency == null ||
+            order.items.any { it.status == OrderItemStatus.INCOMPLETED }
 
     private fun orderIsInProgress(order: Order) =
-        order.currency != null
-            && order.items.any { it.status == OrderItemStatus.IN_PROGRESS }
+        order.currency != null &&
+            order.items.any { it.status == OrderItemStatus.IN_PROGRESS }
 
     private fun requestCaptions(order: Order): Order {
         val updateCommands =

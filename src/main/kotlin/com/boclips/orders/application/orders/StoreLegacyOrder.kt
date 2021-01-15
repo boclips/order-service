@@ -33,7 +33,7 @@ class StoreLegacyOrder(
             val order = convertLegacyOrder(event)
 
             // Ideally update and create would be two different events so we wouldn't have to distinguish them here
-            val foundOrder = repo.findOneByLegacyId(order.legacyOrderId)
+            val foundOrder = repo.findOneByLegacyId(order.legacyOrderId!!)
             if (foundOrder != null) {
                 orderService.update(
                     OrderUpdateCommand.ReplaceStatus(orderId = foundOrder.id, orderStatus = order.status)

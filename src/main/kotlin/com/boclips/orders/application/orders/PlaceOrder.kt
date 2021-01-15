@@ -17,7 +17,7 @@ class PlaceOrder(
 ) {
     operator fun invoke(orderRequest: PlaceOrderRequest): Order {
         val ordersResult = orderConverter.toOrder(orderRequest)
-        return orderService.createIfNonExistent(ordersResult)
+        return orderService.create(ordersResult)
             .also { cartsRepository.update(CartUpdateCommand.EmptyCart(UserId(orderRequest.user.id))) }
     }
 }

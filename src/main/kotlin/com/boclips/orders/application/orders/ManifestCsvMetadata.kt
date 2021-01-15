@@ -66,7 +66,7 @@ data class ManifestCsvMetadata(
 
         fun from(manifestItem: ManifestItem): ManifestCsvMetadata = manifestItem.let {
             ManifestCsvMetadata(
-                orderId = it.legacyOrderId,
+                orderId = it.orderId,
                 contentPartner = it.video.channel.name,
                 orderDate = it.orderDate.toString(),
                 boclipsId = it.video.videoServiceId.value,

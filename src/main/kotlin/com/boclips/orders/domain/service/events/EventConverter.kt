@@ -15,7 +15,7 @@ class EventConverter {
     fun convertOrder(order: Order): EventOrder {
         return EventOrder.builder()
             .id(order.id.value)
-            .legacyOrderId(order.legacyOrderId)
+            .legacyOrderId(order.legacyOrderId ?: order.id.value)
             .status(convertOrderStatus(order.status))
             .createdAt(order.createdAt.atZone(ZoneOffset.UTC))
             .updatedAt(order.updatedAt.atZone(ZoneOffset.UTC))
