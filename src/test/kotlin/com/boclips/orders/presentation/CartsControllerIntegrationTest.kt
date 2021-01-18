@@ -202,6 +202,29 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
+        fun `can can set additional services trim to null`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
+
+            mockMvc.perform(
+                patch("/v1/cart/items/${cartItemId.id}").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim" : null
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim", equalTo(null)))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
         fun `get 404 when updating a missing cart item`() {
             val userId = "publishers-user-id"
 
