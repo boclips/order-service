@@ -26,6 +26,7 @@ class EventConverter {
                     .priceGbp(getItemPriceInGbp(item.price, order))
                     .build()
             })
+            .deliveryDate(order.deliveryDate?.atZone((ZoneOffset.UTC)))
             .authorisingUser(order.authorisingUser?.let(::convertOrderUser))
             .requestingUser(order.requestingUser.let(::convertOrderUser))
             .currency(order.currency)
