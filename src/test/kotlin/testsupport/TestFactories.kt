@@ -564,7 +564,7 @@ object CartFactory {
     fun cartItem(
         id: String = "cart-item-id",
         videoId: String = "video-id",
-        additionalServices: AdditionalServices = AdditionalServices(TrimService("0:00", "12:00"))
+        additionalServices: AdditionalServices? = AdditionalServices(TrimService("0:00", "12:00"))
     ) = CartItem(id = id, videoId = VideoId(videoId), additionalServices = additionalServices)
 }
 

@@ -219,8 +219,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asPublisher(userId)
             ).andExpect(status().is2xxSuccessful)
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
-                .andExpect(jsonPath("$.items[0].additionalServices").exists())
-                .andExpect(jsonPath("$.items[0].additionalServices.trim", equalTo(null)))
+                .andExpect(jsonPath("$.items[0].additionalServices", equalTo(null)))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 

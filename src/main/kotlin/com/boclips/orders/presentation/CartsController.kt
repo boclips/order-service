@@ -6,6 +6,7 @@ import com.boclips.orders.application.cart.GetOrCreateCart
 import com.boclips.orders.application.cart.UpdateCartItemAdditionalServices
 import com.boclips.orders.presentation.carts.CartItemResource
 import com.boclips.orders.presentation.carts.CartResource
+import com.boclips.orders.presentation.converters.CartToResourceConverter
 import com.boclips.orders.presentation.hateos.CartsLinkBuilder
 import com.boclips.security.utils.UserExtractor
 import org.springframework.hateoas.EntityModel
@@ -34,7 +35,7 @@ class CartsController(
         val userId = UserExtractor.getCurrentUser()?.id
 
         return try {
-            val resource = CartResource.fromCart(getOrCreateCart(userId!!))
+            val resource = CartToResourceConverter.convert(getOrCreateCart(userId!!))
             ResponseEntity.ok(
                 EntityModel(
                     resource,
@@ -56,7 +57,7 @@ class CartsController(
             val newItem = addItemToCart(createCartItem!!.videoId, userId!!)
             ResponseEntity
                 .created(CartsLinkBuilder.cartItemLink(newItem.id)!!.toUri())
-                .body(CartItemResource.fromCartItem(newItem))
+                .body(CartToResourceConverter.convertCartItem(newItem))
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
         }
@@ -73,7 +74,7 @@ class CartsController(
             additionalServices = additionalServicesRequest!!
         )
 
-        val resource = updatedCart?.let { CartResource.fromCart(it) }
+        val resource = updatedCart?.let { CartToResourceConverter.convert(it) }
 
         return ResponseEntity.ok(
             EntityModel(

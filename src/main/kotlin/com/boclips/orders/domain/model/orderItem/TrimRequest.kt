@@ -8,7 +8,7 @@ sealed class TrimRequest {
 
     companion object {
         fun fromTrimServiceRequest(trimServiceRequest: TrimServiceRequest?) =
-            trimServiceRequest?.let { it -> TrimRequest.WithTrimming(label = "${it.from} - ${it.to}") }
-                ?: TrimRequest.NoTrimming
+            trimServiceRequest?.let { it -> WithTrimming(label = "${it.from} - ${it.to}") }
+                ?: NoTrimming
     }
 }
