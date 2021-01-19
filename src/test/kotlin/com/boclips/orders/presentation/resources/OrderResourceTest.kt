@@ -65,7 +65,7 @@ class OrderResourceTest {
                             amount = BigDecimal.valueOf(1),
                             currency = Currency.getInstance("EUR")
                         ),
-                        transcriptRequested = false,
+                        captionsRequested = false,
                         trim = TrimRequest.WithTrimming("blah"),
                         video = TestFactories.video(
                             videoServiceId = "video-id",
@@ -120,6 +120,7 @@ class OrderResourceTest {
                             currency = Currency.getInstance("EUR")
                         ),
                         transcriptRequested = false,
+                        captionsRequested = false,
                         channel = ChannelResource(
                             id = "paper",
                             name = "cup",

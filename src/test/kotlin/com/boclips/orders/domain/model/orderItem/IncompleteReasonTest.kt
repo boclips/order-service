@@ -39,7 +39,7 @@ class IncompleteReasonTest {
     @Test
     fun `order item is incomplete when missing caption`() {
         val orderWithRequestedButUnavailableCaptions = OrderFactory.orderItem(
-            transcriptRequested = true,
+            captionsRequested = true,
             video = TestFactories.video(
                 captionStatus = AssetStatus.UNAVAILABLE
             )

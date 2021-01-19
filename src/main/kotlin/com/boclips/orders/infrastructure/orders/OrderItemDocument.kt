@@ -6,6 +6,7 @@ data class OrderItemDocument(
     val id: String,
     val price: BigDecimal?,
     val transcriptRequested: Boolean,
+    val captionsRequested: Boolean,
     val trim: String?,
     val video: VideoDocument,
     val source: SourceDocument,

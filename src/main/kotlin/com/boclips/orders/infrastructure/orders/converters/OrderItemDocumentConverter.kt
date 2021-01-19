@@ -24,6 +24,7 @@ object OrderItemDocumentConverter {
         return OrderItemDocument(
             price = it.price.amount,
             transcriptRequested = it.transcriptRequested,
+            captionsRequested = it.captionsRequested,
             source = SourceDocument(
                 channel = ChannelDocument(
                     videoServiceChannelId = it.video.channel.videoServiceId.value,
@@ -77,6 +78,7 @@ object OrderItemDocumentConverter {
             id = document.id,
             price = Price(document.price, orderDocument.currency),
             transcriptRequested = document.transcriptRequested,
+            captionsRequested = document.transcriptRequested,
 
             trim = document.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(

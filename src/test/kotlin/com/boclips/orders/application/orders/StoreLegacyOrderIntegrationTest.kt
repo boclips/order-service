@@ -145,6 +145,7 @@ class StoreLegacyOrderIntegrationTest : AbstractSpringIntegrationTest() {
         val item = order.items.first()
         assertThat(item.price.amount).isNull()
         assertThat(item.transcriptRequested).isEqualTo(true)
+        assertThat(item.captionsRequested).isEqualTo(true)
         assertThat(item.trim).isEqualTo(TrimRequest.WithTrimming("40 - 100"))
         assertThat(item.license?.duration).isNull()
         assertThat(item.license?.territory).isNull()

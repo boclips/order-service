@@ -110,7 +110,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
             .takeIf { validator.errors.isEmpty() }
             ?.run {
                 price(csvItem.price.parsePrice())
-                    .transcriptRequested(csvItem.captioning.parseBoolean())
+                    .captionsRequested(csvItem.captioning.parseBoolean())
                     .trim(csvItem.trim.parseTrimRequest())
                     .license(orderItemLicenseBuilder.build())
                     .notes(csvItem.notes?.takeIf { it.isNotBlank() })

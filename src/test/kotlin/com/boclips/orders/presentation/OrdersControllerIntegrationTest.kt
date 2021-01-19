@@ -94,7 +94,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 amount = BigDecimal.valueOf(1),
                                 currency = Currency.getInstance("EUR")
                             ),
-                            transcriptRequested = true,
+                            captionsRequested = true,
                             trim = TrimRequest.WithTrimming("4 - 10"),
                             video = TestFactories.video(
                                 videoServiceId = "1234",
@@ -118,7 +118,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 amount = BigDecimal.valueOf(10),
                                 currency = Currency.getInstance("EUR")
                             ),
-                            transcriptRequested = false,
+                            captionsRequested = false,
                             video = TestFactories.video(
                                 channel = TestFactories.channel()
                             )
@@ -170,6 +170,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("EUR 1.00")))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$._embedded.orders[0].items[0].captionsRequested", equalTo(true)))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseDuration", equalTo("10 Years")))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseTerritory", equalTo("Single Region")))
@@ -190,6 +191,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
                 .andExpect(jsonPath("$._embedded.orders[0].items[1].price.displayValue", equalTo("EUR 10.00")))
                 .andExpect(jsonPath("$._embedded.orders[0].items[1].transcriptRequested", equalTo(false)))
+                .andExpect(jsonPath("$._embedded.orders[0].items[1].captionsRequested", equalTo(false)))
         }
 
         @Test
@@ -266,7 +268,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 amount = BigDecimal.valueOf(1),
                                 currency = Currency.getInstance("EUR")
                             ),
-                            transcriptRequested = true,
+                            captionsRequested = true,
                             trim = TrimRequest.NoTrimming,
                             license = OrderFactory.orderItemLicense(
                                 duration = Duration.Time(10, ChronoUnit.YEARS),
@@ -307,6 +309,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
                 .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("EUR 1.00")))
                 .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(true)))
                 .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
                 .andExpect(jsonPath("$.items[0].video.title", equalTo("A Video")))
@@ -949,6 +952,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].licenseTerritory", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("GBP 600.00")))
                 .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(false)))
+                .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(false)))
                 .andExpect(jsonPath("$.items[0].video.title", equalTo("hippos are cool")))
                 .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
                 .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://great-vids.com")))

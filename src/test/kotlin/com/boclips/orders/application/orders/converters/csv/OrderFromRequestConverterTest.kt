@@ -52,6 +52,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.items.first().id).isEqualTo("item-id")
         assertThat(convertedOrder.items.first().video.videoServiceId.value).isEqualTo("video-service-id")
         assertThat(convertedOrder.items.first().transcriptRequested).isFalse()
+        assertThat(convertedOrder.items.first().captionsRequested).isFalse()
         assertThat(convertedOrder.items.first().trim).isEqualTo(TrimRequest.NoTrimming)
         assertThat(convertedOrder.items.first().notes).isNull()
 

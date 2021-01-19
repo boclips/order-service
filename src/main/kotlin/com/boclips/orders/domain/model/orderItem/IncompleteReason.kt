@@ -4,7 +4,7 @@ enum class IncompleteReason {
 
     CAPTIONS_UNAVAILABLE {
         override fun check(orderItem: OrderItem): Boolean {
-            return orderItem.video.captionStatus == AssetStatus.UNAVAILABLE && orderItem.transcriptRequested
+            return orderItem.video.captionStatus == AssetStatus.UNAVAILABLE && orderItem.captionsRequested
         }
     },
     PRICE_UNAVAILABLE {

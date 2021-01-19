@@ -132,7 +132,7 @@ class OrderService(
     private fun requestCaptions(order: Order): Order {
         val updateCommands =
             order.items
-                .filter { orderItem -> orderItem.transcriptRequested }
+                .filter { orderItem -> orderItem.captionsRequested }
                 .mapNotNull {
                     try {
                         videosClient.requestVideoCaptions(it.video.videoServiceId.value)

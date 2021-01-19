@@ -6,6 +6,7 @@ data class OrderItem(
     val id: String,
     val price: Price,
     val transcriptRequested: Boolean,
+    val captionsRequested: Boolean,
     val trim: TrimRequest,
     val video: Video,
     val license: OrderItemLicense?,
@@ -38,14 +39,14 @@ data class OrderItem(
     class Builder {
         private lateinit var id: String
         private lateinit var price: Price
-        private var transcriptRequested: Boolean = false
+        private var captionsRequested: Boolean = false
         private lateinit var trim: TrimRequest
         private lateinit var video: Video
         private var license: OrderItemLicense? = null
         private var notes: String? = null
 
         fun price(price: Price) = apply { this.price = price }
-        fun transcriptRequested(transcriptRequested: Boolean) = apply { this.transcriptRequested = transcriptRequested }
+        fun captionsRequested(captionsRequested: Boolean) = apply { this.captionsRequested = captionsRequested }
         fun trim(trim: TrimRequest) = apply { this.trim = trim }
         fun video(video: Video) = apply { this.video = video }
         fun license(license: OrderItemLicense) = apply { this.license = license }
@@ -54,7 +55,8 @@ data class OrderItem(
 
         fun build() = OrderItem(
             price = price,
-            transcriptRequested = transcriptRequested,
+            transcriptRequested = captionsRequested,
+            captionsRequested = captionsRequested,
             trim = trim,
             video = video,
             license = license,

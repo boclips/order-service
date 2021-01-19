@@ -42,7 +42,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `a created order requests captions when 'transcriptRequested' and the caption status is updated`() {
+    fun `a created order requests captions when 'captionsRequested' and the caption status is updated`() {
         val video1 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val video2 = fakeVideoClient.createVideo(VideoServiceApiFactory.createCreateVideoRequest())
         val originalOrder = OrderFactory.order(
@@ -52,13 +52,13 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                     video = TestFactories.video(videoServiceId = video1.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
                     license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK"),
-                    transcriptRequested = true
+                    captionsRequested = true
                 ),
                 OrderFactory.orderItem(
                     video = TestFactories.video(videoServiceId = video2.id!!, captionStatus = AssetStatus.UNAVAILABLE),
                     price = PriceFactory.tenDollars(),
                     license = OrderItemLicense(duration = Duration.Description("5 years"), territory = "UK"),
-                    transcriptRequested = false
+                    captionsRequested = false
                 )
             )
         )
@@ -384,7 +384,7 @@ class OrderServiceTest : AbstractSpringIntegrationTest() {
                 status = OrderStatus.IN_PROGRESS,
                 items = listOf(
                     OrderFactory.orderItem(
-                        transcriptRequested = false,
+                        captionsRequested = false,
                         video = TestFactories.video(downloadableVideoStatus = AssetStatus.UNAVAILABLE)
                     )
                 )

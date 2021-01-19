@@ -46,18 +46,22 @@ class OrderItemTest {
     inner class InProgressItems {
         @Test
         fun `order item is in progress when captions are processing`() {
-            val orderItem = OrderFactory.orderItem(video = TestFactories.video(
-                captionStatus = AssetStatus.PROCESSING
-            ))
+            val orderItem = OrderFactory.orderItem(
+                video = TestFactories.video(
+                    captionStatus = AssetStatus.PROCESSING
+                )
+            )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.IN_PROGRESS)
         }
 
         @Test
         fun `order item is in progress when captions are requested`() {
-            val orderItem = OrderFactory.orderItem(video = TestFactories.video(
-                captionStatus = AssetStatus.REQUESTED
-            ))
+            val orderItem = OrderFactory.orderItem(
+                video = TestFactories.video(
+                    captionStatus = AssetStatus.REQUESTED
+                )
+            )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.IN_PROGRESS)
         }
@@ -82,8 +86,10 @@ class OrderItemTest {
 
         @Test
         fun `order item is incomplete when downloadable video is not available`() {
-            val orderItem = OrderFactory.orderItem(video = TestFactories.video(
-                downloadableVideoStatus = AssetStatus.UNAVAILABLE)
+            val orderItem = OrderFactory.orderItem(
+                video = TestFactories.video(
+                    downloadableVideoStatus = AssetStatus.UNAVAILABLE
+                )
             )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.READY)
@@ -118,8 +124,11 @@ class OrderItemTest {
 
         @Test
         fun `order item is incomplete when missing caption`() {
-            val orderItem = OrderFactory.orderItem(transcriptRequested = true, video = TestFactories.video(
-                captionStatus = AssetStatus.UNAVAILABLE)
+            val orderItem = OrderFactory.orderItem(
+                captionsRequested = true,
+                video = TestFactories.video(
+                    captionStatus = AssetStatus.UNAVAILABLE
+                )
             )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.INCOMPLETED)
@@ -127,12 +136,14 @@ class OrderItemTest {
 
         @Test
         fun `order item is ready when missing caption but a user has not requested them`() {
-            val orderItem = OrderFactory.orderItem(transcriptRequested = false, video = TestFactories.video(
-                captionStatus = AssetStatus.UNAVAILABLE)
+            val orderItem = OrderFactory.orderItem(
+                captionsRequested = false,
+                video = TestFactories.video(
+                    captionStatus = AssetStatus.UNAVAILABLE
+                )
             )
 
             assertThat(orderItem.status).isEqualTo(OrderItemStatus.READY)
         }
     }
 }
-
