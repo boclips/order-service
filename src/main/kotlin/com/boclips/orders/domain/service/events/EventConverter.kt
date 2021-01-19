@@ -15,7 +15,7 @@ class EventConverter {
     fun convertOrder(order: Order): EventOrder {
         return EventOrder.builder()
             .id(order.id.value)
-            .legacyOrderId(order.legacyOrderId ?: order.id.value)
+            .legacyOrderId(order.legacyOrderId)
             .status(convertOrderStatus(order.status))
             .createdAt(order.createdAt.atZone(ZoneOffset.UTC))
             .updatedAt(order.updatedAt.atZone(ZoneOffset.UTC))
@@ -32,7 +32,6 @@ class EventConverter {
             .currency(order.currency)
             .isbnOrProductNumber(order.isbnOrProductNumber)
             .fxRateToGbp(order.fxRateToGbp)
-            .isThroughPlatform(order.orderSource == OrderSource.LEGACY)
             .orderSource(order.orderSource.let(::convertOrderSource))
             .build()
     }
