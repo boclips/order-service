@@ -7,7 +7,8 @@ class PlaceOrderRequest(
 
 class PlaceOrderRequestItem(
     val id: String,
-    val videoId: String
+    val videoId: String,
+    val additionalServices: AdditionalServicesRequest?
 )
 
 class PlaceOrderRequestUser(

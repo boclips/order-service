@@ -5,10 +5,12 @@ import com.boclips.eventbus.events.order.OrderStatus
 import com.boclips.orders.application.orders.exceptions.IncompleteUserData
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.orders.presentation.AdditionalServicesRequest
 import com.boclips.orders.presentation.PlaceOrderRequest
 import com.boclips.orders.presentation.PlaceOrderRequestItem
 import com.boclips.orders.presentation.PlaceOrderRequestOrganisation
 import com.boclips.orders.presentation.PlaceOrderRequestUser
+import com.boclips.orders.presentation.TrimServiceRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +44,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                 items = setOf(
                     PlaceOrderRequestItem(
                         id = "item-id",
-                        videoId = "video-service-id"
+                        videoId = "video-service-id",
+                        additionalServices = AdditionalServicesRequest(TrimServiceRequest(from = "1:00", to = "2:00"))
                     )
                 )
             )
@@ -53,7 +56,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.items.first().video.videoServiceId.value).isEqualTo("video-service-id")
         assertThat(convertedOrder.items.first().transcriptRequested).isFalse()
         assertThat(convertedOrder.items.first().captionsRequested).isFalse()
-        assertThat(convertedOrder.items.first().trim).isEqualTo(TrimRequest.NoTrimming)
+        assertThat(convertedOrder.items.first().trim).isEqualTo(TrimRequest.WithTrimming(label = "1:00 - 2:00"))
         assertThat(convertedOrder.items.first().notes).isNull()
 
         val convertedUser = (convertedOrder.authorisingUser!! as OrderUser.CompleteUser)
@@ -90,7 +93,13 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                     items = setOf(
                         PlaceOrderRequestItem(
                             id = "item-id",
-                            videoId = "video-service-id"
+                            videoId = "video-service-id",
+                            additionalServices = AdditionalServicesRequest(
+                                TrimServiceRequest(
+                                    from = "1:00",
+                                    to = "2:00"
+                                )
+                            )
                         )
                     )
                 )

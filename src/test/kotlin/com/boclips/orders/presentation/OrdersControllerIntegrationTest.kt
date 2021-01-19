@@ -199,7 +199,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             for (i in 1..6) {
                 ordersRepository.save(
                     OrderFactory.order(
-                        isbnOrProductNumber = "order-${i}",
+                        isbnOrProductNumber = "order-$i",
                         requestingUser = OrderFactory.completeOrderUser(
                             userId = "1234"
                         ),
@@ -918,15 +918,21 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                    "items":[
                                       {
                                          "id":"item-id",
-                                         "videoId":"video-service-id"
+                                         "videoId":"video-service-id",
+                                         "additionalServices": {
+                                            "trim": {
+                                                "from": "1:00",
+                                                "to": "2:00"
+                                            }
+                                         }
                                       }
                                    ],
-                                   "user":{
+                                   "user": {
                                       "id":"user-id",
                                       "email":"definitely-not-batman@wayne.com",
                                       "firstName":"Bruce",
                                       "lastName":"Wayne",
-                                      "organisation":{
+                                      "organisation": {
                                          "id":"org-id",
                                          "name":"Wayne Enterprises"
                                       }
@@ -944,7 +950,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items[0].id", equalTo("item-id")))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-service-id")))
-                .andExpect(jsonPath("$.items[0].trim", nullValue()))
+                .andExpect(jsonPath("$.items[0].trim", equalTo("1:00 - 2:00")))
                 .andExpect(jsonPath("$.items[0].notes", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.value", equalTo(600.0)))
                 .andExpect(jsonPath("$.items[0].price.currency", equalTo("GBP")))
