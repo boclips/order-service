@@ -72,6 +72,27 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updates cart note`() {
+        val userId = "publishers-user-id"
+
+        val cart = CartFactory.sample(
+            userId = userId,
+            items = listOf()
+        )
+
+        mongoCartsRepository.create(cart)
+        mongoCartsRepository.update(
+            CartUpdateCommand.UpdateNote(
+                userId = UserId(userId),
+                note = "hi there"
+            )
+        )
+
+        val updatedCart = mongoCartsRepository.findByUserId(UserId(userId))
+        assertThat(updatedCart!!.note).isEqualTo("hi there")
+    }
+
+    @Test
     fun `updates existing cart item with additional service information`() {
         val userId = "publishers-user-id"
 

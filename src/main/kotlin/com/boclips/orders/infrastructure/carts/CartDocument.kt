@@ -6,5 +6,6 @@ import org.bson.types.ObjectId
 data class CartDocument(
     @BsonId val id: ObjectId,
     val items: List<CartItemDocument>,
-    val userId: String
+    val userId: String,
+    val note: String? = null
 )

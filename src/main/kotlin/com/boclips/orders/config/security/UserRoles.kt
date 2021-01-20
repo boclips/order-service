@@ -9,5 +9,6 @@ object UserRoles {
     const val ADD_CART_ITEMS = "ADD_CART_ITEMS"
     const val DELETE_CART_ITEMS = "DELETE_CART_ITEMS"
     const val VIEW_CART = "VIEW_CART"
+    const val UPDATE_CART = "UPDATE_CART"
     const val UPDATE_CART_ITEM = "UPDATE_CART_ITEM"
 }

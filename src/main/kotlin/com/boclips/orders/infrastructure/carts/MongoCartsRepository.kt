@@ -43,6 +43,10 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
                 CartDocument::items,
                 emptyList()
             )
+            is CartUpdateCommand.UpdateNote -> set(
+                CartDocument::note,
+                cartUpdateCommand.note
+            )
         }
 
         updateBson.let {

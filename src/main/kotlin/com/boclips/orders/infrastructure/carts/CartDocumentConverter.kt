@@ -14,6 +14,7 @@ object CartDocumentConverter {
         return CartDocument(
             id = ObjectId(cart.cartId.value),
             userId = cart.userId.value,
+            note = cart.note,
             items = cart.items.map { cartItemToCartItemDocument(it) }
         )
     }
@@ -22,6 +23,7 @@ object CartDocumentConverter {
         return Cart(
             cartId = CartId(document.id.toHexString()),
             userId = UserId(document.userId),
+            note = document.note,
             items = document.items.map { cartItemDocumentToCartItem(it) }
         )
     }

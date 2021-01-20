@@ -13,6 +13,7 @@ object CartToResourceConverter {
 
     fun convert(cart: Cart): CartResource {
         return CartResource(
+            note = cart.note,
             items = cart.items.map { convertCartItem(it) }
         )
     }

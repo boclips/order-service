@@ -3,18 +3,11 @@ package com.boclips.orders.presentation
 import com.boclips.orders.domain.model.cart.UserId
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.emptyString
-import org.hamcrest.Matchers.endsWith
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasKey
-import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -171,6 +164,52 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(
                 get("/v1/cart").contentType(MediaType.APPLICATION_JSON).asPublisher(userId)
             ).andExpect(jsonPath("$.items", hasSize<Any>(1)))
+        }
+
+        @Test
+        fun `can update cart with a note`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            mockMvc
+                .perform(
+                    patch("/v1/cart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                    {
+                    "note" : "This is a note"
+                    }
+                    """.trimIndent()
+                        )
+                        .asPublisher(userId)
+                )
+                .andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.note", equalTo("This is a note")))
+        }
+
+        @Test
+        fun `can update cart with an empty note`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            mockMvc
+                .perform(
+                    patch("/v1/cart")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                    {
+                    "note" : ""
+                    }
+                    """.trimIndent()
+                        )
+                        .asPublisher(userId)
+                )
+                .andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.note", equalTo("")))
         }
 
         @Test
