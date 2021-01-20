@@ -9,16 +9,8 @@ import com.boclips.orders.domain.model.cart.UserId
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
-import org.litote.kmongo.and
-import org.litote.kmongo.colProperty
-import org.litote.kmongo.deleteMany
-import org.litote.kmongo.div
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.pull
-import org.litote.kmongo.push
-import org.litote.kmongo.set
+import org.litote.kmongo.*
+import kotlin.collections.toList
 
 const val databaseName = "order-service-db"
 
@@ -39,9 +31,9 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
                 CartDocument::items,
                 CartDocumentConverter.cartItemToCartItemDocument(cartUpdateCommand.cartItem)
             )
-            is CartUpdateCommand.EmptyCart -> set(
-                CartDocument::items,
-                emptyList()
+            is CartUpdateCommand.EmptyCart -> combine(
+                set(CartDocument::items, emptyList()),
+                set(CartDocument::note, null)
             )
             is CartUpdateCommand.UpdateNote -> set(
                 CartDocument::note,

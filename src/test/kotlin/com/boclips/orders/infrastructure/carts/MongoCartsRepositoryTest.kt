@@ -167,7 +167,7 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
     @Test
     fun `empties cart`() {
-        val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()))
+        val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()), note = "hello")
         mongoCartsRepository.create(cart)
 
         mongoCartsRepository.update(
@@ -176,7 +176,9 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
             )
         )
 
-        assertThat(mongoCartsRepository.findByUserId(UserId("publishers-user-id"))?.items).isEmpty()
+        val emptiedCart = mongoCartsRepository.findByUserId(UserId("publishers-user-id"))
+        assertThat(emptiedCart?.items).isEmpty()
+        assertThat(emptiedCart?.note).isNull()
     }
 
     @Test

@@ -553,10 +553,12 @@ object CartFactory {
     fun sample(
         cartId: CartId = CartId(ObjectId.get().toHexString()),
         userId: String = "user-id",
+        note: String? = null,
         items: List<CartItem> = emptyList()
     ): Cart =
         Cart(
             items = items,
+            note = note,
             userId = UserId(userId),
             cartId = cartId
         )
