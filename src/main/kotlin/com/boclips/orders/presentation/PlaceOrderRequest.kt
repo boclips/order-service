@@ -1,17 +1,18 @@
 package com.boclips.orders.presentation
 
-class PlaceOrderRequest(
+data class PlaceOrderRequest(
     val items: Set<PlaceOrderRequestItem>,
+    val note: String?,
     val user: PlaceOrderRequestUser
 )
 
-class PlaceOrderRequestItem(
+data class PlaceOrderRequestItem(
     val id: String,
     val videoId: String,
     val additionalServices: AdditionalServicesRequest?
 )
 
-class PlaceOrderRequestUser(
+data class PlaceOrderRequestUser(
     val id: String,
     val email: String,
     val firstName: String,
@@ -19,7 +20,7 @@ class PlaceOrderRequestUser(
     val organisation: PlaceOrderRequestOrganisation
 )
 
-class PlaceOrderRequestOrganisation(
+data class PlaceOrderRequestOrganisation(
     val id: String?,
     val name: String
 )

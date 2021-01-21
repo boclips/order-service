@@ -47,7 +47,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                         videoId = "video-service-id",
                         additionalServices = AdditionalServicesRequest(TrimServiceRequest(from = "1:00", to = "2:00"))
                     )
-                )
+                ),
+                note = "hello"
             )
         )
 
@@ -73,6 +74,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.orderSource.toString()).isEqualTo(OrderSource.BOCLIPS.toString())
         assertThat(convertedOrder.isbnOrProductNumber).isNull()
         assertThat(convertedOrder.fxRateToGbp).isNull()
+        assertThat(convertedOrder.note).isEqualTo("hello")
     }
 
     @Test
@@ -101,7 +103,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                                 )
                             )
                         )
-                    )
+                    ),
+                    note = null
                 )
             )
         }

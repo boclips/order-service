@@ -73,7 +73,8 @@ class StoreLegacyOrder(
             organisation = OrderOrganisation(name = event.authorisingUser.organisation.name),
             orderSource = OrderSource.LEGACY,
             currency = null,
-            fxRateToGbp = null
+            fxRateToGbp = null,
+            note = null
         )
 
     private fun convertLegacyUser(user: LegacyOrderUser) =

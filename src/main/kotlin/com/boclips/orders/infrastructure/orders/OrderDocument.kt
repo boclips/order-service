@@ -20,5 +20,6 @@ data class OrderDocument(
     val organisation: String? = null,
     val currency: Currency?,
     val orderSource: String,
-    val fxRateToGbp: BigDecimal?
+    val fxRateToGbp: BigDecimal?,
+    val note: String? = null
 )

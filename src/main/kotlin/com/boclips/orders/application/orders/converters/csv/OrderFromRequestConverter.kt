@@ -33,6 +33,7 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
             .orderSource(OrderSource.BOCLIPS)
             .isbnOrProductNumber(null)
             .fxRateToGbp(null)
+            .note(request.note)
             .build()
     }
 

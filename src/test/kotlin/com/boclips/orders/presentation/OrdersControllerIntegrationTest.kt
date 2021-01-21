@@ -907,7 +907,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `order is placed`() {
             defaultVideoClientResponse()
 
-            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
+            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem()), note = "hello"))
 
             val orderLocationUrl = mockMvc.perform(
                 (
@@ -916,14 +916,15 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                         .content(
                             """
                                 {
+                                   "note":"hello",
                                    "items":[
                                       {
                                          "id":"item-id",
                                          "videoId":"video-service-id",
                                          "additionalServices": {
                                             "trim": {
-                                                "from": "1:00",
-                                                "to": "2:00"
+                                                "from":"1:00",
+                                                "to":"2:00"
                                             }
                                          }
                                       }
@@ -977,6 +978,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
                 )
                 .andExpect(jsonPath("$.status", equalTo("INCOMPLETED")))
+                .andExpect(jsonPath("$.note", equalTo("hello")))
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.updatedAt").exists())
                 .andExpect(jsonPath("$.totalPrice.currency", equalTo("GBP")))

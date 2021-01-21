@@ -22,6 +22,7 @@ data class OrderResource(
     val items: List<OrderItemResource>,
     val totalPrice: PriceResource,
     val throughPlatform: Boolean,
+    val note: String?,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     var _links: Map<LinkRelation, Link>?
 ) {
@@ -52,6 +53,7 @@ data class OrderResource(
                     currency = order.currency
                 ),
                 throughPlatform = order.orderSource == OrderSource.LEGACY,
+                note = order.note,
                 _links = resourceLink(order.id.value).map { it.rel to it }.toMap()
             )
 

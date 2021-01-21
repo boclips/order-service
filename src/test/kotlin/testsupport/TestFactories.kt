@@ -427,7 +427,8 @@ object OrderFactory {
         orderOrganisation: OrderOrganisation = OrderOrganisation(name = "E Corp"),
         orderSource: OrderSource = OrderSource.LEGACY,
         currency: Currency? = items.firstOrNull()?.price?.currency,
-        fxRateToGbp: BigDecimal? = null
+        fxRateToGbp: BigDecimal? = null,
+        note: String? = "hi there"
     ): Order {
         return Order(
             id = id,
@@ -443,7 +444,8 @@ object OrderFactory {
             organisation = orderOrganisation,
             orderSource = orderSource,
             currency = currency,
-            fxRateToGbp = fxRateToGbp
+            fxRateToGbp = fxRateToGbp,
+            note = note
         )
     }
 

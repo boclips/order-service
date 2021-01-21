@@ -58,6 +58,7 @@ class OrderResourceTest {
                 deliveryDate = Instant.ofEpochSecond(100),
                 currency = Currency.getInstance("EUR"),
                 orderSource = OrderSource.LEGACY,
+                note = "pls hurry with delivery",
                 items = listOf(
                     OrderFactory.orderItem(
                         id = "item-id",
@@ -150,6 +151,7 @@ class OrderResourceTest {
                     )
                 ),
                 throughPlatform = true,
+                note = "pls hurry with delivery",
                 _links = listOf(
                     OrdersLinkBuilder.getSelfOrderLink("123")
                 ).map { it.rel to it }.toMap()

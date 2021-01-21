@@ -22,6 +22,7 @@ class Order(
     val orderSource: OrderSource,
     val currency: Currency?,
     val fxRateToGbp: BigDecimal?,
+    val note: String?,
     items: Iterable<OrderItem>
 ) {
     companion object {
@@ -67,6 +68,7 @@ class Order(
         if (currency != other.currency) return false
         if (fxRateToGbp != other.fxRateToGbp) return false
         if (orderItems != other.orderItems) return false
+        if (note != other.note) return false
 
         return true
     }
@@ -85,6 +87,7 @@ class Order(
         result = 31 * result + (currency?.hashCode() ?: 0)
         result = 31 * result + (fxRateToGbp?.hashCode() ?: 0)
         result = 31 * result + orderItems.hashCode()
+        result = 31 * result + note.hashCode()
         return result
     }
 
@@ -102,6 +105,7 @@ class Order(
         private var isbnOrProductNumber: String? = null
         private var currency: Currency? = null
         private var fxRateToGbp: BigDecimal? = null
+        private var note: String? = null
 
         fun legacyOrderId(legacyOrderId: String) = apply { this.legacyOrderId = legacyOrderId }
         fun status(status: OrderStatus) = apply { this.status = status }
@@ -116,6 +120,7 @@ class Order(
         fun orderSource(orderSource: OrderSource?) = apply { this.orderSource = orderSource }
         fun currency(currency: Currency?) = apply { this.currency = currency }
         fun fxRateToGbp(fxRateToGbp: BigDecimal?) = apply { this.fxRateToGbp = fxRateToGbp }
+        fun note(note: String?) = apply { this.note = note }
 
         fun build(): Order {
             return Order(
@@ -131,7 +136,8 @@ class Order(
                 orderSource = orderSource!!,
                 items = items,
                 currency = currency,
-                fxRateToGbp = fxRateToGbp
+                fxRateToGbp = fxRateToGbp,
+                note = note
             )
         }
     }

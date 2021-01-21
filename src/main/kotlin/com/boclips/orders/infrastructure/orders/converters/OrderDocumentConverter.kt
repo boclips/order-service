@@ -22,7 +22,8 @@ object OrderDocumentConverter {
             organisation = order.organisation?.name,
             orderSource = order.orderSource.name,
             currency = order.currency,
-            fxRateToGbp = order.fxRateToGbp
+            fxRateToGbp = order.fxRateToGbp,
+            note = order.note
         )
     }
 
@@ -41,7 +42,8 @@ object OrderDocumentConverter {
             organisation = document.organisation?.let { OrderOrganisation(name = it) },
             orderSource = convertOrderSource(document),
             currency = document.currency,
-            fxRateToGbp = document.fxRateToGbp
+            fxRateToGbp = document.fxRateToGbp,
+            note = document.note
         )
     }
 
