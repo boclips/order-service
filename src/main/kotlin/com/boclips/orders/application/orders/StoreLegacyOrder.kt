@@ -89,7 +89,6 @@ class StoreLegacyOrder(
             id = item.uuid,
             price = Price(amount = null, currency = null),
             captionsRequested = item.transcriptsRequired,
-            transcriptRequested = item.transcriptsRequired,
             trim = item.trimming.parseTrimRequest(),
             video = videoProvider.get(VideoId(value = item.assetId)),
             license = null,

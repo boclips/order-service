@@ -78,7 +78,7 @@ object OrderItemDocumentConverter {
             id = document.id,
             price = Price(document.price, orderDocument.currency),
             transcriptRequested = document.transcriptRequested,
-            captionsRequested = document.transcriptRequested,
+            captionsRequested = document.captionsRequested,
 
             trim = document.trim?.let { TrimRequest.WithTrimming(it) } ?: TrimRequest.NoTrimming,
             video = Video(

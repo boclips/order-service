@@ -246,6 +246,7 @@ object TestFactories {
         id: String = UUID.randomUUID().toString(),
         price: BigDecimal? = BigDecimal.ONE,
         captionsRequested: Boolean = true,
+        transcriptRequested: Boolean = false,
         source: SourceDocument = sourceDocument(),
         video: VideoDocument = videoDocument(),
         license: LicenseDocument = licenseDocument(),
@@ -255,7 +256,7 @@ object TestFactories {
         return OrderItemDocument(
             id = id,
             price = price,
-            transcriptRequested = captionsRequested,
+            transcriptRequested = transcriptRequested,
             captionsRequested = captionsRequested,
             source = source,
             video = video,
@@ -495,6 +496,7 @@ object OrderFactory {
             currency = Currency.getInstance("GBP")
         ),
         captionsRequested: Boolean = true,
+        transcriptRequested: Boolean = false,
         video: Video = TestFactories.video(),
         trim: TrimRequest = TrimRequest.NoTrimming,
         license: OrderItemLicense? = OrderItemLicense(
@@ -507,7 +509,7 @@ object OrderFactory {
             id = id,
             price = price,
             captionsRequested = captionsRequested,
-            transcriptRequested = captionsRequested,
+            transcriptRequested = transcriptRequested,
             video = video,
             trim = trim,
             license = license,

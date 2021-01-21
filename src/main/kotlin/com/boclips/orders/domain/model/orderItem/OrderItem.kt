@@ -5,7 +5,7 @@ import com.boclips.orders.domain.model.Price
 data class OrderItem(
     val id: String,
     val price: Price,
-    val transcriptRequested: Boolean,
+    val transcriptRequested: Boolean = false,
     val captionsRequested: Boolean,
     val trim: TrimRequest,
     val video: Video,
@@ -55,7 +55,6 @@ data class OrderItem(
 
         fun build() = OrderItem(
             price = price,
-            transcriptRequested = captionsRequested,
             captionsRequested = captionsRequested,
             trim = trim,
             video = video,

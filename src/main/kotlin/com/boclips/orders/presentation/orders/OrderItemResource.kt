@@ -29,7 +29,7 @@ data class OrderItemResource(
             OrderItemResource(
                 id = item.id,
                 price = PriceResource.fromPrice(item.price),
-                transcriptRequested = item.transcriptRequested,
+                transcriptRequested = item.captionsRequested,
                 captionsRequested = item.captionsRequested,
                 channel = ChannelResource(
                     item.video.channel.videoServiceId.value,

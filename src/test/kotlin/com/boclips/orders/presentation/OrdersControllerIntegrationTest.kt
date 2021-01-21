@@ -95,6 +95,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 currency = Currency.getInstance("EUR")
                             ),
                             captionsRequested = true,
+                            transcriptRequested = false,
                             trim = TrimRequest.WithTrimming("4 - 10"),
                             video = TestFactories.video(
                                 videoServiceId = "1234",
