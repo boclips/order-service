@@ -9,7 +9,12 @@ version=$(cat version/tag)
 
 (
 cd source
-./gradlew -Pversion="$version" clean build --rerun-tasks --no-daemon
+./gradlew \
+    -Pversion="$version" \
+    clean build \
+    --info \
+    --rerun-tasks \
+    --no-daemon
 )
 
 cp -a source/* dist/
