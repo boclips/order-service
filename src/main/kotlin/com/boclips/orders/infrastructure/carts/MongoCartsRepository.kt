@@ -71,9 +71,13 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
 
         updateCommands.map {
             val updateBson = when (it) {
-                is CartItemUpdateCommand.ReplaceTrimming -> set(
+                is CartItemUpdateCommand.SetTrimming -> set(
                     CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices / AdditionalServicesDocument::trim,
                     CartDocumentConverter.trimServiceDocument(it.trim)
+                )
+                is CartItemUpdateCommand.SetTranscriptRequested -> set(
+                    CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices / AdditionalServicesDocument::transcriptRequested,
+                    it.transcriptRequested
                 )
             }
 

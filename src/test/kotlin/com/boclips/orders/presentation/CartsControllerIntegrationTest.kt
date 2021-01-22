@@ -4,9 +4,7 @@ import com.boclips.orders.domain.model.CartUpdateCommand
 import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
-import com.nhaarman.mockito_kotlin.isNull
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.from
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.emptyString
 import org.hamcrest.Matchers.endsWith
@@ -223,9 +221,13 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().is2xxSuccessful)
                 .andExpect(jsonPath("$.note", equalTo("")))
         }
+    }
+
+    @Nested
+    inner class AdditionalServices {
 
         @Test
-        fun `can update cart item with addition services`() {
+        fun `can update cart item with trimming`() {
             val userId = "publishers-user-id"
 
             createCart(userId)
@@ -362,6 +364,67 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """.trimIndent()
                 ).asPublisher(userId)
             ).andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `can update cart item with transcriptRequested`() {
+            createCart(
+                userId = "publishers-user-id",
+                items = listOf(
+                    CartFactory.cartItem(
+                        id = "cart-item-1",
+                        additionalServices = CartFactory.additionalServices(transcriptRequested = false)
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "transcriptRequested" : true
+                    }
+                    """.trimIndent()
+                ).asPublisher("publishers-user-id")
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+
+        @Test
+        fun `can update two additional services with one request`() {
+            createCart(
+                userId = "publishers-user-id",
+                items = listOf(
+                    CartFactory.cartItem(
+                        id = "cart-item-1",
+                        additionalServices = CartFactory.additionalServices(
+                            trim = TrimService(from = "1:00", to = "2:00"),
+                            transcriptRequested = false
+                        )
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim": null,
+                    "transcriptRequested" : true
+                    }
+                    """.trimIndent()
+                ).asPublisher("publishers-user-id")
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").doesNotExist())
+                .andExpect(jsonPath("$.items[0].additionalServices.transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
     }
 }

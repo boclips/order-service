@@ -31,7 +31,7 @@ class UpdateCartItemAdditionalServices(
     private fun buildUpdateCommands(additionalServices: UpdateAdditionalServicesRequest): List<CartItemUpdateCommand> {
         return listOfNotNull(
             additionalServices.trim?.let {
-                CartItemUpdateCommand.ReplaceTrimming(
+                CartItemUpdateCommand.SetTrimming(
                     trim = when (it) {
                         is Specified -> TrimService(
                             from = it.value.from,
@@ -40,6 +40,9 @@ class UpdateCartItemAdditionalServices(
                         is ExplicitlyNull -> null
                     }
                 )
+            },
+            additionalServices.transcriptRequested?.let {
+                CartItemUpdateCommand.SetTranscriptRequested(transcriptRequested = it.orElse(false))
             }
         )
     }

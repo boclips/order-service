@@ -19,10 +19,15 @@ sealed class Specifiable<T> {
         }
 
     abstract fun orNull(): T?
+    abstract fun orElse(returnedWhenNull: T): T
 }
 
 data class Specified<T>(val value: T) : Specifiable<T>() {
     override fun orNull(): T? {
+        return value
+    }
+
+    override fun orElse(returnedWhenNull: T): T {
         return value
     }
 }
@@ -30,6 +35,10 @@ data class Specified<T>(val value: T) : Specifiable<T>() {
 class ExplicitlyNull<T> : Specifiable<T>() {
     override fun orNull(): T? {
         return null
+    }
+
+    override fun orElse(returnedWhenNull: T): T {
+        return returnedWhenNull
     }
 }
 

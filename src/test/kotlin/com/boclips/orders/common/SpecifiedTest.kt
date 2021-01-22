@@ -92,6 +92,32 @@ class SpecifiableTest {
         assertThat(value).isEqualTo(Specified(3))
     }
 
+    @Test
+    fun `orElse for ExplicitlyNull`() {
+        val json = """
+            {
+                "property": null
+            }
+        """.trimIndent()
+
+        val specifiable = ObjectMapper().readValue(json, StringProperty::class.java)
+
+        assertThat(specifiable.property!!.orElse("nanana")).isEqualTo("nanana")
+    }
+
+    @Test
+    fun `orElse for Specified`() {
+        val json = """
+            {
+                "property": "I exist!"
+            }
+        """.trimIndent()
+
+        val specifiable = ObjectMapper().readValue(json, StringProperty::class.java)
+
+        assertThat(specifiable.property!!.orElse("nanana")).isEqualTo("I exist!")
+    }
+
     data class StringProperty(val property: Specifiable<String>? = null)
     data class ListStringProperty(val property: Specifiable<List<String>>? = null)
 }

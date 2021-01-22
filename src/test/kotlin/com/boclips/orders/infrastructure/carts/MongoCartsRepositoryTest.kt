@@ -121,7 +121,7 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
             userId = UserId(userId),
             cartItemId = cartItem.id,
             updateCommands = listOf(
-                CartItemUpdateCommand.ReplaceTrimming(
+                CartItemUpdateCommand.SetTrimming(
                     trim = TrimService(
                         from = "6:66",
                         to = "6:69"
@@ -136,6 +136,31 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
         assertThat(updatedCart?.items?.first()?.videoId?.value).isEqualTo("video-id")
         assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.from).isEqualTo("6:66")
         assertThat(updatedCart?.items?.first()?.additionalServices?.trim?.to).isEqualTo("6:69")
+    }
+
+    @Test
+    fun `updates existing cartItem's additional services with transcript request`() {
+        createCart(
+            userId = "publishers-user-id",
+            items = listOf(
+                CartFactory.cartItem(
+                    id = "cart-item-1",
+                    additionalServices = CartFactory.additionalServices(transcriptRequested = false)
+                )
+            )
+        )
+
+        mongoCartsRepository.updateCartItem(
+            userId = UserId("publishers-user-id"),
+            cartItemId = "cart-item-1",
+            updateCommands = listOf(CartItemUpdateCommand.SetTranscriptRequested(true))
+        )
+
+        val updatedCart = mongoCartsRepository.findByUserId(UserId("publishers-user-id"))
+
+        assertThat(updatedCart?.items).hasSize(1)
+        assertThat(updatedCart?.items?.first()?.additionalServices?.transcriptRequested).isEqualTo(true)
+        assertThat(updatedCart?.items?.first()?.additionalServices?.trim).isNotNull
     }
 
     @Test
@@ -154,7 +179,7 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
                 userId = UserId(userId),
                 cartItemId = "1234",
                 updateCommands = listOf(
-                    CartItemUpdateCommand.ReplaceTrimming(
+                    CartItemUpdateCommand.SetTrimming(
                         trim = TrimService(
                             from = "6:66",
                             to = "6:69"

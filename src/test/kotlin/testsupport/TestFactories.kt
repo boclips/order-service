@@ -572,6 +572,11 @@ object CartFactory {
         videoId: String = "video-id",
         additionalServices: AdditionalServices = AdditionalServices(TrimService("0:00", "12:00"))
     ) = CartItem(id = id, videoId = VideoId(videoId), additionalServices = additionalServices)
+
+    fun additionalServices(
+        trim: TrimService? = TrimService("0:00", "12:00"),
+        transcriptRequested: Boolean = false
+    ) = AdditionalServices(trim = trim, transcriptRequested = transcriptRequested)
 }
 
 object ManifestFactory {

@@ -28,7 +28,8 @@ object CartToResourceConverter {
                         from = it.from,
                         to = it.to
                     )
-                }
+                },
+                transcriptRequested = cartItem.additionalServices.transcriptRequested
             )
         ),
         listOfNotNull(CartsLinkBuilder.cartItemLink(cartItem.id))

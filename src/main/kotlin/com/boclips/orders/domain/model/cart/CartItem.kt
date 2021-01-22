@@ -9,7 +9,8 @@ data class CartItem(
 )
 
 data class AdditionalServices(
-    val trim: TrimService? = null
+    val trim: TrimService? = null,
+    val transcriptRequested: Boolean = false
 )
 
 data class TrimService(
