@@ -3,11 +3,11 @@ package com.boclips.orders.infrastructure.carts
 data class CartItemDocument(
     val id: String,
     val videoId: String,
-    val additionalServices: AdditionalServicesDocument? = null
+    val additionalServices: AdditionalServicesDocument = AdditionalServicesDocument()
 )
 
 data class AdditionalServicesDocument(
-    val trim: TrimServiceDocument?
+    val trim: TrimServiceDocument? = null
 )
 
 data class TrimServiceDocument(

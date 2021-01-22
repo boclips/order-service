@@ -32,14 +32,14 @@ object CartDocumentConverter {
         CartItemDocument(
             id = cartItem.id,
             videoId = cartItem.videoId.value,
-            additionalServices = cartItem.additionalServices?.let { additionalServicesDocument(it) }
+            additionalServices = additionalServicesDocument(cartItem.additionalServices)
         )
 
     fun cartItemDocumentToCartItem(document: CartItemDocument): CartItem =
         CartItem(
             id = document.id,
             videoId = VideoId(document.videoId),
-            additionalServices = document.additionalServices?.let { additionalServices(it) }
+            additionalServices = additionalServices(document.additionalServices)
         )
 
     private fun additionalServices(document: AdditionalServicesDocument): AdditionalServices =
@@ -53,14 +53,16 @@ object CartDocumentConverter {
             to = document.to
         )
 
-    fun additionalServicesDocument(additionalServices: AdditionalServices): AdditionalServicesDocument =
+    private fun additionalServicesDocument(additionalServices: AdditionalServices): AdditionalServicesDocument =
         AdditionalServicesDocument(
             trim = additionalServices.trim?.let { trimServiceDocument(it) }
         )
 
-    fun trimServiceDocument(trimService: TrimService): TrimServiceDocument =
-        TrimServiceDocument(
-            from = trimService.from,
-            to = trimService.to
-        )
+    fun trimServiceDocument(trimService: TrimService?): TrimServiceDocument? =
+        trimService?.let {
+            TrimServiceDocument(
+                from = it.from,
+                to = it.to
+            )
+        }
 }

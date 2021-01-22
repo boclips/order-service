@@ -5,11 +5,11 @@ import com.boclips.orders.domain.model.video.VideoId
 data class CartItem(
     val id: String,
     val videoId: VideoId,
-    val additionalServices: AdditionalServices? = null
+    val additionalServices: AdditionalServices = AdditionalServices()
 )
 
 data class AdditionalServices(
-    val trim: TrimService?
+    val trim: TrimService? = null
 )
 
 data class TrimService(

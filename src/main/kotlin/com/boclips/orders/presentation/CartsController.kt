@@ -1,9 +1,13 @@
 package com.boclips.orders.presentation
 
-import com.boclips.orders.application.cart.*
-import com.boclips.orders.domain.model.cart.Cart
+import com.boclips.orders.application.cart.AddItemToCart
+import com.boclips.orders.application.cart.DeleteCartItem
+import com.boclips.orders.application.cart.GetOrCreateCart
+import com.boclips.orders.application.cart.UpdateCart
+import com.boclips.orders.application.cart.UpdateCartItemAdditionalServices
 import com.boclips.orders.presentation.carts.CartItemResource
 import com.boclips.orders.presentation.carts.CartResource
+import com.boclips.orders.presentation.carts.UpdateAdditionalServicesRequest
 import com.boclips.orders.presentation.converters.CartToResourceConverter
 import com.boclips.orders.presentation.hateos.CartsLinkBuilder
 import com.boclips.security.utils.UserExtractor
@@ -80,22 +84,20 @@ class CartsController(
         }
     }
 
-    @PatchMapping("/items/{id}")
+    @PatchMapping(value = ["/items/{id}", "/items/{id}/additional-services"])
     fun updateCartItem(
-        @Valid @RequestBody additionalServicesRequest: AdditionalServicesRequest?,
+        @Valid @RequestBody updateAdditionalServicesRequest: UpdateAdditionalServicesRequest?,
         @PathVariable id: String?
     ): ResponseEntity<EntityModel<CartResource>> {
         val updatedCart = updateCartItemAdditionalServices(
             cartItemId = id!!,
             userId = UserExtractor.getCurrentUser()?.id!!,
-            additionalServices = additionalServicesRequest!!
+            additionalServices = updateAdditionalServicesRequest!!
         )
-
-        val resource = updatedCart?.let { CartToResourceConverter.convert(it) }
 
         return ResponseEntity.ok(
             EntityModel(
-                resource,
+                CartToResourceConverter.convert(updatedCart),
                 getDefaultCartLinks()
             )
         )

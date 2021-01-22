@@ -1,6 +1,6 @@
 package com.boclips.orders.domain.model.orderItem
 
-import com.boclips.orders.presentation.TrimServiceRequest
+import com.boclips.orders.presentation.carts.TrimServiceRequest
 
 sealed class TrimRequest {
     data class WithTrimming(val label: String) : TrimRequest()

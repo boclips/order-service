@@ -1,16 +1,25 @@
 package com.boclips.orders.infrastructure.carts
 
 import com.boclips.orders.domain.exceptions.CartItemNotFoundException
+import com.boclips.orders.domain.model.CartItemUpdateCommand
 import com.boclips.orders.domain.model.CartUpdateCommand
-import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartItemDocumentId
 import com.boclips.orders.domain.model.cart.UserId
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import mu.KLogging
-import org.litote.kmongo.*
-import kotlin.collections.toList
+import org.litote.kmongo.and
+import org.litote.kmongo.colProperty
+import org.litote.kmongo.combine
+import org.litote.kmongo.deleteMany
+import org.litote.kmongo.div
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.pull
+import org.litote.kmongo.push
+import org.litote.kmongo.set
 
 const val databaseName = "order-service-db"
 
@@ -52,27 +61,29 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
             ?: throw IllegalStateException("Adding cart items: cart does not exist for user: ${cartUpdateCommand.userId}")
     }
 
-    override fun updateCartItem(
-        userId: UserId,
-        cartItemId: String,
-        additionalServices: AdditionalServices
-    ): Cart? {
+    override fun updateCartItem(userId: UserId, cartItemId: String, updateCommands: List<CartItemUpdateCommand>): Cart {
         collection().findOne(
             and(
                 CartDocument::userId eq userId.value,
                 CartDocument::items / CartItemDocument::id eq cartItemId
             )
-        ) ?: throw CartItemNotFoundException(cartItemId)
+        ) ?: throw CartItemNotFoundException(cartItemId = cartItemId, userId = userId)
 
-        collection().updateOne(
-            and(CartDocument::userId eq userId.value, CartDocument::items / CartItemDocument::id eq cartItemId),
-            set(
-                CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices,
-                CartDocumentConverter.additionalServicesDocument(additionalServices)
+        updateCommands.map {
+            val updateBson = when (it) {
+                is CartItemUpdateCommand.ReplaceTrimming -> set(
+                    CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices / AdditionalServicesDocument::trim,
+                    CartDocumentConverter.trimServiceDocument(it.trim)
+                )
+            }
+
+            collection().updateOne(
+                and(CartDocument::userId eq userId.value, CartDocument::items / CartItemDocument::id eq cartItemId),
+                updateBson
             )
-        )
+        }
 
-        return findByUserId(userId)
+        return findByUserId(userId)!!
     }
 
     override fun deleteItem(userId: UserId, cartItemId: String): Boolean {

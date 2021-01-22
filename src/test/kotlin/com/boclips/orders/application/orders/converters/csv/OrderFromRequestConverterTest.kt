@@ -5,12 +5,12 @@ import com.boclips.eventbus.events.order.OrderStatus
 import com.boclips.orders.application.orders.exceptions.IncompleteUserData
 import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.orderItem.TrimRequest
-import com.boclips.orders.presentation.AdditionalServicesRequest
+import com.boclips.orders.presentation.PlaceOrderAdditionalServices
 import com.boclips.orders.presentation.PlaceOrderRequest
 import com.boclips.orders.presentation.PlaceOrderRequestItem
 import com.boclips.orders.presentation.PlaceOrderRequestOrganisation
 import com.boclips.orders.presentation.PlaceOrderRequestUser
-import com.boclips.orders.presentation.TrimServiceRequest
+import com.boclips.orders.presentation.carts.TrimServiceRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,7 +45,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                     PlaceOrderRequestItem(
                         id = "item-id",
                         videoId = "video-service-id",
-                        additionalServices = AdditionalServicesRequest(TrimServiceRequest(from = "1:00", to = "2:00"))
+                        additionalServices = PlaceOrderAdditionalServices(TrimServiceRequest(from = "1:00", to = "2:00"))
                     )
                 ),
                 note = "hello"
@@ -96,11 +96,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                         PlaceOrderRequestItem(
                             id = "item-id",
                             videoId = "video-service-id",
-                            additionalServices = AdditionalServicesRequest(
-                                TrimServiceRequest(
-                                    from = "1:00",
-                                    to = "2:00"
-                                )
+                            additionalServices = PlaceOrderAdditionalServices(
+                                TrimServiceRequest(from = "1:00", to = "2:00")
                             )
                         )
                     ),

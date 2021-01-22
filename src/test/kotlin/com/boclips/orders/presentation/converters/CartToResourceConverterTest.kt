@@ -22,7 +22,7 @@ class CartToResourceConverterTest {
                 CartFactory.cartItem(
                     id = "cart-item-2",
                     videoId = "video-2",
-                    additionalServices = null
+                    additionalServices = AdditionalServices(trim = null)
                 )
             )
         )
@@ -35,6 +35,6 @@ class CartToResourceConverterTest {
         Assertions.assertThat(cartResource.items[0].content?.additionalServices!!.trim!!.to).isEqualTo("2:00")
         Assertions.assertThat(cartResource.items[1].content?.id).isEqualTo("cart-item-2")
         Assertions.assertThat(cartResource.items[1].content?.videoId).isEqualTo("video-2")
-        Assertions.assertThat(cartResource.items[1].content?.additionalServices).isNull()
+        Assertions.assertThat(cartResource.items[1].content?.additionalServices!!.trim).isNull()
     }
 }

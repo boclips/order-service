@@ -1,13 +1,25 @@
 package com.boclips.orders.presentation
 
+import com.boclips.orders.domain.model.CartUpdateCommand
+import com.boclips.orders.domain.model.cart.AdditionalServices
+import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
+import com.nhaarman.mockito_kotlin.isNull
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.from
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.emptyString
+import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasKey
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -181,7 +193,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "note" : "This is a note"
                     }
-                    """.trimIndent()
+                            """.trimIndent()
                         )
                         .asPublisher(userId)
                 )
@@ -204,7 +216,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "note" : ""
                     }
-                    """.trimIndent()
+                            """.trimIndent()
                         )
                         .asPublisher(userId)
                 )
@@ -241,7 +253,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `can can set additional services trim to null`() {
+        fun `can update additional services using more specific URL`() {
             val userId = "publishers-user-id"
 
             createCart(userId)
@@ -249,7 +261,47 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
 
             mockMvc.perform(
-                patch("/v1/cart/items/${cartItemId.id}").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/${cartItemId.id}/additional-services").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim" : {
+                        "from": "1:23",
+                        "to": "2:69"
+                        }
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:69")))
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `can set additional services trim to null`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            mongoCartsRepository.update(
+                CartUpdateCommand.AddItem(
+                    userId = UserId(userId),
+                    cartItem = CartFactory.cartItem(
+                        id = "cart-item-1",
+                        additionalServices = AdditionalServices(
+                            trim = TrimService(
+                                from = "1:00", to = "2:00"
+                            )
+                        )
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "trim" : null
@@ -258,7 +310,35 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asPublisher(userId)
             ).andExpect(status().is2xxSuccessful)
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
-                .andExpect(jsonPath("$.items[0].additionalServices", equalTo(null)))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").doesNotExist())
+                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `does not touch trimming when not included in request`() {
+            val userId = "publishers-user-id"
+
+            createCart(
+                userId = userId,
+                items = listOf(
+                    CartFactory.cartItem(
+                        id = "1",
+                        additionalServices = AdditionalServices(trim = TrimService(from = "0:00", to = "1:00"))
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/1").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().is2xxSuccessful)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 

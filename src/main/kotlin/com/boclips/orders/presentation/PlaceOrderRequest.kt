@@ -1,5 +1,7 @@
 package com.boclips.orders.presentation
 
+import com.boclips.orders.presentation.carts.TrimServiceRequest
+
 data class PlaceOrderRequest(
     val items: Set<PlaceOrderRequestItem>,
     val note: String?,
@@ -9,7 +11,7 @@ data class PlaceOrderRequest(
 data class PlaceOrderRequestItem(
     val id: String,
     val videoId: String,
-    val additionalServices: AdditionalServicesRequest?
+    val additionalServices: PlaceOrderAdditionalServices?
 )
 
 data class PlaceOrderRequestUser(
@@ -23,4 +25,8 @@ data class PlaceOrderRequestUser(
 data class PlaceOrderRequestOrganisation(
     val id: String?,
     val name: String
+)
+
+data class PlaceOrderAdditionalServices(
+    val trim: TrimServiceRequest? = null
 )

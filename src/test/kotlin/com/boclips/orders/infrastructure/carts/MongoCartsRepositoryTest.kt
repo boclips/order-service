@@ -1,8 +1,8 @@
 package com.boclips.orders.infrastructure.carts
 
 import com.boclips.orders.domain.exceptions.CartItemNotFoundException
+import com.boclips.orders.domain.model.CartItemUpdateCommand
 import com.boclips.orders.domain.model.CartUpdateCommand
-import com.boclips.orders.domain.model.cart.AdditionalServices
 import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import testsupport.AbstractSpringIntegrationTest
 import testsupport.CartFactory
-import java.lang.IllegalStateException
 
 class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
@@ -119,12 +118,14 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
         )
 
         mongoCartsRepository.updateCartItem(
-            UserId(userId),
+            userId = UserId(userId),
             cartItemId = cartItem.id,
-            additionalServices = AdditionalServices(
-                TrimService(
-                    from = "6:66",
-                    to = "6:69"
+            updateCommands = listOf(
+                CartItemUpdateCommand.ReplaceTrimming(
+                    trim = TrimService(
+                        from = "6:66",
+                        to = "6:69"
+                    )
                 )
             )
         )
@@ -150,24 +151,27 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
 
         assertThrows<CartItemNotFoundException> {
             mongoCartsRepository.updateCartItem(
-                UserId(userId),
+                userId = UserId(userId),
                 cartItemId = "1234",
-                additionalServices = AdditionalServices(
-                    TrimService(
-                        from = "6:66",
-                        to = "6:69"
+                updateCommands = listOf(
+                    CartItemUpdateCommand.ReplaceTrimming(
+                        trim = TrimService(
+                            from = "6:66",
+                            to = "6:69"
+                        )
                     )
                 )
             )
         }
             .message.let {
-                assertThat(it).contains("Could not find cart item with ID: 1234")
+                assertThat(it).contains("Could not find cart item with ID: 1234 for user: publishers-user-id")
             }
     }
 
     @Test
     fun `empties cart`() {
-        val cart = CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()), note = "hello")
+        val cart =
+            CartFactory.sample(userId = "publishers-user-id", items = listOf(CartFactory.cartItem()), note = "hello")
         mongoCartsRepository.create(cart)
 
         mongoCartsRepository.update(

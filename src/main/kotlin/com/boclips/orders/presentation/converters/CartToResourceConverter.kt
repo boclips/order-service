@@ -22,14 +22,14 @@ object CartToResourceConverter {
         CartItemResource(
             id = cartItem.id,
             videoId = cartItem.videoId.value,
-            additionalServices = cartItem.additionalServices?.trim?.let {
-                AdditionalServicesResource(
-                    trim = TrimServiceResource(
+            additionalServices = AdditionalServicesResource(
+                trim = cartItem.additionalServices.trim?.let {
+                    TrimServiceResource(
                         from = it.from,
                         to = it.to
                     )
-                )
-            }
+                }
+            )
         ),
         listOfNotNull(CartsLinkBuilder.cartItemLink(cartItem.id))
     )

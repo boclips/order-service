@@ -1,11 +1,14 @@
 package com.boclips.orders.application.cart
 
+import com.boclips.orders.common.ExplicitlyNull
+import com.boclips.orders.common.Specified
 import com.boclips.orders.domain.exceptions.CartItemNotFoundException
-import com.boclips.orders.domain.model.cart.AdditionalServices
+import com.boclips.orders.domain.model.CartItemUpdateCommand
+import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.TrimService
 import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.infrastructure.carts.CartsRepository
-import com.boclips.orders.presentation.AdditionalServicesRequest
+import com.boclips.orders.presentation.carts.UpdateAdditionalServicesRequest
 import com.boclips.web.exceptions.ResourceNotFoundApiException
 import org.springframework.stereotype.Component
 
@@ -13,24 +16,31 @@ import org.springframework.stereotype.Component
 class UpdateCartItemAdditionalServices(
     private val cartsRepository: CartsRepository
 ) {
-    operator fun invoke(cartItemId: String, userId: String, additionalServices: AdditionalServicesRequest) =
-        try {
+    operator fun invoke(cartItemId: String, userId: String, additionalServices: UpdateAdditionalServicesRequest): Cart {
+        return try {
             cartsRepository.updateCartItem(
                 userId = UserId(userId),
                 cartItemId = cartItemId,
-                additionalServices = AdditionalServices(
-                    trim = additionalServices.trim?.let {
-                        TrimService(
-                            from = it.from,
-                            to = it.to
-                        )
-                    }
-                )
+                updateCommands = buildUpdateCommands(additionalServices)
             )
         } catch (e: CartItemNotFoundException) {
-            throw ResourceNotFoundApiException(
-                "Not found",
-                e.message
-            )
+            throw ResourceNotFoundApiException(error = "Not found", message = e.message)
         }
+    }
+
+    private fun buildUpdateCommands(additionalServices: UpdateAdditionalServicesRequest): List<CartItemUpdateCommand> {
+        return listOfNotNull(
+            additionalServices.trim?.let {
+                CartItemUpdateCommand.ReplaceTrimming(
+                    trim = when (it) {
+                        is Specified -> TrimService(
+                            from = it.value.from,
+                            to = it.value.to
+                        )
+                        is ExplicitlyNull -> null
+                    }
+                )
+            }
+        )
+    }
 }
