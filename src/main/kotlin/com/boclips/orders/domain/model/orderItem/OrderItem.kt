@@ -5,7 +5,7 @@ import com.boclips.orders.domain.model.Price
 data class OrderItem(
     val id: String,
     val price: Price,
-    val transcriptRequested: Boolean = false,
+    val transcriptRequested: Boolean,
     val captionsRequested: Boolean,
     val trim: TrimRequest,
     val video: Video,
@@ -40,6 +40,7 @@ data class OrderItem(
         private lateinit var id: String
         private lateinit var price: Price
         private var captionsRequested: Boolean = false
+        private var transcriptRequested: Boolean = false
         private lateinit var trim: TrimRequest
         private lateinit var video: Video
         private var license: OrderItemLicense? = null
@@ -47,6 +48,7 @@ data class OrderItem(
 
         fun price(price: Price) = apply { this.price = price }
         fun captionsRequested(captionsRequested: Boolean) = apply { this.captionsRequested = captionsRequested }
+        fun transcriptRequested(transcriptRequested: Boolean) = apply { this.transcriptRequested = transcriptRequested }
         fun trim(trim: TrimRequest) = apply { this.trim = trim }
         fun video(video: Video) = apply { this.video = video }
         fun license(license: OrderItemLicense) = apply { this.license = license }
@@ -56,6 +58,7 @@ data class OrderItem(
         fun build() = OrderItem(
             price = price,
             captionsRequested = captionsRequested,
+            transcriptRequested = transcriptRequested,
             trim = trim,
             video = video,
             license = license,

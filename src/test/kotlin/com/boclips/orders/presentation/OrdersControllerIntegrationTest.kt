@@ -170,7 +170,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 )
 
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].price.displayValue", equalTo("EUR 1.00")))
-                .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$._embedded.orders[0].items[0].transcriptRequested", equalTo(false)))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].captionsRequested", equalTo(true)))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].trim", equalTo("4 - 10")))
                 .andExpect(jsonPath("$._embedded.orders[0].items[0].licenseDuration", equalTo("10 Years")))
@@ -269,6 +269,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                 amount = BigDecimal.valueOf(1),
                                 currency = Currency.getInstance("EUR")
                             ),
+                            transcriptRequested = false,
                             captionsRequested = true,
                             trim = TrimRequest.NoTrimming,
                             license = OrderFactory.orderItemLicense(
@@ -309,7 +310,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].licenseDuration", equalTo("10 Years")))
                 .andExpect(jsonPath("$.items[0].licenseTerritory", equalTo("Worldwide")))
                 .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("EUR 1.00")))
-                .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(false)))
                 .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(true)))
                 .andExpect(jsonPath("$.items[0].trim", isEmptyOrNullString()))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-id")))
@@ -925,7 +926,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                             "trim": {
                                                 "from":"1:00",
                                                 "to":"2:00"
-                                            }
+                                            },
+                                            "transcriptRequested": true
                                          }
                                       }
                                    ],
@@ -959,7 +961,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].licenseDuration", nullValue()))
                 .andExpect(jsonPath("$.items[0].licenseTerritory", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("GBP 600.00")))
-                .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(false)))
+                .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
                 .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(false)))
                 .andExpect(jsonPath("$.items[0].video.title", equalTo("hippos are cool")))
                 .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
