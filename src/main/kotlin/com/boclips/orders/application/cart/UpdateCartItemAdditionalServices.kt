@@ -34,8 +34,8 @@ class UpdateCartItemAdditionalServices(
                 CartItemUpdateCommand.SetTrimming(
                     trim = when (it) {
                         is Specified -> TrimService(
-                            from = it.value.from,
-                            to = it.value.to
+                            from = it.value.from!!,
+                            to = it.value.to!!
                         )
                         is ExplicitlyNull -> null
                     }

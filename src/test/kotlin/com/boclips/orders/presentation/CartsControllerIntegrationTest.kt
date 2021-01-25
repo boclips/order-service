@@ -241,7 +241,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "trim" : {
                         "from": "1:23",
-                        "to": "2:69"
+                        "to": "2:59"
                         }
                     }
                     """.trimIndent()
@@ -251,7 +251,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
-                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:69")))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:59")))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 
@@ -269,7 +269,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "trim" : {
                         "from": "1:23",
-                        "to": "2:69"
+                        "to": "2:59"
                         }
                     }
                     """.trimIndent()
@@ -279,7 +279,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
-                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:69")))
+                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:59")))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 
@@ -315,6 +315,29 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").doesNotExist())
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `throws exception on invalid trim format`() {
+            val userId = "publishers-user-id"
+
+            createCart(userId)
+
+            val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
+
+            mockMvc.perform(
+                patch("/v1/cart/items/${cartItemId.id}/additional-services").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "trim" : {
+                        "from": null,
+                        "to": "1:00"
+                        }
+                    }
+                    """.trimIndent()
+                ).asPublisher(userId)
+            ).andExpect(status().isBadRequest)
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
@@ -359,7 +382,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "trim" : {
                         "from": "1:23",
-                        "to": "2:69"
+                        "to": "2:59"
                         }
                     }
                     """.trimIndent()
@@ -451,13 +474,17 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").doesNotExist())
                 .andExpect(jsonPath("$.items[0].additionalServices.transcriptRequested", equalTo(true)))
-                .andExpect(jsonPath("$.items[0].additionalServices.editingRequested",
-                    equalTo("please remove all images of cats!")))
+                .andExpect(
+                    jsonPath(
+                        "$.items[0].additionalServices.editingRequested",
+                        equalTo("please remove all images of cats!")
+                    )
+                )
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 
         @Test
-        fun `it can request editing` (){
+        fun `it can request editing`() {
             createCart(
                 userId = "publishers-user-id",
                 items = listOf(
@@ -479,9 +506,12 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """.trimIndent()
                 ).asPublisher("publishers-user-id")
             ).andExpect(status().is2xxSuccessful)
-                .andExpect(jsonPath("$.items[0].additionalServices.editingRequested",
-                    equalTo("please remove all images of penguins!")))
-
+                .andExpect(
+                    jsonPath(
+                        "$.items[0].additionalServices.editingRequested",
+                        equalTo("please remove all images of penguins!")
+                    )
+                )
         }
     }
 }
