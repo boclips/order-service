@@ -14,6 +14,7 @@ data class OrderItemResource(
     val price: PriceResource?,
     val transcriptRequested: Boolean,
     val captionsRequested: Boolean,
+    val editingRequested: String?,
     val channel: ChannelResource,
     val video: VideoResource,
     val licenseDuration: String?,
@@ -31,6 +32,7 @@ data class OrderItemResource(
                 price = PriceResource.fromPrice(item.price),
                 transcriptRequested = item.transcriptRequested,
                 captionsRequested = item.captionsRequested,
+                editingRequested = item.editingRequested,
                 channel = ChannelResource(
                     item.video.channel.videoServiceId.value,
                     item.video.channel.name,

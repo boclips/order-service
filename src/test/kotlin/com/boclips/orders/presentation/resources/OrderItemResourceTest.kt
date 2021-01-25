@@ -34,6 +34,17 @@ class OrderItemResourceTest {
         assertThat(orderItemResource.trim).isEqualTo("hello")
     }
 
+    @Test
+    fun `converts item with editing requested`() {
+        val orderItem = OrderFactory.orderItem(
+            editingRequested = "yes please!"
+        )
+
+        val orderItemResource = OrderItemResource.fromOrderItem(orderItem)
+
+        assertThat(orderItemResource.editingRequested).isEqualTo("yes please!")
+    }
+
     @Nested
     inner class License {
         @Test

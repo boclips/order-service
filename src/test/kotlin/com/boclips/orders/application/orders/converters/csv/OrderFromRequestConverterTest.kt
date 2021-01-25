@@ -58,6 +58,7 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.items.first().transcriptRequested).isFalse()
         assertThat(convertedOrder.items.first().captionsRequested).isFalse()
         assertThat(convertedOrder.items.first().trim).isEqualTo(TrimRequest.WithTrimming(label = "1:00 - 2:00"))
+        assertThat(convertedOrder.items.first().editingRequested).isNull()
         assertThat(convertedOrder.items.first().notes).isNull()
 
         val convertedUser = (convertedOrder.authorisingUser!! as OrderUser.CompleteUser)

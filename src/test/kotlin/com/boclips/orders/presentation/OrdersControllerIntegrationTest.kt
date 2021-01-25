@@ -927,7 +927,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                                 "from":"1:00",
                                                 "to":"2:00"
                                             },
-                                            "transcriptRequested": true
+                                            "transcriptRequested": true,
+                                            "editingRequested": "please remove images of alcohol"
                                          }
                                       }
                                    ],
@@ -955,6 +956,8 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].id", equalTo("item-id")))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-service-id")))
                 .andExpect(jsonPath("$.items[0].trim", equalTo("1:00 - 2:00")))
+                .andExpect(jsonPath("$.items[0].editingRequested",
+                    equalTo("please remove images of alcohol")))
                 .andExpect(jsonPath("$.items[0].notes", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.value", equalTo(600.0)))
                 .andExpect(jsonPath("$.items[0].price.currency", equalTo("GBP")))

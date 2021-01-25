@@ -7,6 +7,7 @@ data class OrderItem(
     val price: Price,
     val transcriptRequested: Boolean,
     val captionsRequested: Boolean,
+    val editingRequested: String?,
     val trim: TrimRequest,
     val video: Video,
     val license: OrderItemLicense?,
@@ -41,6 +42,7 @@ data class OrderItem(
         private lateinit var price: Price
         private var captionsRequested: Boolean = false
         private var transcriptRequested: Boolean = false
+        private var editingRequested: String? = null
         private lateinit var trim: TrimRequest
         private lateinit var video: Video
         private var license: OrderItemLicense? = null
@@ -49,6 +51,7 @@ data class OrderItem(
         fun price(price: Price) = apply { this.price = price }
         fun captionsRequested(captionsRequested: Boolean) = apply { this.captionsRequested = captionsRequested }
         fun transcriptRequested(transcriptRequested: Boolean) = apply { this.transcriptRequested = transcriptRequested }
+        fun editingRequested(editingRequested: String?) = apply { this.editingRequested = editingRequested }
         fun trim(trim: TrimRequest) = apply { this.trim = trim }
         fun video(video: Video) = apply { this.video = video }
         fun license(license: OrderItemLicense) = apply { this.license = license }
@@ -59,6 +62,7 @@ data class OrderItem(
             price = price,
             captionsRequested = captionsRequested,
             transcriptRequested = transcriptRequested,
+            editingRequested = editingRequested,
             trim = trim,
             video = video,
             license = license,

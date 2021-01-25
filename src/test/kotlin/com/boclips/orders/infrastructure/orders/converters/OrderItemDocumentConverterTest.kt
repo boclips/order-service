@@ -134,6 +134,17 @@ class OrderItemDocumentConverterTest {
         }
 
         @Test
+        fun `converts a editing requested`() {
+            val orderItemDocument = TestFactories.orderItemDocument(
+                editingRequested = "please edit me!"
+            )
+
+            val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
+
+            assertThat(convertedItem.editingRequested).isEqualTo("please edit me!")
+        }
+
+        @Test
         fun `converts 3 year multi region license`() {
             val orderItemDocument = TestFactories.orderItemDocument(
                 license = TestFactories.licenseDocument(
