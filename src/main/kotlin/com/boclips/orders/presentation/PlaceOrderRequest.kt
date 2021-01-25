@@ -30,5 +30,5 @@ data class PlaceOrderRequestOrganisation(
 data class PlaceOrderAdditionalServices(
     val trim: TrimServiceRequest? = null,
     val transcriptRequested: Boolean? = null,
-    val editingRequested: String? = null
+    val editRequest: String? = null
 )

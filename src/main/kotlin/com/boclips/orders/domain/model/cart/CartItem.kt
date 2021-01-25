@@ -12,7 +12,7 @@ data class AdditionalServices(
     val trim: TrimService? = null,
     val transcriptRequested: Boolean = false,
     val captionsRequested: Boolean = false,
-    val editingRequested: String? = null
+    val editRequest: String? = null
 )
 
 data class TrimService(

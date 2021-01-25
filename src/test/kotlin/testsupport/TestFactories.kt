@@ -247,7 +247,7 @@ object TestFactories {
         price: BigDecimal? = BigDecimal.ONE,
         captionsRequested: Boolean = true,
         transcriptRequested: Boolean = false,
-        editingRequested: String? = null,
+        editRequest: String? = null,
         source: SourceDocument = sourceDocument(),
         video: VideoDocument = videoDocument(),
         license: LicenseDocument = licenseDocument(),
@@ -259,7 +259,7 @@ object TestFactories {
             price = price,
             transcriptRequested = transcriptRequested,
             captionsRequested = captionsRequested,
-            editingRequested = editingRequested,
+            editRequest = editRequest,
             source = source,
             video = video,
             license = license,
@@ -501,7 +501,7 @@ object OrderFactory {
         ),
         captionsRequested: Boolean = true,
         transcriptRequested: Boolean = false,
-        editingRequested: String? = null,
+        editRequest: String? = null,
         video: Video = TestFactories.video(),
         trim: TrimRequest = TrimRequest.NoTrimming,
         license: OrderItemLicense? = OrderItemLicense(
@@ -515,7 +515,7 @@ object OrderFactory {
             price = price,
             captionsRequested = captionsRequested,
             transcriptRequested = transcriptRequested,
-            editingRequested = editingRequested,
+            editRequest = editRequest,
             video = video,
             trim = trim,
             license = license,
@@ -583,12 +583,12 @@ object CartFactory {
         trim: TrimService? = TrimService("0:00", "12:00"),
         transcriptRequested: Boolean = false,
         captionsRequested: Boolean = false,
-        editingRequested: String? = null
+        editRequest: String? = null
     ) = AdditionalServices(
         trim = trim,
         transcriptRequested = transcriptRequested,
         captionsRequested = captionsRequested,
-        editingRequested = editingRequested
+        editRequest = editRequest
     )
 }
 

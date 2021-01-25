@@ -195,7 +195,7 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
             items = listOf(
                 CartFactory.cartItem(
                     id = "cart-item-1",
-                    additionalServices = CartFactory.additionalServices(editingRequested = null)
+                    additionalServices = CartFactory.additionalServices(editRequest = null)
                 )
             )
         )
@@ -203,13 +203,13 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
         mongoCartsRepository.updateCartItem(
             userId = UserId("publishers-user-id"),
             cartItemId = "cart-item-1",
-            updateCommands = listOf(CartItemUpdateCommand.SetEditingRequested("yes please"))
+            updateCommands = listOf(CartItemUpdateCommand.SetEditRequest("yes please"))
         )
 
         val updatedCart = mongoCartsRepository.findByUserId(UserId("publishers-user-id"))
 
         assertThat(updatedCart?.items).hasSize(1)
-        assertThat(updatedCart?.items?.first()?.additionalServices?.editingRequested).isEqualTo("yes please")
+        assertThat(updatedCart?.items?.first()?.additionalServices?.editRequest).isEqualTo("yes please")
     }
 
     @Test

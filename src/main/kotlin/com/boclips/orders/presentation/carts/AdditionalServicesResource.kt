@@ -4,7 +4,7 @@ data class AdditionalServicesResource(
     val trim: TrimServiceResource?,
     val transcriptRequested: Boolean,
     val captionsRequested: Boolean,
-    val editingRequested: String?
+    val editRequest: String?
 )
 
 data class TrimServiceResource(

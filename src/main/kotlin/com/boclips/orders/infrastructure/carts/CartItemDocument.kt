@@ -10,7 +10,7 @@ data class AdditionalServicesDocument(
     val trim: TrimServiceDocument? = null,
     val transcriptRequested: Boolean? = false,
     val captionsRequested: Boolean? = false,
-    val editingRequested: String? = null
+    val editRequest: String? = null
 )
 
 data class TrimServiceDocument(

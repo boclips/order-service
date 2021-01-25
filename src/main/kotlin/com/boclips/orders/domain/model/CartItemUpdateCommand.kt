@@ -6,5 +6,5 @@ sealed class CartItemUpdateCommand {
     class SetTrimming(val trim: TrimService?) : CartItemUpdateCommand()
     class SetTranscriptRequested(val transcriptRequested: Boolean) : CartItemUpdateCommand()
     class SetCaptionsRequested(val captionsRequested: Boolean) : CartItemUpdateCommand()
-    class SetEditingRequested(val editingRequested: String?) : CartItemUpdateCommand()
+    class SetEditRequest(val editRequest: String?) : CartItemUpdateCommand()
 }

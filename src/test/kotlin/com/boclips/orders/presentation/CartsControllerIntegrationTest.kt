@@ -318,29 +318,6 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `throws exception on invalid trim format`() {
-            val userId = "publishers-user-id"
-
-            createCart(userId)
-
-            val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
-
-            mockMvc.perform(
-                patch("/v1/cart/items/${cartItemId.id}/additional-services").contentType(MediaType.APPLICATION_JSON).content(
-                    """
-                    {
-                    "trim" : {
-                        "from": null,
-                        "to": "1:00"
-                        }
-                    }
-                    """.trimIndent()
-                ).asPublisher(userId)
-            ).andExpect(status().isBadRequest)
-                .andDo(MockMvcResultHandlers.print())
-        }
-
-        @Test
         fun `does not touch trimming when not included in request`() {
             val userId = "publishers-user-id"
 
@@ -465,7 +442,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     {
                     "trim": null,
                     "transcriptRequested" : true,
-                    "editingRequested" : "please remove all images of cats!"
+                    "editRequest" : "please remove all images of cats!"
                     }
                     """.trimIndent()
                 ).asPublisher("publishers-user-id")
@@ -476,7 +453,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices.transcriptRequested", equalTo(true)))
                 .andExpect(
                     jsonPath(
-                        "$.items[0].additionalServices.editingRequested",
+                        "$.items[0].additionalServices.editRequest",
                         equalTo("please remove all images of cats!")
                     )
                 )
@@ -484,14 +461,14 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `it can request editing`() {
+        fun `it can request editing` (){
             createCart(
                 userId = "publishers-user-id",
                 items = listOf(
                     CartFactory.cartItem(
                         id = "cart-item-1",
                         additionalServices = CartFactory.additionalServices(
-                            editingRequested = null
+                            editRequest = null
                         )
                     )
                 )
@@ -501,17 +478,15 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
-                    "editingRequested" : "please remove all images of penguins!"
+                    "editRequest" : "please remove all images of penguins!"
                     }
                     """.trimIndent()
                 ).asPublisher("publishers-user-id")
             ).andExpect(status().is2xxSuccessful)
                 .andExpect(
-                    jsonPath(
-                        "$.items[0].additionalServices.editingRequested",
-                        equalTo("please remove all images of penguins!")
-                    )
-                )
+                    jsonPath("$.items[0].additionalServices.editRequest",
+                    equalTo("please remove all images of penguins!")))
+
         }
     }
 }

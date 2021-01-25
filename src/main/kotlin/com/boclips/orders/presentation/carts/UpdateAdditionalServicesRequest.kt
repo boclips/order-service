@@ -8,6 +8,6 @@ data class UpdateAdditionalServicesRequest(
     val trim: Specifiable<TrimServiceRequest>? = null,
     val transcriptRequested: Specifiable<Boolean>? = null,
     val captionsRequested: Specifiable<Boolean>? = null,
-    val editingRequested: Specifiable<String>? = null
+    val editRequest: Specifiable<String>? = null
 )
 

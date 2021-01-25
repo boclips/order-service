@@ -37,12 +37,12 @@ class OrderItemResourceTest {
     @Test
     fun `converts item with editing requested`() {
         val orderItem = OrderFactory.orderItem(
-            editingRequested = "yes please!"
+            editRequest = "yes please!"
         )
 
         val orderItemResource = OrderItemResource.fromOrderItem(orderItem)
 
-        assertThat(orderItemResource.editingRequested).isEqualTo("yes please!")
+        assertThat(orderItemResource.editRequest).isEqualTo("yes please!")
     }
 
     @Nested

@@ -136,12 +136,12 @@ class OrderItemDocumentConverterTest {
         @Test
         fun `converts a editing requested`() {
             val orderItemDocument = TestFactories.orderItemDocument(
-                editingRequested = "please edit me!"
+                editRequest = "please edit me!"
             )
 
             val convertedItem = OrderItemDocumentConverter.toOrderItem(orderItemDocument, OrderFactory.orderDocument())
 
-            assertThat(convertedItem.editingRequested).isEqualTo("please edit me!")
+            assertThat(convertedItem.editRequest).isEqualTo("please edit me!")
         }
 
         @Test

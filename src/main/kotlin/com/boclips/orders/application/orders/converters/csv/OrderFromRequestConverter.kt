@@ -60,7 +60,7 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
                 .price(it.price!!)
                 .captionsRequested(false)
                 .transcriptRequested(itemRequest.additionalServices?.transcriptRequested ?: false)
-                .editingRequested(itemRequest.additionalServices?.editingRequested)
+                .editRequest(itemRequest.additionalServices?.editRequest)
                 .trim(TrimRequest.fromTrimServiceRequest(itemRequest.additionalServices?.trim))
                 .id(itemRequest.id)
                 .build()

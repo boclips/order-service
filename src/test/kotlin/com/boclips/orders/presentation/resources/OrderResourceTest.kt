@@ -122,7 +122,7 @@ class OrderResourceTest {
                         ),
                         transcriptRequested = false,
                         captionsRequested = false,
-                        editingRequested = null,
+                        editRequest = null,
                         channel = ChannelResource(
                             id = "paper",
                             name = "cup",
