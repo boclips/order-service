@@ -421,7 +421,6 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices.captionsRequested", equalTo(true)))
         }
 
-
         @Test
         fun `can update two additional services with one request`() {
             createCart(

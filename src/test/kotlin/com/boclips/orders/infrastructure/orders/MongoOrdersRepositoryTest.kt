@@ -20,6 +20,7 @@ import testsupport.PriceFactory
 import testsupport.TestFactories
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Currency
 
 class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
@@ -42,36 +43,42 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
 
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(5, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-1",
                 requestingUser = completeOrderUser(userId = "1234")
             )
         )
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(10, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-2",
                 requestingUser = completeOrderUser(userId = "1234")
             )
         )
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(15, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-3",
                 requestingUser = completeOrderUser(userId = "1234")
             )
         )
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(20, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-4",
                 requestingUser = completeOrderUser(userId = "1234")
             )
         )
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(25, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-5",
                 requestingUser = completeOrderUser(userId = "1234")
             )
         )
         ordersRepository.save(
             order = OrderFactory.order(
+                createdAt = Instant.now().plus(30, ChronoUnit.SECONDS),
                 isbnOrProductNumber = "order-6",
                 requestingUser = completeOrderUser(userId = "1234")
             )
