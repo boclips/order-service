@@ -189,6 +189,30 @@ class MongoCartsRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `updates existing cartItem's additional services with editing requested`() {
+        createCart(
+            userId = "publishers-user-id",
+            items = listOf(
+                CartFactory.cartItem(
+                    id = "cart-item-1",
+                    additionalServices = CartFactory.additionalServices(editingRequested = null)
+                )
+            )
+        )
+
+        mongoCartsRepository.updateCartItem(
+            userId = UserId("publishers-user-id"),
+            cartItemId = "cart-item-1",
+            updateCommands = listOf(CartItemUpdateCommand.SetEditingRequested("yes please"))
+        )
+
+        val updatedCart = mongoCartsRepository.findByUserId(UserId("publishers-user-id"))
+
+        assertThat(updatedCart?.items).hasSize(1)
+        assertThat(updatedCart?.items?.first()?.additionalServices?.editingRequested).isEqualTo("yes please")
+    }
+
+    @Test
     fun `throws item doesn't exist exception`() {
         val userId = "publishers-user-id"
 

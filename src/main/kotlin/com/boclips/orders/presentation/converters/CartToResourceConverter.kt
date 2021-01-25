@@ -29,6 +29,7 @@ object CartToResourceConverter {
                         to = it.to
                     )
                 },
+                editingRequested = cartItem.additionalServices.editingRequested,
                 transcriptRequested = cartItem.additionalServices.transcriptRequested,
                 captionsRequested = cartItem.additionalServices.captionsRequested
             )

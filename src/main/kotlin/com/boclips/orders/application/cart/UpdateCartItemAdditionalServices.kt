@@ -46,6 +46,9 @@ class UpdateCartItemAdditionalServices(
             },
             additionalServices.captionsRequested?.let {
                 CartItemUpdateCommand.SetCaptionsRequested(captionsRequested = it.orElse(false))
+            },
+            additionalServices.editingRequested?.let {
+                CartItemUpdateCommand.SetEditingRequested(editingRequested = it.orNull())
             }
         )
     }

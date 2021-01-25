@@ -11,7 +11,8 @@ data class CartItem(
 data class AdditionalServices(
     val trim: TrimService? = null,
     val transcriptRequested: Boolean = false,
-    val captionsRequested: Boolean = false
+    val captionsRequested: Boolean = false,
+    val editingRequested: String? = null
 )
 
 data class TrimService(

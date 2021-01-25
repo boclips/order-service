@@ -441,7 +441,8 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     """
                     {
                     "trim": null,
-                    "transcriptRequested" : true
+                    "transcriptRequested" : true,
+                    "editingRequested" : "please remove all images of cats!"
                     }
                     """.trimIndent()
                 ).asPublisher("publishers-user-id")
@@ -450,7 +451,37 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].additionalServices").exists())
                 .andExpect(jsonPath("$.items[0].additionalServices.trim").doesNotExist())
                 .andExpect(jsonPath("$.items[0].additionalServices.transcriptRequested", equalTo(true)))
+                .andExpect(jsonPath("$.items[0].additionalServices.editingRequested",
+                    equalTo("please remove all images of cats!")))
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
+        }
+
+        @Test
+        fun `it can request editing` (){
+            createCart(
+                userId = "publishers-user-id",
+                items = listOf(
+                    CartFactory.cartItem(
+                        id = "cart-item-1",
+                        additionalServices = CartFactory.additionalServices(
+                            editingRequested = null
+                        )
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "editingRequested" : "please remove all images of penguins!"
+                    }
+                    """.trimIndent()
+                ).asPublisher("publishers-user-id")
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].additionalServices.editingRequested",
+                    equalTo("please remove all images of penguins!")))
+
         }
     }
 }
