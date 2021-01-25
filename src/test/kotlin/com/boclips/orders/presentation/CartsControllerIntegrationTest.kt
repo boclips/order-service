@@ -71,6 +71,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items", hasSize<Any>(1)))
                 .andExpect(jsonPath("$.items[0]._links.self.href", endsWith("/cart-item-id")))
+                .andExpect(jsonPath("$.items[0]._links.additionalServices.href", endsWith("/cart-item-id/additional-services")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/cart")))
                 .andExpect(jsonPath("$._links.addItem.href", endsWith("/cart/items")))
         }

@@ -84,7 +84,7 @@ class CartsController(
         }
     }
 
-    @PatchMapping(value = ["/items/{id}", "/items/{id}/additional-services"])
+    @PatchMapping(value = ["/items/{id}/additional-services", "/items/{id}"])
     fun updateCartItem(
         @Valid @RequestBody updateAdditionalServicesRequest: UpdateAdditionalServicesRequest?,
         @PathVariable id: String?
@@ -101,11 +101,6 @@ class CartsController(
                 getDefaultCartLinks()
             )
         )
-    }
-
-    @GetMapping("/items/{id}")
-    fun getCartItem(@PathVariable id: String?): ResponseEntity<CartItemResource> {
-        TODO("to be implemented - for now it's only for link building")
     }
 
     @DeleteMapping("/items/{id}")

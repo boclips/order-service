@@ -32,6 +32,9 @@ object CartToResourceConverter {
                 transcriptRequested = cartItem.additionalServices.transcriptRequested
             )
         ),
-        listOfNotNull(CartsLinkBuilder.cartItemLink(cartItem.id))
+        listOfNotNull(
+            CartsLinkBuilder.cartItemLink(cartItem.id),
+            CartsLinkBuilder.cartItemAdditionalServices(cartItem.id)
+        )
     )
 }
