@@ -395,6 +395,32 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
         }
 
+        @Test
+        fun `can update cart item with captionsRequested`() {
+            createCart(
+                userId = "publishers-user-id",
+                items = listOf(
+                    CartFactory.cartItem(
+                        id = "cart-item-1",
+                        additionalServices = CartFactory.additionalServices(captionsRequested = false)
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                    """
+                    {
+                    "captionsRequested" : true
+                    }
+                    """.trimIndent()
+                ).asPublisher("publishers-user-id")
+            ).andExpect(status().is2xxSuccessful)
+                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
+                .andExpect(jsonPath("$.items[0].additionalServices").exists())
+                .andExpect(jsonPath("$.items[0].additionalServices.captionsRequested", equalTo(true)))
+        }
+
 
         @Test
         fun `can update two additional services with one request`() {

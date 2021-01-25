@@ -45,7 +45,8 @@ object CartDocumentConverter {
     private fun additionalServices(document: AdditionalServicesDocument): AdditionalServices =
         AdditionalServices(
             trim = document.trim?.let { trimService(it) },
-            transcriptRequested = document.transcriptRequested ?: false
+            transcriptRequested = document.transcriptRequested ?: false,
+            captionsRequested = document.captionsRequested ?: false
         )
 
     private fun trimService(document: TrimServiceDocument): TrimService =

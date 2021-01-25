@@ -29,7 +29,8 @@ object CartToResourceConverter {
                         to = it.to
                     )
                 },
-                transcriptRequested = cartItem.additionalServices.transcriptRequested
+                transcriptRequested = cartItem.additionalServices.transcriptRequested,
+                captionsRequested = cartItem.additionalServices.captionsRequested
             )
         ),
         listOfNotNull(

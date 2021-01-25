@@ -43,6 +43,9 @@ class UpdateCartItemAdditionalServices(
             },
             additionalServices.transcriptRequested?.let {
                 CartItemUpdateCommand.SetTranscriptRequested(transcriptRequested = it.orElse(false))
+            },
+            additionalServices.captionsRequested?.let {
+                CartItemUpdateCommand.SetCaptionsRequested(captionsRequested = it.orElse(false))
             }
         )
     }

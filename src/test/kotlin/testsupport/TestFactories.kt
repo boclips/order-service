@@ -575,8 +575,9 @@ object CartFactory {
 
     fun additionalServices(
         trim: TrimService? = TrimService("0:00", "12:00"),
-        transcriptRequested: Boolean = false
-    ) = AdditionalServices(trim = trim, transcriptRequested = transcriptRequested)
+        transcriptRequested: Boolean = false,
+        captionsRequested: Boolean = false
+    ) = AdditionalServices(trim = trim, transcriptRequested = transcriptRequested, captionsRequested = captionsRequested)
 }
 
 object ManifestFactory {

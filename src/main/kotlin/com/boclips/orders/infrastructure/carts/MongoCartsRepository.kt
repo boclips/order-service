@@ -79,6 +79,10 @@ class MongoCartsRepository(private val mongoClient: MongoClient) : CartsReposito
                     CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices / AdditionalServicesDocument::transcriptRequested,
                     it.transcriptRequested
                 )
+                is CartItemUpdateCommand.SetCaptionsRequested -> set(
+                    CartDocument::items.colProperty.posOp / CartItemDocument::additionalServices / AdditionalServicesDocument::captionsRequested,
+                    it.captionsRequested
+                )
             }
 
             collection().updateOne(

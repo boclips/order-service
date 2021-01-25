@@ -8,7 +8,8 @@ data class CartItemDocument(
 
 data class AdditionalServicesDocument(
     val trim: TrimServiceDocument? = null,
-    val transcriptRequested: Boolean? = false
+    val transcriptRequested: Boolean? = false,
+    val captionsRequested: Boolean? = false
 )
 
 data class TrimServiceDocument(
