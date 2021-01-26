@@ -236,34 +236,6 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
 
             mockMvc.perform(
-                patch("/v1/cart/items/${cartItemId.id}").contentType(MediaType.APPLICATION_JSON).content(
-                    """
-                    {
-                    "trim" : {
-                        "from": "1:23",
-                        "to": "2:59"
-                        }
-                    }
-                    """.trimIndent()
-                ).asPublisher(userId)
-            ).andExpect(status().is2xxSuccessful)
-                .andExpect(jsonPath("$.items[0].videoId", equalTo("video-id")))
-                .andExpect(jsonPath("$.items[0].additionalServices").exists())
-                .andExpect(jsonPath("$.items[0].additionalServices.trim").exists())
-                .andExpect(jsonPath("$.items[0].additionalServices.trim.from", equalTo("1:23")))
-                .andExpect(jsonPath("$.items[0].additionalServices.trim.to", equalTo("2:59")))
-                .andExpect(jsonPath("$.items[0].id", Matchers.not(emptyString())))
-        }
-
-        @Test
-        fun `can update additional services using more specific URL`() {
-            val userId = "publishers-user-id"
-
-            createCart(userId)
-
-            val cartItemId = saveItemToCart(videoId = "video-id", userId = userId)
-
-            mockMvc.perform(
                 patch("/v1/cart/items/${cartItemId.id}/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
@@ -304,7 +276,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/cart-item-1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "trim" : null
@@ -332,7 +304,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     }
@@ -354,7 +326,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             saveItemToCart(videoId = "video-id", userId = userId)
 
             mockMvc.perform(
-                patch("/v1/cart/items/1234").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/1234/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "trim" : {
@@ -380,7 +352,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/cart-item-1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "transcriptRequested" : true
@@ -408,7 +380,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/cart-item-1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "captionsRequested" : true
@@ -437,7 +409,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/cart-item-1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "trim": null,
@@ -461,7 +433,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `it can request editing` (){
+        fun `it can request editing`() {
             createCart(
                 userId = "publishers-user-id",
                 items = listOf(
@@ -475,7 +447,7 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
 
             mockMvc.perform(
-                patch("/v1/cart/items/cart-item-1").contentType(MediaType.APPLICATION_JSON).content(
+                patch("/v1/cart/items/cart-item-1/additional-services").contentType(MediaType.APPLICATION_JSON).content(
                     """
                     {
                     "editRequest" : "please remove all images of penguins!"
@@ -484,9 +456,11 @@ class CartsControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 ).asPublisher("publishers-user-id")
             ).andExpect(status().is2xxSuccessful)
                 .andExpect(
-                    jsonPath("$.items[0].additionalServices.editRequest",
-                    equalTo("please remove all images of penguins!")))
-
+                    jsonPath(
+                        "$.items[0].additionalServices.editRequest",
+                        equalTo("please remove all images of penguins!")
+                    )
+                )
         }
     }
 }

@@ -84,7 +84,7 @@ class CartsController(
         }
     }
 
-    @PatchMapping(value = ["/items/{id}/additional-services", "/items/{id}"])
+    @PatchMapping(value = ["/items/{id}/additional-services"])
     fun updateCartItem(
         @Valid @RequestBody updateAdditionalServicesRequest: UpdateAdditionalServicesRequest?,
         @PathVariable id: String?
