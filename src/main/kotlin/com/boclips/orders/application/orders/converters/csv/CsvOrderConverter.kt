@@ -86,7 +86,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
         val orderItemBuilder = OrderItem.builder()
 
         validator.setNotNullOrError(
-            value = csvItem.videoId,
+            value = csvItem.videoId?.trim(),
             setter = { orderItemBuilder.video(videoProvider.get(VideoId(value = it))) },
             defaultErrorMessage = "Field ${CsvOrderItemMetadata.CLIP_ID} must not be null",
             errorMessages = *arrayOf(BoclipsException::class to "${CsvOrderItemMetadata.CLIP_ID} error")

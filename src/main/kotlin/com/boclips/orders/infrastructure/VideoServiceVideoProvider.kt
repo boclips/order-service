@@ -1,9 +1,17 @@
 package com.boclips.orders.infrastructure
 
-import com.boclips.orders.domain.exceptions.*
+import com.boclips.orders.domain.FetchVideoResourceException
+import com.boclips.orders.domain.exceptions.ChannelNotFoundException
+import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
+import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
+import com.boclips.orders.domain.exceptions.MissingVideoPlaybackId
+import com.boclips.orders.domain.exceptions.VideoNotFoundException
 import com.boclips.orders.domain.model.Price
+import com.boclips.orders.domain.model.orderItem.AssetStatus
+import com.boclips.orders.domain.model.orderItem.Channel
+import com.boclips.orders.domain.model.orderItem.ChannelId
+import com.boclips.orders.domain.model.orderItem.Video
 import com.boclips.orders.domain.model.video.VideoId
-import com.boclips.orders.domain.model.orderItem.*
 import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.infrastructure.orders.converters.KalturaLinkConverter
 import com.boclips.videos.api.httpclient.ChannelsClient
@@ -17,7 +25,7 @@ import feign.FeignException
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.net.URL
-import java.util.*
+import java.util.Currency
 
 @Component
 class VideoServiceVideoProvider(
@@ -92,8 +100,15 @@ class VideoServiceVideoProvider(
     private fun getVideoResource(videoId: VideoId): VideoResource {
         return try {
             videosClient.getVideo(videoId = videoId.value, projection = Projection.full)
+        } catch (e: FeignException) {
+            logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
+            throw when (e) {
+                is FeignException.NotFound -> VideoNotFoundException(videoId, e)
+                else -> FetchVideoResourceException(videoId, e)
+            }
         } catch (e: Exception) {
-            throw VideoNotFoundException(videoId, e)
+            logger.info { e.message }
+            throw FetchVideoResourceException(videoId, e)
         }
     }
 }
