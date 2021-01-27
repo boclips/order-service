@@ -928,6 +928,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                                 "to":"2:00"
                                             },
                                             "transcriptRequested": true,
+                                            "captionsRequested": true,
                                             "editRequest": "please remove images of alcohol"
                                          }
                                       }
@@ -956,8 +957,12 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].id", equalTo("item-id")))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-service-id")))
                 .andExpect(jsonPath("$.items[0].trim", equalTo("1:00 - 2:00")))
-                .andExpect(jsonPath("$.items[0].editRequest",
-                    equalTo("please remove images of alcohol")))
+                .andExpect(
+                    jsonPath(
+                        "$.items[0].editRequest",
+                        equalTo("please remove images of alcohol")
+                    )
+                )
                 .andExpect(jsonPath("$.items[0].notes", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.value", equalTo(600.0)))
                 .andExpect(jsonPath("$.items[0].price.currency", equalTo("GBP")))
@@ -965,7 +970,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$.items[0].licenseTerritory", nullValue()))
                 .andExpect(jsonPath("$.items[0].price.displayValue", equalTo("GBP 600.00")))
                 .andExpect(jsonPath("$.items[0].transcriptRequested", equalTo(true)))
-                .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(false)))
+                .andExpect(jsonPath("$.items[0].captionsRequested", equalTo(true)))
                 .andExpect(jsonPath("$.items[0].video.title", equalTo("hippos are cool")))
                 .andExpect(jsonPath("$.items[0].video.types[0]", equalTo("STOCK")))
                 .andExpect(jsonPath("$.items[0].video._links.fullProjection.href", equalTo("https://great-vids.com")))
