@@ -28,6 +28,8 @@ class SyncVideos(
                 orders.map { order ->
                     order.items.map { item ->
                         threadPool.execute {
+                            logger.info { "Updating video: ${item.video.videoServiceId} for order: ${order.id}" }
+
                             try {
                                 val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
                                 val updateCommand = OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
@@ -35,6 +37,7 @@ class SyncVideos(
                                     orderItemsId = item.id,
                                     video = newVideo
                                 )
+
                                 ordersRepository.update(updateCommand)
                             } catch (e: Exception) {
                                 logger.warn("Error syncing video for order: ${order.id.value}", e)
