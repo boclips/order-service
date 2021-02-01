@@ -8,7 +8,6 @@ import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.infrastructure.VideoServiceVideoProvider
 import mu.KLogging
 import org.springframework.stereotype.Component
-import javax.annotation.PostConstruct
 
 @Component
 class SyncVideos(
@@ -20,10 +19,13 @@ class SyncVideos(
 
     operator fun invoke() {
         ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED, OrderStatus.IN_PROGRESS)) {
-            it.windowed(100, 100, true).forEachIndexed { index, orders ->
+            it.windowed(50, 50, true).forEachIndexed { index, orders ->
                 logger.info { "Starting batch ${index + 1} of syncing videos" }
+
                 val commands = orders.flatMap { order ->
-                    order.items.mapNotNull { item ->
+                    logger.info { "Processing ${order.items.size} items for order: ${order.id.value}" }
+
+                    return@flatMap order.items.mapNotNull { item ->
                         try {
                             val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
                             OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
