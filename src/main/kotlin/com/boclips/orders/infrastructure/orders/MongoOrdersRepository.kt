@@ -144,7 +144,7 @@ class MongoOrdersRepository(private val mongoClient: MongoClient) : OrdersReposi
 
     private fun convertUpdateToBson(orderUpdateCommand: OrderUpdateCommand): Bson? {
         return when (orderUpdateCommand) {
-            is OrderUpdateCommand.ReplaceDeliveryDate ->
+            is OrderUpdateCommand.ReplaceDeliveredAt ->
                 set(OrderDocument::deliveryDate, orderUpdateCommand.deliveredAt)
             is OrderUpdateCommand.ReplaceStatus ->
                 set(OrderDocument::status, orderUpdateCommand.orderStatus.toString())

@@ -9,7 +9,7 @@ import java.util.Currency
 sealed class OrderUpdateCommand(val orderId: OrderId) {
     class ReplaceStatus(orderId: OrderId, val orderStatus: OrderStatus) : OrderUpdateCommand(orderId)
 
-    class ReplaceDeliveryDate(orderId: OrderId, val deliveredAt: Instant?) : OrderUpdateCommand(orderId)
+    class ReplaceDeliveredAt(orderId: OrderId, val deliveredAt: Instant?) : OrderUpdateCommand(orderId)
 
     class UpdateOrderCurrency(orderId: OrderId, val currency: Currency, val fxRateToGbp: BigDecimal) :
         OrderUpdateCommand(orderId)

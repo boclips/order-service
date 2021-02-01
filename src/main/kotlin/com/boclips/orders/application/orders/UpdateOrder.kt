@@ -42,7 +42,7 @@ class UpdateOrder(
                 getStatusUpdate(it, orderId)
             },
             updateOrderRequest?.status?.let {
-                getDeliveryDateUpdate(orderId, it)
+                getDeliveredAtUpdate(orderId, it)
             }
         )
 
@@ -112,10 +112,10 @@ class UpdateOrder(
         }
     )
 
-    private fun getDeliveryDateUpdate(
+    private fun getDeliveredAtUpdate(
         orderId: OrderId,
         it: UpdateOrderStatusRequest
-    ) = OrderUpdateCommand.ReplaceDeliveryDate(
+    ) = OrderUpdateCommand.ReplaceDeliveredAt(
         orderId = orderId, deliveredAt = when (it) {
             UpdateOrderStatusRequest.DELIVERED -> Instant.now()
             UpdateOrderStatusRequest.READY -> null

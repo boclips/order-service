@@ -108,7 +108,6 @@ class OrderResourceTest {
                 status = OrderStatusResource.READY,
                 createdAt = Instant.ofEpochSecond(100).toString(),
                 updatedAt = Instant.ofEpochSecond(100).toString(),
-                deliveryDate = Instant.ofEpochSecond(100).toString(),
                 deliveredAt = Instant.ofEpochSecond(100).toString(),
                 totalPrice = PriceResource(
                     value = BigDecimalWith2DP.ONE,

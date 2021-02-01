@@ -707,11 +707,11 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status", equalTo("DELIVERED")))
-                .andExpect(jsonPath("$.deliveryDate").exists())
+                .andExpect(jsonPath("$.deliveredAt").exists())
         }
 
         @Test
-        fun `when order status is updated to ready delivery date is set to null`() {
+        fun `when order status is updated to ready deliveryAt is set to null`() {
             val order = ordersRepository.save(
                 OrderFactory.order(
                     orderOrganisation = OrderOrganisation("org1"),
@@ -736,7 +736,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("$.deliveryDate", nullValue()))
+                .andExpect(jsonPath("$.deliveredAt", nullValue()))
                 .andExpect(jsonPath("$.status", equalTo("READY")))
         }
 
