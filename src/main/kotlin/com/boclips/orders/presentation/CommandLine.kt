@@ -18,7 +18,7 @@ class CommandLine(
     fun onBoot() {
         when (env.getProperty("mode")) {
             "synchronise-videos" -> {
-                syncVideos.invoke()
+                syncVideos()
                 exitProcess(0)
             }
         }

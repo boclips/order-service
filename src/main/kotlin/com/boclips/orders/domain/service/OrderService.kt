@@ -89,7 +89,7 @@ class OrderService(
     private fun undoDeliveredOrder(currentStatus: OrderStatus?, newStatus: OrderStatus) =
         currentStatus === OrderStatus.DELIVERED && newStatus === OrderStatus.READY
 
-    private fun syncStatus(order: Order): Order {
+    fun syncStatus(order: Order): Order {
         val currentStatus = order.status
 
         val candidateStatus = when {

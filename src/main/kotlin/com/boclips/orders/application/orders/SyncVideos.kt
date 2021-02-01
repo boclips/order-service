@@ -8,6 +8,8 @@ import com.boclips.orders.domain.service.OrderService
 import com.boclips.orders.infrastructure.VideoServiceVideoProvider
 import mu.KLogging
 import org.springframework.stereotype.Component
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 @Component
 class SyncVideos(
@@ -18,30 +20,37 @@ class SyncVideos(
     companion object : KLogging()
 
     operator fun invoke() {
+        val threadPool = Executors.newFixedThreadPool(15)
         ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED, OrderStatus.IN_PROGRESS)) {
             it.windowed(2, 2, true).forEachIndexed { index, orders ->
                 logger.info { "Starting batch ${index + 1} of syncing videos" }
 
-                val commands = orders.flatMap { order ->
-                    logger.info { "Processing ${order.items.size} items for order: ${order.id.value}" }
-
-                    return@flatMap order.items.mapNotNull { item ->
-                        try {
-                            val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
-                            OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
-                                orderId = order.id,
-                                orderItemsId = item.id,
-                                video = newVideo
-                            )
-                        } catch (e: Exception) {
-                            logger.warn("Error syncing video for order: ${order.id.value}", e)
-                            null
+                orders.map { order ->
+                    order.items.map { item ->
+                        threadPool.execute {
+                            try {
+                                val newVideo = videoServiceVideoProvider.get(item.video.videoServiceId)
+                                val updateCommand = OrderUpdateCommand.OrderItemUpdateCommand.ReplaceVideo(
+                                    orderId = order.id,
+                                    orderItemsId = item.id,
+                                    video = newVideo
+                                )
+                                ordersRepository.update(updateCommand)
+                            } catch (e: Exception) {
+                                logger.warn("Error syncing video for order: ${order.id.value}", e)
+                            }
                         }
                     }
+                    orderService.syncStatus(order)
                 }
-
-                orderService.bulkUpdate(commands)
             }
         }
+        threadPool.shutdown()
+        try {
+            threadPool.awaitTermination(40, TimeUnit.MINUTES)
+        } catch (e: Exception) {
+            logger.error(e) { "something went wrong with syncVideos thread pool" }
+        }
+        logger.info { "shutting down" }
     }
 }
