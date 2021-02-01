@@ -19,7 +19,7 @@ class SyncVideos(
 
     operator fun invoke() {
         ordersRepository.streamAll(filter = OrderFilter.HasStatus(OrderStatus.INCOMPLETED, OrderStatus.IN_PROGRESS)) {
-            it.windowed(50, 50, true).forEachIndexed { index, orders ->
+            it.windowed(2, 2, true).forEachIndexed { index, orders ->
                 logger.info { "Starting batch ${index + 1} of syncing videos" }
 
                 val commands = orders.flatMap { order ->
