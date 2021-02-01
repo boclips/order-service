@@ -687,7 +687,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     orderOrganisation = OrderOrganisation("org1"),
                     currency = Currency.getInstance("USD"),
                     status = OrderStatus.READY,
-                    deliveryDate = null
+                    deliveredAt = null
                 )
             )
 
@@ -717,7 +717,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     orderOrganisation = OrderOrganisation("org1"),
                     currency = Currency.getInstance("USD"),
                     status = OrderStatus.DELIVERED,
-                    deliveryDate = Instant.now()
+                    deliveredAt = Instant.now()
                 )
             )
 

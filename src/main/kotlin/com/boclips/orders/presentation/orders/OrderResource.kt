@@ -18,6 +18,7 @@ data class OrderResource(
     val createdAt: String,
     val updatedAt: String,
     val deliveryDate: String?,
+    val deliveredAt: String?,
     val isbnNumber: String?,
     val items: List<OrderItemResource>,
     val totalPrice: PriceResource,
@@ -35,7 +36,8 @@ data class OrderResource(
                 userDetails = UserDetailsResource.toResource(order),
                 createdAt = order.createdAt.toString(),
                 updatedAt = order.updatedAt.toString(),
-                deliveryDate = order.deliveryDate?.toString(),
+                deliveryDate = order.deliveredAt?.toString(),
+                deliveredAt = order.deliveredAt?.toString(),
                 status = when (order.status) {
                     OrderStatus.READY -> OrderStatusResource.READY
                     OrderStatus.DELIVERED -> OrderStatusResource.DELIVERED

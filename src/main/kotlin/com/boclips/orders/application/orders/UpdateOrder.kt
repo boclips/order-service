@@ -116,7 +116,7 @@ class UpdateOrder(
         orderId: OrderId,
         it: UpdateOrderStatusRequest
     ) = OrderUpdateCommand.ReplaceDeliveryDate(
-        orderId = orderId, deliveryDate = when (it) {
+        orderId = orderId, deliveredAt = when (it) {
             UpdateOrderStatusRequest.DELIVERED -> Instant.now()
             UpdateOrderStatusRequest.READY -> null
         }
