@@ -28,6 +28,8 @@ class OrderService(
         if (retrievedOrder == null) {
             retrievedOrder = ordersRepository.save(order)
                 .let { requestCaptions(it) }
+        } else {
+            logger.warn { "Trying to create order that already exists: ${order.legacyOrderId}" }
         }
 
         return syncStatus(retrievedOrder)

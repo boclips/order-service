@@ -2,7 +2,11 @@ package com.boclips.orders.application.orders.converters.csv
 
 import com.boclips.orders.application.orders.converters.parseTrimRequest
 import com.boclips.orders.domain.exceptions.BoclipsException
-import com.boclips.orders.domain.model.*
+import com.boclips.orders.domain.model.Order
+import com.boclips.orders.domain.model.OrderOrganisation
+import com.boclips.orders.domain.model.OrderSource
+import com.boclips.orders.domain.model.OrderStatus
+import com.boclips.orders.domain.model.OrderUser
 import com.boclips.orders.domain.model.orderItem.OrderItem
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.video.VideoId
@@ -10,7 +14,7 @@ import com.boclips.orders.domain.service.VideoProvider
 import com.boclips.orders.presentation.orders.CsvOrderItemMetadata
 import mu.KLogging
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.UUID
 import kotlin.reflect.KClass
 
 @Component
@@ -61,6 +65,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     "Field ${CsvOrderItemMetadata.ORDER_THROUGH_PLATFORM} '${firstOrderItem.orderThroughPlatform}' has an invalid format, try yes or no instead"
                 )
 
+                logger.info { "Processing total items: ${csvOrderItems.size} for order $legacyOrderId" }
                 val orderItems = csvOrderItems.mapNotNull { toOrderItem(it, validator) }
                 orderBuilder.items(orderItems)
                 orderItems
@@ -76,6 +81,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                             .organisation(firstOrderItem.publisher?.let { OrderOrganisation(name = it) })
                             .build()
                     }
+                    ?.also { logger.info { "Finished processing order: $legacyOrderId" } }
             }
             .let { orders ->
                 OrdersResult.instanceOf(orders, errors)
@@ -83,6 +89,7 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
     }
 
     fun toOrderItem(csvItem: CsvOrderItemMetadata, validator: OrderValidator): OrderItem? {
+        logger.info { "Processing order item with video id: ${csvItem.videoId}" }
         val orderItemBuilder = OrderItem.builder()
 
         validator.setNotNullOrError(
@@ -114,9 +121,11 @@ class CsvOrderConverter(val videoProvider: VideoProvider) {
                     .trim(csvItem.trim.parseTrimRequest())
                     .license(orderItemLicenseBuilder.build())
                     .notes(csvItem.notes?.takeIf { it.isNotBlank() })
-                    .id(UUID
-                        .randomUUID()
-                        .toString())
+                    .id(
+                        UUID
+                            .randomUUID()
+                            .toString()
+                    )
                     .build()
             }
     }
