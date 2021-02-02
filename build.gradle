@@ -53,6 +53,7 @@ dependencies {
     implementation 'io.sentry:sentry-logback:1.7.23'
     implementation 'com.damnhandy:handy-uri-templates:2.1.8'
     implementation 'io.opentracing.contrib:opentracing-spring-jaeger-cloud-starter:3.2.2'
+    implementation 'com.mailjet:mailjet-client:5.1.1'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.2.0"
@@ -60,9 +61,7 @@ dependencies {
     testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.3.0'
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     testImplementation("org.springframework.security:spring-security-test")
-    testCompile 'org.mockito:mockito-core:2.23.0'
-    testCompile "org.mockito:mockito-junit-jupiter:2.23.0"
-    testCompile 'com.nhaarman:mockito-kotlin:1.5.0'
+    testImplementation('com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0')
 
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.2.0"
 }

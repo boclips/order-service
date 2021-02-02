@@ -6,6 +6,7 @@ import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.model.Order
 import com.boclips.orders.domain.model.cart.Cart
 import com.boclips.orders.domain.model.cart.CartItem
+import com.boclips.orders.domain.service.EmailSender
 import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
@@ -74,6 +75,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var addItemToCart: AddItemToCart
+
+    @Autowired
+    lateinit var emailSender: EmailSender
 
     @BeforeEach
     fun setup() {
