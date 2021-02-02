@@ -2,6 +2,7 @@ package com.boclips.orders.config.application
 
 import com.boclips.orders.config.CurrencyLayerProperties
 import com.boclips.orders.config.KeycloakProperties
+import com.boclips.orders.config.properties.MailJetProperties
 import com.boclips.orders.config.security.AppKeycloakConfigResolver
 import com.boclips.orders.domain.model.LegacyOrdersRepository
 import com.boclips.orders.domain.service.currency.FxRateService
@@ -9,6 +10,8 @@ import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.currency.CurrencyLayerFxRateService
 import com.boclips.orders.infrastructure.orders.MongoLegacyOrdersRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
+import com.mailjet.client.ClientOptions
+import com.mailjet.client.MailjetClient
 import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import org.keycloak.adapters.KeycloakConfigResolver
@@ -54,5 +57,16 @@ class InfrastructureConfiguration(
     @Profile("!test")
     fun keycloakConfigResolver(keycloakProperties: KeycloakProperties): KeycloakConfigResolver {
         return AppKeycloakConfigResolver(keycloakProperties)
+    }
+
+    @Bean
+    @Profile("!test")
+    fun mailJetClient(mailJetProperties: MailJetProperties): MailjetClient {
+        return MailjetClient(
+            ClientOptions.builder()
+                .apiKey(mailJetProperties.apiKey)
+                .apiSecretKey(mailJetProperties.apiSecretKey)
+                .build()
+        )
     }
 }

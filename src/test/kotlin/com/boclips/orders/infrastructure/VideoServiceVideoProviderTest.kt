@@ -16,7 +16,7 @@ import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
