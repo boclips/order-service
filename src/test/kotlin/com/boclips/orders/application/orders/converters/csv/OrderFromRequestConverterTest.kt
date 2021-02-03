@@ -34,8 +34,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                 user = PlaceOrderRequestUser(
                     id = "user-id",
                     email = "definitely-not-batman@wayne.com",
-                    firstName = "Bruce",
-                    lastName = "Wayne",
+                    firstName = "",
+                    lastName = null,
                     organisation = PlaceOrderRequestOrganisation(
                         id = "org-id",
                         name = "Wayne Enterprises"
@@ -62,8 +62,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
         assertThat(convertedOrder.items.first().notes).isNull()
 
         val convertedUser = (convertedOrder.authorisingUser!! as OrderUser.CompleteUser)
-        assertThat(convertedUser.firstName).isEqualTo("Bruce")
-        assertThat(convertedUser.lastName).isEqualTo("Wayne")
+        assertThat(convertedUser.firstName).isEqualTo("")
+        assertThat(convertedUser.lastName).isEqualTo(null)
         assertThat(convertedUser.email).isEqualTo("definitely-not-batman@wayne.com")
         assertThat(convertedUser.userId).isEqualTo("user-id")
         assertThat(convertedUser.legacyUserId).isNull()
@@ -85,8 +85,8 @@ internal class OrderFromRequestConverterTest : AbstractSpringIntegrationTest() {
                 PlaceOrderRequest(
                     user = PlaceOrderRequestUser(
                         id = "user-id",
-                        email = "definitely-not-batman@wayne.com",
-                        firstName = "",
+                        email = "",
+                        firstName = "Bruce",
                         lastName = "Wayne",
                         organisation = PlaceOrderRequestOrganisation(
                             id = "org-id",

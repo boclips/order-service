@@ -19,6 +19,7 @@ import com.boclips.videos.api.response.video.CaptionStatus
 import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
 import com.boclips.videos.api.response.video.VideoTypeResource
+import com.nhaarman.mockitokotlin2.reset
 import de.flapdoodle.embed.mongo.MongodProcess
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -84,6 +85,7 @@ abstract class AbstractSpringIntegrationTest {
         ordersRepository.deleteAll()
         mongoCartsRepository.deleteAll()
         legacyOrdersRepository.clear()
+        reset(emailSender)
     }
 
     @AfterEach
