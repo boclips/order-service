@@ -681,7 +681,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `when order status is updated to delivered delivery date is set`() {
+        fun `when order status is updated to delivered deliveredAt field is set`() {
             val order = ordersRepository.save(
                 OrderFactory.order(
                     orderOrganisation = OrderOrganisation("org1"),
@@ -711,7 +711,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         }
 
         @Test
-        fun `when order status is updated to ready deliveryAt is set to null`() {
+        fun `when order status is updated to ready deliveredAt field is set to null`() {
             val order = ordersRepository.save(
                 OrderFactory.order(
                     orderOrganisation = OrderOrganisation("org1"),

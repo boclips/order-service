@@ -71,7 +71,7 @@ class EventConverterTest {
         assertThat(eventOrder.status).isEqualTo(EventOrderStatus.READY)
         assertThat(eventOrder.createdAt).isEqualTo("2018-10-05T12:13:14Z")
         assertThat(eventOrder.updatedAt).isEqualTo("2019-10-05T12:13:14Z")
-        assertThat(eventOrder.deliveryDate).isEqualTo("2019-10-05T12:13:14Z")
+        assertThat(eventOrder.deliveredAt).isEqualTo("2019-10-05T12:13:14Z")
         assertThat(eventOrder.items).contains(
             OrderItem.builder()
                 .priceGbp(BigDecimal("20.00"))

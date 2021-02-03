@@ -177,7 +177,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updates delivery date of order`() {
+    fun `updates deliveredAt field of order`() {
         val startOfTest = Instant.now().minusMillis(100)
         val order = OrderFactory.order(deliveredAt = null)
         ordersRepository.save(order = order)
@@ -187,7 +187,7 @@ class MongoOrdersRepositoryTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
-    fun `updates delivery date with null`() {
+    fun `updates deliveredAt field with null`() {
         val order = OrderFactory.order(deliveredAt = Instant.now())
         ordersRepository.save(order = order)
         ordersRepository.update(OrderUpdateCommand.ReplaceDeliveredAt(orderId = order.id, deliveredAt = null))
