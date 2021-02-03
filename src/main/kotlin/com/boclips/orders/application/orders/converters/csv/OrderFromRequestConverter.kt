@@ -68,8 +68,6 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
     }
 
     private fun isUserDataValid(userRequest: PlaceOrderRequestUser): Boolean =
-        userRequest.firstName.isNotBlank() &&
-            userRequest.lastName.isNotBlank() &&
-            userRequest.email.isNotBlank() &&
+        userRequest.email.isNotBlank() &&
             userRequest.id.isNotBlank()
 }

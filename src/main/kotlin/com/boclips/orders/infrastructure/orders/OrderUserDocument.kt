@@ -13,9 +13,7 @@ data class OrderUserDocument(
     }
 
     fun isCompleteUser(): Boolean {
-        return !firstName.isNullOrEmpty() &&
-            !lastName.isNullOrEmpty() &&
-            !email.isNullOrEmpty() &&
+        return !email.isNullOrEmpty() &&
             !(legacyUserId.isNullOrEmpty() && userId.isNullOrEmpty())
     }
 }

@@ -24,5 +24,18 @@ class OrderUserDocumentTest {
 
             assertTrue(userDocument.isCompleteUser())
         }
+
+        @Test
+        fun `is still complete user when first name and last name are nullable`() {
+            val userDocument = TestFactories.orderUserDocument(
+                firstName = null,
+                lastName = null,
+                email = "email@email.com",
+                userId = "123",
+                legacyUserId = null
+            )
+
+            assertTrue(userDocument.isCompleteUser())
+        }
     }
 }

@@ -1091,9 +1091,9 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                    ],
                                    "user":{
                                       "id":"user-id",
-                                      "email":"definitely-not-batman@wayne.com",
+                                      "email":"",
                                       "firstName":"Bruce",
-                                      "lastName":"",
+                                      "lastName":null,
                                       "organisation":{
                                          "id":"org-id",
                                          "name":"Wayne Enterprises"

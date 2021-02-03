@@ -17,8 +17,8 @@ data class PlaceOrderRequestItem(
 data class PlaceOrderRequestUser(
     val id: String,
     val email: String,
-    val firstName: String,
-    val lastName: String,
+    val firstName: String?,
+    val lastName: String?,
     val organisation: PlaceOrderRequestOrganisation
 )
 
