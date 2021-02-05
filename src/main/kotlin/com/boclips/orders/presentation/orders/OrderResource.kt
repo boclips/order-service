@@ -13,6 +13,7 @@ import org.springframework.hateoas.server.core.Relation
 data class OrderResource(
     val id: String,
     val legacyOrderId: String?,
+    val searchableOrderId: String,
     val userDetails: UserDetailsResource,
     val status: OrderStatusResource,
     val createdAt: String,
@@ -31,6 +32,7 @@ data class OrderResource(
             OrderResource(
                 id = order.id.value,
                 legacyOrderId = order.legacyOrderId ?: order.id.value,
+                searchableOrderId = order.legacyOrderId ?: order.id.value,
                 isbnNumber = order.isbnOrProductNumber,
                 userDetails = UserDetailsResource.toResource(order),
                 createdAt = order.createdAt.toString(),

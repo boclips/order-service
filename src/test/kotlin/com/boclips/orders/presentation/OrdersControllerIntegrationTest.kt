@@ -134,6 +134,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("a beautiful isbnNumber")))
                 .andExpect(jsonPath("$._embedded.orders[0].legacyOrderId", equalTo("456")))
+                .andExpect(jsonPath("$._embedded.orders[0].searchableOrderId", equalTo("456")))
                 .andExpect(jsonPath("$._embedded.orders[0].userDetails.organisationLabel", equalTo("An Org")))
                 .andExpect(
                     jsonPath(
@@ -298,6 +299,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
                 .andExpect(jsonPath("$.legacyOrderId", equalTo("456")))
+                .andExpect(jsonPath("$.searchableOrderId", equalTo("456")))
                 .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
                 .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))
                 .andExpect(jsonPath("$.userDetails.authorisingUserLabel", equalTo("hi there <vendor@proper.order>")))

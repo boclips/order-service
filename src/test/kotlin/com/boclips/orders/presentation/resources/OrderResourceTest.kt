@@ -98,6 +98,7 @@ class OrderResourceTest {
             OrderResource(
                 id = "123",
                 legacyOrderId = "456",
+                searchableOrderId = "456",
                 isbnNumber = "an isbn",
                 userDetails = UserDetailsResource(
                     requestingUserLabel = "requestorJack Smith <creator@email.com>",
