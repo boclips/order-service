@@ -133,7 +133,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$._embedded.orders[0].id", equalTo("5ceeb99bd0e30a1a57ae9767")))
                 .andExpect(jsonPath("$._embedded.orders[0].isbnNumber", equalTo("a beautiful isbnNumber")))
-                .andExpect(jsonPath("$._embedded.orders[0].legacyOrderId", equalTo("456")))
                 .andExpect(jsonPath("$._embedded.orders[0].searchableOrderId", equalTo("456")))
                 .andExpect(jsonPath("$._embedded.orders[0].userDetails.organisationLabel", equalTo("An Org")))
                 .andExpect(
@@ -298,7 +297,6 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 get("/v1/orders/5ceeb99bd0e30a1a57ae9767").asHQStaff()
             ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.id", equalTo("5ceeb99bd0e30a1a57ae9767")))
-                .andExpect(jsonPath("$.legacyOrderId", equalTo("456")))
                 .andExpect(jsonPath("$.searchableOrderId", equalTo("456")))
                 .andExpect(jsonPath("$.userDetails.organisationLabel", equalTo("An Org")))
                 .andExpect(jsonPath("$.userDetails.requestingUserLabel", equalTo("hello you <creator@proper.order>")))

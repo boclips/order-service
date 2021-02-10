@@ -97,7 +97,6 @@ class OrderResourceTest {
         assertThat(orderResource).isEqualTo(
             OrderResource(
                 id = "123",
-                legacyOrderId = "456",
                 searchableOrderId = "456",
                 isbnNumber = "an isbn",
                 userDetails = UserDetailsResource(

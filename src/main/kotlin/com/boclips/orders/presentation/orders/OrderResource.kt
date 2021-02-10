@@ -12,7 +12,6 @@ import org.springframework.hateoas.server.core.Relation
 @Relation(collectionRelation = "orders")
 data class OrderResource(
     val id: String,
-    val legacyOrderId: String?,
     val searchableOrderId: String,
     val userDetails: UserDetailsResource,
     val status: OrderStatusResource,
@@ -31,7 +30,6 @@ data class OrderResource(
         fun fromOrder(order: Order): OrderResource =
             OrderResource(
                 id = order.id.value,
-                legacyOrderId = order.legacyOrderId ?: order.id.value,
                 searchableOrderId = order.legacyOrderId ?: order.id.value,
                 isbnNumber = order.isbnOrProductNumber,
                 userDetails = UserDetailsResource.toResource(order),

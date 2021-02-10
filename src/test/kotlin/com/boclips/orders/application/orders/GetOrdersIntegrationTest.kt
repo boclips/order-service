@@ -18,7 +18,7 @@ class GetOrdersIntegrationTest : AbstractSpringIntegrationTest() {
 
         val retrievedOrders = getOrders.getAll()
 
-        assertThat(retrievedOrders.map { it.legacyOrderId })
+        assertThat(retrievedOrders.map { it.searchableOrderId })
             .containsExactlyInAnyOrder("hello", "bye")
     }
 
