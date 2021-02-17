@@ -29,7 +29,7 @@ class OrderServiceHttpSecurityConfigurer : HttpSecurityConfigurer {
             .antMatchers("/v1/").permitAll()
 
             .antMatchers(HttpMethod.GET, "/v1/orders").hasRole(UserRoles.VIEW_ORDERS)
-            .antMatchers(HttpMethod.GET, "/v1/orders/**").hasRole(UserRoles.VIEW_ORDERS)
+            .antMatchers(HttpMethod.GET, "/v1/orders/**").hasAnyRole(UserRoles.VIEW_ORDERS, UserRoles.VIEW_OWN_ORDERS)
             .antMatchers(HttpMethod.POST, "/v1/orders").hasAnyRole(UserRoles.CREATE_ORDERS, UserRoles.PLACE_ORDER)
             .antMatchers(HttpMethod.PATCH, "/v1/orders/**").hasRole(UserRoles.UPDATE_ORDERS)
 

@@ -106,7 +106,10 @@ class OrdersController(
         )
 
     @GetMapping("/{id}")
-    fun getOrderResource(@PathVariable("id") id: String?) = wrapOrder(getOrder(id))
+    fun getOrderResource(@PathVariable("id") id: String?) = wrapOrder(getOrder(
+        orderId = id,
+        userId = UserExtractor.getCurrentUser()!!.id
+    ))
 
     @PatchMapping(value = ["/{id}"])
     fun patchOrder(

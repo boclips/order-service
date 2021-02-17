@@ -34,7 +34,7 @@ fun MockHttpServletRequestBuilder.asPublisher(userId: String = "publisher") = th
             UserRoles.VIEW_CART,
             UserRoles.ADD_CART_ITEMS,
             UserRoles.DELETE_CART_ITEMS,
-            UserRoles.VIEW_ORDERS,
+            UserRoles.VIEW_OWN_ORDERS,
             UserRoles.PLACE_ORDER,
             UserRoles.UPDATE_CART_ITEM,
             UserRoles.UPDATE_CART

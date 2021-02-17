@@ -952,7 +952,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                 .andExpect(header().exists("Location"))
                 .andReturn().response.getHeader("Location")!!
 
-            mockMvc.perform(get(orderLocationUrl).asPublisher())
+            mockMvc.perform(get(orderLocationUrl).asPublisher("user-id"))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.items[0].id", equalTo("item-id")))
                 .andExpect(jsonPath("$.items[0].video.id", equalTo("video-service-id")))
@@ -1106,6 +1106,25 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             )
                 .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.message", equalTo("User data is incomplete")))
+        }
+
+        @Test
+        fun `can't access someone else's order`() {
+            val userId = "publishers-user-id"
+            val otherUserId = "other-publishers-user-id"
+
+            ordersRepository.save(
+                OrderFactory.order(
+                    id = OrderId(value="5ceeb99bd0e30a1a57ae9768"),
+                    requestingUser = OrderFactory.completeOrderUser(
+                        userId = userId
+                    )
+                )
+            )
+
+            mockMvc.perform(
+                get("/v1/orders/5ceeb99bd0e30a1a57ae9768").asPublisher(otherUserId)
+            ).andExpect(status().isNotFound)
         }
     }
 }
