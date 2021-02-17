@@ -1,6 +1,7 @@
 package com.boclips.orders.infrastructure.outgoing.videos
 
 import com.boclips.videos.api.httpclient.VideosClient
+import feign.okhttp.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -38,11 +39,11 @@ class HTTPVideoServiceTests : VideoServiceTests() {
     @BeforeEach
     fun setUp() {
         videoServiceForKaltura =
-            HTTPVideoService(VideosClient.create("https://api.boclips.com"))
+            HTTPVideoService(VideosClient.create("https://api.boclips.com", feignClient = OkHttpClient()))
         videoServiceForYouTube =
-            HTTPVideoService(VideosClient.create("https://api.boclips.com"))
+            HTTPVideoService(VideosClient.create("https://api.boclips.com", feignClient = OkHttpClient()))
         missingVideoService =
-            HTTPVideoService(VideosClient.create("https://httpbin.org/status/404"))
+            HTTPVideoService(VideosClient.create("https://httpbin.org/status/404", feignClient = OkHttpClient()))
     }
 }
 

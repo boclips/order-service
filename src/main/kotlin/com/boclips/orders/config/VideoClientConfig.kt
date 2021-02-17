@@ -4,6 +4,9 @@ import com.boclips.videos.api.httpclient.ChannelsClient
 import com.boclips.videos.api.httpclient.VideosClient
 import com.boclips.videos.api.httpclient.helper.ServiceAccountCredentials
 import com.boclips.videos.api.httpclient.helper.ServiceAccountTokenFactory
+import feign.opentracing.TracingClient
+import io.opentracing.Tracer
+import feign.okhttp.OkHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -12,7 +15,7 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class VideoClientConfig {
     @Bean
-    fun channelsClient(properties: VideoServiceClientProperties): ChannelsClient {
+    fun channelsClient(properties: VideoServiceClientProperties, tracer: Tracer): ChannelsClient {
         return ChannelsClient.create(
             apiUrl = properties.baseUrl,
             tokenFactory = ServiceAccountTokenFactory(
@@ -21,12 +24,13 @@ class VideoClientConfig {
                     clientId = properties.clientId,
                     clientSecret = properties.clientSecret
                 )
-            )
+            ),
+            feignClient = TracingClient(OkHttpClient(), tracer)
         )
     }
 
     @Bean
-    fun videosClient(properties: VideoServiceClientProperties): VideosClient {
+    fun videosClient(properties: VideoServiceClientProperties, tracer: Tracer): VideosClient {
         return VideosClient.create(
             apiUrl = properties.baseUrl,
             tokenFactory = ServiceAccountTokenFactory(
@@ -35,7 +39,8 @@ class VideoClientConfig {
                     clientId = properties.clientId,
                     clientSecret = properties.clientSecret
                 )
-            )
+            ),
+            feignClient = TracingClient(OkHttpClient(), tracer)
         )
     }
 }
