@@ -4,9 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
-@ConfigurationProperties(prefix = "mailjet")
-data class MailJetProperties(
-    var apiKey: String = "",
-    var apiSecretKey: String = "",
-    var templateId: String = ""
+@ConfigurationProperties(prefix = "order-confirmed-email")
+data class  OrderConfirmedEmailProperties(
+    var baseUrl: String = ""
 )
