@@ -24,8 +24,6 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$._links.orders").exists())
             .andExpect(jsonPath("$._links.orders.href", endsWith("/orders")))
-            .andExpect(jsonPath("$._links.userOrders").exists())
-            .andExpect(jsonPath("$._links.userOrders.href", endsWith("orders/items{?size,page}")))
             .andExpect(jsonPath("$._links.order").exists())
             .andExpect(jsonPath("$._links.order.href", endsWith("/orders/{id}")))
             .andExpect(
@@ -43,6 +41,8 @@ class LinksControllerIntegrationTest : AbstractSpringIntegrationTest() {
             .andExpect(jsonPath("$._links.cart").exists())
             .andExpect(jsonPath("$._links.cart.href", endsWith("/cart")))
             .andExpect(jsonPath("$._links.placeOrder.href", endsWith("/orders")))
+            .andExpect(jsonPath("$._links.order").exists())
+            .andExpect(jsonPath("$._links.userOrders").exists())
     }
 
     @Test

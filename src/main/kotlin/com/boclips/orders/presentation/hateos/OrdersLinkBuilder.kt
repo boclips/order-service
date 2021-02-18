@@ -2,6 +2,7 @@ package com.boclips.orders.presentation.hateos
 
 import com.boclips.orders.config.security.UserRoles
 import com.boclips.orders.presentation.OrdersController
+import com.boclips.security.utils.UserExtractor.getIfHasAnyRole
 import com.boclips.security.utils.UserExtractor.getIfHasRole
 import org.springframework.hateoas.Link
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder
@@ -22,7 +23,7 @@ object OrdersLinkBuilder {
         ).withRel(Rels.ORDERS)
     }
 
-    fun getOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
+    fun getUserOrdersLink(): Link? = getIfHasRole(UserRoles.VIEW_OWN_ORDERS) {
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getPaginatedOrderList(null, null)
         ).withRel(Rels.USER_ORDERS)
@@ -42,7 +43,7 @@ object OrdersLinkBuilder {
         ).withRel(Rels.EXPORT_ORDERS)
     }
 
-    fun getOrderLink(): Link? = getIfHasRole(UserRoles.VIEW_ORDERS) {
+    fun getOrderLink(): Link? = getIfHasAnyRole(UserRoles.VIEW_ORDERS, UserRoles.VIEW_OWN_ORDERS) {
         WebMvcLinkBuilder.linkTo(
             WebMvcLinkBuilder.methodOn(OrdersController::class.java).getOrderResource(null)
         ).withRel(Rels.ORDER)
