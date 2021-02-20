@@ -4,5 +4,5 @@ import com.boclips.orders.domain.model.orderItem.Video
 import com.boclips.orders.domain.model.video.VideoId
 
 interface VideoProvider {
-    fun get(videoId: VideoId): Video
+    fun get(videoId: VideoId, userId: String? = null): Video
 }

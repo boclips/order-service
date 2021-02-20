@@ -1,11 +1,7 @@
 package com.boclips.orders.infrastructure
 
 import com.boclips.orders.domain.FetchVideoResourceException
-import com.boclips.orders.domain.exceptions.ChannelNotFoundException
-import com.boclips.orders.domain.exceptions.MissingCurrencyForChannel
-import com.boclips.orders.domain.exceptions.MissingVideoFullProjectionLink
-import com.boclips.orders.domain.exceptions.MissingVideoPlaybackId
-import com.boclips.orders.domain.exceptions.VideoNotFoundException
+import com.boclips.orders.domain.exceptions.*
 import com.boclips.orders.domain.model.Price
 import com.boclips.orders.domain.model.orderItem.AssetStatus
 import com.boclips.orders.domain.model.orderItem.Channel
@@ -20,12 +16,13 @@ import com.boclips.videos.api.request.Projection
 import com.boclips.videos.api.request.video.StreamPlaybackResource
 import com.boclips.videos.api.response.channel.ChannelResource
 import com.boclips.videos.api.response.video.CaptionStatus
+import com.boclips.videos.api.response.video.PriceResource
 import com.boclips.videos.api.response.video.VideoResource
 import feign.FeignException
 import mu.KLogging
 import org.springframework.stereotype.Component
 import java.net.URL
-import java.util.Currency
+import java.util.*
 
 @Component
 class VideoServiceVideoProvider(
@@ -34,8 +31,11 @@ class VideoServiceVideoProvider(
 ) : VideoProvider {
     companion object : KLogging()
 
-    override fun get(videoId: VideoId): Video {
+    override fun get(videoId: VideoId, userId: String?): Video {
         val videoResource = getVideoResource(videoId)
+        val videoPrice = userId?.let {
+            getVideoPrice(videoId, userId)
+        }
         val channel = getChannel(videoResource)
 
         return Video(
@@ -79,7 +79,9 @@ class VideoServiceVideoProvider(
             captionAdminLink = KalturaLinkConverter.getCaptionAdminLink(videoResource.playback?.id),
             videoUploadLink = KalturaLinkConverter.getVideoUploadLink(videoResource.playback?.id),
             playbackId = videoResource.playback?.id ?: throw MissingVideoPlaybackId(videoId),
-            price = videoResource.price?.let { Price(amount = it.amount, currency = it.currency) } ?: throw TODO("no price on video?")
+            price = videoPrice?.let { Price(amount = it.amount, currency = it.currency) }
+                ?: videoResource.price?.let { Price(amount = it.amount, currency = it.currency) }
+                ?: throw TODO("no price on video?")
         )
     }
 
@@ -100,6 +102,21 @@ class VideoServiceVideoProvider(
     private fun getVideoResource(videoId: VideoId): VideoResource {
         return try {
             videosClient.getVideo(videoId = videoId.value, projection = Projection.full)
+        } catch (e: FeignException) {
+            logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
+            throw when (e) {
+                is FeignException.NotFound -> VideoNotFoundException(videoId, e)
+                else -> FetchVideoResourceException(videoId, e)
+            }
+        } catch (e: Exception) {
+            logger.info { e.message }
+            throw FetchVideoResourceException(videoId, e)
+        }
+    }
+
+    private fun getVideoPrice(videoId: VideoId, userId: String): PriceResource {
+        return try {
+            videosClient.getVideoPrice(videoId = videoId.value, userId = userId)
         } catch (e: FeignException) {
             logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
             throw when (e) {

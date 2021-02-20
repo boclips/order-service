@@ -20,7 +20,7 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
 
     fun toOrder(request: PlaceOrderRequest): Order {
         val user = toOrderUser(request.user)
-        val items = request.items.map { toOrderItem(it) }
+        val items = request.items.map { toOrderItem(it, request.user.id) }
         return Order.builder()
             .currency(getCommonCurrencyOf(items))
             .authorisingUser(user)
@@ -53,8 +53,8 @@ class OrderFromRequestConverter(val videoProvider: VideoProvider) {
             )
         } ?: throw IncompleteUserData()
 
-    fun toOrderItem(itemRequest: PlaceOrderRequestItem): OrderItem {
-        return videoProvider.get(VideoId(value = itemRequest.videoId)).let {
+    fun toOrderItem(itemRequest: PlaceOrderRequestItem, userId: String): OrderItem {
+        return videoProvider.get(VideoId(value = itemRequest.videoId), userId).let {
             OrderItem.builder()
                 .video(it)
                 .price(it.price!!)
