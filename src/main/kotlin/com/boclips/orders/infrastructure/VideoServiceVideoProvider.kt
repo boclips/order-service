@@ -34,8 +34,8 @@ class VideoServiceVideoProvider(
 ) : VideoProvider {
     companion object : KLogging()
 
-    override fun get(videoId: VideoId): Video {
-        val videoResource = getVideoResource(videoId)
+    override fun get(videoId: VideoId, userId: String): Video {
+        val videoResource = getVideoResource(videoId, userId)
         val channel = getChannel(videoResource)
 
         return Video(
@@ -99,7 +99,22 @@ class VideoServiceVideoProvider(
 
     private fun getVideoResource(videoId: VideoId): VideoResource {
         return try {
-            videosClient.getVideo(videoId = videoId.value, projection = Projection.full)
+            videosClient.getVideo(videoId = videoId.value, projection = Projection.full, userId = )
+        } catch (e: FeignException) {
+            logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
+            throw when (e) {
+                is FeignException.NotFound -> VideoNotFoundException(videoId, e)
+                else -> FetchVideoResourceException(videoId, e)
+            }
+        } catch (e: Exception) {
+            logger.info { e.message }
+            throw FetchVideoResourceException(videoId, e)
+        }
+    }
+
+    private fun getVideoPrice(videoId: VideoId, userId: String): VideoResource {
+        return try {
+            videosClient.getVideoPrice(videoId = videoId.value, userId = userId)
         } catch (e: FeignException) {
             logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
             throw when (e) {

@@ -182,4 +182,25 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
             videoProvider.get(videoId = VideoId(value = videoResource.id!!))
         }
     }
+
+    @Test
+    fun`can get a video's price`() {
+        val videoId = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partner",
+                channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
+                _links = mapOf(
+                    "fullProjection" to HateoasLink("https://great-vids.com")
+                )
+            )
+        )
+
+        val price = videoProvider.getPrice(videoId = VideoId(value = videoId.id!!), userId = "a-user-id")
+
+        assertThat(price.amount).isEqualTo("600")
+        assertThat(price.currency).isEqualTo("600")
+    }
 }
