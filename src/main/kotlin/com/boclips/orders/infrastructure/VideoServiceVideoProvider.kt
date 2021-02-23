@@ -121,11 +121,11 @@ class VideoServiceVideoProvider(
             logger.info { "FeignException exception with status code: ${e.status()}, message: ${e.message}" }
             throw when (e) {
                 is FeignException.NotFound -> VideoNotFoundException(videoId, e)
-                else -> FetchVideoResourceException(videoId, e)
+                else -> FetchVideoPriceException(videoId, e)
             }
         } catch (e: Exception) {
             logger.info { e.message }
-            throw FetchVideoResourceException(videoId, e)
+            throw FetchVideoPriceException(videoId, e)
         }
     }
 }

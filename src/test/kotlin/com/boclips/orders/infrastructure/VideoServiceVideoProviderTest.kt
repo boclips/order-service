@@ -75,6 +75,51 @@ internal class VideoServiceVideoProviderTest : AbstractSpringIntegrationTest() {
     }
 
     @Test
+    fun `can get a video price`() {
+        val channel = fakeChannelsClient.add(
+            ChannelResource(
+                id = "cp-id",
+                name = "our content partner",
+                currency = Currency.getInstance("GBP").currencyCode,
+                distributionMethods = emptySet(),
+                official = true
+            )
+        )
+
+        val videoId = fakeVideoClient.add(
+            VideoResource(
+                id = "video-id",
+                title = "hello",
+                createdBy = "our content partner",
+                captionStatus = CaptionStatus.HUMAN_GENERATED_AVAILABLE,
+                playback = StreamPlaybackResource(
+                    id = "playback-id",
+                    referenceId = "reference-id",
+                    maxResolutionAvailable = true
+                ),
+                channelId = channel.id,
+                channelVideoId = "",
+                price = PriceResource(amount = BigDecimal(600), currency = Currency.getInstance("USD")),
+                _links = mapOf(
+                    "fullProjection" to HateoasLink("https://great-vids.com")
+                )
+            )
+        )
+
+        val video = videoProvider.get(videoId = VideoId(value = videoId.id!!), userId = "user-123")
+
+        assertThat(video.title).isEqualTo("hello")
+        assertThat(video.channel.name).isEqualTo("our content partner")
+        assertThat(video.fullProjectionLink).describedAs("https://great-vids.com")
+        assertThat(video.captionStatus).isEqualTo(AssetStatus.AVAILABLE)
+        assertThat(video.price?.amount.toString()).isEqualTo("600.00")
+        assertThat(video.price?.currency?.currencyCode).isEqualTo("USD")
+        assertThat(video.downloadableVideoStatus).isEqualTo(AssetStatus.AVAILABLE)
+        assertThat(video.captionAdminLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/metadata")
+        assertThat(video.videoUploadLink.toString()).isEqualTo("https://kmc.kaltura.com/index.php/kmcng/content/entries/entry/playback-id/flavours")
+    }
+
+    @Test
     fun `throws when channel id is missing`() {
         val videoId = fakeVideoClient.add(
             VideoResource(
