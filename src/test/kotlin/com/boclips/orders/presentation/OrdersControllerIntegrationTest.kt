@@ -908,7 +908,13 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         fun `order is placed`() {
             defaultVideoClientResponse()
 
-            mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem()), note = "hello"))
+            mongoCartsRepository.create(
+                CartFactory.sample(
+                    userId = "user-id",
+                    items = listOf(CartFactory.cartItem()),
+                    note = "hello"
+                )
+            )
 
             val orderLocationUrl = mockMvc.perform(
                 (
@@ -945,7 +951,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                    }
                                 }
                             """.trimIndent()
-                        ).asPublisher()
+                        ).asPublisher(userId = "user-id")
                     )
             )
                 .andExpect(status().isCreated)
@@ -1101,7 +1107,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                                    }
                                 }
                             """.trimIndent()
-                        ).asPublisher()
+                        ).asPublisher(userId = "user-id")
                     )
             )
                 .andExpect(status().isBadRequest)
@@ -1115,7 +1121,7 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
             ordersRepository.save(
                 OrderFactory.order(
-                    id = OrderId(value="5ceeb99bd0e30a1a57ae9768"),
+                    id = OrderId(value = "5ceeb99bd0e30a1a57ae9768"),
                     requestingUser = OrderFactory.completeOrderUser(
                         userId = userId
                     )
@@ -1125,6 +1131,50 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
             mockMvc.perform(
                 get("/v1/orders/5ceeb99bd0e30a1a57ae9768").asPublisher(otherUserId)
             ).andExpect(status().isNotFound)
+        }
+
+        @Test
+        fun `can't place orders for another user`() {
+            defaultVideoClientResponse()
+
+            mongoCartsRepository.create(
+                CartFactory.sample(
+                    userId = "someone-elses-user-id",
+                    items = listOf(CartFactory.cartItem()),
+                    note = "hello"
+                )
+            )
+
+            mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"someone-elses-user-id",
+                                      "email":"hi@bye.com",
+                                      "firstName":"Poor",
+                                      "lastName":"Chump",
+                                      "organisation":{
+                                         "id":"org-id",
+                                         "name":"unlucky"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asPublisher()
+                    )
+            )
+                .andExpect(status().isForbidden)
+                .andExpect(jsonPath("$.message", equalTo("Cannot place orders for another user")))
         }
     }
 }

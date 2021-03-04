@@ -10,6 +10,7 @@ import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
 import com.boclips.orders.presentation.converters.OrdersToResourceConverter
+import com.boclips.orders.presentation.exceptions.InvalidUserException
 import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrderLink
 import com.boclips.orders.presentation.hateos.OrdersLinkBuilder.getSelfOrdersLink
@@ -160,6 +161,10 @@ class OrdersController(
 
     @PostMapping
     fun createOrder(@RequestBody request: PlaceOrderRequest?): ResponseEntity<Any> {
+        if(request?.user?.id != UserExtractor.getCurrentUser()?.id) {
+            throw InvalidUserException()
+        }
+
         return placeOrder(request!!).let { createdOrder ->
             ResponseEntity.created(getSelfOrderLink(createdOrder.id.value).toUri()).build()
         }

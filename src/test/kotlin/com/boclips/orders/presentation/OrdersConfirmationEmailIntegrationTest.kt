@@ -70,7 +70,7 @@ class OrdersConfirmationEmailIntegrationTest : AbstractSpringIntegrationTest() {
                                    }
                                 }
                         """.trimIndent()
-                    ).asPublisher()
+                    ).asPublisher(userId = "user-id")
                 )
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
