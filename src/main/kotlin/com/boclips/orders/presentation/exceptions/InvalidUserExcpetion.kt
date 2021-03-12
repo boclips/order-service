@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus
 class InvalidUserException : BoclipsApiException(
     exceptionDetails = ExceptionDetails(
         error = HttpStatus.FORBIDDEN.reasonPhrase,
-        message = "Cannot place orders for another user",
+        message = "Cannot place orders for another user or organisation",
         status = HttpStatus.FORBIDDEN
     )
 ) {

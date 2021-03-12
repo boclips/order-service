@@ -10,6 +10,8 @@ import com.boclips.orders.domain.model.cart.UserId
 import com.boclips.orders.domain.model.orderItem.Duration
 import com.boclips.orders.domain.model.orderItem.OrderItemLicense
 import com.boclips.orders.domain.model.orderItem.TrimRequest
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.organisation.OrganisationDetailsResource
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
@@ -907,7 +909,21 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `order is placed`() {
             defaultVideoClientResponse()
-
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "user-id",
+                    organisation = OrganisationDetailsResource(
+                        id = "org-id",
+                        name = "an org name",
+                        allowsOverridingUserIds = null,
+                        country = null,
+                        domain = null,
+                        features = null,
+                        state = null,
+                        type = null
+                    )
+                )
+            )
             mongoCartsRepository.create(
                 CartFactory.sample(
                     userId = "user-id",
@@ -1041,6 +1057,21 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
         @Test
         fun `cart gets emptied after order has been placed`() {
             defaultVideoClientResponse()
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "user-id",
+                    organisation = OrganisationDetailsResource(
+                        id = "org-id",
+                        name = "an org name",
+                        allowsOverridingUserIds = null,
+                        country = null,
+                        domain = null,
+                        features = null,
+                        state = null,
+                        type = null
+                    )
+                )
+            )
 
             mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
 
@@ -1078,6 +1109,22 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
 
         @Test
         fun `400 when there is incomplete user data in request`() {
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "user-id",
+                    organisation = OrganisationDetailsResource(
+                        id = "org-id",
+                        name = "an org name",
+                        allowsOverridingUserIds = null,
+                        country = null,
+                        domain = null,
+                        features = null,
+                        state = null,
+                        type = null
+                    )
+                )
+            )
+
             defaultVideoClientResponse()
 
             mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem())))
@@ -1174,7 +1221,67 @@ class OrdersControllerIntegrationTest : AbstractSpringIntegrationTest() {
                     )
             )
                 .andExpect(status().isForbidden)
-                .andExpect(jsonPath("$.message", equalTo("Cannot place orders for another user")))
+                .andExpect(jsonPath("$.message", equalTo("Cannot place orders for another user or organisation")))
+        }
+
+        @Test
+        fun `can't place orders for another user's organisation`() {
+            defaultVideoClientResponse()
+
+            usersClient.add(
+                UserResourceFactory.sample(
+                    id = "test-person",
+                    organisation = OrganisationDetailsResource(
+                        id = "this-users-org",
+                        name = "an org name",
+                        allowsOverridingUserIds = null,
+                        country = null,
+                        domain = null,
+                        features = null,
+                        state = null,
+                        type = null
+                    )
+                )
+            )
+
+            mongoCartsRepository.create(
+                CartFactory.sample(
+                    userId = "test-person",
+                    items = listOf(CartFactory.cartItem()),
+                    note = "hello"
+                )
+            )
+
+            mockMvc.perform(
+                (
+                    post("/v1/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """
+                                {
+                                   "items":[
+                                      {
+                                         "id":"item-id",
+                                         "videoId":"video-service-id"
+                                      }
+                                   ],
+                                   "user":{
+                                      "id":"test-person",
+                                      "email":"hi@bye.com",
+                                      "firstName":"Poor",
+                                      "lastName":"Chump",
+                                      "organisation":{
+                                         "id":"a-victim-org",
+                                         "name":"unlucky"
+                                      }
+                                   }
+                                }
+                            """.trimIndent()
+                        ).asPublisher(userId = "test-person")
+                    )
+            )
+                .andExpect(status().isForbidden)
+                .andExpect(jsonPath("$.message", equalTo("Cannot place orders for another user or organisation")))
         }
     }
 }

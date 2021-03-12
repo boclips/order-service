@@ -9,6 +9,8 @@ import com.boclips.orders.application.orders.UpdateOrder
 import com.boclips.orders.application.orders.UpdateOrderItem
 import com.boclips.orders.application.orders.exceptions.InvalidOrderUpdateRequest
 import com.boclips.orders.application.orders.exceptions.InvalidUpdateOrderItemRequest
+import com.boclips.orders.domain.service.UserService
+import com.boclips.orders.infrastructure.users.ApiUsersClient
 import com.boclips.orders.presentation.converters.OrdersToResourceConverter
 import com.boclips.orders.presentation.exceptions.InvalidUserException
 import com.boclips.orders.presentation.hateos.HateoasEmptyCollection
@@ -47,8 +49,9 @@ class OrdersController(
     private val updateOrderItem: UpdateOrderItem,
     private val updateOrder: UpdateOrder,
     private val placeOrder: PlaceOrder,
-    private val ordersToResourceConverter: OrdersToResourceConverter
-) {
+    private val ordersToResourceConverter: OrdersToResourceConverter,
+    private val userService: UserService
+    ) {
     companion object : KLogging() {
         const val DEFAULT_PAGE_SIZE = 10
         const val DEFAULT_PAGE_NUMBER = 0
@@ -161,8 +164,10 @@ class OrdersController(
 
     @PostMapping
     fun createOrder(@RequestBody request: PlaceOrderRequest?): ResponseEntity<Any> {
-        if(request?.user?.id != UserExtractor.getCurrentUser()?.id) {
-            throw InvalidUserException()
+        request?.user?.id?.let { userId ->
+            if(userId != UserExtractor.getCurrentUser()?.id || request.user.organisation.id != userService.getUser(userId).organisationId) {
+                throw InvalidUserException()
+            }
         }
 
         return placeOrder(request!!).let { createdOrder ->

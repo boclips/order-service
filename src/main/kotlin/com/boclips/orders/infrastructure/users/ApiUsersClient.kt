@@ -1,11 +1,12 @@
 package com.boclips.orders.infrastructure.users
 
+import com.boclips.orders.domain.service.UserService
 import com.boclips.users.api.httpclient.UsersClient
 
-open class ApiUsersClient(
+class ApiUsersClient(
     private val usersClient: UsersClient
-) {
-    fun getUser(userId: String): UserResource {
+) : UserService {
+    override fun getUser(userId: String): UserResource {
         val user = usersClient.getUser(userId)
 
         return UserResource(

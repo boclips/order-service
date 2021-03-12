@@ -6,6 +6,8 @@ import com.boclips.orders.application.orders.EmailOrderConfirmation
 import com.boclips.orders.domain.exceptions.OrderNotFoundException
 import com.boclips.orders.domain.model.OrderSource
 import com.boclips.orders.domain.service.events.EventConverter
+import com.boclips.users.api.factories.UserResourceFactory
+import com.boclips.users.api.response.organisation.OrganisationDetailsResource
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
@@ -32,7 +34,21 @@ class OrdersConfirmationEmailIntegrationTest : AbstractSpringIntegrationTest() {
     @Test
     fun `order is placed`() {
         defaultVideoClientResponse()
-
+        usersClient.add(
+            UserResourceFactory.sample(
+                id = "user-id",
+                organisation = OrganisationDetailsResource(
+                    id = "org-id",
+                    name = "an org name",
+                    allowsOverridingUserIds = null,
+                    country = null,
+                    domain = null,
+                    features = null,
+                    state = null,
+                    type = null
+                )
+            )
+        )
         mongoCartsRepository.create(CartFactory.sample(userId = "user-id", items = listOf(CartFactory.cartItem()), note = "hello"))
 
         val orderLocationUrl = mockMvc.perform(

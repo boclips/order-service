@@ -55,8 +55,10 @@ class TestContext {
             )
         )
     }
+
     @Bean
-    fun userService(usersClient: UsersClient): ApiUsersClient {
+    @Primary
+    fun fakeUserService(usersClient: UsersClient): ApiUsersClient {
         return ApiUsersClient(usersClient)
     }
 
