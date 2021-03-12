@@ -10,6 +10,7 @@ import com.boclips.orders.domain.service.EmailSender
 import com.boclips.orders.infrastructure.carts.MongoCartsRepository
 import com.boclips.orders.infrastructure.orders.MongoOrdersRepository
 import com.boclips.orders.infrastructure.orders.TestMongoProcess
+import com.boclips.users.api.httpclient.test.fakes.UsersClientFake
 import com.boclips.videos.api.httpclient.test.fakes.ChannelsClientFake
 import com.boclips.videos.api.httpclient.test.fakes.VideosClientFake
 import com.boclips.videos.api.request.video.StreamPlaybackResource
@@ -64,6 +65,9 @@ abstract class AbstractSpringIntegrationTest {
 
     @Autowired
     lateinit var fakeVideoClient: VideosClientFake
+
+    @Autowired
+    lateinit var usersClient: UsersClientFake
 
     @Autowired
     lateinit var fakeChannelsClient: ChannelsClientFake

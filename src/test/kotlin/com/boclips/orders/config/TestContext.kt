@@ -13,6 +13,9 @@ import com.boclips.orders.infrastructure.outgoing.slack.FakeSlackPoster
 import com.boclips.orders.infrastructure.outgoing.slack.SlackPoster
 import com.boclips.orders.infrastructure.outgoing.videos.FakeVideoService
 import com.boclips.orders.infrastructure.outgoing.videos.VideoService
+import com.boclips.orders.infrastructure.users.ApiUsersClient
+import com.boclips.users.api.httpclient.OrganisationsClient
+import com.boclips.users.api.httpclient.UsersClient
 import com.nhaarman.mockitokotlin2.mock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -51,6 +54,10 @@ class TestContext {
                 Currency.getInstance("GBP") to BigDecimal("1.0")
             )
         )
+    }
+    @Bean
+    fun userService(usersClient: UsersClient): ApiUsersClient {
+        return ApiUsersClient(usersClient)
     }
 
     @Bean
